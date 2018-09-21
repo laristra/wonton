@@ -1,0 +1,13 @@
+COMPILER:
+  - intel
+  - gcc
+
+BUILD_TYPE:
+  - base
+  - debug
+  - readme
+
+exclude:
+  - COMPILER: gcc
+    BUILD_TYPE: readme
+
