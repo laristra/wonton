@@ -15,6 +15,7 @@ set -x
 compiler=$1
 build_type=$2
 
+echo "inside build_matrix entry"
 # special case for README builds
 if [[ $build_type == "readme" ]]; then
   python2 $WORKSPACE/jenkins/parseREADME.py $WORKSPACE/README.md $WORKSPACE
@@ -67,6 +68,3 @@ module load cmake # 3.0 or higher is required
 
 echo "this should test something!"
 echo $WORKSPACE
-
-
-
