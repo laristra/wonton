@@ -10,5 +10,5 @@ Execute the following from the wonton root directory:
 
 ```c++
 # machine=varan
-echo "this is a test on varan"
+echo "This is a test on varan"
 ```
