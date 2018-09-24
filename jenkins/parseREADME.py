@@ -1,10 +1,10 @@
 '''
- This file is part of the Ristra tangram project.
+ This file is part of the Ristra wonton project.
  Please see the license file at the root of this repository, or at:
- https://github.com/laristra/tangram/blob/master/LICENSE
+ https://github.com/laristra/wonton/blob/master/LICENSE
 '''
 import subprocess, sys
-# This script parses the README file which describes how to build tangram
+# This script parses the README file which describes how to build wonton
 # It looks for code blocks enclosed in ``` and requires that the first
 # line of a block be a followed by a hostname.  The script will then
 # execute all commands specified after that point on the host machine
