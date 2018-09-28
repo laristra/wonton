@@ -62,7 +62,7 @@ set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
 #-----------------------------------------------------------------------------
 
 set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
-if (ENABLE_FleCSI)
+if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
  
  find_package(FleCSI REQUIRED)
  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
@@ -74,7 +74,7 @@ if (ENABLE_FleCSI)
  include_directories(${FleCSISP_INCLUDE_DIR})
  message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
 
-endif()
+endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
 
 #------------------------------------------------------------------------------#
@@ -82,7 +82,7 @@ endif()
 # (this includes the TPLs that Jali will need)
 #------------------------------------------------------------------------------#
 
-if (Jali_DIR)
+if (Jali_DIR AND NOT Jali_LIBRARIES)
 
    # Look for the Jali package
 
@@ -101,7 +101,7 @@ if (Jali_DIR)
 
    include_directories(${Jali_INCLUDE_DIRS} ${Jali_TPL_INCLUDE_DIRS})
 
-endif (Jali_DIR)
+endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 
 #-----------------------------------------------------------------------------
