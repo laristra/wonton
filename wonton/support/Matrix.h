@@ -14,7 +14,6 @@
 #include <type_traits>
 
 #include "Vector.h"   // Wonton::Vector
-#include "wonton.h"
 
 /*!
   @file Matrix.h
