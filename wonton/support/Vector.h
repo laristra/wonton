@@ -22,6 +22,7 @@
 #ifndef WONTON_VECTOR_H_
 #define WONTON_VECTOR_H_
 
+#include <cmath>
 #include <math.h>
 #include <assert.h>
 #include <iostream>

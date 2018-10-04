@@ -13,7 +13,8 @@
 #include <iostream>
 #include <type_traits>
 
-#include "Vector.h"   // Wonton::Vector
+#include "wonton/support/Vector.h"   // Wonton::Vector
+#include "wonton/support/wonton.h"   // Wonton::pow2
 
 /*!
   @file Matrix.h

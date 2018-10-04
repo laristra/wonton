@@ -197,6 +197,8 @@ struct Weights_t {
   std::vector<double> weights;
 };
 
+inline double pow2(double x) { return x*x; }
+
 }  // namespace Wonton
 
 #endif  // WONTON_H_
