@@ -10,29 +10,29 @@ Please see the license file at the root of this repository, or at:
 
 # Add header files
 set(support_HEADERS
-    wonton.h
-    Vector.h
-    Point.h
-#    Matrix.h
-#    lsfits.h
-#    svd.h
-    PARENT_SCOPE
+  lsfits.h
+  Matrix.h
+  Point.h
+  svd.h
+  Vector.h
+  wonton.h
+  PARENT_SCOPE
 )
 
 # Add source files
-#set(support_SOURCES
-#    svd.cc
-#    Matrix.cc
-#    PARENT_SCOPE
-#)
+set(support_SOURCES
+  Matrix.cc
+  svd.cc
+  PARENT_SCOPE
+)
 
 # Unit tests
 
-if (ENABLE_UNIT_TESTS) 
+if (ENABLE_UNIT_TESTS)
 
 #  cinch_add_unit(test_matfuncs
 #    SOURCES test/test_matfuncs.cc
-#    LIBRARIES portage 
+#    LIBRARIES portage
 #    POLICY MPI
 #    THREADS 1)
 
