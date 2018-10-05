@@ -30,10 +30,10 @@ set(support_SOURCES
 
 if (ENABLE_UNIT_TESTS)
 
-#  cinch_add_unit(test_matfuncs
-#    SOURCES test/test_matfuncs.cc
-#    LIBRARIES portage
-#    POLICY MPI
-#    THREADS 1)
+  cinch_add_unit(test_matfuncs
+    SOURCES test/test_matfuncs.cc
+    LIBRARIES wonton
+    POLICY MPI
+    THREADS 1)
 
 endif(ENABLE_UNIT_TESTS)

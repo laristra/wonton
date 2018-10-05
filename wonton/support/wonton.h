@@ -4,8 +4,8 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_H_
-#define WONTON_H_
+#ifndef WONTON_SUPPORT_WONTON_H_
+#define WONTON_SUPPORT_WONTON_H_
 
 #ifdef THRUST
 
@@ -59,6 +59,8 @@ Please see the license file at the root of this repository, or at:
  */
 namespace Wonton {
 // TODO:  Right now we're relying on the fact that this enum is
+// TODO:  This should probably be an enum class, unless we are relying on
+//        implicit conversion to Jali types, which we shouldn't be doing...
 //        identical to Jali::Entity_kind.  Need to fix this.
 /// The type of mesh entity.
 enum Entity_kind {
@@ -76,8 +78,6 @@ enum Entity_kind {
   BOUNDARY_FACE,
   PARTICLE
 };
-
-const int NUM_ENTITY_KINDS = 8;
 
 // Parallel status of entity
 /// The parallel type of a given entity.
@@ -104,14 +104,15 @@ enum Element_type {
 };
 
 /// Field type - whether it is mesh field or multi-material field
-
-enum class Field_type {UNKNOWN_TYPE_FIELD = -1, MESH_FIELD, MULTIMATERIAL_FIELD};
-
+enum class Field_type {
+  UNKNOWN_TYPE_FIELD = -1,
+  MESH_FIELD,
+  MULTIMATERIAL_FIELD
+};
 
 /// Layout of 2D input data to state - CELL_CENTRIC means the first
 /// index is the cell and the second is the material; MATERIAL_CENTRIC
 /// means the first index is the material and the second is the cell
-
 enum class Data_layout {CELL_CENTRIC, MATERIAL_CENTRIC};
 
 
@@ -182,9 +183,8 @@ inline void for_each(InputIterator first, InputIterator last,
                      UnaryFunction f) {
   std::for_each(first, last, f);
 }
-
-
 #endif
+
 
 struct Weights_t {
   Weights_t() : entityID(-1) {}
@@ -192,7 +192,7 @@ struct Weights_t {
       entityID(entityID_in), weights(weights_in) {}
   Weights_t(Weights_t const& source) :
       entityID(source.entityID), weights(source.weights) {}
-  
+
   int entityID;
   std::vector<double> weights;
 };
@@ -201,4 +201,4 @@ inline double pow2(double x) { return x*x; }
 
 }  // namespace Wonton
 
-#endif  // WONTON_H_
+#endif  // WONTON_SUPPORT_WONTON_H_
