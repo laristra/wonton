@@ -24,8 +24,8 @@ fi
 
 # set modules and install paths
 
-jali_version=0.9.8
-xmof2d_version=529f2dcdbe4
+jali_version=1.0.0
+lapack_version=3.8.0
 
 export NGC=/usr/local/codes/ngc
 ngc_include_dir=$NGC/private/include
@@ -39,7 +39,7 @@ if [[ $compiler == "intel" ]]; then
   # openmpi module for compiling and linking
   mpi_module=openmpi/2.1.2
   jali_install_dir=$NGC/private/jali/${jali_version}-intel-${intel_version}-openmpi-${openmpi_version}
-  xmof2d_install_dir=$NGC/private/xmof2d/${xmof2d_version}-intel-${intel_version}
+  lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-intel-${intel_version}
 elif [[ $compiler == "gcc" ]]; then
   gcc_version=6.4.0
   cxxmodule=gcc/${gcc_version}
@@ -48,9 +48,9 @@ elif [[ $compiler == "gcc" ]]; then
   # openmpi module for compiling and linking
   mpi_module=openmpi/2.1.2
   jali_install_dir=$NGC/private/jali/${jali_version}-gcc-${gcc_version}-openmpi-${openmpi_version}
-  xmof2d_install_dir=$NGC/private/xmof2d/${xmof2d_version}-gcc-${gcc_version}
+  lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-gcc-${gcc_version}
 fi
-  
+
 # build-type-specific settings
 cmake_build_type=Release
 extra_flags=
@@ -66,5 +66,21 @@ module load $cxxmodule
 module load ${mpi_module}
 module load cmake # 3.0 or higher is required
 
-echo "this should test something!"
 echo $WORKSPACE
+cd $WORKSPACE
+
+mkdir build
+cd build
+
+cmake \
+    -D CMAKE_BUILD_TYPE=$cmake_build_type \
+    -D ENABLE_UNIT_TESTS=True \
+    -D ENABLE_APP_TESTS=True \
+    -D ENABLE_MPI=True \
+    -D ENABLE_JENKINS_OUTPUT=True \
+    -D NGC_INCLUDE_DIR:FILEPATH=$ngc_include_dir \
+    -D Jali_DIR:FILEPATH=$jali_install_dir/lib \
+    -D LAPACKE_DIR:FILEPATH=$lapacke_dir \
+    ..
+make -j2
+ctest --output-on-failure

@@ -17,7 +17,7 @@ else()
   message(STATUS "C++14 compatible compiler not found")
 endif()
 
-# If we couldn't find a C++14 compiler, try to see if a C++11 
+# If we couldn't find a C++14 compiler, try to see if a C++11
 # compiler is available, then set the appropriate flags
 if (NOT CXX14_COMPILER)
   include(cxx11)
@@ -65,7 +65,7 @@ set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
 
 set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
 if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
- 
+
  find_package(FleCSI REQUIRED)
  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
  include_directories(${FleCSI_INCLUDE_DIR})
@@ -139,7 +139,7 @@ if (LAPACKE_DIR)
                  NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
                  HINTS ${LAPACKE_DIR} ${LAPACKE_INCLUDE_DIRS}/..
 	         PATH_SUFFIXES lib lib64)
-	       
+
 
     # Extract path of directory in which library files live to pass as a lib
     # search directory for the linker to find lapacke, lapack and blas libs
@@ -155,9 +155,9 @@ if (LAPACKE_DIR)
 
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-      set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lgfortran")    
+      set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lgfortran")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-      set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lifcore")    
+      set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lifcore")
     endif()
 
   endif(LAPACKE_LIBRARIES STREQUAL "lapacke")
@@ -172,7 +172,7 @@ else (LAPACKE_DIR)
 
 endif (LAPACKE_DIR)
 
-if (LAPACKE_FOUND) 
+if (LAPACKE_FOUND)
   include_directories(${LAPACKE_INCLUDE_DIRS})
   add_definitions("-DHAVE_LAPACKE")
 
