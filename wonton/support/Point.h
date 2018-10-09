@@ -1,9 +1,10 @@
 /*
-This file is part of the Ristra Wonton project.
-Please see the license file at the root of this repository, or at:
-    https://github.com/laristra/wonton/blob/master/LICENSE
+ This file is part of the Ristra wonton project.
+ Please see the license file at the root of this repository, or at:
+ https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
+///////////////////////////////////////////////////////////////////////////////
 // Copyright 2016 Los Alamos National Laboratory                             //
 //                                                                           //
 // Original Author: Paul Henning                                             //
@@ -26,13 +27,10 @@ Please see the license file at the root of this repository, or at:
 
 #ifndef WONTON_POINT_H_
 #define WONTON_POINT_H_
-
 #include <assert.h>
 #include <iostream>
-#include <type_traits>
 #include <vector>
 #include "wonton/support/Vector.h"
-
 namespace Wonton {
 
 const int X = 0;
@@ -59,12 +57,13 @@ class Point {
   }
 
   /*!
-    @brief Specialized constructor for Points in 1d.
-    @param[in] x The (x) coordinates of this Point.
+    @brief Specialized constructor from a std::vector of arbitary size.
+    @param[in] v std::vector of coordinates.
   */
-  inline Point(const double& x) {
-    assert(D == 1);
-    m_loc[0] = x;
+  explicit inline Point(const std::vector<double> &v) {
+    assert(v.size() == D);
+    for (int i = 0; i < D; i++)
+      m_loc[i] = v[i];
   }
 
   /*!
@@ -89,13 +88,12 @@ class Point {
   }
 
   /*!
-    @brief Specialized constructor from a std::vector of arbitary size.
-    @param[in] v std::vector of coordinates.
+    @brief Specialized constructor for Points in 1d.
+    @param[in] x The x coordinates of this Point.
   */
-  explicit inline Point(const std::vector<double> &v) {
-    assert(v.size() == D);
-    for (int i = 0; i < D; i++)
-      m_loc[i] = v[i];
+  inline Point(const double& x) {
+    assert(D == 1);
+    m_loc[0] = x;
   }
 
   /// Convert a Vector to a Point.
@@ -118,6 +116,13 @@ class Point {
   /// Return component @c i of the Point.
   inline double& operator[](const int& i) {
     return m_loc[i];
+  }
+
+  /// Negative of this Point.
+  Point<D> operator-() const {
+    Point<D> p;
+    for (int i = 0; i < D; i++) p.m_loc[i] = -m_loc[i];
+    return p;
   }
 
   /// Translate this Point along the Vector @c v.
@@ -181,6 +186,8 @@ class Point {
 typedef Point<3> Point3;
 /// Alias for creating a Point in 2d.
 typedef Point<2> Point2;
+/// Alias for creating a Point in 1d.
+typedef Point<1> Point1;
 
 template <long D> inline std::ostream&
 operator<<(std::ostream& os, const Point<D>& p) {
@@ -218,6 +225,14 @@ operator*(double s, const Point<D>& p) {
 template <long D> inline const Point<D>
 operator/(const Point<D>& p, double s) {
   return Point<D>(p) /= s;
+}
+
+template <long D> inline bool
+operator==(const Point<D>& p1, const Point<D>& p2) {
+  for (int i = 0; i < D; i++)
+    if (p1[i] != p2[i])
+      return false;
+  return true;
 }
 
 template <long D> inline bool
@@ -269,6 +284,15 @@ createP2(double x, double y) {
 
   p[0] = x;
   p[1] = y;
+
+  return p;
+}
+
+inline const Point1
+createP1(double x) {
+  Point1 p;
+
+  p[0] = x;
 
   return p;
 }
