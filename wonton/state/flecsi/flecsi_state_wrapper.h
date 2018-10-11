@@ -1,22 +1,23 @@
 /*
-This file is part of the Ristra Wonton project.
+This file is part of the Ristra wonton project.
 Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
+////////////////////////////////////////////////////////////////////////////////
+/// \file
+////////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
-// user includes
-
-// library includes
-#include "wonton/support/wonton.h"
 
 // system includes
 #include <utility>
 #include <cstring>
 #include <string>
+#include <vector>
+#include <typeinfo>
 
-//namespace flecsale {
+#include "wonton/support/wonton.h"
+
 namespace Wonton {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,7 +25,6 @@ namespace Wonton {
 ////////////////////////////////////////////////////////////////////////////////
 template< typename M >
 class flecsi_state_t {
-
   //============================================================================
   // Typedefs
   //============================================================================
@@ -38,13 +38,11 @@ class flecsi_state_t {
 
 
   //! \brief The entity kind type
-  using entity_kind_t = Wonton::Entity_kind;
-  //! \brief The entity type 
-  using entity_type_t = Wonton::Entity_type;
+  using entity_kind_t = Entity_kind;
+  //! \brief The entity type
+  using entity_type_t = Entity_type;
 
-public:
-
-
+ public:
   //============================================================================
   // Constructors
   //============================================================================
@@ -123,7 +121,7 @@ public:
   int cell_index_in_material(int meshcell, int matid) const {
     return -1;
   }
-  
+
   //! \brief Type of field (MESH_FIELD or MULTIMATERIAL_FIELD)
   //! \param[in] onwhat   Entity_kind that field is defined on
   //! \param[in] varname  Name of field
@@ -133,30 +131,30 @@ public:
       const {
     return Field_type::MESH_FIELD;  // MULTI-MATERIAL FIELDS NOT ACCESSED YET
   }
-  
+
 
   //! \brief Get the entity type on which the given field is defined
   //! \param[in] var_name The string name of the data field
-  //! \return The Entity_kind enum for the entity type on which the field is defined
+  //! \return The Entity_kind enum for the entity type on which the field is
+  //! defined
   //!
-  //! \todo  THIS ASSUMES ONLY DOUBLE VECTORS - WE HAVE TO ACCOUNT FOR OTHER TYPES
+  //! \todo  THIS ASSUMES ONLY DOUBLE VECTORS - WE HAVE TO ACCOUNT FOR OTHER
+  //! TYPES
   //!        OR WE HAVE TO GENERALIZE THE FIND FUNCTION!!!
   //! \todo  THIS ALSO DOES NOT CHECK FOR OTHER ENTITY TYPES LIKE EDGE, FACE,
   //!        SIDE, WEDGE AND CORNER
-  entity_kind_t get_entity(std::string const& var_name) const 
-  {
+  entity_kind_t get_entity(std::string const& var_name) const {
     auto cell_field_list = flecsi_get_accessors_all(
-      *mesh_, real_t, dense, 0, flecsi_is_at(cells)
-    );
+        *mesh_, real_t, dense, 0, flecsi_is_at(cells));
+
     for (auto var : cell_field_list)
-      if (var.label() == var_name) 
+      if (var.label() == var_name)
         return entity_kind_t::CELL;
 
     auto nodal_field_list = flecsi_get_accessors_all(
-      *mesh_, real_t, dense, 0, flecsi_is_at(vertices)
-    );
+        *mesh_, real_t, dense, 0, flecsi_is_at(vertices));
     for (auto var : nodal_field_list)
-      if (var.label() == var_name) 
+      if (var.label() == var_name)
         return entity_kind_t::NODE;
 
     return entity_kind_t::UNKNOWN_KIND;
@@ -168,15 +166,14 @@ public:
   //! \param[in] var_name The string name of the data field
   //! \param[in,out] data A pointer to an array of data
   template <class T>
-  void mesh_get_data(entity_kind_t on_what, std::string const& var_name, 
+  void mesh_get_data(entity_kind_t on_what, std::string const& var_name,
                      T ** data) const {
     // Ignore on_what here - the state manager knows where it lives
     // based on its name
 
     // first check cells
     auto cell_field_list = flecsi_get_accessors_all(
-      *mesh_, real_t, dense, 0, flecsi_is_at(cells)
-    );
+        *mesh_, real_t, dense, 0, flecsi_is_at(cells));
     for (auto var : cell_field_list)
       if (var.label() == var_name) {
         *data = &var[0];
@@ -185,8 +182,7 @@ public:
 
     // now check nodes
     auto nodal_field_list = flecsi_get_accessors_all(
-      *mesh_, real_t, dense, 0, flecsi_is_at(vertices)
-    );
+        *mesh_, real_t, dense, 0, flecsi_is_at(vertices));
     for (auto var : nodal_field_list)
       if (var.label() == var_name)  {
         *data = &var[0];
@@ -194,14 +190,15 @@ public:
       }
 
     // if we got here, there is something wrong
-    raise_runtime_error( "Could not find variable to ReMAP!" );
+    raise_runtime_error("Could not find variable to ReMAP!");
   }
 
 
   //! \brief Get pointer to read-only scalar cell data for a particular material
   //! \param[in] var_name The string name of the data field
   //! \param[in] matid   Index (not unique identifier) of the material
-  //! \param[out] data   vector containing the values corresponding to cells in the material
+  //! \param[out] data   vector containing the values corresponding to cells in
+  //! the material
 
   void mat_get_celldata(std::string const& var_name, int matid,
                         double const **data) const {
@@ -209,10 +206,10 @@ public:
 
   // TEMPORARY: UNTIL THIS GETS TEMPLATED ON TYPE OF DATA
   void mat_get_celldata(std::string const& var_name, int matid,
-                        Wonton::Point<2> const **data) const {
+                        Point<2> const **data) const {
   }
   void mat_get_celldata(std::string const& var_name, int matid,
-                        Wonton::Point<3> const **data) const {
+                        Point<3> const **data) const {
   }
 
 
@@ -220,7 +217,8 @@ public:
   //! \param[in] on_what The entity type on which to get the data
   //! \param[in] var_name The string name of the data field
   //! \param[in] matid   Index (not unique identifier) of the material
-  //! \param[out] data   vector containing the values corresponding to cells in the material
+  //! \param[out] data   vector containing the values corresponding to cells in
+  //! the material
 
   void mat_get_celldata(std::string const& var_name, int matid, double **data) {
   }
@@ -243,7 +241,7 @@ public:
 
   //! The 2D array will be read and values copied according to which materials
   //! are contained in which cells. If a material+cell combination is not active
-  //! providing a value for the array will have no effect. 
+  //! providing a value for the array will have no effect.
 
   void mat_add_celldata(std::string const& var_name, double value) {
   }
@@ -271,7 +269,7 @@ public:
   //! data to one of its materials
   //! \param[in] var_name The name of the data field
   //! \param[in] matid  Index of material in the problem
-  //! \param[in] layout Data layout - 
+  //! \param[in] layout Data layout -
   //! \param[in] values Initialize with this array of values
   //!
   //! Subsequent calls to this function with the same name will find the added
@@ -279,6 +277,14 @@ public:
 
   void mat_add_celldata(std::string const& var_name, int matid,
                         double const * values) {
+  }
+
+  void mat_add_celldata(std::string const& var_name, int matid,
+                        Point<2> const *values) {
+  }
+
+  void mat_add_celldata(std::string const& var_name, int matid,
+                        Point<3> const *values) {
   }
 
 
@@ -305,7 +311,7 @@ public:
   //! \brief Remove cells from material (or remove material from cells)
   //! \param[in] matid  Material ID
   //! \param[in] matcells Vector of to be removed cells
-  
+
   void mat_rem_cells(int matid, std::vector<int> const& delcells) {
   }
 
@@ -319,9 +325,8 @@ public:
   }
 
 
-  int get_data_size(entity_kind_t on_what, std::string const& var_name) const 
-  {
-    raise_runtime_error( "get_data_size not implemented yet!" );
+  int get_data_size(entity_kind_t on_what, std::string const& var_name) const {
+    raise_runtime_error("get_data_size not implemented yet!");
   }
 
 
@@ -334,7 +339,15 @@ public:
   const std::type_info& get_data_type(std::string const& var_name) const {
     return typeid(double);  // thats the only type we can represent
   }
-  
+
+  /*!
+    @brief  Vector of names
+    @return vector of strings
+   */
+  std::vector<std::string> names() const {
+    return std::vector<std::string>{};
+  }
+
 
 #if 0
 
@@ -361,25 +374,21 @@ public:
   //! \brief Get the data size for the given field
   //! \param[in] on_what  The entity type on which the data field is defined
   //! \param[in] var_name The string name of the data field
-  //! \return The data size for the field with the given name on the given entity type
+  //! \return The data size for the field with the given name on the given
+  //! entity type
   int get_data_size(entity_kind_t on_what, std::string const& var_name) const {
-
-   const const_string_t flecsiname(var_name.c_str());
-   auto dat = access_state(flecsi_mesh_,
-                           std::forward<const const_string_t>(flecsiname),
-                           real_t);
-   return (dat.size());
-
+    const const_string_t flecsiname(var_name.c_str());
+    auto dat = access_state(flecsi_mesh_,
+                            std::forward<const const_string_t>(flecsiname),
+                            real_t);
+    return (dat.size());
   }
 
-#endif 
+#endif
 
-private:
-
+ private:
   //! \brief the flecsi mesh pointer
   mesh_t * mesh_ = nullptr;
-
 };  // Flecsi_State_Wrapper
 
-} // namespace wonton 
-//} // namespace 
+}  // namespace Wonton

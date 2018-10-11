@@ -1,22 +1,22 @@
 /*
-This file is part of the Ristra Wonton project.
+This file is part of the Ristra wonton project.
 Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
-
-#ifndef JALI_STATE_WRAPPER_H_
-#define JALI_STATE_WRAPPER_H_
+#ifndef WONTON_STATE_JALI_JALI_STATE_WRAPPER_H_
+#define WONTON_STATE_JALI_JALI_STATE_WRAPPER_H_
 
 #include <type_traits>
-
 #include <string>
 #include <vector>
+#include <memory>
 
+// Jali includes
+#include "Mesh.hh"
+#include "JaliState.h"
+
+// wonton includes
 #include "wonton/support/wonton.h"
-#include "wonton/support/Point.h"
-
-#include "Mesh.hh"       // Jali mesh declarations
-#include "JaliState.h"  // Jali-based state manager declarations
 
 /*!
   @file jali_state_wrapper.h
@@ -25,17 +25,17 @@ Please see the license file at the root of this repository, or at:
 namespace Wonton {
 
 /*!
-  @class Jali_MMState_Wrapper "jali_mmstate_wrapper.h"
+  @class Jali_State_Wrapper "jali_state_wrapper.h"
   @brief Provides access to data stored in Jali_State
 */
 class Jali_State_Wrapper {
  public:
-
   /*!
-    @brief Constructor of Jali_MMState_Wrapper
+    @brief Constructor of Jali_State_Wrapper
     @param[in] jali_state A reference to a Jali::State instance
    */
-  Jali_State_Wrapper(Jali::State & jali_state) : jali_state_(jali_state) {}
+  explicit Jali_State_Wrapper(Jali::State & jali_state)
+      : jali_state_(jali_state) {}
 
   /*!
     @brief Copy constructor of Jali_State_Wrapper - not a deep copy
@@ -152,7 +152,7 @@ class Jali_State_Wrapper {
     while (it != jali_state_.cend()) {
       std::shared_ptr<Jali::StateVectorBase> bvec = *it;
       if (bvec->name() == var_name &&
-          static_cast<Wonton::Entity_kind>(bvec->entity_kind()) == on_what) {
+          static_cast<Entity_kind>(bvec->entity_kind()) == on_what) {
         if (bvec->type() == Jali::StateVector_type::UNIVAL)
           return Field_type::MESH_FIELD;
         else
@@ -162,7 +162,7 @@ class Jali_State_Wrapper {
     }
   }
 
-  
+
   /*!
     @brief Get a pointer to read-only single-valued data on the mesh
     @param[in] on_what The entity type on which to get the data
@@ -221,7 +221,8 @@ class Jali_State_Wrapper {
     @brief Get pointer to read-only scalar cell data for a particular material
     @param[in] var_name The string name of the data field
     @param[in] matid   Index (not unique identifier) of the material
-    @param[out] data   vector containing the values corresponding to cells in the material
+    @param[out] data   vector containing the values corresponding to cells in
+    the material
    */
 
   template <class T>
@@ -247,7 +248,8 @@ class Jali_State_Wrapper {
     @param[in] on_what The entity type on which to get the data
     @param[in] var_name The string name of the data field
     @param[in] matid   Index (not unique identifier) of the material
-    @param[out] data   vector containing the values corresponding to cells in the material
+    @param[out] data   vector containing the values corresponding to cells in
+    the material
 
     Removing the constness of the template parameter allows us to call
     this function and get const data back (e.g. pointer to double const)
@@ -299,9 +301,9 @@ class Jali_State_Wrapper {
    std::enable_if....type') because template deduction rules are
    making the compiler invoke this version, when we call it with a
    const double ** pointer
-   
+
    See, stackoverflow.com Q&A
-   
+
    http://stackoverflow.com/questions/13665574/template-argument-deduction-and-pointers-to-constants
 
     We could make it work for some cases using
@@ -337,16 +339,16 @@ class Jali_State_Wrapper {
 
    The 2D array will be read and values copied according to which materials
    are contained in which cells. If a material+cell combination is not active
-   providing a value for the array will have no effect. 
+   providing a value for the array will have no effect.
 
    This version of the overloaded operator is being DISABLED for
    pointer and array types (via the line 'typename
    std::enable_if....type') because template deduction rules are
    making the compiler invoke this version, when we call it with a
    const double ** pointer
-   
+
    See, stackoverflow.com Q&A
-   
+
    http://stackoverflow.com/questions/13665574/template-argument-deduction-and-pointers-to-constants
 
     We could make it work for some cases using
@@ -377,12 +379,13 @@ class Jali_State_Wrapper {
    @brief Add a scalar multi-valued data field on cells and initialize its
    material data according to a 2D array
    @param[in] var_name The name of the data field
-   @param[in] layout  Whether 2D array is laid out with first index being the cell (CELL_CENRIC) or material (MATERIAL CENTRIC)
+   @param[in] layout  Whether 2D array is laid out with first index being the
+   cell (CELL_CENRIC) or material (MATERIAL CENTRIC)
    @param[in] value Initialize with this value
 
    The 2D array will be read and values copied according to which materials
    are contained in which cells. If a material+cell combination is not active
-   providing a value for the array will have no effect. 
+   providing a value for the array will have no effect.
    */
   template <class T>
   void mat_add_celldata(std::string const& var_name,
@@ -398,7 +401,7 @@ class Jali_State_Wrapper {
    its materials
    @param[in] var_name The name of the data field
    @param[in] matid  Index of material in the problem
-   @param[in] layout Data layout - 
+   @param[in] layout Data layout -
    @param[in] values Initialize with this array of values
 
    Subsequent calls to this function with the same name will find the added
@@ -423,7 +426,8 @@ class Jali_State_Wrapper {
       matdata.assign(values, values+nmatcells);
     } else {
       Jali::MultiStateVector<T, Jali::Mesh>& mmvec =
-          *(std::dynamic_pointer_cast<Jali::MultiStateVector<T, Jali::Mesh>>(*it));
+          *(std::dynamic_pointer_cast<
+            Jali::MultiStateVector<T, Jali::Mesh>>(*it));
       std::vector<T>& matdata = mmvec.get_matdata(matid);
       int nmatcells = matdata.size();
       matdata.assign(values, values+nmatcells);
@@ -455,7 +459,7 @@ class Jali_State_Wrapper {
   template <class T>
   typename
   std::enable_if<(!std::is_pointer<T>::value && !std::is_array<T>::value),
-                 void>::type 
+                 void>::type
   mat_add_celldata(std::string const& var_name, int matid, T value) {
     auto it = jali_state_.find<T, Jali::Mesh, Jali::MultiStateVector>(var_name,
                                                         jali_state_.mesh(),
@@ -473,13 +477,14 @@ class Jali_State_Wrapper {
       matdata.assign(nmatcells, value);
     } else {
       Jali::MultiStateVector<T, Jali::Mesh>& mmvec =
-          *(std::dynamic_pointer_cast<Jali::MultiStateVector<T, Jali::Mesh>>(*it));
+          *(std::dynamic_pointer_cast<
+            Jali::MultiStateVector<T, Jali::Mesh>>(*it));
       std::vector<T>& matdata = mmvec.get_matdata(matid);
       int nmatcells = matdata.size();
       matdata.assign(nmatcells, value);
     }
   }
-    
+
 
 
   /*!
@@ -498,7 +503,7 @@ class Jali_State_Wrapper {
     @param[in] matid  Material ID
     @param[in] matcells Vector of to be removed cells
   */
-  
+
   void mat_rem_cells(int matid, std::vector<int> const& delcells) {
     jali_state_.rem_cells_from_material(matid, delcells);
   }
@@ -524,19 +529,20 @@ class Jali_State_Wrapper {
   /*!
     @brief Get the entity type on which the given field is defined
     @param[in] var_name The string name of the data field
-    @return The Entity_kind enum for the entity type on which the field is defined
+    @return The Entity_kind enum for the entity type on which the field is
+    defined
    */
   Entity_kind get_entity(const std::string var_name) const {
-    
+
     Jali::State::const_iterator it = jali_state_.find(var_name);
     if (it != jali_state_.cend()) {
       std::shared_ptr<Jali::StateVectorBase> vector = *it;
       if (vector)
-        return (Wonton::Entity_kind) vector->entity_kind();
+        return (Entity_kind) vector->entity_kind();
     }
 
     std::cerr << "Could not find state variable " << var_name << "\n";
-    return Wonton::UNKNOWN_KIND;
+    return UNKNOWN_KIND;
   }
 
 
@@ -544,8 +550,9 @@ class Jali_State_Wrapper {
     @brief Get the data size for the given field
     @param[in] on_what  The entity type on which the data field is defined
     @param[in] var_name The string name of the data field
-    @return The data size for the field with the given name on the given entity type
-         
+    @return The data size for the field with the given name on the given entity
+    type
+
     For multi-material state, this will give the number of materials for now
    */
   int get_data_size(Entity_kind on_what, std::string const& var_name) const {
@@ -553,13 +560,15 @@ class Jali_State_Wrapper {
     Jali::State::const_iterator it = jali_state_.find(var_name);
     if (it != jali_state_.cend()) {
       std::shared_ptr<Jali::StateVectorBase> vector = *it;
-      if (vector && on_what == (Wonton::Entity_kind) vector->entity_kind()) {
+      if (vector && on_what == (Entity_kind) vector->entity_kind()) {
         if (vector->type() == Jali::StateVector_type::UNIVAL) {
-          auto uvec = std::dynamic_pointer_cast<Jali::UniStateVectorBase<Jali::Mesh>>(vector);
+          auto uvec = std::dynamic_pointer_cast<
+              Jali::UniStateVectorBase<Jali::Mesh>>(vector);
           if (uvec && uvec->domain() == jali_state_.mesh())
             return uvec->size();
         } else if (vector->type() == Jali::StateVector_type::MULTIVAL) {
-          auto mmvec = std::dynamic_pointer_cast<Jali::MultiStateVectorBase<Jali::Mesh>>(vector);
+          auto mmvec = std::dynamic_pointer_cast<
+              Jali::MultiStateVectorBase<Jali::Mesh>>(vector);
           if (mmvec && mmvec->domain() == jali_state_.mesh())
               return (vector->size());
         }
@@ -602,19 +611,20 @@ class Jali_State_Wrapper {
     @brief End iterator on vector names
     @return End iterator on vector of strings
    */
-  std::vector<std::string>::iterator names_end() const { 
-    return jali_state_.names_end(); 
+  std::vector<std::string>::iterator names_end() const {
+    return jali_state_.names_end();
   }
 
   /*!
     @brief  Vector of names
     @return vector of strings
    */
-  std::vector<std::string> names() const { 
-    std::vector<std::string> result(jali_state_.names_begin(), 
+  std::vector<std::string> names() const {
+    std::vector<std::string> result(jali_state_.names_begin(),
                                     jali_state_.names_end());
     return result;
   }
+
 
   /*!
     @brief Typedef for permutation iterator on vector of strings
@@ -626,24 +636,22 @@ class Jali_State_Wrapper {
     @param[in] on_what The desired entity type
     @return Permutation iterator to start of string vector
    */
-  string_permutation names_entity_begin(Entity_kind const on_what) const { 
-    return jali_state_.names_entity_begin((Jali::Entity_kind)on_what); 
+  string_permutation names_entity_begin(Entity_kind const on_what) const {
+    return jali_state_.names_entity_begin((Jali::Entity_kind)on_what);
   }
 
   /*!
     @brief End iterator on vector of names of specific entity type
     @param[in] on_what The desired entity type
    */
-  string_permutation names_entity_end(Entity_kind const on_what) const { 
-    return jali_state_.names_entity_end((Jali::Entity_kind)on_what); 
+  string_permutation names_entity_end(Entity_kind const on_what) const {
+    return jali_state_.names_entity_end((Jali::Entity_kind)on_what);
   }
 
  private:
-
   Jali::State & jali_state_;
-
 };  // Jali_State_Wrapper
 
 }  // namespace Wonton
 
-#endif  // JALI_STATE_WRAPPER_H_
+#endif  // WONTON_STATE_JALI_JALI_STATE_WRAPPER_H_
