@@ -228,34 +228,6 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
     }
   }
 
-  //! Number of items of given entity
-  //! \param [in] entity  The enumerated entity of interest
-  //! \param [in] entity_type   The type of entity information (ghost,  shared,
-  //!   all,  etc...)
-  size_t num_entities(
-    Entity_kind entity,
-    entity_type_t entity_type = entity_type_t::ALL) const {
-    switch (entity) {
-      case Entity_kind::NODE :
-        return num_owned_nodes();
-      case Entity_kind::EDGE :
-        return num_owned_edges();
-      case Entity_kind::FACE :
-        return num_owned_faces();
-      case Entity_kind::CELL :
-        return num_owned_cells();
-      case Entity_kind::WEDGE :
-        return mesh_->num_wedges();
-        break;
-      case Entity_kind::CORNER :
-        return mesh_->num_corners();
-      default :
-        // raise_runtime_error("Unknown entity type");
-        std::cerr << "Unknown entity type\n";
-        return 0;
-    }
-  }
-
   //! The begin iterator for iterating over mesh entities.
   //! \param [in] entity  The enumerated entity of interest
   //! \param [in] entity_type   The type of entity information (ghost,  shared,
@@ -378,21 +350,21 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
     size_t node_id,
     point_1d_t * pp) const {
     auto v = vertices_[node_id];
-    *pp = wonton::make_1d_point(v->coordinates());
+    *pp = make_1d_point(v->coordinates());
   }
 
   void node_get_coordinates(
     size_t node_id,
     point_2d_t * pp) const {
     auto v = vertices_[node_id];
-    *pp = wonton::make_2d_point(v->coordinates());
+    *pp = make_2d_point(v->coordinates());
   }
 
   void node_get_coordinates(
     size_t node_id,
     point_3d_t * pp) const {
     auto v = vertices_[node_id];
-    *pp = wonton::make_3d_point(v->coordinates());
+    *pp = make_3d_point(v->coordinates());
   }
 
 
@@ -412,7 +384,7 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
     point_list->clear();
     auto verts = mesh_->vertices(cell);
     for (auto v : verts)
-      point_list->emplace_back(wonton::make_point(v->coordinates()));
+      point_list->emplace_back(make_point(v->coordinates()));
   }
 
   //! \brief 2D version of coords of nodes of a dual cell
@@ -444,7 +416,7 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
     size_t cell_id,
     point_t * centroid) const {
     auto this_cell = cells_[cell_id];
-    *centroid = wonton::make_point(this_cell->centroid());
+    *centroid = make_point(this_cell->centroid());
   }
 
   //! \brief Centroid of a dual cell.
@@ -461,7 +433,7 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
     size_t node_id,
     point_t *centroid) const {
     auto this_node = vertices_[node_id];
-    *centroid = wonton::make_point(this_node->coordinates());
+    *centroid = make_point(this_node->coordinates());
   }
 
 
