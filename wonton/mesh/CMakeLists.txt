@@ -37,12 +37,12 @@ if (ENABLE_UNIT_TESTS)
     SOURCES simple/test/test_simple_mesh.cc
     POLICY SERIAL
     )
-  
+
   # Simple Mesh wrapper
   cinch_add_unit(test_simple_mesh_wrapper
     SOURCES simple/test/test_simple_mesh_wrapper.cc
     POLICY SERIAL)
-  
+
   if (Jali_DIR)
     cinch_add_unit(test_jali_mesh_wrapper
       SOURCES jali/test/test_jali_mesh_wrapper.cc
@@ -52,7 +52,7 @@ if (ENABLE_UNIT_TESTS)
       ../../test_data/shotshell-v.exo
       POLICY MPI
       THREADS 1)
-    
+
     # Flat mesh wrapper (has to be paired with a real MPI capable mesh
     # wrapper)
     cinch_add_unit(test_flat_mesh_wrapper
@@ -64,24 +64,5 @@ if (ENABLE_UNIT_TESTS)
       POLICY MPI
       THREADS 1)
   endif (Jali_DIR)
-  
-  if (ENABLE_FleCSI)
-    cinch_add_unit(flecsi_2d
-      SOURCES flecsi/test/flecsi_2d.cc
-      LIBRARIES ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES}
-      POLICY MPI
-      THREADS 1)
-    
-    cinch_add_unit(flecsi_3d
-      SOURCES flecsi/test/flecsi_3d.cc
-      LIBRARIES ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES}
-      POLICY MPI
-      THREADS 1)
-    
-    #cinch_add_unit(test_flecsi_mesh_wrapper
-    #               SOURCES mesh/flecsi/test/test_flecsi_mesh_wrapper.cc
-    #               LIBRARIES wonton ${FLECSI_LIBRARIES})
-  endif ()
-  
-endif(ENABLE_UNIT_TESTS)
 
+endif(ENABLE_UNIT_TESTS)
