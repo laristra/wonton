@@ -254,96 +254,18 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
   /*!
    @brief Get the data vector
-   Experimental::
-   Note we cannot return a reference, we must return a new vector, 
+   I am doing a return by reference of the data here. In the flat
+   state manager as it existed before this, the state manager returned
+   data vector. In the new StateManager, we return a shared pointer to
+   a StateVectorBase that has metadata as well. Getting at the data
+   requires one more access that is not by shared pointer but by array
+   reference as currently implemented. This breaks the current
+   MMDriver code, so I need to change MMDriver as well
   */
-  std::vector<double> get_vector(std::string field_name) {
-  
-  	// get the underlying data vector
-    std::shared_ptr<StateVectorBase> pv =
+  std::vector<double>& get_vector(std::string field_name) {
+    std::shared_ptr<StateVectorBase> p =
         StateManager<MeshWrapper>::get(field_name);
-        
-  	// get the underlying data type
-  	const std::type_info& data_type = StateManager<MeshWrapper>::get_data_type(field_name);
-  	
-  	if (pv->get_type() == Wonton::Field_type::MESH_FIELD){
-  	
-			if (data_type == typeid(double)){
-			
-				std::vector<double>& data = std::static_pointer_cast<StateVectorUni<double>>(pv)->get_data();
-				std::vector<double> flat_data(data.begin(),data.end());
-		  	return flat_data;
-		  	
-			} else if (data_type == typeid(Wonton::Point<2>)){
-			
-				std::vector<Wonton::Point<2>>& data = std::static_pointer_cast<StateVectorUni<Wonton::Point<2>>>(pv)->get_data();
-				std::vector<double> flat_data;
-				for (auto &d : data) {
-					flat_data.emplace_back(d[0]);
-					flat_data.emplace_back(d[1]);
-				}				
-		  	return flat_data;
-		  	
-			} else if (data_type == typeid(Wonton::Point<3>)){
-			
-				std::vector<Wonton::Point<3>>& data = std::static_pointer_cast<StateVectorUni<Wonton::Point<3>>>(pv)->get_data();
-				std::vector<double> flat_data;
-				for (auto &d : data) {
-					flat_data.emplace_back(d[0]);
-					flat_data.emplace_back(d[1]);
-					flat_data.emplace_back(d[2]);
-				}				
-		  	return flat_data;
-		  	
-			}
-			
-		} else if (pv->get_type() == Wonton::Field_type::MULTIMATERIAL_FIELD){
-		
-			if (data_type == typeid(double)){
-			
-				std::unordered_map<int, std::vector<double>>&  data = std::static_pointer_cast<StateVectorMulti<double>>(pv)->get_data();
-				std::vector<int> keys = get_material_ids();
-				std::vector<double> flat_data;
-				for (auto key : keys){
-					std::vector<double>& data_row = data.at(key);
-					for (auto d : data_row) flat_data.emplace_back(d);
-				}
-		  	return flat_data;
-		  	
-			} else if (data_type == typeid(Wonton::Point<2>)){
-			
-				std::unordered_map<int, std::vector<Wonton::Point<2>>>&  data = std::static_pointer_cast<StateVectorMulti<Wonton::Point<2>>>(pv)->get_data();
-				std::vector<int> keys = get_material_ids();
-				std::vector<double> flat_data;
-				for (auto key : keys){
-					std::vector<Wonton::Point<2>>& data_row = data.at(key);
-					for (auto d : data_row) {
-						flat_data.emplace_back(d[0]);
-						flat_data.emplace_back(d[1]);
-					}
-				}
-		  	return flat_data;
-		  	
-		  	
-			} else if (data_type == typeid(Wonton::Point<3>)){
-			
-				std::unordered_map<int, std::vector<Wonton::Point<3>>>&  data = std::static_pointer_cast<StateVectorMulti<Wonton::Point<3>>>(pv)->get_data();
-				std::vector<int> keys = get_material_ids();
-				std::vector<double> flat_data;
-				for (auto key : keys){
-					std::vector<Wonton::Point<3>>& data_row = data.at(key);
-					for (auto d : data_row) {
-						flat_data.emplace_back(d[0]);
-						flat_data.emplace_back(d[1]);
-						flat_data.emplace_back(d[2]);
-					}
-				}
-		  	return flat_data;
-		  	
-			}
-			
-		}
-        
+    return std::static_pointer_cast<StateVectorUni<double>>(p)->get_data();
   }
 
 
@@ -351,24 +273,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     @brief Get field stride
   */
   size_t get_field_stride(std::string field_name) {
-    	
-  	// We need to create a state vector but the type is variable
-  	const std::type_info& data_type = StateManager<MeshWrapper>::get_data_type(field_name);
-  	
-  	// construct the state vector type by if statement
-  	// Is there a better/more idiomatic way to do this???
-  	if (data_type == typeid(double)){
-  		return 1;
-  	} else if (data_type == typeid(int)){
-  	  return 1;
-  	}else if (data_type == typeid(Wonton::Point<2>)){
-  	  return 2;
-  	} else if (data_type == typeid(Wonton::Point<3>)){
-  	  return 3;
-  	} else {
-  	 return 1;
-  	}
-    	
+    // FIX
+    return 1;
   }
 
   /*!
