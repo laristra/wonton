@@ -253,19 +253,72 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
 
   /*!
-   @brief Get the data vector
-   I am doing a return by reference of the data here. In the flat
-   state manager as it existed before this, the state manager returned
-   data vector. In the new StateManager, we return a shared pointer to
-   a StateVectorBase that has metadata as well. Getting at the data
-   requires one more access that is not by shared pointer but by array
-   reference as currently implemented. This breaks the current
-   MMDriver code, so I need to change MMDriver as well
+   @brief Turn the field into a vector of doubles
+   @param[in] field_name	The field name
+   @return The serialized vector of doubles 
+  
   */
-  std::vector<double>& get_vector(std::string field_name) {
-    std::shared_ptr<StateVectorBase> p =
+  std::vector<double> serialize(std::string field_name) {
+  
+  	// get the state vector base class shared pointer
+    std::shared_ptr<StateVectorBase> pv =
         StateManager<MeshWrapper>::get(field_name);
-    return std::static_pointer_cast<StateVectorUni<double>>(p)->get_data();
+         
+    const std::type_info& data_type = pv->data_type(); 
+    
+    if (pv->get_type() == Wonton::Field_type::MESH_FIELD){
+  		if ( data_type == typeid(double)){
+    		return std::static_pointer_cast<StateVectorUni<double>>(pv)->get_data();
+    	}
+    }else if (pv->get_type() == Wonton::Field_type::MULTIMATERIAL_FIELD){
+  		if ( data_type == typeid(Wonton::Point<2>)){
+  		
+  			// get the ordered keys
+  			std::vector<int> const ids = get_material_ids();
+  			
+  			// get the raw mm data
+    		std::unordered_map<int, std::vector<Wonton::Point<2>>> mm_data =  
+    			std::static_pointer_cast<StateVectorMulti<Wonton::Point<2>>>(pv)->get_data();
+    		
+    		// define the result
+    		std::vector<double> result;
+    		
+    		// loop over material ids in the mm state in sort order
+    		for (int id : ids){
+    			for (auto& d : mm_data.at(id)){
+    				result.emplace_back(d[0]);
+    				result.emplace_back(d[1]);
+    			}
+    		}
+    		
+    		return result;
+    	}  else	if (data_type == typeid(double)){
+  		
+  			// get the ordered keys
+  			std::vector<int> const ids = get_material_ids();
+  			
+  			// get the raw mm data
+    		std::unordered_map<int, std::vector<double>> mm_data =  
+    			std::static_pointer_cast<StateVectorMulti<double>>(pv)->get_data();
+    		
+    		// define the result
+    		std::vector<double> result;
+    		
+    		// loop over material ids in the mm state in sort order
+    		for (int id : ids){
+    			for (auto& d : mm_data.at(id)){
+    				result.emplace_back(d);
+    			}
+    		}
+    		
+    		return result;
+    	}
+
+    	
+    	//( data_type == typeid(double)){
+    	//	std::vector<std::vector<double>> data = std::static_pointer_cast<StateVectorMulti<double>>(pv)->get_data();
+    	//} else if 
+    }
   }
 
 
@@ -273,8 +326,16 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     @brief Get field stride
   */
   size_t get_field_stride(std::string field_name) {
-    // FIX
-    return 1;
+  
+  	// get the state vector base class shared pointer
+    std::shared_ptr<StateVectorBase> pv =
+        StateManager<MeshWrapper>::get(field_name);
+         
+    const std::type_info& data_type = pv->data_type(); 
+    
+    if ( data_type == typeid(double)) return 1;
+    else if ( data_type == typeid(Wonton::Point<2>)) return 2;
+    
   }
 
   /*!
