@@ -29,6 +29,8 @@ set (state_HEADERS
      simple/simple_state.h
      simple/simple_state_wrapper.h
      simple/simple_state_mm_wrapper.h
+     flat/flat_state_wrapper.h
+     flat/flat_state_mm_wrapper.h
      ${jali_state_wrapper_headers}
      ${flecsi_state_wrapper_headers}
      PARENT_SCOPE
