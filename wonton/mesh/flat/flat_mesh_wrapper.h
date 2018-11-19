@@ -163,8 +163,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
 
     // Global to local maps for cells and nodes
     std::map<int, int> globalCellMap;
-    std::vector<int> cellUniqueRep;
-    cellUniqueRep.reserve(cellGlobalIds_.size());
+    std::vector<int> cellUniqueRep(cellGlobalIds_.size());
     for (unsigned int i=0; i<cellGlobalIds_.size(); ++i) {
       auto itr = globalCellMap.find(cellGlobalIds_[i]);
       if (itr == globalCellMap.end()) {

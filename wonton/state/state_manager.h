@@ -72,7 +72,7 @@ StateManager(const MeshWrapper& mesh,
 
   /*!
     @brief Return the names registered by the state manager.
-    @return         vector of strings of material names
+    @return       vector of strings of state names, e.g. "pressure","temp", etc
 
     Return the names registered by the state manager.
   */
@@ -145,6 +145,16 @@ StateManager(const MeshWrapper& mesh,
     return material_cells_;
   }
 
+  /*!
+    @brief Return the cell materials.
+    @return map from cell id to set of material ids
+
+    Return the cell materials. The return value is a map from cell id to a
+    set of material ids.
+  */
+	std::unordered_map<int, std::unordered_set<int>> const& get_cell_materials() const {
+    return cell_materials_;
+  }
 
   /*!
     @brief Return the number of cells for each material.
@@ -786,6 +796,13 @@ StateManager(const MeshWrapper& mesh,
     return true;
   }
 
+  /*!
+    @brief Clear material cells and the inverse map of cell materials
+  */  
+  void clear_material_cells() {
+    material_cells_.clear();
+    cell_materials_.clear();
+  }
 
  protected:
  
