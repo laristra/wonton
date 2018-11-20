@@ -16,6 +16,7 @@ Please see the license file at the root of this repository, or at:
 #include <wonton/mesh/AuxMeshTopology.h>
 
 // system includes
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <vector>
@@ -114,17 +115,20 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
   // Constructors
   //============================================================================
 
-  //!  \brief Constructor for creating a serial,  3D Cartesian mesh.
+  //!  \brief Constructor for creating a serial,  2D/3D Cartesian mesh.
   //!  \param[in] mesh The minimum coordinates of the domain.
-  explicit flecsi_mesh_t(const mesh_t & mesh) :
+  explicit flecsi_mesh_t(const mesh_t & mesh, 
+                         bool request_sides = true,
+			 bool request_wedges = true,
+			 bool request_corners = true) :
     cells_(mesh.cells()),  faces_(mesh.faces()),
-    vertices_(mesh.vertices()),  mesh_(&mesh) {
+    vertices_(mesh.vertices()),  mesh_(&mesh),
+    wonton_mesh_aux_t(request_sides, request_wedges, request_corners) {
     // base class (AuxMeshTopology) method that has to be called here
     // and not in the constructor of the base class because it needs
     // access to methods in this class which in turn need access to
     // its member variables. But these member vars don't get
     // initialized until the base class is constructed
-    if (mesh_t::num_dimensions == 3)
       wonton_mesh_aux_t::build_aux_entities();
   }
 
@@ -336,6 +340,11 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
           adj_nodes->emplace_back(node.id());
       }
     }
+
+   //remove duplicates
+   std::sort(adj_nodes->begin(), adj_nodes->end());
+   adj_nodes->erase(std::unique(adj_nodes->begin(), adj_nodes->end()), adj_nodes->end());
+
   }
 
 

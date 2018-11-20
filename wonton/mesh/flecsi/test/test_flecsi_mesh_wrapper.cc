@@ -13,6 +13,7 @@ Please see the license file at the root of this repository, or at:
 
 #include "flecsi-sp.h"
 #include "flecsi-sp/burton/burton.h"
+#include "flecsi-sp/burton/factory.h"
 
 #include "wonton/support/Point.h"
 
@@ -81,7 +82,7 @@ void coordinates_canonical_rotation(
   @param[in,out] xylist The xylist
  */
 void dual_cell_coordinates_canonical_rotation(
-    const Wonton::flecsi_mesh_2d_t &mesh_wrapper,
+    const flecsi_mesh_2d_t &mesh_wrapper,
     int const nodeid,
     std::vector<Wonton::Point<2>> * const xylist) {
   Wonton::Point<2> center_node;
@@ -278,8 +279,9 @@ TEST(FleCSI_Mesh_Wrapper, ccw) {
     constexpr size_t ly = 1;
 
     auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
-    ASSERT_TRUE(mesh != nullptr);
-    Wonton::flecsi_mesh_t mesh_wrapper(mesh);
+    //ASSERT_TRUE(mesh != nullptr);
+    //ASSERT_TRUE(mesh);
+    flecsi_mesh_2d_t mesh_wrapper(mesh);
 
     ASSERT_TRUE(mesh_wrapper.ccw({-1, 0}, {0, 0}, {0, 1}));
     ASSERT_TRUE(!mesh_wrapper.ccw({1, 0}, {0, 0}, {0, 1}));
@@ -291,8 +293,9 @@ TEST(FleCSI_Mesh_Wrapper, ccw) {
 
 /*!
   @brief Unit test for getting dual cell coordinates
+  NOT IMPLEMENTED IN FLECSI YET ! 
  */
-TEST(FleCSI_Mesh_Wrapper, dual_cell_get_coordinates) {
+/*TEST(FleCSI_Mesh_Wrapper, dual_cell_get_coordinates) {
 
     int size;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -304,8 +307,8 @@ TEST(FleCSI_Mesh_Wrapper, dual_cell_get_coordinates) {
     constexpr size_t ly = 1;
 
     auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
-    ASSERT_TRUE(mesh != nullptr);
-    Wonton::flecsi_mesh_t mesh_wrapper(mesh);
+    //ASSERT_TRUE(mesh);
+    flecsi_mesh_2d_t mesh_wrapper(mesh);
     double eps = 1e-12;
 
     std::vector<Wonton::Point<2>> xylist;
@@ -403,15 +406,15 @@ TEST(FleCSI_Mesh_Wrapper, dual_cell_get_coordinates) {
                 }));
     xylist.clear();
 
-    /*
+    //
     // Uncomment this code to print the xylist
-    std::cout << "xylist:" << std::endl;
-    std::cout << xylist.size() << std::endl;
-    for (auto &v: xylist) {
-        std::cout << "{" << v.first << ", " << v.second << "}," << std::endl;
-    }
-    */
-}
+    //std::cout << "xylist:" << std::endl;
+    //std::cout << xylist.size() << std::endl;
+    //for (auto &v: xylist) {
+    //    std::cout << "{" << v.first << ", " << v.second << "}," << std::endl;
+    //}
+    
+}*/
 
 /*!
   @brief Unit test for getting neighbor cells
@@ -429,9 +432,9 @@ TEST(FleCSI_Mesh_Wrapper, Get_Neighbor_Cells) {
   constexpr size_t ly = 1;
   constexpr size_t lz = 1;
 
-  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
-  ASSERT_TRUE(mesh != nullptr);
-  Wonton::flecsi_mesh_t mesh_wrapper(mesh);
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
+  //ASSERT_TRUE(mesh);
+  flecsi_mesh_3d_t mesh_wrapper(mesh);
   
   // This is a regular mesh with 2 cells (3 nodes) in each direction
 
@@ -504,9 +507,9 @@ TEST(FleCSI_Mesh_Wrapper, Get_Exterior_Flag) {
   constexpr size_t ly = 1;
   constexpr size_t lz = 1;
 
-  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
-  ASSERT_TRUE(mesh != nullptr);
-  Wonton::flecsi_mesh_t mesh_wrapper(mesh);
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
+  //ASSERT_TRUE(mesh);
+  flecsi_mesh_3d_t mesh_wrapper(mesh);
 
   int nfaces = mesh_wrapper.num_entities(Wonton::Entity_kind::FACE,
                                          Wonton::Entity_type::ALL);
@@ -570,9 +573,9 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
   constexpr size_t ly = 1;
   constexpr size_t lz = 1;
 
-  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
-  ASSERT_TRUE(mesh != nullptr);
-  Wonton::flecsi_mesh_t mesh_wrapper(mesh);
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
+  //ASSERT_TRUE(mesh);
+  flecsi_mesh_3d_t mesh_wrapper(mesh);
   std::vector<std::array<Wonton::Point<3>, 4>> tcoords;
 
   // The standard decomposition has 24 tets:
@@ -588,32 +591,30 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
 
 
 /*!  @brief Unit test for 2D sides construction and queries in the
-  wrapper class (and not natively in Jali).
+  wrapper class (and not natively in FleCSI.
 
   For this we only need cells (always present), faces and nodes
-  (always present) from Jali
+  (always present) from FleCSI
+
 */
-/*TEST(Jali_Mesh_Wrapper, MESH_SIDES_2D) {
+
+TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_2D) {
 
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return;
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
+  constexpr size_t nx = 2;
+  constexpr size_t ny = 2;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
 
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
-
-  int nsides_owned = mesh_wrapper.num_entities(Wonton::SIDE,
-                                               Wonton::PARALLEL_OWNED);
-  int nsides_ghost = mesh_wrapper.num_entities(Wonton::SIDE,
-                                               Wonton::PARALLEL_GHOST);
-  ASSERT_GT(nsides_owned, 0);
-  if (nproc > 1)
-    ASSERT_TRUE(nsides_ghost);
-  else
-    ASSERT_TRUE(!nsides_ghost);
+  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
+  
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  flecsi_mesh_2d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   double dp;
 
@@ -626,7 +627,7 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
 
     ASSERT_EQ(csides.size(), 4);
 
-    double cellvol = mesh->cell_volume(c);
+    double cellvol = mesh_wrapper.cell_volume(c);
 
     for (auto const & s : csides) {
 
@@ -680,9 +681,9 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
         mesh_wrapper.side_get_coordinates(s, &scoords);
 
         for (int i = 0; i < 2; ++i) {
-          ASSERT_EQ(scoords[0][i], npnt0[i]);
-          ASSERT_EQ(scoords[1][i], npnt1[i]);
-          ASSERT_EQ(scoords[2][i], ccen[i]);
+          ASSERT_NEAR(scoords[0][i], npnt0[i], 1.0e-15);
+          ASSERT_NEAR(scoords[1][i], npnt1[i], 1.0e-15);
+          ASSERT_NEAR(scoords[2][i], ccen[i], 1.0e-15);
         }
 
         // Since there are 4 sides in a quad element, its volume should
@@ -721,26 +722,35 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
     }
   }
 
-}*/
+}
 
 /*!  @brief Unit test for 3D sides construction and queries in the
-  wrapper class (and not natively in Jali).
+  wrapper class (and not natively in FleCSI).
 
   For this we only need cells (always present), faces and nodes
-  (always present) from Jali
+  (always present) from FleCSI
+  
 */
-/*TEST(Jali_Mesh_Wrapper, MESH_SIDES_3D) {
+TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_3D) {
 
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return; 
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  constexpr size_t nx = 2;
+  constexpr size_t ny = 2;
+  constexpr size_t nz = 2;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
+  constexpr size_t lz = 1;
 
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
+  
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  
+  flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   double dp;
@@ -805,10 +815,10 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
       mesh_wrapper.side_get_coordinates(s, &scoords);
 
       for (int i = 0; i < 3; ++i) {
-        ASSERT_EQ(scoords[0][i], npnt0[i]);
-        ASSERT_EQ(scoords[1][i], npnt1[i]);
-        ASSERT_EQ(scoords[2][i], fcen[i]);
-        ASSERT_EQ(scoords[3][i], ccen[i]);
+        ASSERT_NEAR(scoords[0][i], npnt0[i], 1.0e-15);
+        ASSERT_NEAR(scoords[1][i], npnt1[i], 1.0e-15);
+        ASSERT_NEAR(scoords[2][i], fcen[i], 1.0e-15);
+        ASSERT_NEAR(scoords[3][i], ccen[i], 1.0e-15);
       }
 
       // Since there are 24 sides in a hex element, and the hex is
@@ -851,40 +861,35 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
     }
   }
 
-}*/
+}
 
 
 
 /*!  @brief Unit test for 2D wedges construction and queries in the
-  wrapper class (and not natively in Jali).
+  wrapper class (and not natively in FleCSI).
 
   For this we only need cells (always present), faces and nodes
-  (always present) from Jali
+  (always present) from FleCSI
+
 */
-/*TEST(Jali_Mesh_Wrapper, MESH_WEDGES_2D) {
+TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
 
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return; 
 
   // Create the mesh
+  constexpr size_t nx = 2;
+  constexpr size_t ny = 2;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
+  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
 
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
-
-  int nwedges_owned = mesh_wrapper.num_entities(Wonton::WEDGE,
-                                                Wonton::PARALLEL_OWNED);
-  int nwedges_ghost = mesh_wrapper.num_entities(Wonton::WEDGE,
-                                                Wonton::PARALLEL_GHOST);
-  ASSERT_GT(nwedges_owned, 0);
-  if (nproc > 1)
-    ASSERT_TRUE(nwedges_ghost);
-  else
-    ASSERT_TRUE(!nwedges_ghost);
-
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  flecsi_mesh_2d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   double dp;
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
@@ -1003,27 +1008,36 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
       }
     }  // for (w : cwedges)
   }
-}*/
+}
 
 /*!  @brief Unit test for 3D wedges construction and queries in the
-  wrapper class (and not natively in Jali).
+  wrapper class (and not natively in FleCSI).
 
   For this we only need cells (always present), faces and nodes
-  (always present) from Jali
+  (always present) from FleCSI
+
 */
-/*TEST(Jali_Mesh_Wrapper, MESH_WEDGES_3D) {
+TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_3D) {
 
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return; 
 
   // Create the mesh
+  constexpr size_t nx = 2;
+  constexpr size_t ny = 2;
+  constexpr size_t nz = 2;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
+  constexpr size_t lz = 1;
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
 
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  
+  flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   double dp;
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
@@ -1101,10 +1115,9 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
       mesh_wrapper.wedge_get_coordinates(w, &wcoords);
 
       for (int i = 0; i < 3; ++i) {
-        ASSERT_EQ(wcoords[0][i], npnt[i]);
-        //        ASSERT_EQ(wcoords[1][i], ecen[i]);
-        ASSERT_EQ(wcoords[2][i], fcen[i]);
-        ASSERT_EQ(wcoords[3][i], ccen[i]);
+        ASSERT_NEAR(wcoords[0][i], npnt[i], 1.0e-15);
+        ASSERT_NEAR(wcoords[2][i], fcen[i], 1.0e-15);
+        ASSERT_NEAR(wcoords[3][i], ccen[i], 1.0e-15);
       }
 
       // Since there are 48 wedges in a hex element, its volume should
@@ -1147,38 +1160,33 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
     }
   }
 
-}*/
+}
 
 
 /*!  @brief Unit test for 2D corners construction and queries in the
-  wrapper class (and not natively in Jali).
+  wrapper class (and not natively in FleCSI).
 
   For this we only need cells (always present), faces and nodes
-  (always present) from Jali
+  (always present) from FleCSI
 */
-/*TEST(Jali_Mesh_Wrapper, MESH_CORNERS_2D) {
+TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_2D) {
 
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1 ) return; 
 
   // Create the mesh
+  constexpr size_t nx = 2;
+  constexpr size_t ny = 2;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
-
-  int ncorners_owned = mesh_wrapper.num_entities(Wonton::CORNER,
-                                                 Wonton::PARALLEL_OWNED);
-  int ncorners_ghost = mesh_wrapper.num_entities(Wonton::CORNER,
-                                                 Wonton::PARALLEL_GHOST);
-  ASSERT_GT(ncorners_owned, 0);
-  if (nproc > 1)
-    ASSERT_TRUE(ncorners_ghost);
-  else
-    ASSERT_TRUE(!ncorners_ghost);
+  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  
+  flecsi_mesh_2d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   double totalvol = 0.0;  // total volume of domain
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
@@ -1270,28 +1278,35 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
   }
 
   ASSERT_NEAR(totalvol, totalvol2, 1.0e-06);
-}*/
+}
 
 
 /*!  @brief Unit test for 3D sides construction and queries in the
-  wrapper class (and not natively in Jali).
+  wrapper class (and not natively in FleCSI).
 
   For this we only need cells (always present), faces and nodes
-  (always present) from Jali
+  (always present) from FleCSI
 */
-/*TEST(Jali_Mesh_Wrapper, MESH_CORNERS_3D) {
+TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_3D) {
 
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc>1) return; 
 
   // Create the mesh
+  constexpr size_t nx = 2;
+  constexpr size_t ny = 2;
+  constexpr size_t nz = 2;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
+  constexpr size_t lz = 1;
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  
+  flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   double totalvol = 0.0;  // total volume of domain
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
@@ -1387,107 +1402,29 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
   ASSERT_NEAR(totalvol, totalvol2, 1.0e-06);
 
 }  // MESH_CORNERS_3D
-*/
 
-/*!  @brief Test instantiation of Jali mesh wrapper with non-default options
-
-  For this we only need cells (always present), faces and nodes
-  (always present) from Jali
-*/
-/*TEST(Jali_Mesh_Wrapper, MESH_NON_DEFAULT_OPTS) {
-
-  int nproc, me;
-  MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
-
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
-  std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
-
-
-  // Should get positive number of sides and 0 for wedges and corners
-
-  bool request_sides = true;
-  bool request_wedges = false;
-  bool request_corners = false;
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper1(*mesh, request_sides, request_wedges,
-                                           request_corners);
-
-  ASSERT_GT(mesh_wrapper1.num_entities(Wonton::SIDE, Wonton::ALL), 0);
-  ASSERT_EQ(mesh_wrapper1.num_entities(Wonton::WEDGE, Wonton::ALL), 0);
-  ASSERT_EQ(mesh_wrapper1.num_entities(Wonton::CORNER, Wonton::ALL), 0);
-
-
-
-  // Should get positive number of wedges but also sides (because wedges are
-  // implicitly derived from sides) but 0 for corners
-
-  request_wedges = true;
-  request_corners = false;
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper2(*mesh, request_sides, request_wedges,
-                                           request_corners);
-
-  ASSERT_GT(mesh_wrapper2.num_entities(Wonton::WEDGE, Wonton::ALL), 0);
-  ASSERT_EQ(mesh_wrapper2.num_entities(Wonton::CORNER, Wonton::ALL), 0);
-
-
-
-  // Should get positive number of corners but also sides and wedges (because
-  // some corner data is implicitly derived from wedges)
-
-  request_wedges = false;
-  request_corners = true;
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper3(*mesh, request_sides, request_wedges,
-                                           request_corners);
-
-  ASSERT_GT(mesh_wrapper3.num_entities(Wonton::WEDGE, Wonton::ALL), 0);
-  ASSERT_GT(mesh_wrapper3.num_entities(Wonton::CORNER, Wonton::ALL), 0);
-
-
-  // Bare bones mesh wrapper - should get zero for auxiliary entity counts
-
-  request_wedges = false;
-  request_corners = false;
-
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper4(*mesh, request_sides, request_wedges,
-                                           request_corners);
-
-  ASSERT_EQ(mesh_wrapper4.num_entities(Wonton::WEDGE, Wonton::ALL), 0);
-  ASSERT_EQ(mesh_wrapper4.num_entities(Wonton::CORNER, Wonton::ALL), 0);
-
-}
-
-*/
 
 // Check that we can facetize cells and dual cells in 3D correctly
-
-/*TEST(Jali_Mesh_Wrapper, MultiCell_Facetization) {
-  // Create a 8x8x8 mesh
-  double xmin(0.0), ymin(0.0), zmin(0.0);
-  double xmax(5.0), ymax(5.0), zmax(5.0);
-  int nx(5), ny(5), nz(5);
-
+/*
+TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return; 
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::ALL_KIND});
-  mf.partitioner(Jali::Partitioner_type::BLOCK);
-  std::shared_ptr<Jali::Mesh> mesh = mf(xmin, ymin, zmin,
-                                        xmax, ymax, zmax,
-                                        nx, ny, nz);
-  mesh->write_to_gmv_file("test.gmv");
+  //create 5x5x5 mesh
+  constexpr size_t nx = 5;
+  constexpr size_t ny = 5;
+  constexpr size_t nz = 5;
+  constexpr size_t lx = 5;
+  constexpr size_t ly = 5;
+  constexpr size_t lz = 5;
 
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
   bool request_sides = true;
   bool request_wedges = true;
   bool request_corners = true;
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh, request_sides, request_wedges,
-                                         request_corners);
-
+  
+  flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
   int nnodes = mesh_wrapper.num_owned_nodes() + mesh_wrapper.num_ghost_nodes();
 
   // The volume of any cell in the mesh is known to be 1
@@ -1523,24 +1460,9 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
     if (ncells.size() == 8) {
-      if (nproc == 1) {
         inode = n;
-        break;
-      } else {
-        bool owned_found = false, ghost_found = false;
-        for (int i = 0; i < ncells.size(); i++) {
-          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncells[i]);
-          if (ctype == Wonton::Entity_type::PARALLEL_OWNED)
-            owned_found = true;
-          else
-            ghost_found = true;
-        }
-        if (owned_found && ghost_found) {
-          inode = n;
           break;
-        }
       }
-    }
   }
   ASSERT_NE(-1, inode);
   mesh_wrapper.dual_cell_get_facetization(inode, &facets, &fctpoints);
@@ -1591,23 +1513,8 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
     if (ncells.size() == 2) {
-      if (nproc == 1) {
         inode = n;
         break;
-      } else {
-        bool owned_found = false, ghost_found = false;
-        for (int i = 0; i < ncells.size(); i++) {
-          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncells[i]);
-          if (ctype == Wonton::Entity_type::PARALLEL_OWNED)
-            owned_found = true;
-          else
-            ghost_found = true;
-        }
-        if (owned_found && ghost_found) {
-          inode = n;
-          break;
-        }
-      }
     }
   }
   ASSERT_NE(-1, inode);
@@ -1633,23 +1540,8 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
     if (ncells.size() == 4) {
-      if (nproc == 1) {
         inode = n;
         break;
-      } else {
-        bool owned_found = false, ghost_found = false;
-        for (int i = 0; i < ncells.size(); i++) {
-          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncells[i]);
-          if (ctype == Wonton::Entity_type::PARALLEL_OWNED)
-            owned_found = true;
-          else
-            ghost_found = true;
-        }
-        if (owned_found && ghost_found) {
-          inode = n;
-          break;
-        }
-      }
     }
   }
   ASSERT_NE(-1, inode);
@@ -1664,8 +1556,8 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
                               1e-12));
 
 }
-
 */
+
 
 // Check that we can compute volumes and centroids of skewed cells correctly
 
