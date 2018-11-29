@@ -115,6 +115,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     
     if (dim_ == 3)
     {
+    
       // cell face counts, cell face lists, cell face directions
       for (unsigned int c=0; c<numCells; ++c)
       {
@@ -127,9 +128,10 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
           cellToFaceDirs_.push_back(cfDirs[j] >= 0);
       }
 
-      // face node counts, face node lists
+      // face global ids, face node counts, face node lists
       for (unsigned int f=0; f<numFaces; ++f)
       {
+        faceGlobalIds_.push_back(input.get_global_id(f, Entity_kind::FACE));
         std::vector<int> faceNodes;
         input.face_get_nodes(f, &faceNodes);
         faceNodeCounts_.push_back(faceNodes.size());
@@ -583,6 +585,7 @@ private:
   std::vector<int>  nodeCellCounts_;
   std::vector<int>  nodeCellOffsets_;
   std::vector<int>  cellGlobalIds_;
+  std::vector<int>  faceGlobalIds_;
   std::vector<int>  nodeGlobalIds_;
   int dim_;
   int numOwnedCells_;
