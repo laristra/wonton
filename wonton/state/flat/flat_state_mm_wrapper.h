@@ -508,7 +508,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     std::vector<int> material_ids=get_material_ids();
     std::vector<int> material_shapes;
     
-    for (auto m : material_ids) material_shapes.emplace_back(material_cells_.at(m).size());
+    for (auto m : material_ids) material_shapes.emplace_back(
+      StateManager<MeshWrapper>::material_cells_.at(m).size());
     
     return material_shapes;
   }
