@@ -568,6 +568,11 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
 
 private:
 
+  int dim_;
+  int numOwnedCells_;
+  int numOwnedFaces_;
+  int numOwnedNodes_;
+
   std::vector<T>    nodeCoords_;
   std::vector<int>  cellToNodeList_;
   std::vector<int>  cellNodeCounts_;
@@ -587,10 +592,6 @@ private:
   std::vector<int>  cellGlobalIds_;
   std::vector<int>  faceGlobalIds_;
   std::vector<int>  nodeGlobalIds_;
-  int dim_;
-  int numOwnedCells_;
-  int numOwnedFaces_;
-  int numOwnedNodes_;
 
   void reset_and_reserve(int numCells, int numFaces, int numNodes){
 
