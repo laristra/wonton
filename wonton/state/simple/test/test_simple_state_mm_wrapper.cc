@@ -548,13 +548,6 @@ TEST(Simple_State_Wrapper, test4Cell) {
   // add the names to the manager
   manager.add_material_names(matnames);
 
-  // check get_nmats API function
-  ASSERT_EQ(manager.num_materials(), 3);
-  for (const auto& kv : matnames) {
-    ASSERT_EQ(manager.get_material_id(kv.first), matnames[kv.first]);
-    ASSERT_EQ(manager.material_name(kv.second), kv.first);
-  }
-
   // create the material cells
   std::unordered_map<int, std::vector<int>> cells{
     {1, {0, 1, 2, 3}},
@@ -563,6 +556,14 @@ TEST(Simple_State_Wrapper, test4Cell) {
 
   // add the material cells
   manager.add_material_cells(cells);
+
+  // check get_nmats API function
+  // with the current API we need to do this AFTER adding the cells
+  ASSERT_EQ(manager.num_materials(), 3);
+  for (const auto& kv : matnames) {
+    ASSERT_EQ(manager.get_material_id(kv.first), matnames[kv.first]);
+    ASSERT_EQ(manager.material_name(kv.second), kv.first);
+  }
 
   // create the material cells
   std::unordered_map<int, std::vector<int>> cells2{{10, {0, 1, 2, 3}}};

@@ -58,15 +58,21 @@ StateManager(const MeshWrapper& mesh,
 
     Add the names of the materials. The map from material name to id.
   */
-  void add_material_names(std::unordered_map<std::string, int> names) {
-    material_ids_ = names;
-    for (auto& kv : names) material_names_[kv.second] = kv.first;
+  void add_material_names( const std::unordered_map<std::string, int>& names) {
+    for (auto& kv : names) {
+    
+      // this will update, not overwrite
+      material_ids_[kv.first]=kv.second;
+      
+      // likewise
+    	material_names_[kv.second] = kv.first;
+    }
   }
 
 
   /*!
     @brief Return the names registered by the state manager.
-    @return         vector of strings of material names
+    @return       vector of strings of state names, e.g. "pressure","temp", etc
 
     Return the names registered by the state manager.
   */
@@ -139,6 +145,16 @@ StateManager(const MeshWrapper& mesh,
     return material_cells_;
   }
 
+  /*!
+    @brief Return the cell materials.
+    @return map from cell id to set of material ids
+
+    Return the cell materials. The return value is a map from cell id to a
+    set of material ids.
+  */
+	std::unordered_map<int, std::unordered_set<int>> const& get_cell_materials() const {
+    return cell_materials_;
+  }
 
   /*!
     @brief Return the number of cells for each material.
@@ -160,10 +176,10 @@ StateManager(const MeshWrapper& mesh,
     @brief Return the number of materials in the problem.
     @return        the integer number of materials
 
-    Return the number of materials in the problem.
+    Return the number of materials in the problem. Use the material_cells instead
+    of material id's in case the material names aren't registered.
   */
-  int num_materials() const {return material_names_.size();}
-
+  int num_materials() const {return material_cells_.size();}
 
 
   //////////////////////////////////////////////////
@@ -214,6 +230,22 @@ StateManager(const MeshWrapper& mesh,
         state_vectors_.at(name))->get_data().size();
   }
 
+  /*!
+    @brief Get the data type of the given field
+    @param[in] var_name The string name of the data field
+    @return A reference to the type_info struct for the field's data type
+   */
+  const std::type_info& get_data_type(std::string var_name) {
+  
+  	// get a shared state vector base class pointer and cast it to whatever
+  	std::shared_ptr<StateVectorBase> pv = get<StateVectorBase>(var_name);
+		
+		// define the data type
+		const std::type_info & info = pv->data_type();
+		
+		// get the data type
+    return info;
+  }
 
 
 
@@ -735,7 +767,8 @@ StateManager(const MeshWrapper& mesh,
     must match in order to pass the test.
   */
   template <class T = double>
-      bool shape_is_good(const std::shared_ptr<StateVectorMulti<T>> sv) {
+  bool shape_is_good(const std::shared_ptr<StateVectorMulti<T>> sv) {
+  
     // get the data shape
     std::unordered_map<int, int> shape{get_material_shape()};
 
@@ -746,21 +779,32 @@ StateManager(const MeshWrapper& mesh,
     // get the actual data out of the state vector
     const auto& data = sv->get_data();
 
+	  // this one is tricky, but if we build up the state vector material
+	  // we may start with no data, so for the moment, let's pass this
+	  if (data.size() == 0) return true;
+	  
     // check first that there are the correct number of materials
     if (shape.size() != data.size()) return false;
 
     for (const auto& kv : data) {
-      if (
-              shape.find(kv.first) == shape.end() ||
-              shape[kv.first] != kv.second.size()
-          ) return false;
+      if (shape.find(kv.first) == shape.end() ||
+        shape[kv.first] != kv.second.size()
+      ) return false;
     }
 
     return true;
   }
 
+  /*!
+    @brief Clear material cells and the inverse map of cell materials
+  */  
+  void clear_material_cells() {
+    material_cells_.clear();
+    cell_materials_.clear();
+  }
 
  protected:
+ 
   // underlying mesh reference
   const MeshWrapper& mesh_;
 
@@ -779,6 +823,16 @@ StateManager(const MeshWrapper& mesh,
 
   // material id's for a cell
   std::unordered_map<int, std::unordered_set<int>> cell_materials_;
+
+	// clear all the protected data structures
+  void clear() {
+    state_vectors_.clear();
+    material_ids_.clear();
+    material_names_.clear();
+    material_cells_.clear();
+    cell_materials_.clear();
+  }
+  
 };
 
 }  // namespace Wonton
