@@ -75,18 +75,18 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     // cell global ids, cell node counts, cell node listt
     for (unsigned int c=0; c<numCells; c++)
     {
-      cellGlobalIds_.push_back(input.get_global_id(c, Entity_kind::CELL));
+      cellGlobalIds_[c]=input.get_global_id(c, Entity_kind::CELL);
 
       std::vector<int> cellNodes;
       input.cell_get_nodes(c, &cellNodes);
-      cellNodeCounts_.push_back(cellNodes.size());
+      cellNodeCounts_[c]=cellNodes.size();
       cellToNodeList_.insert(cellToNodeList_.end(),
                              cellNodes.begin(), cellNodes.end());
     }
 
     // node global ids
     for (unsigned int n=0; n<numNodes; ++n) {
-      nodeGlobalIds_.push_back(input.get_global_id(n, Entity_kind::NODE));
+      nodeGlobalIds_[n]=input.get_global_id(n, Entity_kind::NODE);
     }
     
     // always compute cell node offsets
@@ -94,7 +94,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     
 
     ///////////////////////////////////////////////////////
-    // local copies only required in 2D
+    // local copies that are only required in 2D
     ///////////////////////////////////////////////////////
     
     if (dim_ ==2)
@@ -104,13 +104,13 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
         Wonton::Point<2> nodeCoord;
         input.node_get_coordinates(n, &nodeCoord);
         for (unsigned int j=0; j<2; ++j)
-          nodeCoords_.push_back(nodeCoord[j]);
+          nodeCoords_[2*n+j]=nodeCoord[j];
       }
     }
     
     
     ///////////////////////////////////////////////////////
-    // local copies only required in 3D
+    // local copies that are only required in 3D
     ///////////////////////////////////////////////////////
     
     if (dim_ == 3)
@@ -121,7 +121,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       {
         std::vector<int> cellFaces, cfDirs;
         input.cell_get_faces_and_dirs(c, &cellFaces, &cfDirs);
-        cellFaceCounts_.push_back(cellFaces.size());
+        cellFaceCounts_[c]=cellFaces.size();
         cellToFaceList_.insert(cellToFaceList_.end(),
                                cellFaces.begin(), cellFaces.end());
         for (unsigned int j=0; j<cellFaces.size(); ++j)
@@ -131,10 +131,10 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       // face global ids, face node counts, face node lists
       for (unsigned int f=0; f<numFaces; ++f)
       {
-        faceGlobalIds_.push_back(input.get_global_id(f, Entity_kind::FACE));
+        faceGlobalIds_[f]=input.get_global_id(f, Entity_kind::FACE);
         std::vector<int> faceNodes;
         input.face_get_nodes(f, &faceNodes);
-        faceNodeCounts_.push_back(faceNodes.size());
+        faceNodeCounts_[f]=faceNodes.size();
         faceToNodeList_.insert(faceToNodeList_.end(),
                                faceNodes.begin(), faceNodes.end());
       }
@@ -144,7 +144,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
         Wonton::Point<3> nodeCoord;
         input.node_get_coordinates(n, &nodeCoord);
         for (unsigned int j=0; j<3; ++j)
-          nodeCoords_.push_back(nodeCoord[j]);
+          nodeCoords_[3*n+j]=nodeCoord[j];
       }
       
       // compute offsets for cell faces and face nodes
@@ -592,22 +592,22 @@ private:
   int numOwnedFaces_;
   int numOwnedNodes_;
 
-	void reset_and_reserve(int numCells, int numFaces, int numNodes){
-	
+  void reset_and_reserve(int numCells, int numFaces, int numNodes){
+
     nodeCoords_.clear();
-    nodeCoords_.reserve(numNodes*dim_);
+    nodeCoords_.resize(numNodes*dim_);
     
     cellNodeCounts_.clear();
-    cellNodeCounts_.reserve(numCells);
+    cellNodeCounts_.resize(numCells);
     
     cellToNodeList_.clear();
     cellToNodeList_.reserve(numCells*(dim_+1));
    
     cellGlobalIds_.clear();
-    cellGlobalIds_.reserve(numCells);
+    cellGlobalIds_.resize(numCells);
     
     nodeGlobalIds_.clear();
-    nodeGlobalIds_.reserve(numNodes);
+    nodeGlobalIds_.resize(numNodes);
     
     cellFaceCounts_.clear();
     cellToFaceList_.clear();
@@ -617,15 +617,18 @@ private:
     // reserve (dim_+1) nodes per cell (lower bound)
     if (dim_ == 3)
     {
-      cellFaceCounts_.reserve(numCells);
+      faceGlobalIds_.resize(numFaces);
+      cellFaceCounts_.resize(numCells);
       // reserve (dim_+1) faces per cell (lower bound)
       cellToFaceList_.reserve(numCells*(dim_+1));
-      faceNodeCounts_.reserve(numFaces);
+      // reserve (dim_+1) faces per cell (lower bound)
+      cellToFaceDirs_.reserve(numCells*(dim_+1));
+      faceNodeCounts_.resize(numFaces);
       // reserve dim_ nodes per face (lower bound)
       faceToNodeList_.reserve(numFaces*dim_);
     }
-	}
-	
+  }
+
 }; // class Flat_Mesh_Wrapper
 
 } // end namespace Wonton

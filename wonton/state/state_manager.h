@@ -58,7 +58,7 @@ StateManager(const MeshWrapper& mesh,
 
     Add the names of the materials. The map from material name to id.
   */
-  void add_material_names( const std::unordered_map<std::string, int> names) {
+  void add_material_names( const std::unordered_map<std::string, int>& names) {
     for (auto& kv : names) {
     
       // this will update, not overwrite
@@ -239,7 +239,6 @@ StateManager(const MeshWrapper& mesh,
   
   	// get a shared state vector base class pointer and cast it to whatever
   	std::shared_ptr<StateVectorBase> pv = get<StateVectorBase>(var_name);
-
 		
 		// define the data type
 		const std::type_info & info = pv->data_type();
