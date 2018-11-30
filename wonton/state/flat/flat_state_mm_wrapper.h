@@ -116,12 +116,10 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         StateManager<MeshWrapper>::mat_add_cells(m, mat_cells);
       }      
       
-#ifdef HAVE_TANGRAM
       // if this is a multimaterial problem we will also need to distriube 
       // volume fraction and centroid
       distribute_var_names.emplace_back("mat_volfracs");
       distribute_var_names.emplace_back("mat_centroids");
-#endif 
 
     }
      
