@@ -609,23 +609,26 @@ private:
     nodeGlobalIds_.clear();
     nodeGlobalIds_.reserve(numNodes);
     
-    cellFaceCounts_.clear();
-    cellToFaceList_.clear();
     faceNodeCounts_.clear();
     faceToNodeList_.clear();
+    faceGlobalIds_.clear();
+    
+    cellFaceCounts_.clear();
+    cellToFaceList_.clear();
+    cellToFaceDirs_.clear();
     
     // reserve (dim_+1) nodes per cell (lower bound)
     if (dim_ == 3)
     {
+      // reserve know sizes
       faceGlobalIds_.reserve(numFaces);
-      cellFaceCounts_.reserve(numCells);
-      // reserve (dim_+1) faces per cell (lower bound)
-      cellToFaceList_.reserve(numCells*(dim_+1));
-      // reserve (dim_+1) faces per cell (lower bound)
-      cellToFaceDirs_.reserve(numCells*(dim_+1));
       faceNodeCounts_.reserve(numFaces);
-      // reserve dim_ nodes per face (lower bound)
+      cellFaceCounts_.reserve(numCells);
+      
+      // reserve lower bounds for sizes
       faceToNodeList_.reserve(numFaces*dim_);
+      cellToFaceList_.reserve(numCells*(dim_+1));
+      cellToFaceDirs_.reserve(numCells*(dim_+1));
     }
   }
 
