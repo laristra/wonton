@@ -184,8 +184,6 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         
             // add the data to the flat state
             StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);            
-            //auto pv = StateManager<MeshWrapper>::get(varname);
-            //std::shared_ptr<StateVectorMulti<double>> pv1= std::static_pointer_cast<StateVectorMulti<double>>(pv);
             auto pv1 = StateManager<MeshWrapper>::get(varname);
             auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<Wonton::Point<2>>>(pv1);
           }
@@ -196,8 +194,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
                
       } else {
 
+        // AT THE MOMENT WE ARE ASSUMING SINGLE MATERIAL FIELDS ARE ALWAYS DOUBLES
         // get pointer to data for state from input state wrapper
-        // DO WE NEED TO DO DATA INTROSPECTION TO FIND THE TYPE HERE (DOUBLE)
         double const* data;
         input.mesh_get_data(entity, varname, &data);
 

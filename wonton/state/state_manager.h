@@ -767,7 +767,8 @@ StateManager(const MeshWrapper& mesh,
     must match in order to pass the test.
   */
   template <class T = double>
-      bool shape_is_good(const std::shared_ptr<StateVectorMulti<T>> sv) {
+  bool shape_is_good(const std::shared_ptr<StateVectorMulti<T>> sv) {
+  
     // get the data shape
     std::unordered_map<int, int> shape{get_material_shape()};
 
@@ -778,18 +779,17 @@ StateManager(const MeshWrapper& mesh,
     // get the actual data out of the state vector
     const auto& data = sv->get_data();
 
-		// this one is tricky, but if we build up the state vector material
-		// material we may start with no data, so for the moment, let's pass this
-		if (data.size() == 0) return true;
-		
+	  // this one is tricky, but if we build up the state vector material
+	  // we may start with no data, so for the moment, let's pass this
+	  if (data.size() == 0) return true;
+	  
     // check first that there are the correct number of materials
     if (shape.size() != data.size()) return false;
 
     for (const auto& kv : data) {
-      if (
-              shape.find(kv.first) == shape.end() ||
-              shape[kv.first] != kv.second.size()
-          ) return false;
+      if (shape.find(kv.first) == shape.end() ||
+        shape[kv.first] != kv.second.size()
+      ) return false;
     }
 
     return true;
