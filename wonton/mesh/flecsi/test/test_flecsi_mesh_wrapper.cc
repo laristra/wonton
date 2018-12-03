@@ -1561,29 +1561,33 @@ TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
 
 // Check that we can compute volumes and centroids of skewed cells correctly
 
-/*TEST(Jali_Mesh_Wrapper, Skewed_2DCell_Geometry) {
-  // Create a 1 cell mesh
-  double xmin(0.0), ymin(0.0);
-  double xmax(1.0), ymax(1.0);
-  int nx(1), ny(1);
-
+/*TEST(FleCSI_Mesh_Wrapper, Skewed_2DCell_Geometry) {
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return; 
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::ALL_KIND});
-  mf.partitioner(Jali::Partitioner_type::BLOCK);
-  std::shared_ptr<Jali::Mesh> mesh = mf(xmin, ymin, xmax, ymax, nx, ny);
+  //create 1x1 mesh
+  constexpr size_t nx = 1;
+  constexpr size_t ny = 1;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
+
+  auto mesh = fmesh::box<mesh_2d_t>(nx, ny, 0, 0, lx, ly); 
+
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  
+  flecsi_mesh_2d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   // Move the node that's at 1.0, 1.0 to 1.25, 1.25
-  int nnodes = mesh->num_nodes();
+  int nnodes = mesh.num_vertices();
   for (int i = 0; i < nnodes; i++) {
-    JaliGeometry::Point ncoord;
-    mesh->node_get_coordinates(i, &ncoord);
+    Wonton::Point<2> ncoord;
+    mesh.coordinates(i, &ncoord);
     if (fabs(ncoord[0]-1.0) < 1.0e-12 && fabs(ncoord[1]-1.0) < 1.0e-12) {
       ncoord[0] = 1.25; ncoord[1] = 1.25;
-      mesh->node_set_coordinates(i, ncoord);
+      mesh.node_set_coordinates(i, ncoord);
       break;
     }
   }
@@ -1591,12 +1595,6 @@ TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
   // We can hand-calculate the area and centroid of this skewed 2D element
   double carea = 1.25;
   Wonton::Point<2> cen(0.58333333333333333, 0.58333333333333333);
-
-  bool request_sides = true;
-  bool request_wedges = true;
-  bool request_corners = true;
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh, request_sides, request_wedges,
-                                         request_corners);
 
   ASSERT_NEAR(carea, mesh_wrapper.cell_volume(0), 1.0e-12);
 
@@ -1608,28 +1606,32 @@ TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
 
 // Check that we can compute volumes and centroids of skewed cells correctly
 /*
-TEST(Jali_Mesh_Wrapper, Skewed_3DCell_Geometry) {
-  // Create a 1 cell mesh
-  double xmin(0.0), ymin(0.0), zmin(0.0);
-  double xmax(1.0), ymax(1.0), zmax(1.0);
-  int nx(1), ny(1), nz(1);
-
+TEST(FleCSI_Mesh_Wrapper, Skewed_3DCell_Geometry) {
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  MPI_Comm_rank(MPI_COMM_WORLD, &me);
+  if (nproc > 1) return; 
 
-  Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::ALL_KIND});
-  mf.partitioner(Jali::Partitioner_type::BLOCK);
-  std::shared_ptr<Jali::Mesh> mesh = mf(xmin, ymin, zmin,
-                                        xmax, ymax, zmax,
-                                        nx, ny, nz);
+  //create 1x1 mesh
+  constexpr size_t nx = 1;
+  constexpr size_t ny = 1;
+  constexpr size_t nz = 1;
+  constexpr size_t lx = 1;
+  constexpr size_t ly = 1;
+  constexpr size_t lz = 1;
+
+  auto mesh = fmesh::box<mesh_3d_t>(nx, ny, nz, 0, 0, 0, lx, ly, lz); 
+
+  bool request_sides = true;
+  bool request_wedges = true;
+  bool request_corners = true;
+  
+  flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   // Move the node that's at 1.0, 1.0, 1.0 to 1.25, 1.25, 1.25
   int nnodes = mesh->num_nodes();
   for (int i = 0; i < nnodes; i++) {
-    JaliGeometry::Point ncoord;
-    mesh->node_get_coordinates(i, &ncoord);
+    Wonton::Point<3> ncoord;
+    mesh->coordinates(i, &ncoord);
     if (fabs(ncoord[0]-1.0) < 1.0e-12 && fabs(ncoord[1] - 1.0) < 1.0e-12 &&
         fabs(ncoord[2]-1.0) < 1.0e-12) {
       ncoord[0] = 1.25; ncoord[1] = 1.25; ncoord[2] = 1.25;
@@ -1637,12 +1639,6 @@ TEST(Jali_Mesh_Wrapper, Skewed_3DCell_Geometry) {
       break;
     }
   }
-
-  bool request_sides = true;
-  bool request_wedges = true;
-  bool request_corners = true;
-  Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh, request_sides, request_wedges,
-                                         request_corners);
 
   // Get the facetization of any one cell and check surface area and
   // volume (by divergence theorem). By definition, each facet is

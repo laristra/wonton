@@ -1,6 +1,9 @@
 #------------------------------------------------------------------------------#
-# Copyright (c) 2016 Los Alamos National Security, LLC
+# Copyright (c) 2018 Los Alamos National Security, LLC
 # All rights reserved.
+# This file is part of the Ristra Wonton project.
+# Please see the license file at the root of this repository, or at:
+#    https://github.com/laristra/wonton/blob/master/LICENSE
 #------------------------------------------------------------------------------#
 
 # - Find flecsi
