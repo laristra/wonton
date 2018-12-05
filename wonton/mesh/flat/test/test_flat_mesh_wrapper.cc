@@ -43,9 +43,6 @@ TEST(Flat_Mesh_Wrapper, basic_routines_3d) {
   Wonton::Flat_Mesh_Wrapper<> mesh_flat;
   mesh_flat.initialize(mesh_wrapper);
   
-  // now needed for the test since explicitly removed from initialize
-  mesh_flat.finish_init();
-
   ASSERT_EQ(3, mesh_flat.space_dimension());
 
   // Test cells, nodes, and faces of flat mesh
@@ -162,9 +159,6 @@ TEST(Flat_Mesh_Wrapper, basic_routines_2d) {
   Wonton::Flat_Mesh_Wrapper<> mesh_flat;
   mesh_flat.initialize(mesh_wrapper);
   
-  // now needed for the test since explicitly removed from initialize
-  mesh_flat.finish_init();
-
   ASSERT_EQ(2, mesh_flat.space_dimension());
 
   // Test cells and nodes of flat mesh
