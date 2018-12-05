@@ -223,9 +223,11 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       
       // Compute cell-to-node adjacency lists (3D only)
       cellNodeCounts_.clear();
-      cellToNodeList_.clear();
       cellNodeCounts_.reserve(cellFaceCounts_.size());
+      
+      cellToNodeList_.clear();
       cellToNodeList_.reserve(cellFaceCounts_.size() * 4);
+      
       for (unsigned int c=0; c<cellFaceCounts_.size(); ++c) {
         std::vector<int> cellfaces, dummy;
         cell_get_faces_and_dirs(c, &cellfaces, &dummy);
@@ -498,6 +500,9 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   //! get global node ids
   std::vector<int>& get_global_node_ids() { return nodeGlobalIds_; }
  
+  //! get global face ids
+  std::vector<int>& get_global_face_ids() { return faceGlobalIds_; }
+ 
   void set_node_global_ids(std::vector<int>& nodeGlobalIds) 
   { nodeGlobalIds_ = nodeGlobalIds; }
 
@@ -539,6 +544,7 @@ private:
   std::vector<int>  nodeToCellList_;
   std::vector<int>  nodeCellCounts_;
   std::vector<int>  nodeCellOffsets_;
+  
   std::vector<int>  cellGlobalIds_;
   std::vector<int>  faceGlobalIds_;
   std::vector<int>  nodeGlobalIds_;
