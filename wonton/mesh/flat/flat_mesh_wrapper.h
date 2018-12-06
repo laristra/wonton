@@ -89,9 +89,6 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       nodeGlobalIds_.push_back(input.get_global_id(n, Entity_kind::NODE));
     }
     
-    // always compute cell node offsets
-    compute_offsets(cellNodeCounts_, &cellNodeOffsets_);
-    
 
     ///////////////////////////////////////////////////////
     // local copies that are only required in 2D
@@ -147,10 +144,15 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
           nodeCoords_.push_back(nodeCoord[j]);
       }
       
-      // compute offsets for cell faces and face nodes
-      compute_offsets(cellFaceCounts_, &cellFaceOffsets_);
-      compute_offsets(faceNodeCounts_, &faceNodeOffsets_);
     } 
+    
+    // Complete the mesh. This step computes offsets and the inverse maps. 
+    // We only need the compute_offsets routines before doing distribute, but 
+    // it is possible (as in the tests) that someone will want to use a pre-
+    // distribution flat mesh wrapper as a complete mesh, instead of the
+    // underlying mesh, which would make more sense, so we will do this here
+    // although it could be easily removed by adding 3 compute_offsets
+    finish_init();
 
   }
 

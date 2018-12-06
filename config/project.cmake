@@ -105,6 +105,17 @@ if (Jali_DIR AND NOT Jali_LIBRARIES)
 
 endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
+#-----------------------------------------------------------------------------
+# Include Boost libraries for builds without Jali
+#-----------------------------------------------------------------------------
+
+if ( NOT Jali_DIR)
+
+ find_package(Boost REQUIRED)
+ include_directories(${Boost_INCLUDE_DIR})
+ message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
+
+endif( NOT Jali_DIR)
 
 #------------------------------------------------------------------------------#
 # Configure LAPACKE

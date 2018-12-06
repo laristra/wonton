@@ -65,4 +65,11 @@ if (ENABLE_UNIT_TESTS)
       THREADS 1)
   endif (Jali_DIR)
 
+  if (ENABLE_FleCSI)
+    cinch_add_unit(test_flecsi_mesh_wrapper
+      SOURCES flecsi/test/test_flecsi_mesh_wrapper.cc
+      LIBRARIES ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES}
+      POLICY MPI
+      THREADS 1)
+  endif (ENABLE_FleCSI)
 endif(ENABLE_UNIT_TESTS)
