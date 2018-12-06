@@ -182,6 +182,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       cellToFaceDirs_.reserve(cellNodeCounts_.size());
       
       faceToNodeList_.clear();
+      // DWS face to node is number of edges * 2???
       faceToNodeList_.reserve(cellToNodeList_.size()); // slight underestimate
       
       std::map<std::pair<int, int>, int> nodeToFaceTmp;
@@ -249,7 +250,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     }
 
     // Compute node-to-cell adjacency lists
-    int numNodes = numOwnedNodes_;
+    int numNodes = nodeCoords_.size()/dim_;
     std::vector<std::set<int>> nodeToCellTmp(numNodes);
     for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
       int offset = cellNodeOffsets_[c];
