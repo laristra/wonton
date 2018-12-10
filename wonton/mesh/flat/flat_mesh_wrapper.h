@@ -568,6 +568,16 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   //! get spatial dimension
   int space_dimension() const { return dim_; }
 
+  //! Get global ID of entities
+  int get_global_id(int ent, Entity_kind onwhat) const {
+    switch (onwhat) {
+      case Entity_kind::NODE: return nodeGlobalIds_[ent];
+      case Entity_kind::FACE: return faceGlobalIds_[ent];
+      case Entity_kind::CELL: return cellGlobalIds_[ent];
+      default: return -1;
+    }
+  }
+
 private:
 
   int dim_;
@@ -594,6 +604,7 @@ private:
   std::vector<int>  cellGlobalIds_;
   std::vector<int>  faceGlobalIds_;
   std::vector<int>  nodeGlobalIds_;
+  
 
   void reset_and_reserve(int numCells, int numFaces, int numNodes){
 
