@@ -2482,7 +2482,7 @@ void AuxMeshTopology<BasicMesh>::dual_cell_get_facetization(int const nodeid,
             if (pntenttypes[k] == FACE) {
               Point<3> fcen2;
               face_centroid(pntentids[k], &fcen2);
-              if (approxEq(fcen1, fcen2, 1.0e-20)) {
+              if (approxEq(fcen1, fcen2, 1.0e-14)) {
                 found = true;
                 fctpnts[j] = k;
               }
