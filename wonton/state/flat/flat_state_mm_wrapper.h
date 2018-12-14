@@ -90,16 +90,17 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     
     // is this a multimaterial problem, if so, add material names and cell indices
     // to the flat state. Do this only once regardless of the number of fields.
-    if (nmats>0){
-
-      // get the material names (for the following code to work, names() must
-      // return the material names in a guaranteed order across processor nodes)
-      std::vector<std::string> names = input.names();
-
+    if (nmats>0){      
+      
       // create the name to id map            
       std::unordered_map<std::string, int> name_map;
       for (int i=0; i<nmats; ++i){
-          name_map[names[i]]=i;
+      
+        // get the material name
+        std::string material_name = input.material_name(i);
+        
+        // add to the temp name map
+        name_map[material_name]=i;
       }
 
       // add the names to the state manager
