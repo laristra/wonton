@@ -499,11 +499,15 @@ StateManager(const MeshWrapper& mesh,
     int cell_index_in_material(int m, int c)
   */
   int cell_index_in_material(int c, int m) const {
+  
     // get the cell ids for a material
     std::vector<int> cells{material_cells_.at(m)};
 
     // get an iterator to the element
     auto it = std::find(cells.begin(), cells.end(), c);
+    
+    // if the cell is not found return -1
+    if (it == cells.end()) return -1;
 
     // return the distance
     return std::distance(cells.begin(), it);
