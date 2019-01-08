@@ -206,8 +206,9 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       // defined by an (vertex, next_vertex) pair. There are as many faces(edges)
       // as vertices.
       
-      // a temporary map that takes an edge pair (v, next_v) and maps it to an id   
-      std::map<std::pair<int, int>, int> nodeToFaceTmp;
+      // a temporary map that takes an edge node pair (v, next_v) and maps it to
+      // a face id   
+      std::map<std::pair<int, int>, int> nodePairToFaceTmp;
       
       // new face/edge counter
       int facecount = 0;
@@ -222,12 +223,12 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
           int p0 = std::min(n0, n1);
           int p1 = std::max(n0, n1);
           auto npair = std::make_pair(p0, p1);
-          auto it = nodeToFaceTmp.find(npair);
+          auto it = nodePairToFaceTmp.find(npair);
           int face;
-          if (it == nodeToFaceTmp.end()) {
+          if (it == nodePairToFaceTmp.end()) {
             // new face
             face = facecount;
-            nodeToFaceTmp.insert(std::make_pair(npair, face));
+            nodePairToFaceTmp.insert(std::make_pair(npair, face));
             faceToNodeList_.emplace_back(p0);
             faceToNodeList_.emplace_back(p1);
             ++facecount;
