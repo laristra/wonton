@@ -166,67 +166,100 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     build_aux_entities();
   }
 
-  //! Create maps for index space conversions
+  // Create complete topologies for the various mesh entities.This topology is
+  // defined by cells, faces and nodes. This is true in both dimensions 2 and 3
+  // but obviously what is meant by these changes with dimension.
+  // These topologies include the maps: cellToFace and faceToNode
+  // and the skip map: cellToNode.
+  // We also create the single inverse map going from nodeToCell.
+  // This routine also computes offsets, which turn counts into partial sums so
+  // that the relevant topologies, e.g. cell face indices, can be extracted from
+  // the corresponding complete lists
+  // Since faces are unique between cells, we also need to assign a direction to
+  // each face in a cell
   void make_index_maps() {
 
-    // Global to local maps for cells and nodes
-    std::map<int, int> globalCellMap;
-    std::vector<int> cellUniqueRep(cellGlobalIds_.size());
-    for (unsigned int i=0; i<cellGlobalIds_.size(); ++i) {
-      auto itr = globalCellMap.find(cellGlobalIds_[i]);
-      if (itr == globalCellMap.end()) {
-        globalCellMap[cellGlobalIds_[i]] = i;
-        cellUniqueRep[i] = i;
-      }
-      else {
-        cellUniqueRep[i] = itr->second;
-      }
-    }
-
-    std::map<int, int> globalNodeMap;
-    std::vector<int> nodeUniqueRep;
-    nodeUniqueRep.reserve(nodeGlobalIds_.size());
-    for (unsigned int i=0; i<nodeGlobalIds_.size(); ++i) {
-      auto itr = globalNodeMap.find(nodeGlobalIds_[i]);
-      if (itr == globalNodeMap.end()) {
-        globalNodeMap[nodeGlobalIds_[i]] = i;
-        nodeUniqueRep[i] = i;
-      }
-      else {
-        nodeUniqueRep[i] = itr->second;
-      }
-    }
-
-    // Compute node and face offsets
     if (dim_ == 2)
     {
+      // In 2D, we need to construct faces and their connectivity since the
+      // boundary representation is just vertices around cells. A face in 2D is
+      // and edge, and edges aren't specified, so we need to create them. Faces
+      // also need to have directions and we need to make sure those are created
+      // as well. 
+      // In 2D we are given the skip topology cellToNode, and we need to construct
+      // the adjacent topologies cellToFace and faceToNode.
+      
       compute_offsets(cellNodeCounts_, &cellNodeOffsets_);
+
+      // Clear and reserve
+      cellToFaceList_.clear();
+      cellToFaceList_.reserve(cellNodeCounts_.size());
+      
+      cellToFaceDirs_.clear();
+      cellToFaceDirs_.reserve(cellNodeCounts_.size());
+      
+      faceToNodeList_.clear();
+      faceToNodeList_.reserve(cellToNodeList_.size()); // slight underestimate
+      
+      // in 2D we directly specify the cell to node map. In order to complete
+      // the topology we need to construct faces on the fly. Each face is 
+      // defined by an (vertex, next_vertex) pair. There are as many faces(edges)
+      // as vertices.
+      
+      // a temporary map that takes an edge node pair (v, next_v) and maps it to
+      // a face id   
+      std::map<std::pair<int, int>, int> nodePairToFaceTmp;
+      
+      // new face/edge counter
+      int facecount = 0;
+      
+      for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
+        int offset = cellNodeOffsets_[c];
+        int count = cellNodeCounts_[c];
+        for (unsigned int i=0; i<count; ++i) {
+          int n0 = cellToNodeList_[offset+i];
+          int n1 = cellToNodeList_[offset+((i+1)%count)];
+          // put nodes in canonical order
+          int p0 = std::min(n0, n1);
+          int p1 = std::max(n0, n1);
+          auto npair = std::make_pair(p0, p1);
+          auto it = nodePairToFaceTmp.find(npair);
+          int face;
+          if (it == nodePairToFaceTmp.end()) {
+            // new face
+            face = facecount;
+            nodePairToFaceTmp.insert(std::make_pair(npair, face));
+            faceToNodeList_.emplace_back(p0);
+            faceToNodeList_.emplace_back(p1);
+            ++facecount;
+          }
+          else {
+            // existing face
+            face = it->second;
+          }
+          cellToFaceList_.emplace_back(face);
+          cellToFaceDirs_.push_back(n0 == p0);
+        }  // for i
+
+        if (c == numOwnedCells_ - 1) numOwnedFaces_ = facecount;
+
+      }  // for c    
     }
-    if (dim_ == 3)
+    else if (dim_ == 3)
     {
+      // In 3D, we are given the adjacent topologies cellToFace and faceToNode
+      // and we only need to compute the skip topology cellToNode
+      
       compute_offsets(faceNodeCounts_, &faceNodeOffsets_);
       compute_offsets(cellFaceCounts_, &cellFaceOffsets_);
-    }
-
-    // Remove duplicate nodes
-    if (dim_ == 2)
-    {
-      for (unsigned int i=0; i<cellToNodeList_.size(); ++i)
-        cellToNodeList_[i] = nodeUniqueRep[cellToNodeList_[i]];
-    }
-    if (dim_ == 3)
-    {
-      for (unsigned int i=0; i<faceToNodeList_.size(); ++i)
-        faceToNodeList_[i] = nodeUniqueRep[faceToNodeList_[i]];
-    }
-
-    // Compute cell-to-node adjacency lists (3D only)
-    if (dim_ == 3)
-    {
+      
+      // Compute cell-to-node adjacency lists (3D only)
       cellNodeCounts_.clear();
-      cellToNodeList_.clear();
       cellNodeCounts_.reserve(cellFaceCounts_.size());
+      
+      cellToNodeList_.clear();
       cellToNodeList_.reserve(cellFaceCounts_.size() * 4);
+      
       for (unsigned int c=0; c<cellFaceCounts_.size(); ++c) {
         std::vector<int> cellfaces, dummy;
         cell_get_faces_and_dirs(c, &cellfaces, &dummy);
@@ -245,82 +278,31 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       compute_offsets(cellNodeCounts_, &cellNodeOffsets_);
     }
 
-    // Compute node-to-cell adjacency lists
-    int numNodes = nodeCoords_.size() / dim_;
+    // Compute inverse node-to-cell adjacency lists
+    int numNodes = nodeCoords_.size()/dim_;
     std::vector<std::set<int>> nodeToCellTmp(numNodes);
     for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
       int offset = cellNodeOffsets_[c];
       int count = cellNodeCounts_[c];
       for (unsigned int i=0; i<count; ++i) {
         int n = cellToNodeList_[offset+i];
-        nodeToCellTmp[n].insert(cellUniqueRep[c]);
+        nodeToCellTmp[n].insert(c);
       }
     }
+
     nodeCellCounts_.clear();
-    nodeToCellList_.clear();
     nodeCellCounts_.reserve(numNodes);
+    
+    nodeToCellList_.clear();
     nodeToCellList_.reserve(cellToNodeList_.size());
+    
     for (unsigned int n=0; n<numNodes; ++n) {
       const std::set<int>& nodes = nodeToCellTmp[n];
       nodeCellCounts_.emplace_back(nodes.size());
       nodeToCellList_.insert(nodeToCellList_.end(), nodes.begin(), nodes.end());
     }
+    
     compute_offsets(nodeCellCounts_, &nodeCellOffsets_);
-
-    // Compute cell-to-face and face-to-node (2D only)
-    // This isn't quite accurate:  some faces at rank boundaries
-    // may end up being "owned" by two ranks.  But for what we are
-    // doing, I don't think this will make a difference.
-    if (dim_ == 2) {
-      cellToFaceList_.clear();
-      cellToFaceDirs_.clear();
-      faceToNodeList_.clear();
-      cellToFaceList_.reserve(cellNodeCounts_.size());
-      cellToFaceDirs_.reserve(cellNodeCounts_.size());
-      faceToNodeList_.reserve(cellToNodeList_.size()); // slight underestimate
-      std::map<std::pair<int, int>, int> nodeToFaceTmp;
-      int facecount = 0;
-      for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
-        int offset = cellNodeOffsets_[c];
-        int count = cellNodeCounts_[c];
-        for (unsigned int i=0; i<count; ++i) {
-          int n0 = cellToNodeList_[offset+i];
-          int n1 = cellToNodeList_[offset+((i+1)%count)];
-          // put nodes in canonical order
-          int p0 = std::min(n0, n1);
-          int p1 = std::max(n0, n1);
-          auto npair = std::make_pair(p0, p1);
-          auto it = nodeToFaceTmp.find(npair);
-          int face;
-          if (it == nodeToFaceTmp.end()) {
-            // new face
-            face = facecount;
-            nodeToFaceTmp.insert(std::make_pair(npair, face));
-            faceToNodeList_.emplace_back(p0);
-            faceToNodeList_.emplace_back(p1);
-            ++facecount;
-          }
-          else {
-            // existing face
-            face = it->second;
-          }
-          cellToFaceList_.emplace_back(face);
-          cellToFaceDirs_.push_back(n0 == p0);
-        }  // for i
-
-        if (c == numOwnedCells_ - 1) numOwnedFaces_ = facecount;
-
-      }  // for c
-    }  // if dim == 2
-
-    // Delete adjacency lists for inactive cells
-    // (Note that this leaves unused spaces in the list; at some later
-    // time we could compress the list, but skip that for now)
-    for (unsigned int c=numOwnedCells_; c<cellNodeCounts_.size(); ++c) {
-      if (cellUniqueRep[c] != c) {
-        cellNodeCounts_[c] = 0;
-      }
-    }
 
   } // make_index_maps
 
@@ -550,6 +532,9 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   //! get global node ids
   std::vector<int>& get_global_node_ids() { return nodeGlobalIds_; }
  
+  //! get global face ids
+  std::vector<int>& get_global_face_ids() { return faceGlobalIds_; }
+ 
   void set_node_global_ids(std::vector<int>& nodeGlobalIds) 
   { nodeGlobalIds_ = nodeGlobalIds; }
 
@@ -601,6 +586,7 @@ private:
   std::vector<int>  nodeToCellList_;
   std::vector<int>  nodeCellCounts_;
   std::vector<int>  nodeCellOffsets_;
+  
   std::vector<int>  cellGlobalIds_;
   std::vector<int>  faceGlobalIds_;
   std::vector<int>  nodeGlobalIds_;
