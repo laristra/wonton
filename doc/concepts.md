@@ -1,162 +1,141 @@
 # wonton Concepts      {#concepts}
 
-The remapping algorithm within wonton is divided into three phases,
-which are roughly labelled as
+## Wrappers 
+Mesh and state/data associated with the mesh are fundamental
+data structures in any physics based application. In general,
+the application can have its own native data structures or 
+use managers/frameworks for the mesh and associated state. 
+Irrespectively, it becomes much harder to design generic
+libraries targetting particular problems with the differences
+in underlying mesh data structures and their access patterns.
 
-1. _search_ - find candidate cells/particles that will contribute to
-   remap of a given target cell/particle
-2. _intersect_ - calculate the weight of each candidate's contribution
-   to the remap of a given target cell/particle; this may include
-   higher-order moments if requested.
-3. _interpolate_ - using the weights and moments, along with
-   appropriate limiters, reconstruct the field data for a given target
-   cell/particle.
+A key design aspect adopted by both Portage and Tangram is to
+template on mesh and state wrapper types ensuring that any application
+code can use them regardless of the underlying mesh data structures. 
 
-All of these operations work with your underlying mesh/particles and
-state manager through wrappers that provide an interface to the
-queries needed to perform any particular step.  For an example of the
-requirements of the wrappers, see the [Example Use](@ref example)
-page.  Below, when we refer to _mesh_ or _particles_ in terms
-of the operations, we really mean _mesh wrappers_ and _particle swarm
-wrappers_.  Particle methods are also referred to as _meshfree
-methods_.
+The user is responsible for writing a mesh and state wrapper 
+that provides basic information regarding how to access 
+certain mesh and state components, e.g., how to get nodes, 
+faces, cell data etc. Wonton is the library with such mesh
+and state wrappers. 
 
-![An example mesh-mesh configuration.  Blue is target mesh, black is source mesh.](doxygen/images/meshmesh.svg)
+Currently, Wonton contains wrappers to Jali mesh framework
+and FleCSI Burton Mesh Specialization as well as a native
+flat mesh/state wrappers (link to Dannys document). 
 
-All operations consist of a _source_ mesh/particle swarm and a
-_target_ mesh/particle swarm.  The _source_ entity is the one where we
-have existing field data, and the _target_ entity is the object to which
-we would like to remap the data.  For meshes, the field data can live
-on either cell centers or node centers; particle data naturally lives
-on particles, which can have various shapes and smoothing lengths.
+The mesh wrappers follow a Curiously Recurring Template Pattern 
+CRTP pattern over a base class called AuxMeshTopology. The wrapper
+implements methods for various mesh queries. It is derived from 
+AuxMeshTopolgy that provides additional functionality to create 
+side/wedge/corner types if they are not provided by the mesh framework.    
+Since AuxMeshTopology needs to make some queries about the basic
+topology, CRTP is used to allow this kind of mutual invocation from
+the Derived wrapper type. 
+
+The wrapper class must support cells, faces and nodes and adjacency
+queries between these entities. In 2D, faces are the same as edges
+and in 1D, faces are the same as nodes. The mesh class is expected
+to support the following methods:
+
+1. Basic 
+
+* int space\_dimension() const;  // dimensionality of mesh points (1, 2, 3)
+
+* int num\_owned\_cells() const;
+
+* int num\_ghost\_cells() const;
+
+* int num\_owned\_faces() const;
+
+* int num\_ghost\_faces() const;
+
+* int num\_owned\_nodes() const;
+
+* int num\_ghost\_nodes() const;
+
+* int get\_global\_id(int const id, Entity\_kind const kind) const;
+
+2. Type information (see for details on Wonton types) 
+
+* Wonton::Entity\_type cell\_get\_type(int const cellid) const;
+
+* Wonton::Entity\_type node\_get\_type(int const nodeid) const;
+
+* Wonton::Element\_type cell\_get\_element\_type(int const cellid) const;
+
+3. Topology queries
+* void cell\_get\_faces\_and\_dirs(int const cellid, std::vector<int> \*cfaces,
+                              std::vector<int> *cfdirs) const;
+  Here the cfdirs conveys the directions in which the faces are used by
+  the cell. If the natural normal of the face points out of the cell, its
+  direction should be returned as 1, if not, it should be returned as -1
+
+* void cell\_get\_nodes(int const cellid, std::vector<int> \*cnodes) const;
+
+* void face\_get\_nodes(int const faceid, std::vector<int> \*fnodes) const;
+
+* void face\_get\_cells(int const faceid, Wonton::Entity\_type etype,
+                     std::vector<int> *fcells) const;
+
+* void node\_get\_cells(int const nodeid, Wonton::Entity\_type etype,
+                     std::vector<int> *ncells) const;
+
+*  template<long D> void node\_get\_coordinates(int const nodeid, Wonton::Point<D> \*pp) const;
+
+The AuxMeshTopology enhances the topological entities provided by the wrapper 
+to build subcell entities - sides, corners and wedges. These non-standard
+entities are required for remapping purposes when one or both meshes have elements
+with non-planar faces. 
+
+The definition of these entities are as follows:
+* 1D: A side is a line segment from a node to the cell. Wedges and corners are the same
+as the sides. 
+* 2D: A side is a triangle formed by the two nodes of an edge/face and the cell center.
+A wedge is half of a side formed by one node of the edge, the edge center and the 
+cell center. A corner is a quadrilateral formed by the two wedges in a cell at a node. 
+* 3D: A side is a tet formed by the two nodes of an edge, a face center and a cell center. 
+A wedge is half a side, formed by a node of the edge, the edge center, the face 
+center and the cell center. A corner is formed by all the wedges of a cell at a node.
 
 
-## Search
+## Types
+Wonton currently provides the following enumerated types:
+1. Entity\_kind: The type of mesh entity. 
+* ALL\_KIND, ANY\_KIND, UNKNOWN\_KIND, NODE, EDGE, FACE, 
+CELL, SIDE, WEDGE, CORNER, FACET, BOUNDARY\_FACE, PARTICLE  
 
-Given source and target entities, this step simply _identifies_ which
-parts of the source contribute to which parts of the target.
-Concretely, for mesh-mesh remap this step would identify which source
-cells overlap each target cell.
+2. Entity\_type: The parallel type of a given entity. 
+* TYP\_UNKNOWN, DELETED, PARALLEL\_OWNED, PARALLEL\_GHOST, BOUNDARY\_GHOST, ALL
 
-![Candidates are in yellow.](doxygen/images/search.svg)
+3. Element\_type: The cell type
+* UNKNOWN\_TOPOLOGY, TRI, QUAD, POLYGON, TET, PRISM, PYRAMID, HEX, POLYHEDRON
 
-Wonton has several search algorithms with varying degrees of
-sophistication/speed.  These are the search methods for meshes:
+4. Field\_type: Whether the field is a mesh or multi-material field. 
+* UNKNOWN\_TYPE\_FIELD, MESH\_FIELD, MULTIMATERIAL\_FIELD
 
-- Wonton::SearchSimple - 2d, bounding box search
-- Wonton::SearchKDTree - 2d or 3d parallel k-d tree search
+Wonton also provides types for Points, Vectors and Matrices. These are advanced types
+with meaningfull operators for their particular type: 
 
-For particle swarms, the search concepts are similar, except any sort
-of bounding needs to take into account the fact that the particles can
-have some extent via shape and kernel functions.  These are the search
-methods for particles:
+* Point:
+- Operators: \[\], -p, p+t, c\*p, p/c
+- Methods: asV (convert Point to Vector) 
+* Vector:
+- Operators: \[\], -V, V+U, V-U, sV, V/s, 
+- Methods: norm, one\_norm, max\_norm, normalize, is\_zero, dot, cross, MaxComponent 
+* Matrix: 
+- Initialization: Using constant value, from vector of vectors, copy
+- Operators: M = M + C, M = M - C, M = c\*M, \[\], M = M\*_v_, M = A\*B
+- Methods: inverse, solve (QR decomposition based), data (return matrix data)  
 
-- Wonton::SearchSimplePoints - any-d quadratic time search over
-  particle swarms
-- Wonton::SearchPointsByCells - any-d linear time search over
-  particle swarms using a bounding box containing particles and their
-  smoothing lengths
 
-## Intersect
+## Algorithms
 
-Given the list of source candidates for intersection for a target
-entity, this step calculates the actual weights going into the
-intersection.
+* SVD:  Double precision SVD decomposition routine. Takes an mxn matrix a and 
+decomposes it into udv, where u,v are left and right orthogonal transformation 
+matrices, and d is a diagonal matrix of singular values. 
 
-![The exact intersection volumes are in green.](doxygen/images/intersect.svg)
+* lsfits: Computes a least squares gradient from a set of values. The first
+  point is assumed to be the point where the gradient must be computed
+  and the first value is assumed to the value at this reference point. 
 
-For meshes, this step uses exact intersection methods to calculate
-various _moments_ of the polygon/polyhedron of intersection; moments
-of higher order than the 0th (i.e. the area or volume of the
-intersection) are needed for higher order remap.  It is possible that
-some candidates are determined to have zero intersection, or that some
-candidates have multiple intersections in the case of non-convex
-cells.
 
-The available intersectors for meshes are:
-
-- Wonton::IntersectClipper - 2d, exact intersection method based on
-  the [Clipper](www.angusj.com/delphi/clipper.php) library for polygon
-  intersection and clipping
-- Wonton::IntersectR2D - 2d, fast, exact polygonal intersection
-  method based on the [r3d](https://github.com/laristra/r3d, 
-  https://github.com/devonmpowell/r3d.git(commit d6799a58)) library.
-- Wonton::IntersectR3D - 3d, fast, exact polyhedral intersection
-  method based on the [r3d](https://github.com/laristra/r3d,
-  https://github.com/devonmpowell/r3d.git(commit d6799a58)) library.
-
-For particles, this step is referred to as _accumulation_.  The
-distinction in terminology stems from the fact that for particles,
-local regression estimators (LRE) are used to do the remap.  In this
-stage, the LRE weights from particle contributions are accumulated by
-computing the weight functions and local regression corrections to
-those weights.  If LRE is performed with enough points, one can obtain
-weights for arbitrary orders of derivatives of the field data, which
-can be used to perform higher-order estimation.
-
-The available meshfree method is:
-
-- Wonton::Meshfree::Accumulate - any-d accumulator that works with
-  particles of various shapes, various kernel functions, utilizing
-  various types of basis functions and estimator models.
-
-## Interpolate
-
-Given the list of source entities and their weighted contributions to
-a given target entity, along with source field data, this step
-actually populates the target field data on the target entities.
-Performing higher-order reconstructions on meshes require more data to
-construct gradients, hessians, etc., and limiters to ensure
-monotonicity.  At mesh domain boundaries, limiting _can_ be ill-posed
-if there are no boundary conditions; we currently do not support such
-boundary conditions, so we do not limit at domain boundaries.
-Furthermore, if the target mesh is not entirely contained within the
-source mesh, then we currently have no mechanism for including
-background or boundary conditions.
-
-![The weights, calculated during intersection, are combined to interpolate data in the target cell.](doxygen/images/interpolate.svg)
-
-The current interpolation methods for meshes are the following:
-
-- Wonton::Interpolate_1stOrder - no limiting gets applied here.
-- Wonton::Interpolate_2ndOrder - capable of performing a
-  limited linear fit (2nd order accurate).
-- Wonton::Interpolate_3rdOrder - capable of performing a
-  least-squares, limited quadratic fit (3rd order accurate).
-
-For particles, the terminology for the interpolate step changes to
-_estimate_.  All of the heavy-lifting of the remap for particles has
-been done in the accumulate phase, such that this step results in a
-basic matrix vector multiply between the field data on source
-particles and the weights taking into account various orders of
-derivative information.
-
-The available meshfree method is:
-
-- Wonton::Meshfree::Estimate - use the output of Wonton::Accumulate
-  to estimate the target field data with varying degrees of accuracy.
-
-----
-
-## Drivers
-
-Wonton comes with a few _drivers_ to help facilitate using the above
-methods with your own mesh/particle data.  The drivers are all
-templated on source and target mesh/particle swarm and state data.
-Furthermore, they are templated on the Search, Intersect (or
-Accumulate), and Interpolate (or Estimate) methods above.  In
-particular, the following drivers are provided:
-
-- Wonton::Driver - for mesh-mesh remap
-- Wonton::Meshfree::SwarmDriver - for particle-particle remap
-- Wonton::MSM_Driver - for mesh to mesh remap with particles as an
-  intermediary
-
-The drivers are all used within our application tests within the
-`apps` directory.  The applications choose a particular mesh or
-particle swarm type, select specfic Search, Intersect, and Interpolate
-algorithms, along with associated settings for remap order of
-accuracy, data locality for meshes (cells or nodes), and any limiters
-needed for higher-order remap.  Users are encouraged to write their
-own specialized drivers, but the above should serve as a starting
-point.
