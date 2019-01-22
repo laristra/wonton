@@ -8,10 +8,12 @@ Primarily, Wonton provides:
 - wrappers for mesh and state data managers
 - geometric and algebraic types 
 - standard math algorithsm such as svd.
-- access to R3D library as submodule for intersection of polygons/hedra.    
 
-See the [Concepts](@ref concepts) page for a high-level discussion of
-the methods used within wonton.
+Wonton also provides access to the [R3D](https://github.com/devonmpowell/r3d.git) 
+library for polyhedra intersection methods as a git submodule. 
+
+For further high-level discussion of the methods and data structures provided
+within Wonton, please see the [Concepts](@ref concepts) page. 
 
 ---
 
@@ -51,7 +53,7 @@ git clone --recursive https://github.com/laristra/wonton
 
 ## Building
 
-Wonton uses the CMake build system. A complete build with MPI, Thrust (for on-node
+Wonton uses the CMake build system. A build with MPI, Thrust (for on-node
 parallelism), unit test support, documentation support, and support for 
 both [Jali](https://github.com/lanl/jali) and the Burton 
 [specialization](https://github.com/laristra/flecsi-sp) of 
@@ -72,7 +74,7 @@ wonton/build/ $ cmake -DENABLE_UNIT_TESTS=True \
 					   -DPC_LAPACKE_LIBRARY_DIRS=/path/to/LAPACKE/install \
 					   ..
 wonton/build/ $ make           # builds the library and tests
-wonton/build/ $ make test      # runs the tests
+wonton/build/ $ ctest          # runs the tests
 wonton/build/ $ make doxygen   # builds this HTML and a PDF form of the documentation
 wonton/build/ $ make install   # installs the wonton library and headers into CMAKE_INSTALL_PREFIX
 ~~~
