@@ -36,48 +36,48 @@ to support the following methods:
 
 1. Basic 
 
-* int space\_dimension() const;  // dimensionality of mesh points (1, 2, 3)
+    * int space\_dimension() const;  // dimensionality of mesh points (1, 2, 3)
 
-* int num\_owned\_cells() const;
+    * int num\_owned\_cells() const;
 
-* int num\_ghost\_cells() const;
+    * int num\_ghost\_cells() const;
 
-* int num\_owned\_faces() const;
+    * int num\_owned\_faces() const;
 
-* int num\_ghost\_faces() const;
+    * int num\_ghost\_faces() const;
 
-* int num\_owned\_nodes() const;
+    * int num\_owned\_nodes() const;
 
-* int num\_ghost\_nodes() const;
+    * int num\_ghost\_nodes() const;
 
-* int get\_global\_id(int const id, Entity\_kind const kind) const;
+    * int get\_global\_id(int const id, Entity\_kind const kind) const;
 
 2. Type information (see for details on Wonton types) 
 
-* Wonton::Entity\_type cell\_get\_type(int const cellid) const;
+    * Wonton::Entity\_type cell\_get\_type(int const cellid) const;
 
-* Wonton::Entity\_type node\_get\_type(int const nodeid) const;
+    * Wonton::Entity\_type node\_get\_type(int const nodeid) const;
 
-* Wonton::Element\_type cell\_get\_element\_type(int const cellid) const;
+    * Wonton::Element\_type cell\_get\_element\_type(int const cellid) const;
 
 3. Topology queries
-* void cell\_get\_faces\_and\_dirs(int const cellid, std::vector<int> \*cfaces,
+    * void cell\_get\_faces\_and\_dirs(int const cellid, std::vector<int> \*cfaces,
                               std::vector<int> *cfdirs) const;
-  Here the cfdirs conveys the directions in which the faces are used by
-  the cell. If the natural normal of the face points out of the cell, its
-  direction should be returned as 1, if not, it should be returned as -1
+      Here the cfdirs conveys the directions in which the faces are used by
+      the cell. If the natural normal of the face points out of the cell, its
+      direction should be returned as 1, if not, it should be returned as -1
 
-* void cell\_get\_nodes(int const cellid, std::vector<int> \*cnodes) const;
+    * void cell\_get\_nodes(int const cellid, std::vector<int> \*cnodes) const;
 
-* void face\_get\_nodes(int const faceid, std::vector<int> \*fnodes) const;
+    * void face\_get\_nodes(int const faceid, std::vector<int> \*fnodes) const;
 
-* void face\_get\_cells(int const faceid, Wonton::Entity\_type etype,
+    * void face\_get\_cells(int const faceid, Wonton::Entity\_type etype,
                      std::vector<int> *fcells) const;
 
-* void node\_get\_cells(int const nodeid, Wonton::Entity\_type etype,
+    * void node\_get\_cells(int const nodeid, Wonton::Entity\_type etype,
                      std::vector<int> *ncells) const;
 
-*  template<long D> void node\_get\_coordinates(int const nodeid, Wonton::Point<D> \*pp) const;
+    *  template<long D> void node\_get\_coordinates(int const nodeid, Wonton::Point<D> \*pp) const;
 
 The AuxMeshTopology enhances the topological entities provided by the wrapper 
 to build subcell entities - sides, corners and wedges. These non-standard
@@ -125,7 +125,7 @@ with meaningfull operators for their particular type:
 
 ## Algorithms
 
-* SVD:  Double precision SVD decomposition routine. Takes an M x N matrix a and 
+* SVD:  Double precision SVD decomposition routine. Takes an m-by-n matrix A and 
 decomposes it into UDV, where U, V are left and right orthogonal transformation 
 matrices, and D is a diagonal matrix of singular values. 
 
