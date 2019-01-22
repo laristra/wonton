@@ -1,4 +1,4 @@
-# Welcome to wonton!   {#mainpage}
+# Welcome to Wonton!   {#mainpage}
 
 Wonton is a low-level library that is used by the remapping
 library, Portage, and interface reconstruction library Tangram 

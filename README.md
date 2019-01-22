@@ -1,5 +1,5 @@
 
-# wonton 
+# Wonton 
 
 Wonton library provides low level infrastructure for wrappers 
 to various unstructured mesh and data (state) managers as 
@@ -16,7 +16,7 @@ recursively:
 git clone --recursive https://github.com/laristra/wonton
 ```
 
-###Prerequisites
+### Prerequisites
 Wonton uses standard C++11 features, so a fairly modern compiler 
 is needed. We regularly test with Intel 17+ or GCC 5.3+. The build 
 system _requires_ CMake version 3.0+. 
@@ -69,7 +69,7 @@ This compiles the serial code and about a dozen application tests.  To
 run the tests, simply execute
 
 ```sh
-wonton/build $ make test
+wonton/build $ ctest
 ```
 
 If you wish to install the code into the `CMAKE_INSTALL_PREFIX` then
