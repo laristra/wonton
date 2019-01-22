@@ -65,7 +65,7 @@ wonton/build $ cmake -DENABLE_UNIT_TESTS=True ..
 wonton/build $ make
 ```
 
-This compiles the serial code and about a dozen application tests.  To
+This compiles the serial code and about a dozen unit tests.  To
 run the tests, simply execute
 
 ```sh

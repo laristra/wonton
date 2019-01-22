@@ -1,19 +1,18 @@
 # Welcome to Wonton!   {#mainpage}
 
-Wonton is a low-level library that is used by the remapping
-library, Portage, and interface reconstruction library Tangram 
-developed under the Ristra project. 
-
-Primarily, Wonton provides:
+Wonton is a low-level library that provides:
 - wrappers for mesh and state data managers
-- geometric and algebraic types 
-- standard math algorithsm such as svd.
+- geometric and algebraic type definitions 
+- standard math algorithsm such as svd, least-squares fittings, etc. 
 
 Wonton also provides access to the [R3D](https://github.com/devonmpowell/r3d.git) 
 library for polyhedra intersection methods as a git submodule. 
 
 For further high-level discussion of the methods and data structures provided
 within Wonton, please see the [Concepts](@ref concepts) page. 
+
+Wonton is primarily used by the data remapping library, Portage, and 
+interface reconstruction library Tangram, developed under the Ristra project. 
 
 ---
 
@@ -26,14 +25,14 @@ At a minimum, wonton requires:
 - LAPACKE (3.7.1+)
 - Boost (1.53.0+) **or** Thrust (1.6.0+)
 
-Though Wonton wrappers do not depend on MPI by design, their
-testing does. Currently, some unit tests will break if MPI
-is not provided. MPI is enabled in wonton by setting the CMake variable
+By design, Wonton wrappers do not depend on MPI. However, testing for 
+some wrappers such as Jali requires MPI. For such cases, MPI can be 
+enabled in Wonton by setting the CMake varible 
 `ENABLE_MPI=True`.
 
 On-node parallelism is exposed through
 the [Thrust](https://thrust.github.io) library.  Enabling Thrust
-within wonton requires setting at least two CMake variables:
+within Wonton requires setting at least two CMake variables:
 `ENABLE_THRUST=True` and `THRUST_DIR=<path_to_thrust_directory>`.
 Additionally, one can specify the Thrust backend to utilize, with the
 default being the OpenMP backend
