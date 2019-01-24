@@ -1,18 +1,23 @@
 # Welcome to Wonton!   {#mainpage}
 
-Wonton is a low-level library that provides:
+Wonton is primarily a library of interfaces for accessing mesh and state (mesh field) 
+data of an application without explicitly copying or converting that data for use 
+in another application. The mesh and state wrappers in Wonton allow packages such
+as the [Portage](https://github.com/laristra/portage) remapping package and the 
+[Tangram](https://github.com/laristra/tangram) interface reconstruction package 
+to easily interface with any application with minimal effort and for the data 
+to be read and written efficiently.  
+
+To summarize, Wonton is a low-level library that provides:
 - wrappers for mesh and state data managers
 - geometric and algebraic type definitions 
-- standard math algorithsm such as svd, least-squares fittings, etc. 
+- standard math algorithms such as svd, least-squares fittings, etc. 
 
 Wonton also provides access to the [R3D](https://github.com/devonmpowell/r3d.git) 
-library for polyhedra intersection methods as a git submodule. 
+library for polyhedral intersection methods as a git submodule. 
 
 For further high-level discussion of the methods and data structures provided
 within Wonton, please see the [Concepts](@ref concepts) page. 
-
-Wonton is primarily used by the data remapping library, Portage, and 
-interface reconstruction library Tangram, developed under the Ristra project. 
 
 ---
 
@@ -62,15 +67,15 @@ find your Boost and LAPACKE installations,  would look like:
 ~~~sh
 wonton/ $ mkdir build
 wonton/ $ cd build
-wonton/build/ $ cmake -DENABLE_UNIT_TESTS=True \
-					   -DENABLE_MPI=True \
-					   -DENABLE_THRUST=True -DTHRUST_DIR=/path/to/thrust/include/directory \
-					   -DJali_DIR=path/ to/Jali/lib \
-					   -DENABLE_FleCSI=True \
-					   -DCMAKE_PREFIX_PATH="/path/to/FleCSI/install;/path/to/FleCSI-sp/install" \
-					   -DENABLE_DOXYGEN=True \
-					   -DPC_LAPACKE_NCLUDE_DIRS=/path/to/LAPACKE/include \
-					   -DPC_LAPACKE_LIBRARY_DIRS=/path/to/LAPACKE/install \
+wonton/build/ $ cmake -D ENABLE_UNIT_TESTS=True \
+					   -D ENABLE_MPI=True \
+					   -D ENABLE_THRUST=True 
+             				   -D THRUST_DIR=/path/to/thrust/include/directory \
+					   -D Jali_DIR=path/ to/Jali/lib \
+					   -D ENABLE_FleCSI=True \
+					   -D CMAKE_PREFIX_PATH="/path/to/FleCSI/install;/path/to/FleCSI-sp/install" \
+					   -D ENABLE_DOXYGEN=True \
+					   -D LAPACKE_DIR=/path/to/LAPACKE/ \
 					   ..
 wonton/build/ $ make           # builds the library and tests
 wonton/build/ $ ctest          # runs the tests
@@ -95,8 +100,7 @@ Wonton.
 | `ENABLE_UNIT_TESTS:BOOL` | Turn on compilation and test harness of unit tests | `False` |
 | `Jali_DIR:PATH` | Hint location for CMake to find Jali.  This version of wonton works with version 1.0.0 of Jali | "" |
 | `ENABLE_FleCSI:BOOL` | Turn on support for the FleCSI Burton specialization; must set `CMAKE_PREFIX_PATH` to a location where _both_ FleCSI and FleCSI-SP can be found. Both FleCSI packages are under constant development.  This version of wonton is known to work with hash `374b56b` of the FleCSI _stable_ branch, and hash `e78c594` of the FleCSI-SP _stable_ branch. | `False` |
-| `PC_LAPACKE_NCLUDE_DIRS:PATH` | Hint location for CMake to find LAPACKE include files if `pkg_config` fails. **NOTE** the variable name _indeed_ includes the typo `_NCLUDE`; this will be fixed in a future release when we update the build system | "" |
-| `PC_LAPACKE_LIBRARY_DIRS:PATH` | Hint location for CMake to find LAPACKE library files if `pkg_config` fails | "" |
+| `LAPACKE_DIR:PATH` | Hint location for CMake to find LAPACKE include files if `pkg_config` fails. | "" |
 | `TCMALLOC_LIB:PATH` | The TCMalloc library to use | `${HOME}` |
 | `THRUST_DIR:PATH` | Directory of the Thrust install | "" |
 | `THRUST_BACKEND:STRING` | Backend to use for Thrust | `"THRUST_DEVICE_SYSTEM_OMP"` |
