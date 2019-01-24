@@ -77,15 +77,6 @@ to support the following methods:
     *  template<long D> void node\_get\_coordinates(int const nodeid, Wonton::Point<D> \*pp) const;
 
 
-At present, Wonton provides the following wrappers to external frameworks:
-1. [Jali](http://github.com/lanl/jali)
-2. [FleCSI Burton Specialization](http://github.com/laristra/flecsi-sp)
-
-Wonton also provides two native mesh and state managers and their wrappers: 
-1. Simple Mesh and State: A very light-weight, serial, 2D/3D Cartesian mesh and its state. 
-3. Flat Mesh and State: A native framework used internally for redistributing mesh/state
-                        data across partitions.   
-
 ### AuxMeshTopology
 Using the CRTP design allows extending the base mesh to 
 support advanced topological types such as _sides_, _corners_, etc., 
