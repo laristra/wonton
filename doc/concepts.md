@@ -118,6 +118,9 @@ cell center. A corner is a quadrilateral formed by the two wedges in a cell at a
 A wedge is half a side, formed by a node of the edge, the edge center, the face 
 center and the cell center. A corner is formed by all the wedges of a cell at a node.
 
+![Illustration for 2D auxiliary entities](doxygen/images/auxentities.svg)
+
+
 In addition to the advanced mesh entities (sides, wedges, and
 corners), AuxMeshTopology also computes some advanced connectivity
 information.  An example is Wonton::AuxMeshTopology::node_get_cell_adj_nodes(), 
