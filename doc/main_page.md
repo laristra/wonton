@@ -47,6 +47,11 @@ default being the OpenMP backend
 `THRUST_DEVICE_SYSTEM_TBB` backend.  Regular testing happens with
 Thrust 1.8. 
 
+**If you turn on Thrust for multi-threading-enabled executables, the team strongly
+recommends linking to the TCMalloc library available in 
+[Google Performance Tools](https://github.com/gperftools/gperftools) 
+to see the expected scaling.**
+
 ## Obtaining wonton
 
 The latest release of [wonton](https://github.com/laristra/wonton)
