@@ -2,12 +2,16 @@
 # Wonton 
 
 Wonton library provides low level infrastructure for wrappers 
-to various unstructured mesh and data (state) managers as 
-well as various math and geometry algorithms and data structures.
+to various unstructured mesh and data (state) managers.
+A wrapper is an implementation of an interface to the native
+interface of the mesh and state manager and can be used by 
+libraries such as Portage and Tangram without copying data
+from the mesh and state manager. 
 
-The primary reason for Wonton's existence is to maintain a single
-and common source of such low level types for any other dependent 
-libraries such as Portage and Tangram.  
+The primary reason for Wonton's existence is to enable applications
+to interface to the Portage and Tangram libraries. Wonton also provides
+a common repository for these interface implementations as well
+as common definitions and methods. 
 
 ## Getting Started 
 To obtain a copy of wonton and its submodules from GitHub, clone 
@@ -16,16 +20,27 @@ recursively:
 git clone --recursive https://github.com/laristra/wonton
 ```
 
+If you are familiar with Docker, take a look at
+our
+[Dockerfile](https://github.com/laristra/wonton/blob/master/docker/Dockerfile) for
+a working build environment.  In particular, the Dockerfile builds off
+of
+the [wonton-buildenv](https://github.com/laristra/wonton-buildenv)
+Dockerfile, and uses
+our
+[travis.yml](https://github.com/laristra/wonton/blob/master/.travis.yml) file
+with Travis CI.
+
 ### Prerequisites
 Wonton uses standard C++11 features, so a fairly modern compiler 
-is needed. We regularly test with Intel 17+ or GCC 5.3+. The build 
+is needed. We regularly test with Intel 17+ or GCC 6.3+. The build 
 system _requires_ CMake version 3.0+. 
 
 The following libraries are also _required_:
 
 - LAPACKE (3.8.0+)
 
-- **__Either__** Boost (1.68.0+) **__or__** Thrust (1.6.0+):
+- **__Either__** Boost (1.58.0+) **__or__** Thrust (1.6.0+):
   We wrap some features of either one of these packages.  If you would
   like to run with OpenMP or TBB threads, then you _must_ use Thrust.
 
@@ -47,7 +62,7 @@ support for these is _optional_:
   the FleCSI and FleCSI-sp install paths to the `CMAKE_PREFIX_PATH`;
   see examples below.  Both FleCSI packages are under constant
   development.  This version of wonton is known to work with hash
-  `374b56b` of the FleCSI _stable_ branch, and hash `e78c594` of the
+  `bd29de5d` of the FleCSI _stable_ branch, and hash `e78c594` of the
   FleCSI-SP _stable_ branch.
 
 The [documentation](http://wonton.lanl.gov) is built using doxygen (1.8+). 
@@ -123,13 +138,4 @@ cmake \
     ..
 make -j16
 ctest -j16 --output-on-failure
-```
-
-## Varan
-
-Execute the following from the wonton root directory:
-
-```c++
-# machine=varan
-echo "This is a test on varan"
 ```

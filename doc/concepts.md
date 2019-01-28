@@ -1,25 +1,31 @@
 # Wonton Concepts      {#concepts}
 
-## Wrappers 
+## Wrappers
 Mesh and state or data associated with the mesh are fundamental
 data structures in any physics based application. In general,
-the application can have its own native data structures or 
-use managers/frameworks for the mesh and associated state. 
-It becomes much harder to design generic
-libraries targetting particular problems with the differences
-in underlying mesh data structures and their access patterns. 
-A key design aspect adopted by both Portage and Tangram is to
-template on mesh and state wrapper types ensuring that any application
-code can use them regardless of their API for the underlying mesh 
-data structures. 
+the application has its own native data structures with
+its native interface for data access. 
 
-The user is responsible for writing a mesh and state wrapper 
-that provides basic information regarding how to access 
-certain mesh and state components, e.g., how to get nodes, 
-faces, cell data etc. Wonton is the library with such mesh
-and state wrappers. Currently, Wonton has examples of wrappers 
-to the Jali mesh framework and FleCSI Burton Mesh Specialization 
-as well as a native flat mesh/state wrappers. 
+This makes it harder to design generic libraries that can work
+with different applications with different native APIs. One way 
+to overcome this problem is to access data through a wrapper. 
+A wrapper is an implementation of an interface to the native 
+interface and can be used to avoid data copy between application 
+and the library if the wrapper interface provides the essential 
+queries required by the library.   
+
+Both Portage and Tangram are templated on mesh and state wrapper
+types ensuring that any application code can use them regardless
+of their native API while avoiding data copy. 
+
+Wonton primarily serves two purposes: 
+1. It defines a common interface to access mesh and field data
+from any application.
+2. It serves as a repository of example wrappers, specifically to 
+the Jali mesh framework, FleCSI Burton Mesh Specialization and 
+couple of native mesh/state wrappers.  
+
+We now describe the common interface and its design.  
 
 ### Mesh Wrapper Design 
 The mesh wrappers are designed to use a Curiously Recurring Template Pattern 
@@ -74,32 +80,35 @@ to support the following methods:
     * void node\_get\_cells(int const nodeid, Wonton::Entity\_type etype,
                      std::vector<int> *ncells) const;
 
-    *  template<long D> void node\_get\_coordinates(int const nodeid, Wonton::Point<D> \*pp) const;
+    * template<long D> void node\_get\_coordinates(int const nodeid, Wonton::Point<D> \*pp) const;
 
 
 ### AuxMeshTopology
+
+The basic mesh wrapper provides access to the standard 
+entity types and their topological and geometrical information.
+However, advanced non-standard types such as _sides_, _corners_, etc.,
+may not be provided by the mesh framework. Such advanced types are
+required for some particular algorithms such as nodal remapping, 
+remapping methods for entities with non-planar faces, etc. 
+
 Using the CRTP design allows extending the base mesh to 
-support advanced topological types such as _sides_, _corners_, etc., 
-that may be required for some particular algorithms (such as nodal 
-remapping in Portage), if they are not provided by the mesh framework. 
+support construction of such advanced topological types. 
 Since AuxMeshTopology needs to make some queries about the basic 
 topology, CRTP is used to allow this kind of mutual invocation 
 from the Derived wrapper type.
 
 Using the CRTP design, the basic mesh framework wrapper looks something like
 
-~~{.cc}
+~~~{.cc}
 class Basic_Mesh_Wrapper : public AuxMeshTopology<Basic_Mesh_Wrapper> {...};
-~~
+~~~
 
 In this way, the `Basic_Mesh_Wrapper` can use its own methods, or
 defer to AuxMeshTopology to perform more advanced queries. 
 
-The AuxMeshTopology enhances the topological entities provided by the wrapper 
-to build subcell entities - sides, corners and wedges. These non-standard
-entities are required for remapping purposes when one or both meshes have elements
-with non-planar faces as well as nodal data remapping. The definition of these 
-entities are as follows:
+The definitions of the non-standard subcell entities that the AuxMeshTopology
+constructs are as follows: 
 * 1D: A side is a line segment from a node to the cell. Wedges and corners are the same
 as the sides. 
 * 2D: A side is a triangle formed by the two nodes of an edge/face and the cell center.
@@ -110,7 +119,7 @@ A wedge is half a side, formed by a node of the edge, the edge center, the face
 center and the cell center. A corner is formed by all the wedges of a cell at a node.
 
 In addition to the advanced mesh entities (sides, wedges, and
-corners), AuxMeshTopology also resolves some advanced connectivity
+corners), AuxMeshTopology also computes some advanced connectivity
 information.  An example is Wonton::AuxMeshTopology::node_get_cell_adj_nodes(), 
 which, given a node index in the mesh, returns a vector of all 
 the nodes that are attached to all cells attached to the given node.  
@@ -139,10 +148,10 @@ Wonton also provides two native mesh and state managers and their wrappers:
 ### State Wrappers
 There is no equivalent of AuxMeshTopology for state wrappers.  This is
 simply because the requirements of a state manager are much less
-intense than those of the mesh framework.  In particular, the state
-wrappers only need to know how to add data, get data, and query things
+than those of the mesh framework.  In particular, the state
+wrappers need to know how to add data, get data, and query things
 like the size of the data and where the data lives (Wonton::CELL or
-Wonton::NODE).
+Wonton::NODE). 
 
 
 ## Types
@@ -177,7 +186,7 @@ with the following operators and methods:
 
 ## Algorithms
 
-* SVD:  Double precision SVD decomposition routine. Takes an m-by-n matrix A and 
+* SVD:  Double precision SVD routine. Takes an m-by-n matrix A and 
 decomposes it into UDV, where U, V are left and right orthogonal transformation 
 matrices, and D is a diagonal matrix of singular values. 
 

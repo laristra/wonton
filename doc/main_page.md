@@ -25,19 +25,21 @@ within Wonton, please see the [Concepts](@ref concepts) page.
 
 At a minimum, wonton requires:
 - A C++-11 compatible compiler; regular testing is performed with GCC
-  5.3+ and Intel 17+.
+  6.3+ and Intel 17+.
 - CMake 3.0+
-- LAPACKE (3.7.1+)
-- Boost (1.53.0+) **or** Thrust (1.6.0+)
+- LAPACKE (3.8.0+)
+- Boost (1.58.0+) **or** Thrust (1.6.0+)
 
 By design, Wonton wrappers do not depend on MPI. However, testing for 
-some wrappers such as Jali requires MPI. For such cases, MPI can be 
-enabled in Wonton by setting the CMake varible 
+some wrappers such as [Jali](https://github.com/lanl/jali) requires MPI. 
+For such cases, MPI can be enabled in Wonton by setting the CMake varible 
 `ENABLE_MPI=True`.
 
-On-node parallelism is exposed through
-the [Thrust](https://thrust.github.io) library.  Enabling Thrust
-within Wonton requires setting at least two CMake variables:
+On-node parallelism in Portage and Tangram are exposed through aliases 
+of the transform operator in the [Thrust](https://thrust.github.io) library
+which is defined in Wonton. In order to use 
+[Thrust](https://thrust.github.io) based transform operators, Wonton
+should be build with at least two CMake variables:
 `ENABLE_THRUST=True` and `THRUST_DIR=<path_to_thrust_directory>`.
 Additionally, one can specify the Thrust backend to utilize, with the
 default being the OpenMP backend
@@ -92,7 +94,6 @@ Wonton.
 | `CMAKE_BUILD_TYPE:STRING`| `Debug` or optimized `Release` build | `Debug` |
 | `CMAKE_INSTALL_PREFIX:PATH` | Location for the wonton library and headers to be installed | `/usr/local` |
 | `CMAKE_PREFIX_PATH:PATH` | Locations where CMake can look for packages; needs to be set to the FleCSI and FleCSI-SP locations if using FleCSI | "" |
-| `ENABLE_APP_TESTS:BOOL` | Turn on compilation and test harness of application tests | `False` |
 | `ENABLE_DOXYGEN:BOOL` | Create a target to build this documentation | `False` |
 | `ENABLE_MPI:BOOL` | Build with support for MPI | `False` |
 | `ENABLE_TCMALLOC:BOOL` | Build with support for TCMalloc | `False` |
