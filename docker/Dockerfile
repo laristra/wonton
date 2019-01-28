@@ -21,8 +21,8 @@ ARG DOCS
 COPY wonton /home/wonton/wonton
 
 USER root
-RUN chown -R wonton:wonton /home/wonton/wonton
-USER wonton
+RUN chown -R portage:portage /home/wonton/wonton
+USER portage
 WORKDIR /home/wonton/wonton
 RUN mkdir build
 WORKDIR build
