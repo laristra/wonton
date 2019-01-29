@@ -1,0 +1,45 @@
+language: cpp
+
+sudo: required
+
+services:
+- docker
+
+python:
+  - "3.6"
+
+env:
+  global:
+    # Doctr deploy key for laristra/wonton
+    - secure: "QjsnGDiCYerawsgriJl2jFzc+Ow4v8Sm37SaWPLK66pkepJCeoxCqdFjD2VEbGsavlsbatcM1+Wi74URgIGRVdqX+qi4I/FufvVVVi8WCKC7IcrHqp1JOj5jZZ9gjO/YLdsv82g1i3Rag6PzZduINJBvLONA84K+iz+3IIb8X+FzVtBYdDqz1quLRsaJhiozIxCT1TWbtcuxR6PCdWjqVt39fDkADZk2KpDxugzuEvy9xlUdYcPypypb+dHruKPwoVsxtzrJp6niVmEgTAgmyAq4KCFMejP8R4HEGKFeuxwYmOwaUPh7mM0DD78Hr4w74OHa/DFTndUyvi/lwgNiFy/LY+ji1QeUxG+d0y4TbnQY5xrj+Gp2CMIExkq8tPRlxMsDdLlnnb1+++x91X4knYjJ7rC2DJhfrCnKxUf2fBNKMJwVD9gpWeilHzbMaKYH0yWwUCtR2sRWdHRto+7PNEL3Bpbv69Euy8Us77YyJh6wJAdyG4JkWrEjDaohUDndwbhX4OeEy9Vx8PndYTkwG+5a6+7nLfzm9OSHTznJInuy1KbX0SLp3FzBUKR+YVWq8ID2o64Y87aLXF2v/QKYoNKwQS+FQ5uxUoRUbr+MSnFZWRVg8bZRACztkuS6l1V58OlghmXL/K2IPgvZu9bftC9eYsQM7eqVjQDnJVU7JSU="
+  matrix:
+    - MPI=OFF DOCS=true
+    - MPI=ON DOCKERHUB=true
+    - MPI=ON COVERAGE=ON
+
+script:
+  - set -e
+  - cp -vr docker ${HOME}/docker
+  - cd ../../
+  - mv -v ${TRAVIS_REPO_SLUG} $HOME/docker
+  - docker build --build-arg MPI=${MPI}
+                 --build-arg CI=${CI} --build-arg TRAVIS=${TRAVIS} --build-arg TRAVIS_OS_NAME=${TRAVIS_OS_NAME}
+                 --build-arg TRAVIS_BRANCH=${TRAVIS_BRANCH} --build-arg TRAVIS_JOB_NUMBER=${TRAVIS_JOB_NUMBER}
+                 --build-arg TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} --build-arg TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
+                 --build-arg TRAVIS_TAG=${TRAVIS_TAG} --build-arg TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG}
+                 --build-arg TRAVIS_COMMIT=${TRAVIS_COMMIT} --build-arg COVERAGE=${COVERAGE}
+                 --build-arg DOCS=${DOCS}
+                 -t ${TRAVIS_REPO_SLUG}:latest ${HOME}/docker/
+
+after_success:
+  - if [[ ${DOCKERHUB} = true && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_PULL_REQUEST} == false && ${TRAVIS_BRANCH} == master ]]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+      docker push "${TRAVIS_REPO_SLUG}:latest";
+    fi
+  - if [[ ${DOCS} || -n ${TRAVIS_TAG} ]]; then
+      cd ${HOME}/docker/wonton;
+      CON=$(docker run -d ${TRAVIS_REPO_SLUG}:latest) && docker cp ${CON}:/home/wonton/wonton/build/doc . ;
+      pyenv local 3.6;
+      pip install git+git://github.com/drdoctr/doctr;
+      doctr deploy --built-docs doc/doxygen/html . ;
+    fi
