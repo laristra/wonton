@@ -58,10 +58,7 @@ Please see the license file at the root of this repository, or at:
   an edge that is shared by two wedges in adjacent cells
  */
 namespace Wonton {
-// TODO:  Right now we're relying on the fact that this enum is
-// TODO:  This should probably be an enum class, unless we are relying on
-//        implicit conversion to Jali types, which we shouldn't be doing...
-//        identical to Jali::Entity_kind.  Need to fix this.
+
 /// The type of mesh entity.
 enum Entity_kind {
   ALL_KIND = -3,     /*!< All possible types */
