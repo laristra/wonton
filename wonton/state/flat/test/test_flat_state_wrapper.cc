@@ -14,7 +14,7 @@ Please see the license file at the root of this repository, or at:
 #include <string>
 
 #include "gtest/gtest.h"
-#include "mpi.h"
+#include "mpi.h"  // jali always needs MPI
 
 
 // Jali mesh factory

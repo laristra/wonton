@@ -53,7 +53,7 @@ set(wonton_LIBRARIES)
 set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  add_definitions(-DENABLE_MPI)
+  add_definitions(-DWONTON_ENABLE_MPI)
 endif ()
 
 
