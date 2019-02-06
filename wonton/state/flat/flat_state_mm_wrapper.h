@@ -317,7 +317,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
   void unpack(std::string field_name, const std::vector<double> & flat_data,
     const std::vector<int> & all_material_ids={}, 
     const std::vector<int> & all_material_shapes={},
-    const std::map<int,std::map<int,int>>& uidToOldIndexInMaterial={} ) {
+    const std::map<int, std::vector<int>>& distributedMaterialCellIds_={} ) {
   
     // get the state vector base class shared pointer
     std::shared_ptr<StateVectorBase> pv =
@@ -401,16 +401,16 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             // existing material data
             std::vector<Wonton::Point<2>> & material_data=kv.second;
             
-            // map to merge material data
-            std::map<int,int> map =uidToOldIndexInMaterial.at(m);
+            // vector to merge material data
+            std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
             
             // merged material data
-            std::vector<Wonton::Point<2>> merged_material_data(map.size());
+            std::vector<Wonton::Point<2>> merged_material_data(distributedMaterialCellIds.size());
             
             // merge the data
             int c=0;
-            for (auto& kv2: map)
-              merged_material_data[c++]=material_data[kv2.second];
+            for (auto id: distributedMaterialCellIds)
+              merged_material_data[c++]=material_data[id];
               
             // add this cell data to the state manager 
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
@@ -474,16 +474,16 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             // existing material data
             std::vector<Wonton::Point<3>> & material_data=kv.second;
             
-            // map to merge material data
-            std::map<int,int> map =uidToOldIndexInMaterial.at(m);
+            // vector to merge material data
+            std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
             
             // merged material data
-            std::vector<Wonton::Point<3>> merged_material_data(map.size());
+            std::vector<Wonton::Point<3>> merged_material_data(distributedMaterialCellIds.size());
             
             // merge the data
             int c=0;
-            for (auto& kv2: map)
-              merged_material_data[c++]=material_data[kv2.second];
+            for (auto id: distributedMaterialCellIds)
+              merged_material_data[c++]=material_data[id];
               
             // add this cell data to the state manager 
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
@@ -537,17 +537,18 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             // existing material data
             std::vector<double> & material_data=kv.second;
             
-            // map to merge material data
-            std::map<int,int> map =uidToOldIndexInMaterial.at(m);
+            // vector to merge material data
+            std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
             
             // merged material data
-            std::vector<double> merged_material_data(map.size());
+            std::vector<double> merged_material_data(distributedMaterialCellIds.size());
             
             // merge the data
             int c=0;
-            for (auto& kv2: map)
-              merged_material_data[c++]=material_data[kv2.second];
+            for (auto id: distributedMaterialCellIds)
+              merged_material_data[c++]=material_data[id];
               
+            // add this cell data to the state manager 
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
         }      
       }
