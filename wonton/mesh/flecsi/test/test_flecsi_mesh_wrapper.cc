@@ -421,9 +421,11 @@ TEST(FleCSI_Mesh_Wrapper, ccw) {
  */
 TEST(FleCSI_Mesh_Wrapper, Get_Neighbor_Cells) {
 
+#ifdef WONTON_ENABLE_MPI
   int size;
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   if (size > 1) return;
+#endif
 
   constexpr size_t nx = 2;
   constexpr size_t ny = 2;
@@ -600,9 +602,11 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
 
 TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_2D) {
 
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1) return;
+#endif
 
   constexpr size_t nx = 2;
   constexpr size_t ny = 2;
@@ -733,9 +737,11 @@ TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_2D) {
 */
 TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_3D) {
 
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc > 1) return; 
+  if (nproc > 1) return;
+#endif
 
   constexpr size_t nx = 2;
   constexpr size_t ny = 2;
@@ -874,9 +880,11 @@ TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_3D) {
 */
 TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
 
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc > 1) return; 
+  if (nproc > 1) return;
+#endif
 
   // Create the mesh
   constexpr size_t nx = 2;
@@ -1019,9 +1027,11 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
 */
 TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_3D) {
 
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc > 1) return; 
+  if (nproc > 1) return;
+#endif
 
   // Create the mesh
   constexpr size_t nx = 2;
@@ -1171,9 +1181,11 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_3D) {
 */
 TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_2D) {
 
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc > 1 ) return; 
+  if (nproc > 1 ) return;
+#endif
 
   // Create the mesh
   constexpr size_t nx = 2;
@@ -1289,9 +1301,11 @@ TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_2D) {
 */
 TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_3D) {
 
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc>1) return; 
+  if (nproc>1) return;
+#endif
 
   // Create the mesh
   constexpr size_t nx = 2;
@@ -1407,9 +1421,11 @@ TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_3D) {
 // Check that we can facetize cells and dual cells in 3D correctly
 /*
 TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc > 1) return; 
+  if (nproc > 1) return;
+#endif 
 
   //create 5x5x5 mesh
   constexpr size_t nx = 5;
@@ -1562,9 +1578,11 @@ TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
 // Check that we can compute volumes and centroids of skewed cells correctly
 
 /*TEST(FleCSI_Mesh_Wrapper, Skewed_2DCell_Geometry) {
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
-  if (nproc > 1) return; 
+  if (nproc > 1) return;
+#endif 
 
   //create 1x1 mesh
   constexpr size_t nx = 1;
@@ -1607,9 +1625,11 @@ TEST(FleCSI_Mesh_Wrapper, MultiCell_Facetization) {
 // Check that we can compute volumes and centroids of skewed cells correctly
 /*
 TEST(FleCSI_Mesh_Wrapper, Skewed_3DCell_Geometry) {
+#ifdef WONTON_ENABLE_MPI
   int nproc, me;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1) return; 
+#endif
 
   //create 1x1 mesh
   constexpr size_t nx = 1;

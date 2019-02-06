@@ -166,12 +166,29 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     build_aux_entities();
   }
 
-  //! Create maps for index space conversions
+  // Create complete topologies for the various mesh entities.This topology is
+  // defined by cells, faces and nodes. This is true in both dimensions 2 and 3
+  // but obviously what is meant by these changes with dimension.
+  // These topologies include the maps: cellToFace and faceToNode
+  // and the skip map: cellToNode.
+  // We also create the single inverse map going from nodeToCell.
+  // This routine also computes offsets, which turn counts into partial sums so
+  // that the relevant topologies, e.g. cell face indices, can be extracted from
+  // the corresponding complete lists
+  // Since faces are unique between cells, we also need to assign a direction to
+  // each face in a cell
   void make_index_maps() {
 
-    // Compute node and face offsets
     if (dim_ == 2)
     {
+      // In 2D, we need to construct faces and their connectivity since the
+      // boundary representation is just vertices around cells. A face in 2D is
+      // and edge, and edges aren't specified, so we need to create them. Faces
+      // also need to have directions and we need to make sure those are created
+      // as well. 
+      // In 2D we are given the skip topology cellToNode, and we need to construct
+      // the adjacent topologies cellToFace and faceToNode.
+      
       compute_offsets(cellNodeCounts_, &cellNodeOffsets_);
 
       // Clear and reserve
@@ -182,11 +199,20 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       cellToFaceDirs_.reserve(cellNodeCounts_.size());
       
       faceToNodeList_.clear();
-      // DWS face to node is number of edges * 2???
       faceToNodeList_.reserve(cellToNodeList_.size()); // slight underestimate
       
-      std::map<std::pair<int, int>, int> nodeToFaceTmp;
+      // in 2D we directly specify the cell to node map. In order to complete
+      // the topology we need to construct faces on the fly. Each face is 
+      // defined by an (vertex, next_vertex) pair. There are as many faces(edges)
+      // as vertices.
+      
+      // a temporary map that takes an edge node pair (v, next_v) and maps it to
+      // a face id   
+      std::map<std::pair<int, int>, int> nodePairToFaceTmp;
+      
+      // new face/edge counter
       int facecount = 0;
+      
       for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
         int offset = cellNodeOffsets_[c];
         int count = cellNodeCounts_[c];
@@ -197,12 +223,12 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
           int p0 = std::min(n0, n1);
           int p1 = std::max(n0, n1);
           auto npair = std::make_pair(p0, p1);
-          auto it = nodeToFaceTmp.find(npair);
+          auto it = nodePairToFaceTmp.find(npair);
           int face;
-          if (it == nodeToFaceTmp.end()) {
+          if (it == nodePairToFaceTmp.end()) {
             // new face
             face = facecount;
-            nodeToFaceTmp.insert(std::make_pair(npair, face));
+            nodePairToFaceTmp.insert(std::make_pair(npair, face));
             faceToNodeList_.emplace_back(p0);
             faceToNodeList_.emplace_back(p1);
             ++facecount;
@@ -219,8 +245,11 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
 
       }  // for c    
     }
-    if (dim_ == 3)
+    else if (dim_ == 3)
     {
+      // In 3D, we are given the adjacent topologies cellToFace and faceToNode
+      // and we only need to compute the skip topology cellToNode
+      
       compute_offsets(faceNodeCounts_, &faceNodeOffsets_);
       compute_offsets(cellFaceCounts_, &cellFaceOffsets_);
       
@@ -249,7 +278,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       compute_offsets(cellNodeCounts_, &cellNodeOffsets_);
     }
 
-    // Compute node-to-cell adjacency lists
+    // Compute inverse node-to-cell adjacency lists
     int numNodes = nodeCoords_.size()/dim_;
     std::vector<std::set<int>> nodeToCellTmp(numNodes);
     for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {

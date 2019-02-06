@@ -22,6 +22,10 @@ Please see the license file at the root of this repository, or at:
 
 #endif
 
+#ifdef WONTON_ENABLE_MPI
+#include "mpi.h"
+#endif
+
 /*
   @file wonton.h
   @brief Several utility types and functions within the Wonton namespace.
@@ -58,10 +62,7 @@ Please see the license file at the root of this repository, or at:
   an edge that is shared by two wedges in adjacent cells
  */
 namespace Wonton {
-// TODO:  Right now we're relying on the fact that this enum is
-// TODO:  This should probably be an enum class, unless we are relying on
-//        implicit conversion to Jali types, which we shouldn't be doing...
-//        identical to Jali::Entity_kind.  Need to fix this.
+
 /// The type of mesh entity.
 enum Entity_kind {
   ALL_KIND = -3,     /*!< All possible types */
@@ -114,6 +115,23 @@ enum class Field_type {
 /// index is the cell and the second is the material; MATERIAL_CENTRIC
 /// means the first index is the material and the second is the cell
 enum class Data_layout {CELL_CENTRIC, MATERIAL_CENTRIC};
+
+
+/// Executor definition that lets us distinguish between serial and
+/// parallel runs as well as furnish a communicator
+struct Executor_type {
+  virtual ~Executor_type() = default;
+};
+
+struct SerialExecutor_type : Executor_type {};  // for RTTI
+
+#ifdef WONTON_ENABLE_MPI
+struct MPIExecutor_type : Executor_type {
+  MPIExecutor_type(MPI_Comm comm) : mpicomm(comm) {}
+  MPI_Comm mpicomm = MPI_COMM_WORLD;
+};
+#endif
+
 
 
 #ifdef THRUST
