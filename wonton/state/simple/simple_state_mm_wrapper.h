@@ -40,6 +40,16 @@ class Simple_State_Wrapper: public StateManager<MeshWrapper> {
   /// Destructor.
   ~Simple_State_Wrapper() { }
 
+  /*!
+    @brief Return the number of cells for this material id.
+    @param[in] m     material id
+    @return                    number of cells containing this material
+
+    Return the number of cells for this material id.
+  */
+  int mat_get_num_cells(int m) const {
+    return StateManager<MeshWrapper>::num_material_cells(m);
+  }
 
  private:
 
