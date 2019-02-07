@@ -3,4 +3,4 @@
 	url = ssh://xcp-stash.lanl.gov:7999/laristra/cinch
 [submodule "wonton/intersect/r3d"]
 	path = wonton/intersect/r3d
-	url = https://github.com/devonmpowell/r3d.git
+	url = https://github.com/ekikinzon/r3d.git
