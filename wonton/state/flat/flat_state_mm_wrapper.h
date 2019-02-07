@@ -441,7 +441,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         // We need to turn the flattened material cells into a correctly shaped
         // ragged right structure for use as the material cells in the flat
         // state wrapper. Just as in the flat state mesh field (and associated
-        // cell ids), we aren't removing duplicates, just concatnating by material
+        // cell ids), we aren't removing duplicates, just concatenating by material
         /////////////////////////////////////////////////////////
         
         
