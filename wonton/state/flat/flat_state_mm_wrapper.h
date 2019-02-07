@@ -341,6 +341,12 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
       
     } else if (field_type == Wonton::Field_type::MULTIMATERIAL_FIELD){
     
+      // THIS SHOULD BE MADE PRETTIER DURING A CLEANUP SPRINT. THE FOLLOWING
+      // THREE CODE BLOCKS POINT<2>, POINT<3>, AND DOUBLE ARE NEARLY IDENTICAL
+      // POINT<2> AND POINT<3> COULD OBVIOUSLY BE TEMPLATED, THE DOUBLE CASE
+      // MAY NEED IT'S OWN FUNCTION. BUT, THE CASE SHOULD BE WRITTEN AS FUNCTIONS
+      // RATHER THAN INLINE
+      
       // this is a multimaterial field
   
       if ( data_type == typeid(Wonton::Point<2>)){
@@ -389,7 +395,6 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             
         }
               
-        // add the material indices by keys
         // the underlying api mat_add_celldata clears the existing data
         for ( auto& kv: material_data){
             
