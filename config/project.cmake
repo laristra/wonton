@@ -6,6 +6,16 @@ Please see the license file at the root of this repository, or at:
 
 project(wonton CXX)
 
+# SEMANTIC VERSION NUMBERS - UPDATE DILIGENTLY
+# As soon as a change with a new version number is merged into the master,
+# tag the central repository.
+
+set(WONTON_VERSION_MAJOR 0)
+set(WONTON_VERSION_MINOR 0)
+set(WONTON_VERSION_PATCH b2fa9daa213)
+
+
+
 cinch_minimum_required(VERSION 1.0)
 
 # If a C++14 compiler is available, then set the appropriate flags
@@ -39,12 +49,15 @@ set(CINCH_HEADER_SUFFIXES "\\.h")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
+# set the name of the WONTON library
+
+set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
 
 #-----------------------------------------------------------------------------
 # Gather all the third party libraries needed for Wonton
 #-----------------------------------------------------------------------------
 
-set(wonton_LIBRARIES)
+set(WONTON_EXTRA_LIBRARIES)
 
 #------------------------------------------------------------------------------#
 # Set up MPI builds
@@ -54,6 +67,7 @@ set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
   add_definitions(-DWONTON_ENABLE_MPI)
+  set(WONTON_ENABLE_MPI True CACHE BOOL "Is Wonton is compiled with MPI?")
 endif ()
 
 
@@ -70,11 +84,13 @@ if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
  include_directories(${FleCSI_INCLUDE_DIR})
  message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
+ set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${FleCSI_LIBRARIES})
 
  find_package(FleCSISP REQUIRED)
  message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
  include_directories(${FleCSISP_INCLUDE_DIR})
  message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
+ set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${FleCSISP_LIBRARIES})
 
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
@@ -103,6 +119,7 @@ if (Jali_DIR AND NOT Jali_LIBRARIES)
 
    include_directories(${Jali_INCLUDE_DIRS} ${Jali_TPL_INCLUDE_DIRS})
 
+   set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
 endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 #-----------------------------------------------------------------------------
@@ -187,6 +204,9 @@ if (LAPACKE_FOUND)
   include_directories(${LAPACKE_INCLUDE_DIRS})
   add_definitions("-DHAVE_LAPACKE")
 
+  set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${LAPACKE_LIBRARIES})
+
+
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
 else (LAPACKE_FOUND)
@@ -199,6 +219,29 @@ endif (LAPACKE_FOUND)
 #-----------------------------------------------------------------------------
 
 cinch_add_library_target(wonton wonton)
-# TODO - merge LAPACKE_LIBRARIES into wonton_LIBRARIES
-cinch_target_link_libraries(wonton ${wonton_LIBRARIES})
+# TODO - merge LAPACKE_LIBRARIES into WONTON_LIBRARIES
+cinch_target_link_libraries(wonton ${WONTON_LIBRARIES})
 cinch_target_link_libraries(wonton ${LAPACKE_LIBRARIES})
+
+
+# build the WONTON_LIBRARIES variable
+set(WONTON_LIBRARIES ${WONTON_LIBRARY} ${WONTON_EXTRA_LIBRARIES} CACHE STRING "List of libraries to link with wonton")
+
+# retrieve all the definitions we added for compiling
+get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS)
+
+############################################################################## 
+# Write a configuration file from template replacing only variables enclosed
+# by the @ sign. This will let other programs build on WONTON discover how
+# WONTON was built and which TPLs it used
+#############################################################################
+
+configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton_config.cmake.in 
+               ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton_config.cmake 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
+
+configure_file(${PROJECT_SOURCE_DIR}/wonton/support/wonton.h
+               ${PROJECT_BINARY_DIR}/wonton/support/wonton.h @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton/support/wonton.h
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wonton/support/)
