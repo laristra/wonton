@@ -84,13 +84,13 @@ if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
  include_directories(${FleCSI_INCLUDE_DIR})
  message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
- set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${FleCSI_LIBRARIES})
+ list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSI_LIBRARIES})
 
  find_package(FleCSISP REQUIRED)
  message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
  include_directories(${FleCSISP_INCLUDE_DIR})
  message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
- set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${FleCSISP_LIBRARIES})
+ list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSISP_LIBRARIES})
 
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
@@ -119,7 +119,7 @@ if (Jali_DIR AND NOT Jali_LIBRARIES)
 
    include_directories(${Jali_INCLUDE_DIRS} ${Jali_TPL_INCLUDE_DIRS})
 
-   set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
+   list(APPEND WONTON_EXTRA_LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
 endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 #-----------------------------------------------------------------------------
@@ -204,8 +204,7 @@ if (LAPACKE_FOUND)
   include_directories(${LAPACKE_INCLUDE_DIRS})
   add_definitions("-DHAVE_LAPACKE")
 
-  set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${LAPACKE_LIBRARIES})
-
+  list(APPEND WONTON_EXTRA_LIBRARIES ${LAPACKE_LIBRARIES})
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
@@ -213,6 +212,50 @@ else (LAPACKE_FOUND)
    unset(LAPACKE_LIBRARIES)  # otherwise it will be LAPACKE-NOTFOUND or something
 endif (LAPACKE_FOUND)
 
+#-----------------------------------------------------------------------------
+# Thrust information
+#-----------------------------------------------------------------------------
+set(ENABLE_THRUST FALSE CACHE BOOL "Use Thrust")
+if(ENABLE_THRUST)
+  message(STATUS "Enabling compilation with Thrust")
+  # allow the user to specify a THRUST_DIR, otherwise use ${NGC_INCLUDE_DIR}
+  # NOTE: thrust internally uses include paths from the 'root' directory, e.g.
+  #
+  #       #include "thrust/device_vector.h"
+  #
+  #       so the path here should point to the directory that has thrust as
+  #       a subdirectory.
+  # Use THRUST_DIR directly if specified, otherwise try to build from NGC
+  set(THRUST_DIR "${NGC_INCLUDE_DIR}" CACHE PATH "Thrust directory")
+  message(STATUS "Using THRUST_DIR=${THRUST_DIR}")
+
+  # Allow for swapping backends
+  set(THRUST_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust backend")
+  message(STATUS "Using ${THRUST_BACKEND} as Thrust backend.")
+  include_directories(${THRUST_DIR})
+  add_definitions(-DWONTON_ENABLE_THRUST)
+  add_definitions(-DTHRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
+  set(WONTON_ENABLE_THRUST True Cache Bool "Is the Thrust libray being used?")
+
+  if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_OMP")
+    FIND_PACKAGE( OpenMP REQUIRED)
+    if(OPENMP_FOUND)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    endif(OPENMP_FOUND)
+  endif ()
+
+  if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_TBB")
+    FIND_PACKAGE(TBB REQUIRED)
+    if(TBB_FOUND)
+      include_directories(${TBB_INCLUDE_DIRS})
+      link_directories(${TBB_LIBRARY_DIRS})
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltbb")
+    endif(TBB_FOUND)
+  endif()
+
+endif(ENABLE_THRUST)
 
 #-----------------------------------------------------------------------------
 # Now add the source directories
