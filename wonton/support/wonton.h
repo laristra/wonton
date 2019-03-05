@@ -7,11 +7,7 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_SUPPORT_WONTON_H_
 #define WONTON_SUPPORT_WONTON_H_
 
-#define WONTON_VERSION_MAJOR @WONTON_VERSION_MAJOR@
-#define WONTON_VERSION_MINOR @WONTON_VERSION_MINOR@
-#define WONTON_VERSION_PATCH @WONTON_VERSION_PATCH@
-
-#ifdef THRUST
+#ifdef WONTON_ENABLE_THRUST
 
 #include "thrust/device_vector.h"
 #include "thrust/iterator/counting_iterator.h"
@@ -138,7 +134,7 @@ struct MPIExecutor_type : Executor_type {
 
 
 
-#ifdef THRUST
+#ifdef WONTON_ENABLE_THRUST
 
 template<typename T>
     using vector = thrust::device_vector<T>;
