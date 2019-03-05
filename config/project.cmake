@@ -67,8 +67,11 @@ set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
   add_definitions(-DWONTON_ENABLE_MPI)
-  set(WONTON_ENABLE_MPI True CACHE BOOL "Is Wonton is compiled with MPI?")
-endif ()
+  
+  set(WONTON_ENABLE_MPI True CACHE BOOL "Whether MPI is enabled")
+  set(WONTON_ENABLE_MPI_DEFINE "#define WONTON_ENABLE_MPI" CACHE STRING
+    "define string to indicate that WONTON was compiled with MPI")
+endif (ENABLE_MPI)
 
 
 set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
@@ -235,7 +238,10 @@ if(ENABLE_THRUST)
   include_directories(${THRUST_DIR})
   add_definitions(-DWONTON_ENABLE_THRUST)
   add_definitions(-DTHRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
-  set(WONTON_ENABLE_THRUST True Cache Bool "Is the Thrust libray being used?")
+
+  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
+  set(WONTON_ENABLE_THRUST_DEFINE "#define WONTON_ENABLE_THRUST" CACHE STRING
+    "define string to indicate that WONTON was compiled with THRUST")
 
   if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_OMP")
     FIND_PACKAGE( OpenMP REQUIRED)
@@ -280,11 +286,12 @@ get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} 
 #############################################################################
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton_config.cmake.in 
-               ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
+  ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
 install(FILES ${PROJECT_BINARY_DIR}/wonton_config.cmake 
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
 
-configure_file(${PROJECT_SOURCE_DIR}/wonton/support/wonton.h
-               ${PROJECT_BINARY_DIR}/wonton/support/wonton.h @ONLY)
-install(FILES ${PROJECT_BINARY_DIR}/wonton/support/wonton.h
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wonton/support/)
+
+configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
+  ${PROJECT_BINARY_DIR}/wonton-config.h @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
