@@ -66,7 +66,7 @@ if [[ $build_type == "debug" ]]; then
 elif [[ $build_type == "serial" ]]; then
     mpi_flags=
     jali_flags=         # jali is not available in serial
-elif [[ $build_type == "thrust" ]]; 
+elif [[ $build_type == "thrust" ]]; then
     thrust_flags = "-D ENABLE_THRUST=True -DTHRUST_DIR:FILEPATH=${thrust_dir}"
 fi
 
