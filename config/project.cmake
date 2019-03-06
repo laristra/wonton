@@ -66,10 +66,7 @@ set(WONTON_EXTRA_LIBRARIES)
 set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  
   set(WONTON_ENABLE_MPI True CACHE BOOL "Whether MPI is enabled")
-  set(WONTON_ENABLE_MPI_DEFINE "#define WONTON_ENABLE_MPI" CACHE STRING
-    "define string to indicate that WONTON was compiled with MPI")
 endif (ENABLE_MPI)
 
 
