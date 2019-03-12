@@ -81,17 +81,17 @@ set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
 set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
 if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
- find_package(FleCSI REQUIRED)
- message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
- include_directories(${FleCSI_INCLUDE_DIR})
- message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
- list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSI_LIBRARIES})
-
- find_package(FleCSISP REQUIRED)
- message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
- include_directories(${FleCSISP_INCLUDE_DIR})
- message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
- list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSISP_LIBRARIES})
+  find_package(FleCSI REQUIRED)
+  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
+  include_directories(${FleCSI_INCLUDE_DIR})
+  message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
+  list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSI_LIBRARIES})
+  
+  find_package(FleCSISP REQUIRED)
+  message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
+  include_directories(${FleCSISP_INCLUDE_DIR})
+  message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
+  list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSISP_LIBRARIES})
 
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
@@ -129,9 +129,9 @@ endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 if ( NOT Jali_DIR)
 
- find_package(Boost REQUIRED)
- include_directories(${Boost_INCLUDE_DIR})
- message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
+  find_package(Boost REQUIRED)
+  include_directories(${Boost_INCLUDE_DIR})
+  message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
 
 endif( NOT Jali_DIR)
 
