@@ -68,7 +68,7 @@ if (ENABLE_MPI)
   find_package(MPI REQUIRED)
   set(WONTON_ENABLE_MPI True CACHE BOOL "Whether MPI is enabled")
   set(CMAKE_C_COMPILER ${MPI_C_COMPILER} CACHE FILEPATH "C compiler to use" FORCE)
-  set(CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER} CACHE FILEPATH "C compiler to use" FORCE)
+  set(CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER} CACHE FILEPATH "C++ compiler to use" FORCE)
 endif (ENABLE_MPI)
 
 
