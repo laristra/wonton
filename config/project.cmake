@@ -66,9 +66,10 @@ set(WONTON_EXTRA_LIBRARIES)
 set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  add_definitions(-DWONTON_ENABLE_MPI)
-  set(WONTON_ENABLE_MPI True CACHE BOOL "Is Wonton is compiled with MPI?")
-endif ()
+  set(WONTON_ENABLE_MPI True CACHE BOOL "Whether MPI is enabled")
+  set(CMAKE_C_COMPILER ${MPI_C_COMPILER} CACHE FILEPATH "C compiler to use" FORCE)
+  set(CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER} CACHE FILEPATH "C++ compiler to use" FORCE)
+endif (ENABLE_MPI)
 
 
 set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
@@ -80,17 +81,17 @@ set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
 set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
 if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
- find_package(FleCSI REQUIRED)
- message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
- include_directories(${FleCSI_INCLUDE_DIR})
- message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
- set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${FleCSI_LIBRARIES})
-
- find_package(FleCSISP REQUIRED)
- message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
- include_directories(${FleCSISP_INCLUDE_DIR})
- message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
- set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${FleCSISP_LIBRARIES})
+  find_package(FleCSI REQUIRED)
+  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
+  include_directories(${FleCSI_INCLUDE_DIR})
+  message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
+  list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSI_LIBRARIES})
+  
+  find_package(FleCSISP REQUIRED)
+  message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
+  include_directories(${FleCSISP_INCLUDE_DIR})
+  message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
+  list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSISP_LIBRARIES})
 
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
@@ -119,7 +120,7 @@ if (Jali_DIR AND NOT Jali_LIBRARIES)
 
    include_directories(${Jali_INCLUDE_DIRS} ${Jali_TPL_INCLUDE_DIRS})
 
-   set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
+   list(APPEND WONTON_EXTRA_LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
 endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 #-----------------------------------------------------------------------------
@@ -128,9 +129,9 @@ endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 if ( NOT Jali_DIR)
 
- find_package(Boost REQUIRED)
- include_directories(${Boost_INCLUDE_DIR})
- message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
+  find_package(Boost REQUIRED)
+  include_directories(${Boost_INCLUDE_DIR})
+  message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
 
 endif( NOT Jali_DIR)
 
@@ -204,8 +205,7 @@ if (LAPACKE_FOUND)
   include_directories(${LAPACKE_INCLUDE_DIRS})
   add_definitions("-DHAVE_LAPACKE")
 
-  set(WONTON_EXTRA_LIBRARIES ${WONTON_EXTRA_LIBRARIES} ${LAPACKE_LIBRARIES})
-
+  list(APPEND WONTON_EXTRA_LIBRARIES ${LAPACKE_LIBRARIES})
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
@@ -213,10 +213,62 @@ else (LAPACKE_FOUND)
    unset(LAPACKE_LIBRARIES)  # otherwise it will be LAPACKE-NOTFOUND or something
 endif (LAPACKE_FOUND)
 
+#-----------------------------------------------------------------------------
+# Thrust information
+#-----------------------------------------------------------------------------
+set(ENABLE_THRUST FALSE CACHE BOOL "Use Thrust")
+if(ENABLE_THRUST)
+  message(STATUS "Enabling compilation with Thrust")
+  # allow the user to specify a THRUST_DIR, otherwise use ${NGC_INCLUDE_DIR}
+  # NOTE: thrust internally uses include paths from the 'root' directory, e.g.
+  #
+  #       #include "thrust/device_vector.h"
+  #
+  #       so the path here should point to the directory that has thrust as
+  #       a subdirectory.
+  # Use THRUST_DIR directly if specified, otherwise try to build from NGC
+  set(THRUST_DIR "${NGC_INCLUDE_DIR}" CACHE PATH "Thrust directory")
+  message(STATUS "Using THRUST_DIR=${THRUST_DIR}")
+
+  # Allow for swapping backends
+  set(THRUST_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust backend")
+  message(STATUS "Using ${THRUST_BACKEND} as Thrust backend.")
+  include_directories(${THRUST_DIR})
+  add_definitions(-DTHRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
+
+  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
+
+  if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_OMP")
+    FIND_PACKAGE( OpenMP REQUIRED)
+    if(OPENMP_FOUND)
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    endif(OPENMP_FOUND)
+  endif ()
+
+  if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_TBB")
+    FIND_PACKAGE(TBB REQUIRED)
+    if(TBB_FOUND)
+      include_directories(${TBB_INCLUDE_DIRS})
+      link_directories(${TBB_LIBRARY_DIRS})
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltbb")
+    endif(TBB_FOUND)
+  endif()
+
+endif(ENABLE_THRUST)
 
 #-----------------------------------------------------------------------------
 # Now add the source directories
 #-----------------------------------------------------------------------------
+
+# In addition to the include directories of the source set by cinch,
+# we need to include the build directory to get the autogenerated
+# wonton-config.h
+
+include_directories(${CMAKE_BINARY_DIRECTORY})
+
+# Libraries
 
 cinch_add_library_target(wonton wonton)
 # TODO - merge LAPACKE_LIBRARIES into WONTON_LIBRARIES
@@ -237,11 +289,12 @@ get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} 
 #############################################################################
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton_config.cmake.in 
-               ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
+  ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
 install(FILES ${PROJECT_BINARY_DIR}/wonton_config.cmake 
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
 
-configure_file(${PROJECT_SOURCE_DIR}/wonton/support/wonton.h
-               ${PROJECT_BINARY_DIR}/wonton/support/wonton.h @ONLY)
-install(FILES ${PROJECT_BINARY_DIR}/wonton/support/wonton.h
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/wonton/support/)
+
+configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
+  ${PROJECT_BINARY_DIR}/wonton-config.h @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include)

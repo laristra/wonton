@@ -30,6 +30,9 @@ lapack_version=3.8.0
 export NGC=/usr/local/codes/ngc
 ngc_include_dir=$NGC/private/include
 
+thrust_dir=${ngc_include_dir}
+
+
 # compiler-specific settings
 if [[ $compiler == "intel" ]]; then
   intel_version=18.0.1
@@ -51,11 +54,20 @@ elif [[ $compiler == "gcc" ]]; then
   lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-gcc-${gcc_version}
 fi
 
+
 # build-type-specific settings
 cmake_build_type=Release
+mpi_flags="-D ENABLE_MPI=True"
 extra_flags=
+thrust_flags=
+lapacke_flags="-D LAPACKE_DIR:FILEPATH=$lapacke_dir"
 if [[ $build_type == "debug" ]]; then
-  cmake_build_type=Debug
+    cmake_build_type=Debug
+elif [[ $build_type == "serial" ]]; then
+    mpi_flags=
+    jali_flags=         # jali is not available in serial
+elif [[ $build_type == "thrust" ]]; then
+    thrust_flags="-D ENABLE_THRUST=True -DTHRUST_DIR:FILEPATH=${thrust_dir}"
 fi
 
 export SHELL=/bin/sh
@@ -63,7 +75,9 @@ export SHELL=/bin/sh
 export MODULEPATH=""
 . /opt/local/packages/Modules/default/init/sh
 module load $cxxmodule
-module load ${mpi_module}
+if [[ -n "$mpi_flags" ]]; then
+    module load ${mpi_module}
+fi
 module load cmake # 3.0 or higher is required
 
 echo $WORKSPACE
@@ -76,11 +90,12 @@ cmake \
     -D CMAKE_BUILD_TYPE=$cmake_build_type \
     -D ENABLE_UNIT_TESTS=True \
     -D ENABLE_APP_TESTS=True \
-    -D ENABLE_MPI=True \
     -D ENABLE_JENKINS_OUTPUT=True \
     -D NGC_INCLUDE_DIR:FILEPATH=$ngc_include_dir \
-    -D Jali_DIR:FILEPATH=$jali_install_dir/lib \
-    -D LAPACKE_DIR:FILEPATH=$lapacke_dir \
+    $mpi_flags \
+    $jali_flags \
+    $lapacke_flags \
+    $thrust_flags \
     ..
 make -j2
 ctest --output-on-failure

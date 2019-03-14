@@ -5,7 +5,9 @@ COMPILER:
 BUILD_TYPE:
   - base
   - debug
+  - serial
   - readme
+  - thrust
 
 exclude:
   - COMPILER: gcc
