@@ -6,17 +6,15 @@ Please see the license file at the root of this repository, or at:
 
 project(wonton CXX)
 
+cinch_minimum_required(VERSION 1.0)
+
 # SEMANTIC VERSION NUMBERS - UPDATE DILIGENTLY
 # As soon as a change with a new version number is merged into the master,
 # tag the central repository.
 
-set(WONTON_VERSION_MAJOR 0)
+set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 0)
-set(WONTON_VERSION_PATCH b2fa9daa213)
-
-
-
-cinch_minimum_required(VERSION 1.0)
+set(WONTON_VERSION_PATCH 0)
 
 # If a C++14 compiler is available, then set the appropriate flags
 include(cxx14)
