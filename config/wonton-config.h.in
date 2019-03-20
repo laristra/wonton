@@ -1,0 +1,30 @@
+/*
+This file is part of the Ristra Wonton project.
+Please see the license file at the root of this repository, or at:
+    https://github.com/laristra/wonton/blob/master/LICENSE
+*/
+
+#ifndef WONTON_CONFIG_H_
+#define WONTON_CONFIG_H_
+
+// This file contains a set of defines generated automatically by
+// CMake during installation
+
+
+// WONTON version number
+
+#define WONTON_VERSION_MAJOR @WONTON_VERSION_MAJOR@
+#define WONTON_VERSION_MINOR @WONTON_VERSION_MINOR@
+#define WONTON_VERSION_PATCH @WONTON_VERSION_PATCH@
+
+// Is WONTON compiled with MPI
+
+#cmakedefine WONTON_ENABLE_MPI
+
+// Is WONTON compiled with Thrust
+
+#cmakedefine WONTON_ENABLE_THRUST
+
+
+#endif  // WONTON_CONFIG_H_
+
