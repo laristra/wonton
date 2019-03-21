@@ -91,7 +91,7 @@ class Direct_Product_Mesh {
 
   // TODO: doxygen
   // TODO: move definition outside of class, but leave declaration here
-  int get_dimensionality() const {
+  int space_dimension() const {
       return dimensionality_;
   }
 

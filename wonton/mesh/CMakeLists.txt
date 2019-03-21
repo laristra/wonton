@@ -22,6 +22,7 @@ endif ()
 
 set(mesh_HEADERS
   AuxMeshTopology.h
+  direct_product/direct_product_mesh.h
   simple/simple_mesh.h
   simple/simple_mesh_wrapper.h
   flat/flat_mesh_wrapper.h
@@ -31,6 +32,12 @@ set(mesh_HEADERS
   )
 
 if (ENABLE_UNIT_TESTS)
+
+  # Direct Product Mesh
+  cinch_add_unit(test_direct_product_mesh
+    SOURCES direct_product/test/test_direct_product_mesh.cc
+    POLICY SERIAL
+    )
 
   # Simple Mesh
   cinch_add_unit(test_simple_mesh

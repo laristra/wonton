@@ -104,7 +104,7 @@ Direct_Product_Mesh_Wrapper::~Direct_Product_Mesh_Wrapper() {
 // Get global mesh bounds
 template<long D>
 void get_global_bounds(Point<D> *plo, Point<D> *phi) const {
-  assert(D == mesh_.get_dimensionality())
+  assert(D == mesh_.space_dimension())
   (*plo)[0] = edges_i_.front();
   (*phi)[0] = edges_i_.back();
   if (D >= 2) {
