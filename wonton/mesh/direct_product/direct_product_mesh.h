@@ -37,7 +37,7 @@ namespace Wonton {
 
   The Direct_Product_Mesh is designed to implement only the necessary
   functionality to test certain components in Wonton and Portage.  As the scope
-  of the tests expands, the scope of functionality of the Direct_Product_mesh
+  of the tests expands, the scope of functionality of the Direct_Product_Mesh
   may also expand.
  */
 class Direct_Product_Mesh {
@@ -137,7 +137,7 @@ class Direct_Product_Mesh {
   int dimensionality_ = -1;
 
   //! Cell edge coordinates along the three axes
-  std::vector<double>[MAXDIM_] edges_;
+  std::vector<double> edges_[MAXDIM_];
 
 };  // class Direct_Product_Mesh
 
@@ -147,7 +147,7 @@ class Direct_Product_Mesh {
 
 // ____________________________________________________________________________
 // 1D constructor (see class definition for declaration).
-Direct_Product_Mesh::Direct_Product_mesh(const std::vector<double> edges) {
+Direct_Product_Mesh::Direct_Product_Mesh(const std::vector<double> edges) {
   dimensionality_ = 1;
   edges_[0] = edges;
   set_default_coordinates();
@@ -155,7 +155,7 @@ Direct_Product_Mesh::Direct_Product_mesh(const std::vector<double> edges) {
 
 // ____________________________________________________________________________
 // 2D constructor (see class definition for declaration).
-Direct_Product_Mesh::Direct_Product_mesh(
+Direct_Product_Mesh::Direct_Product_Mesh(
     const std::vector<double> edges_i,
     const std::vector<double> edges_j) {
   dimensionality_ = 2;
@@ -170,7 +170,7 @@ Direct_Product_Mesh::Direct_Product_mesh(
 
 // ____________________________________________________________________________
 // 3D constructor (see class definition for declaration).
-Direct_Product_Mesh::Direct_Product_mesh(
+Direct_Product_Mesh::Direct_Product_Mesh(
     const std::vector<double> edges_i,
     const std::vector<double> edges_j,
     const std::vector<double> edges_k) {
@@ -183,9 +183,9 @@ Direct_Product_Mesh::Direct_Product_mesh(
 
 // ____________________________________________________________________________
 // destructor (see class definition for declaration).
-Direct_Product_Mesh::~Direct_Product_mesh() {
+Direct_Product_Mesh::~Direct_Product_Mesh() {
   dimensionality_ = -1;
-  for (d = 0, d < MAXDIM_; ++d) {
+  for (int d = 0; d < MAXDIM_; ++d) {
     edges_[d].clear();
   }
 }
@@ -193,7 +193,7 @@ Direct_Product_Mesh::~Direct_Product_mesh() {
 
 // ============================================================================
 // Private support methods
-void set_default_coordinates() {
+void Direct_Product_Mesh::set_default_coordinates() {
   switch(dimensionality_) {
     case 1 :
       // Cartesian coordinates (currently no others available)
@@ -210,6 +210,7 @@ void set_default_coordinates() {
       break;
     default :
       // TODO: Generate an error.
+      break;
   }
 }
 
