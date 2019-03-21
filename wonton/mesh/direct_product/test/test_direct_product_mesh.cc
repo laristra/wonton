@@ -7,7 +7,7 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/mesh/direct_product/direct_product_mesh.h"
 
 #include <iostream>
-#include <math>
+#include <cmath>
 #include <vector>
 
 #include "wonton/support/wonton.h"
@@ -72,12 +72,12 @@ TEST(Direct_Product_Mesh2D, SmallGrid) {
 
 // ============================================================================
 
-TEST(Direct_Product_Mesh1D, SingleCell) {
+TEST(Direct_Product_Mesh1D, SmallGrid) {
 
   // Create a single cell mesh
   //                           2^-4    2^-3   2^-2  2^-1 2^0
   std::vector<double> edges = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  Wonton::Direct_Product_Mesh mesh(edges};
+  Wonton::Direct_Product_Mesh mesh(edges);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), 1);
@@ -87,7 +87,7 @@ TEST(Direct_Product_Mesh1D, SingleCell) {
 
   // Cell coordinates
   for (int n = 0; n < mesh.axis_num_points(0); ++n) {
-    ASSERT_EQ(mesh.axis_point_coordinate(0, n), std::pow(2,4-n))
+    ASSERT_EQ(mesh.axis_point_coordinate(0, n), std::pow(0.5,4-n));
   }
 
 }
