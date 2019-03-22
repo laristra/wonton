@@ -48,6 +48,9 @@ class Direct_Product_Mesh {
   // ==========================================================================
   // Constructors and destructors
 
+  //! Default constructor (disabled)
+  Direct_Product_Mesh() = delete;
+
   /*!
     @brief Constructor to create a 1D Direct_Product_Mesh.
     @param[in] edges The cell edge coordinates.

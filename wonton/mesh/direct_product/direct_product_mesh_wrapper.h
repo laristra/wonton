@@ -36,6 +36,9 @@ class Direct_Product_Mesh_Wrapper {
   // ==========================================================================
   // Constructors and destructors
 
+  //! Default constructor (disabled)
+  Direct_Product_Mesh_Wrapper() = delete;
+
   /*!
     @brief Constructor for the mesh wrapper.
     @param[in] mesh The Direct_Product_Mesh we wish to wrap.
