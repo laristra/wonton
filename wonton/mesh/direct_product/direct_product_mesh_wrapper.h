@@ -58,9 +58,7 @@ class Direct_Product_Mesh_Wrapper {
   // ==========================================================================
   // Accessors
 
-  /*!
-    @brief Get dimensionality of the mesh.
-  */
+  //! Get dimensionality of the mesh.
   int space_dimension () const;
 
   /*!
@@ -75,24 +73,16 @@ class Direct_Product_Mesh_Wrapper {
   template<long D>
   void get_global_bounds(Point<D> *plo, Point<D> *phi) const;
 
-  /*!
-    @brief Get iterator for axis edge coordinates (beginning of array).
-  */
+  //! Get iterator for axis edge coordinates (beginning of array).
   counting_iterator axis_point_begin(const int dim) const;
 
-  /*!
-    @brief Get iterator for axis edge coordinates (end of array).
-  */
+  //! Get iterator for axis edge coordinates (end of array).
   counting_iterator axis_point_end(const int dim) const;
 
-  /*!
-    @brief Get edge coordinate value.
-  */
+  //! Get edge coordinate value.
   double axis_point_coordinate(const int dim, const int pointid) const;
 
-  /*!
-    @brief Get number of cells along axis.
-  */
+  //! Get number of cells along axis.
   int axis_num_cells(const int dim) const;
 
 
