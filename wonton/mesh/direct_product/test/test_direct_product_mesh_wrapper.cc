@@ -37,6 +37,13 @@ TEST(Direct_Product_Mesh, OneCell3D) {
   // Check basic dimensionality
   ASSERT_EQ(mesh_wrapper.space_dimension(), dim);
 
+  // Count cells in mesh
+  int cell_count = 1;
+  for (int d = 0; d < dim; ++d) {
+    cell_count *= mesh_wrapper.axis_num_cells(d);
+  }
+  ASSERT_EQ(mesh_wrapper.total_num_cells(), cell_count);
+
   // For each axis
   for (int d = 0; d < dim; ++d) {
     ASSERT_EQ(mesh_wrapper.axis_num_cells(d), all_edges[d].size()-1);
@@ -48,6 +55,36 @@ TEST(Direct_Product_Mesh, OneCell3D) {
       n++;
     }
   }
+
+  // Check IDs vs indices
+  int id = 0
+  for (int k = 0; k < mesh_wrapper.axis_num_cells(2); ++k) {
+    for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
+      for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
+        const IntPoint<dim> indices = {i, j, k};
+        // Ensure indices to cell ID works.
+        ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
+        IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
+        // Ensure cell ID to indices works.
+        for (int d = 0; d < dim; ++d) {
+          ASSERT_EQ(indices2[d], indices[d]);
+        }
+        // Ensure cell ID to indices to cell ID works.
+        int id2 = mesh_wrapper.indices_to_cellid(
+            mesh_wrapper.cellid_to_indices(id));
+        ASSERT_EQ(id2, id);
+        // Ensure indices to cell ID to indices works.
+        indices2 = mesh_wrapper.cellid_to_indices(
+          mesh_wrapper.indices_to_cellid(indices));
+        for (int d = 0; d < dim; ++d) {
+          ASSERT_EQ(indices2[d], indices[d]);
+        }
+        // Increment to next cell ID
+        id++;
+      }
+    }
+  }
+
 }
 
 
@@ -59,7 +96,7 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
 
   // Build a mesh and wrapper
   std::vector<double> edges = {0.0, 0.25, 0.75, 1.0};
-  Wonton::Direct_Product_Mesh mesh(edges, edges, edges);
+  Wonton::Direct_Product_Mesh mesh(edges, edges);
   Wonton::Direct_Product_Mesh_Wrapper mesh_wrapper(mesh);
 
   // Build a useful structure
@@ -70,6 +107,13 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
 
   // Check basic dimensionality
   ASSERT_EQ(mesh_wrapper.space_dimension(), dim);
+
+  // Count cells in mesh
+  int cell_count = 1;
+  for (int d = 0; d < dim; ++d) {
+    cell_count *= mesh_wrapper.axis_num_cells(d);
+  }
+  ASSERT_EQ(mesh_wrapper.total_num_cells(), cell_count);
 
   // For each axis
   for (int d = 0; d < dim; ++d) {
@@ -82,6 +126,34 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
       n++;
     }
   }
+
+  // Check IDs vs indices
+  int id = 0
+  for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
+    for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
+      const IntPoint<dim> indices = {i, j};
+      // Ensure indices to cell ID works.
+      ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
+      IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
+      // Ensure cell ID to indices works.
+      for (int d = 0; d < dim; ++d) {
+        ASSERT_EQ(indices2[d], indices[d]);
+      }
+      // Ensure cell ID to indices to cell ID works.
+      int id2 = mesh_wrapper.indices_to_cellid(
+          mesh_wrapper.cellid_to_indices(id));
+      ASSERT_EQ(id2, id);
+      // Ensure indices to cell ID to indices works.
+      indices2 = mesh_wrapper.cellid_to_indices(
+        mesh_wrapper.indices_to_cellid(indices));
+      for (int d = 0; d < dim; ++d) {
+        ASSERT_EQ(indices2[d], indices[d]);
+      }
+      // Increment to next cell ID
+      id++;
+    }
+  }
+
 }
 
 
@@ -93,7 +165,7 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
 
   // Build a mesh and wrapper
   std::vector<double> edges = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  Wonton::Direct_Product_Mesh mesh(edges, edges, edges);
+  Wonton::Direct_Product_Mesh mesh(edges);
   Wonton::Direct_Product_Mesh_Wrapper mesh_wrapper(mesh);
 
   // Build a useful structure
@@ -104,6 +176,13 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
 
   // Check basic dimensionality
   ASSERT_EQ(mesh_wrapper.space_dimension(), dim);
+
+  // Count cells in mesh
+  int cell_count = 1;
+  for (int d = 0; d < dim; ++d) {
+    cell_count *= mesh_wrapper.axis_num_cells(d);
+  }
+  ASSERT_EQ(mesh_wrapper.total_num_cells(), cell_count);
 
   // For each axis
   for (int d = 0; d < dim; ++d) {
@@ -116,6 +195,32 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
       n++;
     }
   }
+
+  // Check IDs vs indices
+  int id = 0
+  for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
+    const IntPoint<dim> indices = {i};
+    // Ensure indices to cell ID works.
+    ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
+    IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
+    // Ensure cell ID to indices works.
+    for (int d = 0; d < dim; ++d) {
+      ASSERT_EQ(indices2[d], indices[d]);
+    }
+    // Ensure cell ID to indices to cell ID works.
+    int id2 = mesh_wrapper.indices_to_cellid(
+        mesh_wrapper.cellid_to_indices(id));
+    ASSERT_EQ(id2, id);
+    // Ensure indices to cell ID to indices works.
+    indices2 = mesh_wrapper.cellid_to_indices(
+      mesh_wrapper.indices_to_cellid(indices));
+    for (int d = 0; d < dim; ++d) {
+      ASSERT_EQ(indices2[d], indices[d]);
+    }
+    // Increment to next cell ID
+    id++;
+  }
+
 }
 
 
