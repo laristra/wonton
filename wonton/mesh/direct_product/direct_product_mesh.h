@@ -118,7 +118,10 @@ class Direct_Product_Mesh {
     @brief Constructs the default coordinates
 
     For unused axes (e.g., the third axis for a 2D mesh), create the cell edge
-    coordinate arrays.
+    coordinate arrays.  This is useful for things like computing volumes of
+    cells.  For example, the volume of a cell in 2D cylindrical coordinates is
+    the volume of a ring with a square cross-section, and the fact that it is
+    an entire ring needs to be considered when computing the volume.
 
     This method is primarily intended for extensions to curvilinear
     coordinates.  In Cartesian coordinates, the axes are infinite, so we take a
