@@ -139,7 +139,7 @@ Direct_Product_Mesh_Wrapper::~Direct_Product_Mesh_Wrapper() {
 
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
-int Direct_Product_Mesh_Wrapper::space_dimension () const {
+int Direct_Product_Mesh_Wrapper::space_dimension() const {
   return mesh_.space_dimension();
 }
 
@@ -209,51 +209,49 @@ template<long D>
 CellID Direct_Product_Mesh_Wrapper::indices_to_cellid(
     const IntPoint<D>& indices) const {
   assert(D == mesh_.space_dimension());
+  CellID id = 0;
   switch(D) {
-    case 1 :
-      return ((CellID) i);
-      break;
-    case 2 :
-      CellID imax = (CellID) axis_num_cells(0);
-      return ((CellID) j) * imax + ((CellID) i);
-      break;
     case 3 :
-      CellID imax = (CellID) axis_num_cells(0);
+      CellID k = (CellID) indices[2];
       CellID jmax = (CellID) axis_num_cells(1);
-      return (((CellID) k) * jmax + ((CellID) j)) * imax + ((CellID) i);
-      break;
+      id += k;
+      id *= jmax;
+    case 2 :
+      CellID j = (CellID) indices[1];
+      CellID imax = (CellID) axis_num_cells(0);
+      id += j;
+      id *= imax;
+    case 1 : 
+      CellID i = (CellID) indices[0];
+      id += i;
   }
+  return id;
 }
 
 // ____________________________________________________________________________
 // Convert from ID to indices
 template<long D>
-IntPoint<D> Direct_Product_Mesh_Wrapper::cellid_to_indices(const CellID id) const {
+IntPoint<D> Direct_Product_Mesh_Wrapper::cellid_to_indices(
+    const CellID id) const {
   assert(D == mesh_.space_dimension());
-  IntPoint<D> idx;
+  IntPoint<D> indices;
+  CellID index, denom;
+  CellID residual = id;
   switch(D) {
-    case 1 :
-      idx[0] = (int) id;
-      break;
-    case 2 :
-      CellID imax = (CellID) axis_num_cells(0);
-      CellID i = id % imax;
-      CellID j = (id - i) / imax;
-      idx[0] = (int) i;
-      idx[1] = (int) j;
-      break;
     case 3 :
-      CellID imax = (CellID) axis_num_cells(0);
-      CellID jmax = (CellID) axis_num_cells(1);
-      CellID i = id % imax;
-      CellID j = ((id - i) / imax) % jmax;
-      CellID k = (((id - i) / imax) - j) / jmax;
-      idx[0] = (int) i;
-      idx[1] = (int) j;
-      idx[2] = (int) k;
-      break;
+      denom = (CellID) (axis_num_cells(1) * axis_num_cells(0));
+      index = residual / denom;
+      residual -= index * denom;
+      indices[2] = (int) index;
+    case 2 :
+      denom = (CellID) axis_num_cells(0);
+      index = residual / denom;
+      residual -= index * denom;
+      indices[1] = (int) index;
+    case 1 :
+      indices[0] = (int) residual;
   }
-  return std::move(idx);
+  return std::move(indices);
 }
 
 }  // namespace Wonton
