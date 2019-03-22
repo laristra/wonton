@@ -12,6 +12,8 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/mesh/direct_product/direct_product_mesh.h"
 #include "wonton/mesh/direct_product/direct_product_mesh_wrapper.h"
 #include "wonton/support/wonton.h"
+#include "wonton/support/CellID.h"
+#include "wonton/support/IntPoint.h"
 #include "wonton/support/Point.h"
 #include "wonton/support/Vector.h"
 
@@ -57,20 +59,20 @@ TEST(Direct_Product_Mesh, OneCell3D) {
   }
 
   // Check IDs vs indices
-  int id = 0
+  Wonton::CellID id = 0;
   for (int k = 0; k < mesh_wrapper.axis_num_cells(2); ++k) {
     for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
       for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-        const IntPoint<dim> indices = {i, j, k};
+        const Wonton::IntPoint<dim> indices = {i, j, k};
         // Ensure indices to cell ID works.
         ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
-        IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
+        Wonton::IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
         // Ensure cell ID to indices works.
         for (int d = 0; d < dim; ++d) {
           ASSERT_EQ(indices2[d], indices[d]);
         }
         // Ensure cell ID to indices to cell ID works.
-        int id2 = mesh_wrapper.indices_to_cellid(
+        Wonton::CellID id2 = mesh_wrapper.indices_to_cellid(
             mesh_wrapper.cellid_to_indices(id));
         ASSERT_EQ(id2, id);
         // Ensure indices to cell ID to indices works.
@@ -128,19 +130,19 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
   }
 
   // Check IDs vs indices
-  int id = 0
+  Wonton::CellID id = 0;
   for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
     for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-      const IntPoint<dim> indices = {i, j};
+      const Wonton::IntPoint<dim> indices = {i, j};
       // Ensure indices to cell ID works.
       ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
-      IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
+      Wonton::IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
       // Ensure cell ID to indices works.
       for (int d = 0; d < dim; ++d) {
         ASSERT_EQ(indices2[d], indices[d]);
       }
       // Ensure cell ID to indices to cell ID works.
-      int id2 = mesh_wrapper.indices_to_cellid(
+      Wonton::CellID id2 = mesh_wrapper.indices_to_cellid(
           mesh_wrapper.cellid_to_indices(id));
       ASSERT_EQ(id2, id);
       // Ensure indices to cell ID to indices works.
@@ -197,18 +199,18 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
   }
 
   // Check IDs vs indices
-  int id = 0
+  Wonton::CellID id = 0;
   for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-    const IntPoint<dim> indices = {i};
+    const Wonton::IntPoint<dim> indices = {i};
     // Ensure indices to cell ID works.
     ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
-    IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
+    Wonton::IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices(id);
     // Ensure cell ID to indices works.
     for (int d = 0; d < dim; ++d) {
       ASSERT_EQ(indices2[d], indices[d]);
     }
     // Ensure cell ID to indices to cell ID works.
-    int id2 = mesh_wrapper.indices_to_cellid(
+    Wonton::CellID id2 = mesh_wrapper.indices_to_cellid(
         mesh_wrapper.cellid_to_indices(id));
     ASSERT_EQ(id2, id);
     // Ensure indices to cell ID to indices works.
