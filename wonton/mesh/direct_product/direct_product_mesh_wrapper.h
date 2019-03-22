@@ -56,11 +56,18 @@ class Direct_Product_Mesh_Wrapper {
   // Accessors
 
   /*!
+    @brief Get dimensionality of the mesh.
+  */
+  int space_dimension () const;
+
+  /*!
     @brief Get global mesh bounds.
 
     Because a Direct_Product_Mesh is required to be an axis-aligned box, the
     global mesh bounds are specified as a Point at the lower corner and a Point
     at the upper corner (lower and upper along all axes).
+
+    The points must have the same size as the mesh dimensionality.
   */
   template<long D>
   void get_global_bounds(Point<D> *plo, Point<D> *phi) const;
@@ -73,7 +80,7 @@ class Direct_Product_Mesh_Wrapper {
   /*!
     @brief Get iterator for axis edge coordinates (end of array).
   */
-  counting iterator axis_point_end(const int dim) const;
+  counting_iterator axis_point_end(const int dim) const;
 
   /*!
     @brief Get edge coordinate value.
@@ -101,7 +108,7 @@ class Direct_Product_Mesh_Wrapper {
 
 // ____________________________________________________________________________
 // constructor
-explicit Direct_Product_Mesh_Wrapper::Direct_Product_Mesh_Wrapper(
+Direct_Product_Mesh_Wrapper::Direct_Product_Mesh_Wrapper(
     Direct_Product_Mesh const & mesh) :
     mesh_(mesh) {
 }
@@ -115,9 +122,16 @@ Direct_Product_Mesh_Wrapper::~Direct_Product_Mesh_Wrapper() {
 // Accessors
 
 // ____________________________________________________________________________
+// Get dimensionality of the mesh.
+int Direct_Product_Mesh_Wrapper::space_dimension () const {
+  return mesh_.space_dimension();
+}
+
+// ____________________________________________________________________________
 // Get global mesh bounds.
 template<long D>
-void get_global_bounds(Point<D> *plo, Point<D> *phi) const {
+void Direct_Product_Mesh_Wrapper::get_global_bounds(
+    Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension())
   (*plo)[0] = edges_i_.front();
   (*phi)[0] = edges_i_.back();
@@ -133,7 +147,8 @@ void get_global_bounds(Point<D> *plo, Point<D> *phi) const {
 
 // ____________________________________________________________________________
 // Get iterator for axis edge coordinates (beginning of array).
-counting_iterator axis_point_begin(const int dim) const {
+counting_iterator Direct_Product_Mesh_Wrapper::axis_point_begin(
+    const int dim) const {
   int start_index = 0;
   return make_counting_iterator(start_index);
 }
@@ -141,23 +156,25 @@ counting_iterator axis_point_begin(const int dim) const {
 
 // ____________________________________________________________________________
 // Get iterator for axis edge coordinates (end of array).
-counting iterator axis_point_end(const int dim) const {
+counting_iterator Direct_Product_Mesh_Wrapper::axis_point_end(
+    const int dim) const {
   int start_index = 0;
-  return make_counting_iterator(start_index + mesh.axis_num_points(dim));
+  return make_counting_iterator(start_index + mesh_.axis_num_points(dim));
 }
 
 
 // ____________________________________________________________________________
 // Get edge coordinate value.
-double axis_point_coordinate(const int dim, const int pointid) const {
-  return mesh.axis_point_coordinate(dim, pointid);
+double Direct_Product_Mesh_Wrapper::axis_point_coordinate(
+    const int dim, const int pointid) const {
+  return mesh_.axis_point_coordinate(dim, pointid);
 }
 
 
 // ____________________________________________________________________________
 // Get number of cells along axis.
-int axis_num_cells(const int dim) const {
-  return mesh.axis_num_points(dim) - 1;
+int Direct_Product_Mesh_Wrapper::axis_num_cells(const int dim) const {
+  return mesh_.axis_num_points(dim) - 1;
 }
 
 
