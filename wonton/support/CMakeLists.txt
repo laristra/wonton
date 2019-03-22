@@ -11,6 +11,8 @@ Please see the license file at the root of this repository, or at:
 # Add header files
 set(support_HEADERS
   lsfits.h
+  CellID.h
+  IntPoint.h
   Matrix.h
   Point.h
   svd.h

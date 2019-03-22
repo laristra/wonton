@@ -7,6 +7,8 @@
 #ifndef WONTON_INTPOINT_H_
 #define WONTON_INTPOINT_H_
 
+#include <array>
+
 namespace Wonton {
 
 /*!
