@@ -93,7 +93,7 @@ class Direct_Product_Mesh_Wrapper {
   int axis_num_cells(const int dim) const;
 
   //! Get number of cells in entire mesh.
-  int total_num_cells(const int dim) const;
+  int total_num_cells() const;
 
   // ==========================================================================
   // Index/ID conversions
@@ -192,7 +192,7 @@ int Direct_Product_Mesh_Wrapper::axis_num_cells(const int dim) const {
 
 // ____________________________________________________________________________
 // Get number of cells in entire mesh.
-int Direct_Product_Mesh_Wrapper::total_num_cells(const int dim) const {
+int Direct_Product_Mesh_Wrapper::total_num_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
     count *= mesh_.axis_num_points(dim) - 1;
