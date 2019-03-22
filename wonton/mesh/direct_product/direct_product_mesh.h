@@ -7,6 +7,7 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_DIRECT_PRODUCT_MESH_H_
 #define WONTON_DIRECT_PRODUCT_MESH_H_
 
+#include <cassert>
 #include <vector>
 
 #include "wonton/support/wonton.h"
@@ -22,8 +23,6 @@ Please see the license file at the root of this repository, or at:
 
 namespace Wonton {
 
-    // TODO: Should I switch the dimensionality to use templating?
-
 /*!
   @class Direct_Product_Mesh "direct_product_mesh.h"
   @brief A basic, axis-aligned, logically-rectangular mesh.
@@ -34,6 +33,8 @@ namespace Wonton {
 
   The discretizations need not be uniform -- that is, the cell sizes can vary
   across the mesh.  However, they are static.  Once set, they will not change.
+
+  Storage of the mesh is based on cell edge coordinates, aka points.
 
   The Direct_Product_Mesh is designed to implement only the necessary
   functionality to test certain components in Wonton and Portage.  As the scope
@@ -89,23 +90,20 @@ class Direct_Product_Mesh {
   // ==========================================================================
   // Accessors
 
-  // TODO: doxygen
-  // TODO: move definition outside of class, but leave declaration here
-  int space_dimension() const {
-      return dimensionality_;
-  }
+  /*!
+    @brief Get the dimensionality of the mesh.
+  */
+  int space_dimension() const;
 
-  // TODO: doxygen
-  // TODO: move definition outside of class, but leave declaration here
-  int axis_num_points(const int dim) const {
-    return edges_[dim].size();
-  }
+  /*!
+    @brief Get the number of points (edge coordinates).
+  */
+  int axis_num_points(const int dim) const;
 
-  // TODO: doxygen
-  // TODO: move definition outside of class, but leave declaration here
-  double axis_point_coordinate(const int dim, const int pointid) const {
-    return edges_[dim][pointid];
-  }
+  /*!
+    @brief Get the specified point (edge coordinate).
+  */
+  double axis_point_coordinate(const int dim, const int pointid) const;
 
 
  private:
@@ -159,10 +157,6 @@ Direct_Product_Mesh::Direct_Product_Mesh(
     const std::vector<double> edges_i,
     const std::vector<double> edges_j) {
   dimensionality_ = 2;
-  // TODO: Note that this may have to be modified.  For example, in 2D you can
-  // have cylindrical coordinates (s,z) or polar coordinates (s, phi), and
-  // fitting those both into the standard 3D cylindrical (s, phi, z) requires
-  // that 2D cylindrical will assign edges_j to edges_[2] not edges_[1].
   edges_[0] = edges_i;
   edges_[1] = edges_j;
   set_default_coordinates();
@@ -192,8 +186,33 @@ Direct_Product_Mesh::~Direct_Product_Mesh() {
 
 
 // ============================================================================
+// Accessors
+
+// ____________________________________________________________________________
+// Get the dimensionality of the mesh.
+int Direct_Product_Mesh::space_dimension() const {
+  return dimensionality_;
+}
+
+// ____________________________________________________________________________
+// Get the number of points (edge coordinates).
+int Direct_Product_Mesh::axis_num_points(const int dim) const {
+  return edges_[dim].size();
+}
+
+// ____________________________________________________________________________
+// Get the specified point (edge coordinate).
+double Direct_Product_Mesh::axis_point_coordinate(
+    const int dim, const int pointid) const {
+  return edges_[dim][pointid];
+}
+
+
+// ============================================================================
 // Private support methods
 void Direct_Product_Mesh::set_default_coordinates() {
+  assert(dimensionality_ >= 1);
+  assert(dimensionality_ <= 3);
   switch(dimensionality_) {
     case 1 :
       // Cartesian coordinates (currently no others available)
@@ -207,9 +226,6 @@ void Direct_Product_Mesh::set_default_coordinates() {
     case 3 :
       // All edge coordinate arrays are specified, so do nothing.  This clause
       // exists to avoid the default clause.
-      break;
-    default :
-      // TODO: Generate an error.
       break;
   }
 }
