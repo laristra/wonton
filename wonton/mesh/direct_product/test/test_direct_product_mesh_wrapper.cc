@@ -64,8 +64,8 @@ namespace direct_product_mesh_wrapper_test {
       const Wonton::IntPoint<dim>& indices, const Wonton::CellID id) {
     // Ensure indices to cell ID works.
     ASSERT_EQ(mesh_wrapper.indices_to_cellid<dim>(indices), id);
-    Wonton::IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices<dim>(id);
     // Ensure cell ID to indices works.
+    Wonton::IntPoint<dim> indices2 = mesh_wrapper.cellid_to_indices<dim>(id);
     for (int d = 0; d < dim; ++d) {
       ASSERT_EQ(indices2[d], indices[d]);
     }
