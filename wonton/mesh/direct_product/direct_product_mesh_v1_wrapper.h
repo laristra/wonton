@@ -29,14 +29,14 @@ Please see the license file at the root of this repository, or at:
 namespace Wonton {
 
 /*!
-  @class Direct_Product_Mesh_Wrapper direct_product_mesh_wrapper.h
-  @brief A thin wrapper that implements mesh methods for Direct_Product_Mesh
+  @class Direct_Product_Mesh_v1_Wrapper direct_product_mesh_wrapper.h
+  @brief A thin wrapper that implements mesh methods for Direct_Product_Mesh_v1
 
   The methods implemented are those required by select parts of the Wonton and
   Portage code.  This will expand as the list of components that this wrapper
   supports expands.
 */
-class Direct_Product_Mesh_Wrapper {
+class Direct_Product_Mesh_v1_Wrapper {
 
  public:
 
@@ -44,23 +44,24 @@ class Direct_Product_Mesh_Wrapper {
   // Constructors and destructors
 
   //! Default constructor (disabled)
-  Direct_Product_Mesh_Wrapper() = delete;
+  Direct_Product_Mesh_v1_Wrapper() = delete;
 
   /*!
     @brief Constructor for the mesh wrapper.
-    @param[in] mesh The Direct_Product_Mesh we wish to wrap.
+    @param[in] mesh The Direct_Product_Mesh_v1 we wish to wrap.
   */
-  explicit Direct_Product_Mesh_Wrapper(Direct_Product_Mesh const & mesh);
+  explicit Direct_Product_Mesh_v1_Wrapper(Direct_Product_Mesh_v1 const & mesh);
 
   //! Copy constructor (disabled).
-  Direct_Product_Mesh_Wrapper(Direct_Product_Mesh_Wrapper const &) = delete;
+  Direct_Product_Mesh_v1_Wrapper(
+      Direct_Product_Mesh_v1_Wrapper const &) = delete;
 
   //! Assignment operator (disabled).
-  Direct_Product_Mesh_Wrapper & operator=(
-      Direct_Product_Mesh_Wrapper const &) = delete;
+  Direct_Product_Mesh_v1_Wrapper & operator=(
+      Direct_Product_Mesh_v1_Wrapper const &) = delete;
 
   //! Destructor
-  ~Direct_Product_Mesh_Wrapper();
+  ~Direct_Product_Mesh_v1_Wrapper();
 
   // ==========================================================================
   // Accessors
@@ -71,7 +72,7 @@ class Direct_Product_Mesh_Wrapper {
   /*!
     @brief Get global mesh bounds.
 
-    Because a Direct_Product_Mesh is required to be an axis-aligned box, the
+    Because a Direct_Product_Mesh_v1 is required to be an axis-aligned box, the
     global mesh bounds are specified as a Point at the lower corner and a Point
     at the upper corner (lower and upper along all axes).
 
@@ -117,9 +118,9 @@ class Direct_Product_Mesh_Wrapper {
   // Class data
 
   //! The mesh to wrap.
-  Direct_Product_Mesh const & mesh_;
+  Direct_Product_Mesh_v1 const & mesh_;
 
-};  // class Direct_Product_Mesh_Wrapper
+};  // class Direct_Product_Mesh_v1_Wrapper
 
 
 // ============================================================================
@@ -127,14 +128,14 @@ class Direct_Product_Mesh_Wrapper {
 
 // ____________________________________________________________________________
 // constructor
-Direct_Product_Mesh_Wrapper::Direct_Product_Mesh_Wrapper(
-    Direct_Product_Mesh const & mesh) :
+Direct_Product_Mesh_v1_Wrapper::Direct_Product_Mesh_v1_Wrapper(
+    Direct_Product_Mesh_v1 const & mesh) :
     mesh_(mesh) {
 }
 
 // ____________________________________________________________________________
 // destructor
-Direct_Product_Mesh_Wrapper::~Direct_Product_Mesh_Wrapper() {
+Direct_Product_Mesh_v1_Wrapper::~Direct_Product_Mesh_v1_Wrapper() {
 }
 
 
@@ -143,14 +144,14 @@ Direct_Product_Mesh_Wrapper::~Direct_Product_Mesh_Wrapper() {
 
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
-int Direct_Product_Mesh_Wrapper::space_dimension() const {
+int Direct_Product_Mesh_v1_Wrapper::space_dimension() const {
   return mesh_.space_dimension();
 }
 
 // ____________________________________________________________________________
 // Get global mesh bounds.
 template<long D>
-void Direct_Product_Mesh_Wrapper::get_global_bounds(
+void Direct_Product_Mesh_v1_Wrapper::get_global_bounds(
     Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension());
   for (int d = 0; d < D; ++d) {
@@ -161,7 +162,7 @@ void Direct_Product_Mesh_Wrapper::get_global_bounds(
 
 // ____________________________________________________________________________
 // Get iterator for axis edge coordinates (beginning of array).
-counting_iterator Direct_Product_Mesh_Wrapper::axis_point_begin(
+counting_iterator Direct_Product_Mesh_v1_Wrapper::axis_point_begin(
     const int dim) const {
   int start_index = 0;
   return make_counting_iterator(start_index);
@@ -169,7 +170,7 @@ counting_iterator Direct_Product_Mesh_Wrapper::axis_point_begin(
 
 // ____________________________________________________________________________
 // Get iterator for axis edge coordinates (end of array).
-counting_iterator Direct_Product_Mesh_Wrapper::axis_point_end(
+counting_iterator Direct_Product_Mesh_v1_Wrapper::axis_point_end(
     const int dim) const {
   int start_index = 0;
   return make_counting_iterator(start_index + mesh_.axis_num_points(dim));
@@ -177,20 +178,20 @@ counting_iterator Direct_Product_Mesh_Wrapper::axis_point_end(
 
 // ____________________________________________________________________________
 // Get edge coordinate value.
-double Direct_Product_Mesh_Wrapper::axis_point_coordinate(
+double Direct_Product_Mesh_v1_Wrapper::axis_point_coordinate(
     const int dim, const int pointid) const {
   return mesh_.axis_point_coordinate(dim, pointid);
 }
 
 // ____________________________________________________________________________
 // Get number of cells along axis.
-int Direct_Product_Mesh_Wrapper::axis_num_cells(const int dim) const {
+int Direct_Product_Mesh_v1_Wrapper::axis_num_cells(const int dim) const {
   return mesh_.axis_num_points(dim) - 1;
 }
 
 // ____________________________________________________________________________
 // Get number of cells in entire mesh.
-int Direct_Product_Mesh_Wrapper::total_num_cells() const {
+int Direct_Product_Mesh_v1_Wrapper::total_num_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
     count *= mesh_.axis_num_points(dim) - 1;
@@ -201,7 +202,7 @@ int Direct_Product_Mesh_Wrapper::total_num_cells() const {
 // ____________________________________________________________________________
 // Get lower and upper corners of cell bounding box
 template<long D>
-void Direct_Product_Mesh_Wrapper::cell_get_bounds(
+void Direct_Product_Mesh_v1_Wrapper::cell_get_bounds(
     const CellID id, Point<D> *plo, Point<D> *phi) const {
   IntPoint<D> indices = cellid_to_indices<D>(id);
   // Cell edges (points) are zero-indexed, cells are zero-indexed.  Thus cell 0
@@ -219,7 +220,7 @@ void Direct_Product_Mesh_Wrapper::cell_get_bounds(
 // ____________________________________________________________________________
 // Convert from indices to ID
 template<long D>
-CellID Direct_Product_Mesh_Wrapper::indices_to_cellid(
+CellID Direct_Product_Mesh_v1_Wrapper::indices_to_cellid(
     const IntPoint<D>& indices) const {
   assert(D == mesh_.space_dimension());
   CellID id = 0;
@@ -244,7 +245,7 @@ CellID Direct_Product_Mesh_Wrapper::indices_to_cellid(
 // ____________________________________________________________________________
 // Convert from ID to indices
 template<long D>
-IntPoint<D> Direct_Product_Mesh_Wrapper::cellid_to_indices(
+IntPoint<D> Direct_Product_Mesh_v1_Wrapper::cellid_to_indices(
     const CellID id) const {
   assert(D == mesh_.space_dimension());
   IntPoint<D> indices;
