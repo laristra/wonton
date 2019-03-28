@@ -95,6 +95,10 @@ class Direct_Product_Mesh_Wrapper {
   //! Get number of cells in entire mesh.
   int total_num_cells() const;
 
+  //! Get lower and upper corners of cell bounding box
+  template<long D>
+  void cell_get_bounds(const CellID id, Point<D> *plo, Point<D> *phi) const;
+
   // ==========================================================================
   // Index/ID conversions
 
@@ -149,15 +153,9 @@ template<long D>
 void Direct_Product_Mesh_Wrapper::get_global_bounds(
     Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension());
-  (*plo)[0] = edges_i_.front();
-  (*phi)[0] = edges_i_.back();
-  if (D >= 2) {
-    (*plo)[1] = edges_j_.front();
-    (*phi)[1] = edges_j_.back();
-    if (D >= 3) {
-      (*plo)[2] = edges_k_.front();
-      (*phi)[2] = edges_k_.back();
-    }
+  for (int d = 0; d < D; ++d) {
+    (*plo)[d] = mesh_.axis_point_coordinate(d,0);
+    (*phi)[d] = mesh_.axis_point_coordinate(d,mesh_.axis_num_points(d)-1);
   }
 }
 
@@ -198,6 +196,21 @@ int Direct_Product_Mesh_Wrapper::total_num_cells() const {
     count *= mesh_.axis_num_points(dim) - 1;
   }
   return count;
+}
+
+// ____________________________________________________________________________
+// Get lower and upper corners of cell bounding box
+template<long D>
+void Direct_Product_Mesh_Wrapper::cell_get_bounds(
+    const CellID id, Point<D> *plo, Point<D> *phi) const {
+  IntPoint<D> indices = cellid_to_indices<D>(id);
+  // Cell edges (points) are zero-indexed, cells are zero-indexed.  Thus cell 0
+  // is bounded by edges 0 and 1, or more generally, cell N is bounded by edges
+  // N and N+1.
+  for (int d = 0; d < D; ++d) {
+    (*plo)[d] = mesh_.axis_point_coordinate(d, indices[d]);
+    (*phi)[d] = mesh_.axis_point_coordinate(d, indices[d+1]);
+  }
 }
 
 // ============================================================================
