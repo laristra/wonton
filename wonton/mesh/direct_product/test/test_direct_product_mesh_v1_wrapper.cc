@@ -9,8 +9,8 @@ Please see the license file at the root of this repository, or at:
 #include <vector>
 #include <iterator>
 
-#include "wonton/mesh/direct_product/direct_product_mesh.h"
-#include "wonton/mesh/direct_product/direct_product_mesh_wrapper.h"
+#include "wonton/mesh/direct_product/direct_product_mesh_v1.h"
+#include "wonton/mesh/direct_product/direct_product_mesh_v1_wrapper.h"
 #include "wonton/support/wonton.h"
 #include "wonton/support/CellID.h"
 #include "wonton/support/IntPoint.h"
@@ -24,7 +24,7 @@ Please see the license file at the root of this repository, or at:
 namespace direct_product_mesh_wrapper_test {
   template<long dim>
   void check_basic_functions(
-      const Wonton::Direct_Product_Mesh_Wrapper& mesh_wrapper,
+      const Wonton::Direct_Product_Mesh_v1_Wrapper& mesh_wrapper,
       const std::vector<double>& edges) {
 
     // Build a useful structure
@@ -60,7 +60,7 @@ namespace direct_product_mesh_wrapper_test {
 
   template<long dim>
   void check_cell_bounds(
-      const Wonton::Direct_Product_Mesh_Wrapper& mesh_wrapper,
+      const Wonton::Direct_Product_Mesh_v1_Wrapper& mesh_wrapper,
       const Wonton::IntPoint<dim>& indices,
       const std::vector<double>& edges) {
     // Get the cell ID
@@ -79,7 +79,7 @@ namespace direct_product_mesh_wrapper_test {
 
   template<long dim>
   void check_indices_and_cellids(
-      const Wonton::Direct_Product_Mesh_Wrapper& mesh_wrapper,
+      const Wonton::Direct_Product_Mesh_v1_Wrapper& mesh_wrapper,
       const Wonton::IntPoint<dim>& indices, const Wonton::CellID id) {
     // Ensure indices to cell ID works.
     ASSERT_EQ(mesh_wrapper.indices_to_cellid<dim>(indices), id);
@@ -110,8 +110,8 @@ TEST(Direct_Product_Mesh, OneCell3D) {
 
   // Build a mesh and wrapper
   std::vector<double> edges = {0.0, 1.0};
-  Wonton::Direct_Product_Mesh mesh(edges, edges, edges);
-  Wonton::Direct_Product_Mesh_Wrapper mesh_wrapper(mesh);
+  Wonton::Direct_Product_Mesh_v1 mesh(edges, edges, edges);
+  Wonton::Direct_Product_Mesh_v1_Wrapper mesh_wrapper(mesh);
 
   // Run basic tests
   direct_product_mesh_wrapper_test::check_basic_functions<dim>(
@@ -147,8 +147,8 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
 
   // Build a mesh and wrapper
   std::vector<double> edges = {0.0, 0.25, 0.75, 1.0};
-  Wonton::Direct_Product_Mesh mesh(edges, edges);
-  Wonton::Direct_Product_Mesh_Wrapper mesh_wrapper(mesh);
+  Wonton::Direct_Product_Mesh_v1 mesh(edges, edges);
+  Wonton::Direct_Product_Mesh_v1_Wrapper mesh_wrapper(mesh);
 
   // Run basic tests
   direct_product_mesh_wrapper_test::check_basic_functions<dim>(
@@ -182,8 +182,8 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
 
   // Build a mesh and wrapper
   std::vector<double> edges = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  Wonton::Direct_Product_Mesh mesh(edges);
-  Wonton::Direct_Product_Mesh_Wrapper mesh_wrapper(mesh);
+  Wonton::Direct_Product_Mesh_v1 mesh(edges);
+  Wonton::Direct_Product_Mesh_v1_Wrapper mesh_wrapper(mesh);
 
   // Run basic tests
   direct_product_mesh_wrapper_test::check_basic_functions<dim>(
