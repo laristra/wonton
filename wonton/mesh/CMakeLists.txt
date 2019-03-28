@@ -22,9 +22,10 @@ endif ()
 
 set(mesh_HEADERS
   AuxMeshTopology.h
+  direct_product/direct_product_mesh.h
+  direct_product/direct_product_mesh_wrapper.h
   direct_product/direct_product_mesh_v1.h
-  direct_product/direct_product_mesh_v1.h
-  direct_product/direct_product_mesh_wrapper_v1.h
+  direct_product/direct_product_mesh_v1_wrapper.h
   simple/simple_mesh.h
   simple/simple_mesh_wrapper.h
   flat/flat_mesh_wrapper.h
@@ -38,6 +39,12 @@ if (ENABLE_UNIT_TESTS)
   # Direct Product Mesh
   cinch_add_unit(test_direct_product_mesh
     SOURCES direct_product/test/test_direct_product_mesh.cc
+    POLICY SERIAL
+    )
+
+# Direct Product Mesh Wrapper
+  cinch_add_unit(test_direct_product_mesh_wrapper
+    SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
     POLICY SERIAL
     )
 
