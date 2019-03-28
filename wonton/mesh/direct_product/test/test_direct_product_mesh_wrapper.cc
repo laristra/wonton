@@ -59,6 +59,25 @@ namespace direct_product_mesh_wrapper_test {
   // --------------------------------------------------------------------------
 
   template<long dim>
+  void check_cell_bounds(
+      const Wonton::Direct_Product_Mesh_Wrapper& mesh_wrapper,
+      const Wonton::IntPoint<dim>& indices,
+      const std::vector<double>& edges) {
+    // Get the cell ID
+    Wonton::CellID id = mesh_wrapper.indices_to_cellid<dim>(indices);
+    // Get the bounding box
+    Wonton::Point<dim> plo, phi;
+    mesh_wrapper.cell_get_bounds(id, &plo, &phi);
+    // Verify the bounding box (assumes edges are same for all axes)
+    for (int d = 0; d < dim; ++d) {
+      ASSERT_EQ(plo[d], edges[indices[d]]);
+      ASSERT_EQ(phi[d], edges[indices[d]+1]);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+
+  template<long dim>
   void check_indices_and_cellids(
       const Wonton::Direct_Product_Mesh_Wrapper& mesh_wrapper,
       const Wonton::IntPoint<dim>& indices, const Wonton::CellID id) {
@@ -98,13 +117,17 @@ TEST(Direct_Product_Mesh, OneCell3D) {
   direct_product_mesh_wrapper_test::check_basic_functions<dim>(
       mesh_wrapper, edges);
 
-  // Check IDs vs indices
   Wonton::CellID id = 0;
   for (int k = 0; k < mesh_wrapper.axis_num_cells(2); ++k) {
     for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
       for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
         const Wonton::IntPoint<dim> indices = {i, j, k};
-        // Run indices/cell_id tests
+        // Verify cell bounding boxes
+        // -- Since this mesh is just axis-aligned boxes, the bounding boxes
+        //    will simply be the cell bounds.
+        direct_product_mesh_wrapper_test::check_cell_bounds<dim>(
+            mesh_wrapper, indices, edges);
+        // Check IDs vs indices
         direct_product_mesh_wrapper_test::check_indices_and_cellids<dim>(
             mesh_wrapper, indices, id);
         // Increment to next cell ID
@@ -131,12 +154,16 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
   direct_product_mesh_wrapper_test::check_basic_functions<dim>(
       mesh_wrapper, edges);
 
-  // Check IDs vs indices
   Wonton::CellID id = 0;
   for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
     for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
       const Wonton::IntPoint<dim> indices = {i, j};
-      // Run indices/cell_id tests
+      // Verify cell bounding boxes
+      // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
+      //    simply be the cell bounds.
+      direct_product_mesh_wrapper_test::check_cell_bounds<dim>(
+          mesh_wrapper, indices, edges);
+      // Check IDs vs indices
       direct_product_mesh_wrapper_test::check_indices_and_cellids<dim>(
           mesh_wrapper, indices, id);
       // Increment to next cell ID
@@ -162,11 +189,15 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
   direct_product_mesh_wrapper_test::check_basic_functions<dim>(
       mesh_wrapper, edges);
 
-  // Check IDs vs indices
   Wonton::CellID id = 0;
   for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
     const Wonton::IntPoint<dim> indices = {i};
-    // Run indices/cell_id tests
+    // Verify cell bounding boxes
+    // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
+    //    simply be the cell bounds.
+    direct_product_mesh_wrapper_test::check_cell_bounds<dim>(
+        mesh_wrapper, indices, edges);
+    // Check IDs vs indices
     direct_product_mesh_wrapper_test::check_indices_and_cellids<dim>(
         mesh_wrapper, indices, id);
     // Increment to next cell ID
