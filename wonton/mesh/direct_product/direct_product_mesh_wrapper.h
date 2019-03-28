@@ -234,18 +234,24 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
   CellID id = 0;
   switch(D) {
     case 3 :
+    {
       CellID k = (CellID) indices[2];
       CellID jmax = (CellID) axis_num_cells(1);
       id += k;
       id *= jmax;
+    }
     case 2 :
+    {
       CellID j = (CellID) indices[1];
       CellID imax = (CellID) axis_num_cells(0);
       id += j;
       id *= imax;
+    }
     case 1 : 
+    {
       CellID i = (CellID) indices[0];
       id += i;
+    }
   }
   return id;
 }
