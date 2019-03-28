@@ -209,7 +209,7 @@ void Direct_Product_Mesh_Wrapper::cell_get_bounds(
   // N and N+1.
   for (int d = 0; d < D; ++d) {
     (*plo)[d] = mesh_.axis_point_coordinate(d, indices[d]);
-    (*phi)[d] = mesh_.axis_point_coordinate(d, indices[d+1]);
+    (*phi)[d] = mesh_.axis_point_coordinate(d, indices[d]+1);
   }
 }
 
