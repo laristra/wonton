@@ -17,10 +17,6 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/support/IntPoint.h"
 #include "wonton/support/Point.h"
 
-// TODO: How much of the mesh and wrapper act as 3D (regardless of user
-// dimensionality), and how much act as exactly the specified dimensionality?
-// --> I should modify the code to be uniform throughout.
-
 /*!
   @file direct_product_mesh_wrapper.h
   @brief Wrapper for a Direct_Product_mesh
