@@ -7,10 +7,14 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_ADAPTIVE_REFINEMENT_MESH_H_
 #define WONTON_ADAPTIVE_REFINEMENT_MESH_H_
 
+#include <array>
 #include <cassert>
+#include <tuple>
 #include <vector>
 
 #include "wonton/support/wonton.h"
+#include "wonton/support/CellID.h"
+#include "wonton/support/Point.h"
 
 /*!
   @file adaptive_refinement_mesh.h
@@ -43,6 +47,14 @@ namespace Wonton {
  */
 template<long D>
 class Adaptive_Refinement_Mesh {
+
+ private:
+
+  //! A convenient shorthand to describe a cell
+  using cell_data_t = std::array<std::array<double,2>,D>;
+
+  //! A convenient shorthand for the type of the cell data structure.
+  using mesh_data_t = std::vector<cell_data_t>;
 
  public:
 
@@ -96,17 +108,15 @@ class Adaptive_Refinement_Mesh {
   //! Recursive procedure to perform the actual splitting of a cell by axis.
   mesh_data_t split_cell(const int d, const cell_data_t cell);
 
+  // Refine a single cell.
+  std::pair<mesh_data_t, std::vector<int>> refine_cell(
+      const mesh_data_t cells, const std::vector<int> level, const int n);
+
   //! Build the mesh based on the mesh corners and the refinement function.
   void build_mesh();
 
   // ==========================================================================
   // Class data
-
-  //! A convenient shorthand to describe a cell
-  using cell_data_t = std::array<std::array<double,2>,D>;
-
-  //! A convenient shorthand for the type of the cell data structure.
-  using mesh_data_t = std::vector<cell_data_t>;
 
   //! Shorthands to clarify storage and accessors
   static const int LO = 0;
@@ -118,7 +128,7 @@ class Adaptive_Refinement_Mesh {
    * @param[in] coords The coordinates of the point at which to evaluate the
    *                   mesh refinement function.
   */
-  double (*refinement_level_)(const Point<D> coords) const;
+  double (*refinement_level_)(const Point<D> coords);
 
   //! Dimensionality of the mesh
   int dimensionality_ = -1;
@@ -161,7 +171,7 @@ template<long D>
 Adaptive_Refinement_Mesh<D>::~Adaptive_Refinement_Mesh() {
   cells_.clear();
   refinement_level_ = NULL;
-  for (int d = 0; d < D; ++D) {
+  for (int d = 0; d < D; ++d) {
     mesh_corners_[d][LO] = 0.0;
     mesh_corners_[d][HI] = 0.0;
   }
@@ -204,14 +214,14 @@ Adaptive_Refinement_Mesh<D>::mesh_data_t
   double midpoint = 0.5 * (cell[d][LO] + cell[d][HI]);
   // Create the lower cell
   cell_data_t cell_lo;
-  for (d2 = 0; d2 < D; ++d2) {
+  for (int d2 = 0; d2 < D; ++d2) {
     cell_lo[d2][LO] = cell[d2][LO];
     cell_lo[d2][HI] = cell[d2][HI];
   }
   cell_lo[d][HI] = midpoint;
   // Create the upper cell
   cell_data_t cell_hi;
-  for (d2 = 0; dt < D; ++d2) {
+  for (int d2 = 0; d2 < D; ++d2) {
     cell_hi[d2][LO] = cell[d2][LO];
     cell_hi[d2][HI] = cell[d2][HI];
   }
@@ -226,7 +236,7 @@ Adaptive_Refinement_Mesh<D>::mesh_data_t
     for (int n = 0; n < N/2; ++n) {
       newcells[n] = tempcells[n];
     }
-    auto tempcells = split_cell(d-1, cell_hi);
+    tempcells = split_cell(d-1, cell_hi);
     for (int n = 0; n < N/2; ++n) {
       newcells[n+N/2] = tempcells[n];
     }
@@ -235,7 +245,7 @@ Adaptive_Refinement_Mesh<D>::mesh_data_t
     newcells[0] = cell_lo;
     newcells[1] = cell_hi;
   }
-  return(newcells);
+  return(std::move(newcells));
 }
 
 // ____________________________________________________________________________
@@ -243,12 +253,12 @@ Adaptive_Refinement_Mesh<D>::mesh_data_t
 // -- Remove the specified cell and replace it with refined cells.
 // -- Refinement is done by splitting in half along each axis.
 template<long D>
-std::pair<Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
+std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
     Adaptive_Refinement_Mesh<D>::refine_cell(
     const Adaptive_Refinement_Mesh<D>::mesh_data_t cells,
     const std::vector<int> level, const int n) {
   assert(n >= 0);
-  assert(n < levels.size());
+  assert(n < level.size());
   // Create new storage
   // -- New storage replaces 1 cell with 2^D cells
   const int num_new_cells = 1<<D - 1;
@@ -263,13 +273,13 @@ std::pair<Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
     newlevel[i] = level[i];
   }
   // Replace specified cell with new cells
-  auto tempcells = split_cell(D-1,cells[n]);
+  Adaptive_Refinement_Mesh<D>::mesh_data_t tempcells = split_cell(D-1,cells[n]);
   for (int i = 0; i < tempcells.size(); ++i) {
     newcells[n+i] = tempcells[i];
     newlevel[n+i] = level[n] + 1;
   }
   // Copy elements after the one to refine
-  for (int i = n+1; i < levels.size(); ++i) {
+  for (int i = n+1; i < level.size(); ++i) {
     newcells[i+num_new_cells] = cells[i];
     newlevel[i+num_new_cells] = level[i];
   }
@@ -303,7 +313,7 @@ void Adaptive_Refinement_Mesh<D>::build_mesh() {
       std::tie(cells_, level) = refine1(cells_, refine_flag, level);
   } while(do_refinement);*/
   for (int n = 0; n < level.size(); ++n) {
-    if (check_for_refinement(cells0[n], level[n])) {
+    if (check_for_refinement(cells_[n], level[n])) {
       std::tie(cells_, level) = refine_cell(cells_, level, n);
       --n;  // Decrement to repeat the current cell, as it was replaced
     }
@@ -333,6 +343,7 @@ int Adaptive_Refinement_Mesh<D>::num_cells() const {
 template<long D>
 Adaptive_Refinement_Mesh<D>::cell_data_t
     Adaptive_Refinement_Mesh<D>::cell_get_bounds(const CellID id) const {
+  int n = (int) id;
   return(cells_[n]);
 }
 

@@ -35,13 +35,19 @@ set(mesh_HEADERS
 
 if (ENABLE_UNIT_TESTS)
 
+  # Adaptive Refinement Mesh
+  cinch_add_unit(test_adaptive_refinement_mesh
+    SOURCES adaptive_refinement/test/test_adaptive_refinement_mesh.cc
+    POLICY SERIAL
+    )
+
   # Direct Product Mesh
   cinch_add_unit(test_direct_product_mesh
     SOURCES direct_product/test/test_direct_product_mesh.cc
     POLICY SERIAL
     )
 
-# Direct Product Mesh Wrapper
+  # Direct Product Mesh Wrapper
   cinch_add_unit(test_direct_product_mesh_wrapper
     SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
     POLICY SERIAL
