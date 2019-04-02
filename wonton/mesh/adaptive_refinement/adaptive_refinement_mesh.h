@@ -16,6 +16,11 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
+// TODO: Clean up
+// TODO: Check what needs to be qualified with Adaptive_Refinement_Mesh<D>:: in
+//       the method implementations and make sure I'm consistent (e.g.
+//       mesh_data_t vs Adaptive_Refinement_Mesh<D>::mesh_data_t, etc).
+
 /*!
   @file adaptive_refinement_mesh.h
   @brief Definition of the Adaptive_Refinement_Mesh class.

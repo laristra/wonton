@@ -36,6 +36,7 @@ double refinement_function_2d(const Wonton::Point<2> r) {
 
 // ============================================================================
 
+// TODO: 3D test
 /*TEST(Adaptive_Refinement_Mesh, SingleCell3D) {
 
   const int D = 3;
