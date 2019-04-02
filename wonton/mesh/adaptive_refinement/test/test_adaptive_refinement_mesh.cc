@@ -26,7 +26,7 @@ Please see the license file at the root of this repository, or at:
 
 template<long D>
 double refinement_function_2d(const Wonton::Point<D> r) {
-  return(2.5 - 1.1*r[0] + 2.4*r[1]);
+  return(1.2 - 1.1*r[0] + 2.4*r[1]);
 }
 
 // ============================================================================
@@ -71,7 +71,7 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
   const Wonton::Point<D> lo = {0.0, 0.0};
   const Wonton::Point<D> hi = {1.0, 1.0};
   Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function_2d, lo, hi);
-/*
+
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
 
@@ -90,7 +90,7 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
   ASSERT_EQ(bounds[0][1], 1.0/16.0);
   ASSERT_EQ(bounds[1][0], 1.0-1.0/16.0);
   ASSERT_EQ(bounds[1][1], 1.0);
-*/
+
 }
 
 

@@ -261,8 +261,8 @@ std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
   assert(n < level.size());
   // Create new storage
   // -- New storage replaces 1 cell with 2^D cells
-  const int num_new_cells = 1<<D - 1;
-  const int newsize = level.size() + num_new_cells;
+  const int num_new_cells = (1<<D) - 1;
+  const int newsize = cells.size() + num_new_cells;
   Adaptive_Refinement_Mesh<D>::mesh_data_t newcells;
   std::vector<int> newlevel;
   newcells.resize(newsize);
