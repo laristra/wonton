@@ -76,7 +76,8 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
   ASSERT_EQ(mesh.space_dimension(), D);
 
   // Cell counts
-  ASSERT_EQ(mesh.num_cells(), 46);    // Known from testing
+  // -- This is known from testing
+  ASSERT_EQ(mesh.num_cells(), 46);
 
   // Cell coordinates
   // -- These are known from testing
@@ -90,6 +91,11 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
   ASSERT_EQ(bounds[0][1], 1.0/16.0);
   ASSERT_EQ(bounds[1][0], 1.0-1.0/16.0);
   ASSERT_EQ(bounds[1][1], 1.0);
+  bounds = mesh.cell_get_bounds(35);
+  ASSERT_EQ(bounds[0][0], 0.5);
+  ASSERT_EQ(bounds[0][1], 5.0/8.0);
+  ASSERT_EQ(bounds[1][0], 5.0/8.0);
+  ASSERT_EQ(bounds[1][1], 3.0/4.0);
 
 }
 
