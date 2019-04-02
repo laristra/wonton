@@ -22,6 +22,7 @@ endif ()
 
 set(mesh_HEADERS
   AuxMeshTopology.h
+  adaptive_refinement/adaptive_refinement_mesh.h
   direct_product/direct_product_mesh.h
   direct_product/direct_product_mesh_wrapper.h
   simple/simple_mesh.h
