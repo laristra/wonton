@@ -24,8 +24,13 @@ Please see the license file at the root of this repository, or at:
 
 // ============================================================================
 
-template<long D>
-double refinement_function_2d(const Wonton::Point<D> r) {
+double refinement_function_1d(const Wonton::Point<1> r) {
+  return(2.0 + 3.0*r[0]);
+}
+
+// ============================================================================
+
+double refinement_function_2d(const Wonton::Point<2> r) {
   return(1.2 - 1.1*r[0] + 2.4*r[1]);
 }
 
@@ -67,7 +72,7 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
 
   const int D = 2;
 
-  // Create a simple 2x2 mesh
+  // Create a mesh
   const Wonton::Point<D> lo = {0.0, 0.0};
   const Wonton::Point<D> hi = {1.0, 1.0};
   Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function_2d, lo, hi);
@@ -102,32 +107,34 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
 
 // ============================================================================
 
-/*TEST(Adaptive_Refinement_Mesh, SmallGrid1D) {
+TEST(Adaptive_Refinement_Mesh, Test1D) {
 
   const int D = 1;
 
-  // Create a single cell mesh
-  //                           2^-4    2^-3   2^-2  2^-1 2^0
-  const std::vector<double> edges1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  std::vector<double> edges[D];
-  for (int d = 0; d < D; ++d) {
-    edges[d] = edges1;
-  }
-  Wonton::Adaptive_Refinement_Mesh<D> mesh(edges);
+  // Create a mesh
+  const Wonton::Point<D> lo = {0.0};
+  const Wonton::Point<D> hi = {1.0};
+  Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function_1d, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
 
   // Cell counts
-  ASSERT_EQ(mesh.axis_num_points(0), edges1.size());
+  // -- This is known from testing
+  ASSERT_EQ(mesh.num_cells(), 18);
 
   // Cell coordinates
-  for (int d = 0; d < D; ++d) {
-    for (int n = 0; n < mesh.axis_num_points(d); ++n) {
-      ASSERT_EQ(mesh.axis_point_coordinate(d,n), std::pow(0.5,4-n));
-    }
-  }
+  // -- These are known from testing
+  auto bounds = mesh.cell_get_bounds(0);
+  ASSERT_EQ(bounds[0][0], 0.0);
+  ASSERT_EQ(bounds[0][1], 0.125);
+  bounds = mesh.cell_get_bounds(6);
+  ASSERT_EQ(bounds[0][0], 9.0/16.0);
+  ASSERT_EQ(bounds[0][1], 10.0/16.0);
+  bounds = mesh.cell_get_bounds(14);
+  ASSERT_EQ(bounds[0][0], 1.0 - 4.0/32.0);
+  ASSERT_EQ(bounds[0][1], 1.0 - 3.0/32.0);
 
-}*/
+}
 
 
