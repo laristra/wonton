@@ -46,7 +46,7 @@ TEST(Adaptive_Refinement_Mesh, Test4D) {
 
   // Cell counts
   // -- This is known from testing
-  ASSERT_EQ(mesh.num_cells(), 916);
+  ASSERT_EQ(mesh.num_cells(), Adaptive_Refinement_Utilities::num_cells<D>());
 
   // Cell coordinates
   // -- These are known from testing
@@ -101,7 +101,7 @@ TEST(Adaptive_Refinement_Mesh, Test3D) {
 
   // Cell counts
   // -- This is known from testing
-  ASSERT_EQ(mesh.num_cells(), 120);
+  ASSERT_EQ(mesh.num_cells(), Adaptive_Refinement_Utilities::num_cells<D>());
 
   // Cell coordinates
   // -- These are known from testing
@@ -150,7 +150,7 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
 
   // Cell counts
   // -- This is known from testing
-  ASSERT_EQ(mesh.num_cells(), 46);
+  ASSERT_EQ(mesh.num_cells(), Adaptive_Refinement_Utilities::num_cells<D>());
 
   // Cell coordinates
   // -- These are known from testing
@@ -193,7 +193,7 @@ TEST(Adaptive_Refinement_Mesh, Test1D) {
 
   // Cell counts
   // -- This is known from testing
-  ASSERT_EQ(mesh.num_cells(), 18);
+  ASSERT_EQ(mesh.num_cells(), Adaptive_Refinement_Utilities::num_cells<D>());
 
   // Cell coordinates
   // -- These are known from testing

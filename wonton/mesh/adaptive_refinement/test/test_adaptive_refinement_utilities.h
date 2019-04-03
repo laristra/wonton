@@ -29,24 +29,53 @@ Please see the license file at the root of this repository, or at:
 namespace Adaptive_Refinement_Utilities {
 
 // ============================================================================
-// 1D
+// Templates
 
 template<long D>
-double refinement_function(const Wonton::Point<1> r) {
+double refinement_function(const Wonton::Point<D> r) {
+  return(0.0);
+}
+
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+template<long D>
+int num_cells() {
+  return(0);
+}
+
+// ============================================================================
+// 1D
+
+template<>
+double refinement_function<1>(const Wonton::Point<1> r) {
   return(2.0 + 3.0*r[0]);
 }
 
-// ============================================================================
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-template<long D>
-double refinement_function(const Wonton::Point<2> r) {
-  return(1.2 - 1.1*r[0] + 2.4*r[1]);
+template<>
+int num_cells<1>() {
+  return(18);
 }
 
 // ============================================================================
 
-template<long D>
-double refinement_function(const Wonton::Point<3> r) {
+template<>
+double refinement_function<2>(const Wonton::Point<2> r) {
+  return(1.2 - 1.1*r[0] + 2.4*r[1]);
+}
+
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+template<>
+int num_cells<2>() {
+  return(46);
+}
+
+// ============================================================================
+
+template<>
+double refinement_function<3>(const Wonton::Point<3> r) {
   const int DIM = 3;
   double radius = 0;
   for (int d = 0; d < DIM; ++d) {
@@ -57,11 +86,25 @@ double refinement_function(const Wonton::Point<3> r) {
   return(2.5 - 6.0*radius*radius);
 }
 
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+template<>
+int num_cells<3>() {
+  return(120);
+}
+
 // ============================================================================
 
-template<long D>
-double refinement_function(const Wonton::Point<4> r) {
+template<>
+double refinement_function<4>(const Wonton::Point<4> r) {
   return (2.0 - 3.0*r[0] + 1.2*r[1] - 0.5*r[2] + 0.3*r[3]);
+}
+
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+template<>
+int num_cells<4>() {
+  return(916);
 }
 
 // ============================================================================
