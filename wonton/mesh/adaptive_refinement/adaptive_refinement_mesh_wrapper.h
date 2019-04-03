@@ -127,7 +127,11 @@ int Adaptive_Refinement_Mesh_Wrapper<D>::total_num_cells() const {
 template<long D>
 void Adaptive_Refinement_Mesh_Wrapper<D>::cell_get_bounds(
     const CellID id, Point<D> *plo, Point<D> *phi) const {
-  return mesh_.cell_get_bounds(id);
+  auto bounding_box = mesh_.cell_get_bounds(id);
+  for (int d = 0; d < D; ++d) {
+    (*plo)[d] = bounding_box[d][LO];
+    (*phi)[d] = bounding_box[d][HI];
+  }
 }
 
 }  // namespace Wonton

@@ -23,6 +23,7 @@ endif ()
 set(mesh_HEADERS
   AuxMeshTopology.h
   adaptive_refinement/adaptive_refinement_mesh.h
+  adaptive_refinement/adaptive_refinement_mesh_wrapper.h
   direct_product/direct_product_mesh.h
   direct_product/direct_product_mesh_wrapper.h
   simple/simple_mesh.h
@@ -38,6 +39,12 @@ if (ENABLE_UNIT_TESTS)
   # Adaptive Refinement Mesh
   cinch_add_unit(test_adaptive_refinement_mesh
     SOURCES adaptive_refinement/test/test_adaptive_refinement_mesh.cc
+    POLICY SERIAL
+    )
+
+  # Adaptive Refinement Mesh Wrapper
+  cinch_add_unit(test_adaptive_refinement_mesh_wrapper
+    SOURCES adaptive_refinement/test/test_adaptive_refinement_mesh_wrapper.cc
     POLICY SERIAL
     )
 
