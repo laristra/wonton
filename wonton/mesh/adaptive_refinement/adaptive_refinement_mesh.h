@@ -208,7 +208,7 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
 // ____________________________________________________________________________
 // Recursive procedure to perform the actual splitting of a cell by axis.
 template<long D>
-Adaptive_Refinement_Mesh<D>::mesh_data_t
+typename Adaptive_Refinement_Mesh<D>::mesh_data_t
     Adaptive_Refinement_Mesh<D>::split_cell(
     const int d, const Adaptive_Refinement_Mesh<D>::cell_data_t cell) {
   // Splitting point
@@ -342,7 +342,7 @@ int Adaptive_Refinement_Mesh<D>::num_cells() const {
 // ____________________________________________________________________________
 // Get the lower and upper bounds of the specified cell.
 template<long D>
-Adaptive_Refinement_Mesh<D>::cell_data_t
+typename Adaptive_Refinement_Mesh<D>::cell_data_t
     Adaptive_Refinement_Mesh<D>::cell_get_bounds(const CellID id) const {
   int n = (int) id;
   return(cells_[n]);
