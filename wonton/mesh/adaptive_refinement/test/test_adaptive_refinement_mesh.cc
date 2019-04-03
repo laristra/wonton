@@ -39,7 +39,7 @@ TEST(Adaptive_Refinement_Mesh, Test4D) {
     hi[d] = 1.0;
   }
   Wonton::Adaptive_Refinement_Mesh<D> mesh(
-      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
+      &Adaptive_Refinement_Utilities::refinement_function<D>, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
@@ -94,7 +94,7 @@ TEST(Adaptive_Refinement_Mesh, Test3D) {
     hi[d] = 1.0;
   }
   Wonton::Adaptive_Refinement_Mesh<D> mesh(
-      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
+      &Adaptive_Refinement_Utilities::refinement_function<D>, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
@@ -143,7 +143,7 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
     hi[d] = 1.0;
   }
   Wonton::Adaptive_Refinement_Mesh<D> mesh(
-      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
+      &Adaptive_Refinement_Utilities::refinement_function<D>, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
@@ -186,7 +186,7 @@ TEST(Adaptive_Refinement_Mesh, Test1D) {
     hi[d] = 1.0;
   }
   Wonton::Adaptive_Refinement_Mesh<D> mesh(
-      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
+      &Adaptive_Refinement_Utilities::refinement_function<D>, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);

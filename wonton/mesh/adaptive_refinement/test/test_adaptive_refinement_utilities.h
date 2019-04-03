@@ -24,28 +24,28 @@ Please see the license file at the root of this repository, or at:
 
   NOTE 1: The tests are calibrated against these refinement functions.  If you
   change these functions, you will have to recalibrate the tests.
-
-  NOTE 2: These all have the same name because the templating of the mesh and
-  wrapper on dimensionality provides enough information for the compiler to
-  select the correct function.
 */
 
 namespace Adaptive_Refinement_Utilities {
 
 // ============================================================================
+// 1D
 
+template<long D>
 double refinement_function(const Wonton::Point<1> r) {
   return(2.0 + 3.0*r[0]);
 }
 
 // ============================================================================
 
+template<long D>
 double refinement_function(const Wonton::Point<2> r) {
   return(1.2 - 1.1*r[0] + 2.4*r[1]);
 }
 
 // ============================================================================
 
+template<long D>
 double refinement_function(const Wonton::Point<3> r) {
   const int DIM = 3;
   double radius = 0;
@@ -59,6 +59,7 @@ double refinement_function(const Wonton::Point<3> r) {
 
 // ============================================================================
 
+template<long D>
 double refinement_function(const Wonton::Point<4> r) {
   return (2.0 - 3.0*r[0] + 1.2*r[1] - 0.5*r[2] + 0.3*r[3]);
 }
