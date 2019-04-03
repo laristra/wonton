@@ -13,6 +13,7 @@ Please see the license file at the root of this repository, or at:
 #include <vector>
 
 #include "wonton/support/wonton.h"
+#include "wonton/support/BoundingBox.h"
 #include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
@@ -50,11 +51,8 @@ class Adaptive_Refinement_Mesh {
 
  private:
 
-  //! A convenient shorthand to describe a cell
-  using cell_data_t = std::array<std::array<double,2>,D>;
-
   //! A convenient shorthand for the type of the cell data structure.
-  using mesh_data_t = std::vector<cell_data_t>;
+  using mesh_data_t = std::vector<BoundingBox<D>>;
 
  public:
 
@@ -98,7 +96,7 @@ class Adaptive_Refinement_Mesh {
     @brief Get the lower and upper bounds of the specified cell.
     @param[in] id The ID of the cell to query.
   */
-  cell_data_t cell_get_bounds(const CellID id) const;
+  BoundingBox<D> cell_get_bounds(const CellID id) const;
 
 
  private:
@@ -107,10 +105,10 @@ class Adaptive_Refinement_Mesh {
   // Private support methods
 
   //! Check to see if the current cell needs to be refined further
-  bool check_for_refinement(const cell_data_t cell, const int level);
+  bool check_for_refinement(const BoundingBox<D> cell, const int level);
 
   //! Recursive procedure to perform the actual splitting of a cell by axis.
-  mesh_data_t split_cell(const int d, const cell_data_t cell);
+  mesh_data_t split_cell(const int d, const BoundingBox<D> cell);
 
   // Refine a single cell.
   std::pair<mesh_data_t, std::vector<int>> refine_cell(
@@ -121,10 +119,6 @@ class Adaptive_Refinement_Mesh {
 
   // ==========================================================================
   // Class data
-
-  //! Shorthands to clarify storage and accessors
-  static const int LO = 0;
-  static const int HI = 1;
 
   /*!
    * @brief Function pointer to a method that describes the desired refinement
@@ -138,7 +132,7 @@ class Adaptive_Refinement_Mesh {
   int dimensionality_ = -1;
 
   //! Mesh corner coordinates
-  cell_data_t mesh_corners_;
+  BoundingBox<D> mesh_corners_;
 
   //! Cell corner coordinates
   mesh_data_t cells_;
@@ -193,7 +187,7 @@ Adaptive_Refinement_Mesh<D>::~Adaptive_Refinement_Mesh() {
 // Check to see if the current cell needs to be refined further
 template<long D>
 bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
-    const Adaptive_Refinement_Mesh<D>::cell_data_t cell, const int level) {
+    const BoundingBox<D> cell, const int level) {
   // Evaluate refinement function
   // -- In principle one could do something like integrate to get the
   //    average value or find the maximum value, but for now we'll just sample
@@ -219,18 +213,18 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
 template<long D>
 typename Adaptive_Refinement_Mesh<D>::mesh_data_t
     Adaptive_Refinement_Mesh<D>::split_cell(
-    const int d, const Adaptive_Refinement_Mesh<D>::cell_data_t cell) {
+    const int d, const BoundingBox<D> cell) {
   // Splitting point
   double midpoint = 0.5 * (cell[d][LO] + cell[d][HI]);
   // Create the lower cell
-  cell_data_t cell_lo;
+  BoundingBox<D> cell_lo;
   for (int d2 = 0; d2 < D; ++d2) {
     cell_lo[d2][LO] = cell[d2][LO];
     cell_lo[d2][HI] = cell[d2][HI];
   }
   cell_lo[d][HI] = midpoint;
   // Create the upper cell
-  cell_data_t cell_hi;
+  BoundingBox<D> cell_hi;
   for (int d2 = 0; d2 < D; ++d2) {
     cell_hi[d2][LO] = cell[d2][LO];
     cell_hi[d2][HI] = cell[d2][HI];
@@ -338,8 +332,8 @@ int Adaptive_Refinement_Mesh<D>::num_cells() const {
 // ____________________________________________________________________________
 // Get the lower and upper bounds of the specified cell.
 template<long D>
-typename Adaptive_Refinement_Mesh<D>::cell_data_t
-    Adaptive_Refinement_Mesh<D>::cell_get_bounds(const CellID id) const {
+BoundingBox<D> Adaptive_Refinement_Mesh<D>::cell_get_bounds(
+    const CellID id) const {
   int n = (int) id;
   return(cells_[n]);
 }
