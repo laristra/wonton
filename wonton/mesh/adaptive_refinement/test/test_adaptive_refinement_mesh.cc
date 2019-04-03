@@ -5,6 +5,7 @@ Please see the license file at the root of this repository, or at:
 */
 
 #include "wonton/mesh/adaptive_refinement/adaptive_refinement_mesh.h"
+#include "wonton/mesh/adaptive_refinement/test/test_adaptive_refinement_utilities.h"
 
 #include <iostream>
 #include <cmath>
@@ -23,42 +24,6 @@ Please see the license file at the root of this repository, or at:
 */
 
 // ============================================================================
-// NOTE: The tests below are calibrated against these refinement functions.  If
-//       you change these functions, you will have to recalibrate the tests.
-// NOTE: These all have the same name because the templating of the grid on
-//       different dimensionalities provides enough information for the
-//       compiler to select the correct function.
-
-double refinement_function(const Wonton::Point<1> r) {
-  return(2.0 + 3.0*r[0]);
-}
-
-//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-double refinement_function(const Wonton::Point<2> r) {
-  return(1.2 - 1.1*r[0] + 2.4*r[1]);
-}
-
-//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-double refinement_function(const Wonton::Point<3> r) {
-  const int DIM = 3;
-  double radius = 0;
-  for (int d = 0; d < DIM; ++d) {
-    double x = r[d] - 0.5;
-    radius += x * x;
-  }
-  radius = sqrt(radius);
-  return(2.5 - 6.0*radius*radius);
-}
-
-//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-double refinement_function(const Wonton::Point<4> r) {
-  return (2.0 - 3.0*r[0] + 1.2*r[1] - 0.5*r[2] + 0.3*r[3]);
-}
-
-// ============================================================================
 // Not sure why you'd want a 4D AMR-like mesh, but this proves that it works
 // (verifying that I didn't hard-code any assumptions about the dimensionality
 // being <= 3, which I was worried about).
@@ -73,7 +38,8 @@ TEST(Adaptive_Refinement_Mesh, Test4D) {
     lo[d] = 0.0;
     hi[d] = 1.0;
   }
-  Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function, lo, hi);
+  Wonton::Adaptive_Refinement_Mesh<D> mesh(
+      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
@@ -127,7 +93,8 @@ TEST(Adaptive_Refinement_Mesh, Test3D) {
     lo[d] = 0.0;
     hi[d] = 1.0;
   }
-  Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function, lo, hi);
+  Wonton::Adaptive_Refinement_Mesh<D> mesh(
+      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
@@ -175,7 +142,8 @@ TEST(Adaptive_Refinement_Mesh, Test2D) {
     lo[d] = 0.0;
     hi[d] = 1.0;
   }
-  Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function, lo, hi);
+  Wonton::Adaptive_Refinement_Mesh<D> mesh(
+      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
@@ -217,7 +185,8 @@ TEST(Adaptive_Refinement_Mesh, Test1D) {
     lo[d] = 0.0;
     hi[d] = 1.0;
   }
-  Wonton::Adaptive_Refinement_Mesh<D> mesh(&refinement_function, lo, hi);
+  Wonton::Adaptive_Refinement_Mesh<D> mesh(
+      &Adaptive_Refinement_Utilities::refinement_function, lo, hi);
 
   // Dimensionality
   ASSERT_EQ(mesh.space_dimension(), D);
