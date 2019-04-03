@@ -17,9 +17,6 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/support/Point.h"
 
 // TODO: Clean up
-// TODO: Check what needs to be qualified with Adaptive_Refinement_Mesh<D>:: in
-//       the method implementations and make sure I'm consistent (e.g.
-//       mesh_data_t vs Adaptive_Refinement_Mesh<D>::mesh_data_t, etc).
 
 /*!
   @file adaptive_refinement_mesh.h
@@ -157,7 +154,6 @@ Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
     double (*func)(const Point<D>), const Point<D> plo, const Point<D> phi) {
   // Verify and save dimensionality
   assert(D > 0);
-  assert(D <= 3); // Maybe the logic will extend beyond this, but I'm unsure.
   dimensionality_ = D;
   // Save refinement level function pointer
   refinement_level_ = func;
@@ -268,7 +264,7 @@ std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
   // -- New storage replaces 1 cell with 2^D cells
   const int num_new_cells = (1<<D) - 1;
   const int newsize = cells.size() + num_new_cells;
-  Adaptive_Refinement_Mesh<D>::mesh_data_t newcells;
+  mesh_data_t newcells;
   std::vector<int> newlevel;
   newcells.resize(newsize);
   newlevel.resize(newsize);
@@ -278,7 +274,7 @@ std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
     newlevel[i] = level[i];
   }
   // Replace specified cell with new cells
-  Adaptive_Refinement_Mesh<D>::mesh_data_t tempcells = split_cell(D-1,cells[n]);
+  mesh_data_t tempcells = split_cell(D-1,cells[n]);
   for (int i = 0; i < tempcells.size(); ++i) {
     newcells[n+i] = tempcells[i];
     newlevel[n+i] = level[n] + 1;
