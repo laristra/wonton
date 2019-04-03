@@ -16,8 +16,6 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
-// TODO: Clean up
-
 /*!
   @file adaptive_refinement_mesh.h
   @brief Definition of the Adaptive_Refinement_Mesh class.
@@ -68,10 +66,14 @@ class Adaptive_Refinement_Mesh {
 
   /*!
     @brief Constructor to create a Adaptive_Refinement_Mesh.
-    @param[in] edges The cell edge coordinates along each axis.
+    @param[in] func The refinement function specifying the AMR level as a
+                    function of position.
+    @param[in] plo Point specifying the low corner of the mesh along all axes.
+    @param[in] phi Point specifying the high corner of the mesh along all axes.
 
-    Specify the edge coordinates that delineate the cells of the mesh along
-    each axis.
+    Some AMR meshes allow multiple refinement-level-zero cells in order to have
+    non-square grids, but for simplicity this mesh assumes that the overall
+    grid has a single refinement-level-zero cell, and then refines from there.
   */
   Adaptive_Refinement_Mesh(
       double (*func)(const Point<D>), const Point<D> plo, const Point<D> phi);
@@ -170,12 +172,16 @@ Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
 // Destructor
 template<long D>
 Adaptive_Refinement_Mesh<D>::~Adaptive_Refinement_Mesh() {
+  // Break down mesh info
   cells_.clear();
+  // Clear the refinement function
   refinement_level_ = NULL;
+  // Zero-out the corner coordinates
   for (int d = 0; d < D; ++d) {
     mesh_corners_[d][LO] = 0.0;
     mesh_corners_[d][HI] = 0.0;
   }
+  // Clear the dimensionality
   dimensionality_ = -1;
 }
 
@@ -190,8 +196,10 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
     const Adaptive_Refinement_Mesh<D>::cell_data_t cell, const int level) {
   // Evaluate refinement function
   // -- In principle one could do something like integrate to get the
-  //    average value, but for now we'll just sample the center of the
-  //    cell.  This is equivalent to second order for Cartesian geometries.
+  //    average value or find the maximum value, but for now we'll just sample
+  //    the center of the cell.  This is equivalent to using the average value
+  //    to second order for Cartesian geometries (if you use the centroid
+  //    instead, you get second-order equivalence on other geometries).
   Point<D> center;
   for (int d = 0; d < D; ++d) {
     center[d] = 0.5 * (cell[d][LO] + cell[d][HI]);
@@ -207,6 +215,7 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
 
 // ____________________________________________________________________________
 // Recursive procedure to perform the actual splitting of a cell by axis.
+// -- Refinement is done by splitting in half along each axis.
 template<long D>
 typename Adaptive_Refinement_Mesh<D>::mesh_data_t
     Adaptive_Refinement_Mesh<D>::split_cell(
@@ -231,18 +240,19 @@ typename Adaptive_Refinement_Mesh<D>::mesh_data_t
   mesh_data_t newcells;
   const int N = 1<<(d+1);
   newcells.resize(N);
-  if (d > 0) {
-    // Recursive case: split along the next axis, then combine results
+  if (d > 0) {  // Recursive case
+    // Split lower cell along other axes
     auto tempcells = split_cell(d-1, cell_lo);
     for (int n = 0; n < N/2; ++n) {
       newcells[n] = tempcells[n];
     }
+    // Split upper cell along other axes
     tempcells = split_cell(d-1, cell_hi);
     for (int n = 0; n < N/2; ++n) {
       newcells[n+N/2] = tempcells[n];
     }
-  } else {
-    // Base case: return the two new cells
+  } else {  // Base case
+    // Return the two new cells
     newcells[0] = cell_lo;
     newcells[1] = cell_hi;
   }
@@ -252,14 +262,15 @@ typename Adaptive_Refinement_Mesh<D>::mesh_data_t
 // ____________________________________________________________________________
 // Refine a single cell.
 // -- Remove the specified cell and replace it with refined cells.
-// -- Refinement is done by splitting in half along each axis.
+//    -- Some AMR meshes preserve non-leaf cells, but this mesh throws them
+//       away as they are irrelevant to mapping to another grid.
 template<long D>
 std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
     Adaptive_Refinement_Mesh<D>::refine_cell(
     const Adaptive_Refinement_Mesh<D>::mesh_data_t cells,
     const std::vector<int> level, const int n) {
   assert(n >= 0);
-  assert(n < level.size());
+  assert(n < cells.size());
   // Create new storage
   // -- New storage replaces 1 cell with 2^D cells
   const int num_new_cells = (1<<D) - 1;
@@ -298,21 +309,6 @@ void Adaptive_Refinement_Mesh<D>::build_mesh() {
   std::vector<int> level = {0};
   // Refinement loop
   bool do_refinement;
-  /*do {
-    // Should we do another refinement?
-    do_refinement = false;
-    // Which cells need to be refined?
-    std::vector<bool> refine_flag;
-    refine_flag.resize(level.size(), false);
-    for (int n = 0; n < level.size(); ++n) {
-      // Should we refine this cell?
-      refine_flag[n] = check_for_refinement(cells_[n], level[n]);
-      do_refinement = (do_refinement || refine_flag[n]);
-    }
-    // Apply refinement
-    if (do_refinement)
-      std::tie(cells_, level) = refine1(cells_, refine_flag, level);
-  } while(do_refinement);*/
   for (int n = 0; n < level.size(); ++n) {
     if (check_for_refinement(cells_[n], level[n])) {
       std::tie(cells_, level) = refine_cell(cells_, level, n);
