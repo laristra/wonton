@@ -95,9 +95,6 @@ class Direct_Product_Mesh {
   // ==========================================================================
   // Class data
 
-  //! Dimensionality of the mesh
-  int dimensionality_ = -1;
-
   //! Cell edge coordinates along the three axes
   std::vector<double> edges_[D];
 
@@ -111,7 +108,6 @@ class Direct_Product_Mesh {
 // Constructor
 template<long D>
 Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> edges[D]) {
-  dimensionality_ = D;
   for (int d = 0; d < D; ++d) {
     edges_[d] = edges[d];
   }
@@ -121,10 +117,9 @@ Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> edges[D]) 
 // Destructor
 template<long D>
 Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
-  for (int d = 0; d < dimensionality_; ++d) {
+  for (int d = 0; d < D; ++d) {
     edges_[d].clear();
   }
-  dimensionality_ = -1;
 }
 
 
@@ -135,7 +130,7 @@ Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
 // Get the dimensionality of the mesh.
 template<long D>
 int Direct_Product_Mesh<D>::space_dimension() const {
-  return dimensionality_;
+  return(D);
 }
 
 // ____________________________________________________________________________
@@ -143,7 +138,7 @@ int Direct_Product_Mesh<D>::space_dimension() const {
 template<long D>
 int Direct_Product_Mesh<D>::axis_num_points(const int dim) const {
   assert(dim >= 0);
-  assert(dim < dimensionality_);
+  assert(dim < D);
   return edges_[dim].size();
 }
 
@@ -153,7 +148,7 @@ template<long D>
 double Direct_Product_Mesh<D>::axis_point_coordinate(
     const int dim, const int pointid) const {
   assert(dim >= 0);
-  assert(dim < dimensionality_);
+  assert(dim < D);
   assert(pointid >= 0);
   assert(pointid < edges_[dim].size());
   return edges_[dim][pointid];
