@@ -128,9 +128,6 @@ class Adaptive_Refinement_Mesh {
   */
   double (*refinement_level_)(const Point<D> coords);
 
-  //! Dimensionality of the mesh
-  int dimensionality_ = -1;
-
   //! Mesh corner coordinates
   BoundingBox<D> mesh_corners_;
 
@@ -148,9 +145,8 @@ class Adaptive_Refinement_Mesh {
 template<long D>
 Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
     double (*func)(const Point<D>), const Point<D> plo, const Point<D> phi) {
-  // Verify and save dimensionality
+  // Verify dimensionality
   assert(D > 0);
-  dimensionality_ = D;
   // Save refinement level function pointer
   refinement_level_ = func;
   // Save mesh corners
@@ -175,8 +171,6 @@ Adaptive_Refinement_Mesh<D>::~Adaptive_Refinement_Mesh() {
     mesh_corners_[d][LO] = 0.0;
     mesh_corners_[d][HI] = 0.0;
   }
-  // Clear the dimensionality
-  dimensionality_ = -1;
 }
 
 
@@ -319,7 +313,7 @@ void Adaptive_Refinement_Mesh<D>::build_mesh() {
 // Get the dimensionality of the mesh.
 template<long D>
 int Adaptive_Refinement_Mesh<D>::space_dimension() const {
-  return dimensionality_;
+  return(D);
 }
 
 // ____________________________________________________________________________
