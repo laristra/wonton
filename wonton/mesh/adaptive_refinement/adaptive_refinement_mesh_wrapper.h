@@ -14,7 +14,6 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/support/wonton.h"
 #include "wonton/support/CellID.h"
-#include "wonton/support/IntPoint.h"
 #include "wonton/support/Point.h"
 
 /*!
