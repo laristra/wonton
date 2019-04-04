@@ -9,12 +9,12 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/mesh/direct_product/direct_product_mesh.h"
 
-#include <vector>
 #include <algorithm>
+#include <array>
+#include <vector>
 
 #include "wonton/support/wonton.h"
 #include "wonton/support/CellID.h"
-#include "wonton/support/IntPoint.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -98,10 +98,10 @@ class Direct_Product_Mesh_Wrapper {
   // Index/ID conversions
 
   //! Convert from indices to cell ID
-  CellID indices_to_cellid(const IntPoint<D>& indices) const;
+  CellID indices_to_cellid(const std::array<int,D>& indices) const;
 
   //! Convert from ID to indices
-  IntPoint<D> cellid_to_indices(const CellID id) const;
+  std::array<int,D> cellid_to_indices(const CellID id) const;
 
 
  private:
@@ -212,7 +212,7 @@ int Direct_Product_Mesh_Wrapper<D>::total_num_cells() const {
 template<long D>
 void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
     const CellID id, Point<D> *plo, Point<D> *phi) const {
-  IntPoint<D> indices = cellid_to_indices(id);
+  std::array<int,D> indices = cellid_to_indices(id);
   // Cell edges (points) are zero-indexed, cells are zero-indexed.  Thus cell 0
   // is bounded by edges 0 and 1, or more generally, cell N is bounded by edges
   // N and N+1.
@@ -229,7 +229,7 @@ void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
 // Convert from indices to ID
 template<long D>
 CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
-    const IntPoint<D>& indices) const {
+    const std::array<int,D>& indices) const {
   assert(D == mesh_.space_dimension());
   CellID id = 0;
   switch(D) {
@@ -259,10 +259,10 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
 // ____________________________________________________________________________
 // Convert from ID to indices
 template<long D>
-IntPoint<D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
+std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
     const CellID id) const {
   assert(D == mesh_.space_dimension());
-  IntPoint<D> indices;
+  std::array<int,D> indices;
   CellID index, denom;
   CellID residual = id;
   switch(D) {
