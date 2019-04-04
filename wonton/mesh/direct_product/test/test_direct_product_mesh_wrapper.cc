@@ -13,7 +13,6 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/mesh/direct_product/direct_product_mesh_wrapper.h"
 #include "wonton/support/wonton.h"
 #include "wonton/support/CellID.h"
-#include "wonton/support/IntPoint.h"
 #include "wonton/support/Point.h"
 #include "wonton/support/Vector.h"
 
@@ -55,7 +54,7 @@ namespace direct_product_mesh_wrapper_test {
   template<long D>
   void check_cell_bounds(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const Wonton::IntPoint<D>& indices,
+      const std::array<int,D>& indices,
       const std::vector<double> edges[D]) {
     // Get the cell ID
     Wonton::CellID id = mesh_wrapper.indices_to_cellid(indices);
@@ -74,11 +73,11 @@ namespace direct_product_mesh_wrapper_test {
   template<long D>
   void check_indices_and_cellids(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const Wonton::IntPoint<D>& indices, const Wonton::CellID id) {
+      const std::array<int,D>& indices, const Wonton::CellID id) {
     // Ensure indices to cell ID works.
     ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
     // Ensure cell ID to indices works.
-    Wonton::IntPoint<D> indices2 = mesh_wrapper.cellid_to_indices(id);
+    std::array<int,D> indices2 = mesh_wrapper.cellid_to_indices(id);
     for (int d = 0; d < D; ++d) {
       ASSERT_EQ(indices2[d], indices[d]);
     }
@@ -119,7 +118,7 @@ TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
   for (int k = 0; k < mesh_wrapper.axis_num_cells(2); ++k) {
     for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
       for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-        const Wonton::IntPoint<D> indices = {i, j, k};
+        const std::array<int,D> indices = {i, j, k};
         // Verify cell bounding boxes
         // -- Since this mesh is just axis-aligned boxes, the bounding boxes
         //    will simply be the cell bounds.
@@ -159,7 +158,7 @@ TEST(Direct_Product_Mesh_Wrapper, SmallGrid2D) {
   Wonton::CellID id = 0;
   for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
     for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-      const Wonton::IntPoint<D> indices = {i, j};
+      const std::array<int,D> indices = {i, j};
       // Verify cell bounding boxes
       // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
       //    simply be the cell bounds.
@@ -197,7 +196,7 @@ TEST(Direct_Product_Mesh_Wrapper, SmallGrid1D) {
 
   Wonton::CellID id = 0;
   for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-    const Wonton::IntPoint<D> indices = {i};
+    const std::array<int,D> indices = {i};
     // Verify cell bounding boxes
     // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
     //    simply be the cell bounds.
