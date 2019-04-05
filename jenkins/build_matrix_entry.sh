@@ -60,6 +60,7 @@ cmake_build_type=Release
 mpi_flags="-D ENABLE_MPI=True"
 extra_flags=
 thrust_flags=
+jali_flags="-D Jali_DIR:FILEPATH=$jali_install_dir/lib"
 lapacke_flags="-D LAPACKE_DIR:FILEPATH=$lapacke_dir"
 if [[ $build_type == "debug" ]]; then
     cmake_build_type=Debug
