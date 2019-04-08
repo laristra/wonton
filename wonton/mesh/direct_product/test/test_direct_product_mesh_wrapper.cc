@@ -21,7 +21,7 @@ Please see the license file at the root of this repository, or at:
 // ============================================================================
 
 namespace direct_product_mesh_wrapper_test {
-  template<long D>
+  template<int D>
   void check_basic_functions(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::vector<double> edges[D]) {
@@ -51,7 +51,7 @@ namespace direct_product_mesh_wrapper_test {
 
   // --------------------------------------------------------------------------
 
-  template<long D>
+  template<int D>
   void check_cell_bounds(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::array<int,D>& indices,
@@ -70,7 +70,7 @@ namespace direct_product_mesh_wrapper_test {
 
   // --------------------------------------------------------------------------
 
-  template<long D>
+  template<int D>
   void check_indices_and_cellids(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::array<int,D>& indices, const Wonton::CellID id) {

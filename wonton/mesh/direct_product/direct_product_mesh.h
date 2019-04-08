@@ -41,7 +41,7 @@ namespace Wonton {
   of the tests expands, the scope of functionality of the Direct_Product_Mesh
   may also expand.
  */
-template<long D>
+template<int D>
 class Direct_Product_Mesh {
 
  public:
@@ -106,7 +106,7 @@ class Direct_Product_Mesh {
 
 // ____________________________________________________________________________
 // Constructor
-template<long D>
+template<int D>
 Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> &edges[D]) {
   for (int d = 0; d < D; ++d) {
     edges_[d] = edges[d];
@@ -115,7 +115,7 @@ Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> &edges[D])
 
 // ____________________________________________________________________________
 // Destructor
-template<long D>
+template<int D>
 Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
   for (int d = 0; d < D; ++d) {
     edges_[d].clear();
@@ -128,14 +128,14 @@ Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
 
 // ____________________________________________________________________________
 // Get the dimensionality of the mesh.
-template<long D>
+template<int D>
 int Direct_Product_Mesh<D>::space_dimension() const {
   return(D);
 }
 
 // ____________________________________________________________________________
 // Get the number of points (edge coordinates).
-template<long D>
+template<int D>
 int Direct_Product_Mesh<D>::axis_num_points(const int dim) const {
   assert(dim >= 0);
   assert(dim < D);
@@ -144,7 +144,7 @@ int Direct_Product_Mesh<D>::axis_num_points(const int dim) const {
 
 // ____________________________________________________________________________
 // Get the specified point (edge coordinate).
-template<long D>
+template<int D>
 double Direct_Product_Mesh<D>::axis_point_coordinate(
     const int dim, const int pointid) const {
   assert(dim >= 0);
