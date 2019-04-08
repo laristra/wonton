@@ -31,6 +31,9 @@ namespace Wonton {
   The methods implemented are those required by select parts of the Wonton and
   Portage code.  This will expand as the list of components that this wrapper
   supports expands.
+
+  This class is not meant to be used to be utilized with downstream classes
+  that assume an unstructured mesh (e.g. SearchKDTree or IntersectR2D etc.).
 */
 template<int D>
 class Direct_Product_Mesh_Wrapper {
