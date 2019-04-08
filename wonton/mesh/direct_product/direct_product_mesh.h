@@ -59,7 +59,7 @@ class Direct_Product_Mesh {
     Specify the edge coordinates that delineate the cells of the mesh along
     each axis.
   */
-  Direct_Product_Mesh(const std::vector<double> edges[D]);
+  Direct_Product_Mesh(const std::vector<double> &edges[D]);
 
   //! Assignment operator (disabled).
   Direct_Product_Mesh & operator=(const Direct_Product_Mesh<D> &) = delete;
@@ -107,7 +107,7 @@ class Direct_Product_Mesh {
 // ____________________________________________________________________________
 // Constructor
 template<long D>
-Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> edges[D]) {
+Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> &edges[D]) {
   for (int d = 0; d < D; ++d) {
     edges_[d] = edges[d];
   }
