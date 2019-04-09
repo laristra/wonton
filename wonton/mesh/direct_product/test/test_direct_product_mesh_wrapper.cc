@@ -96,14 +96,15 @@ namespace direct_product_mesh_wrapper_test {
 
 } // namespace direct_product_mesh_wrapper_test 
 
+
 // ============================================================================
 
-TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
+TEST(Direct_Product_Mesh_Wrapper, SmallGrid1D) {
 
-  const int D = 3;
+  const int D = 1;
 
   // Build a mesh and wrapper
-  const std::vector<double> edges1 = {0.0, 1.0};
+  const std::vector<double> edges1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
   std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
@@ -116,22 +117,18 @@ TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
       mesh_wrapper, edges);
 
   Wonton::CellID id = 0;
-  for (int k = 0; k < mesh_wrapper.axis_num_cells(2); ++k) {
-    for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
-      for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-        const std::array<int,D> indices = {i, j, k};
-        // Verify cell bounding boxes
-        // -- Since this mesh is just axis-aligned boxes, the bounding boxes
-        //    will simply be the cell bounds.
-        direct_product_mesh_wrapper_test::check_cell_bounds<D>(
-            mesh_wrapper, indices, edges);
-        // Check IDs vs indices
-        direct_product_mesh_wrapper_test::check_indices_and_cellids<D>(
-            mesh_wrapper, indices, id);
-        // Increment to next cell ID
-        id++;
-      }
-    }
+  for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
+    const std::array<int,D> indices = {i};
+    // Verify cell bounding boxes
+    // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
+    //    simply be the cell bounds.
+    direct_product_mesh_wrapper_test::check_cell_bounds<D>(
+        mesh_wrapper, indices, edges);
+    // Check IDs vs indices
+    direct_product_mesh_wrapper_test::check_indices_and_cellids<D>(
+        mesh_wrapper, indices, id);
+    // Increment to next cell ID
+    id++;
   }
 
 }
@@ -178,12 +175,12 @@ TEST(Direct_Product_Mesh_Wrapper, SmallGrid2D) {
 
 // ============================================================================
 
-TEST(Direct_Product_Mesh_Wrapper, SmallGrid1D) {
+TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
 
-  const int D = 1;
+  const int D = 3;
 
   // Build a mesh and wrapper
-  const std::vector<double> edges1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
+  const std::vector<double> edges1 = {0.0, 1.0};
   std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
@@ -196,18 +193,22 @@ TEST(Direct_Product_Mesh_Wrapper, SmallGrid1D) {
       mesh_wrapper, edges);
 
   Wonton::CellID id = 0;
-  for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
-    const std::array<int,D> indices = {i};
-    // Verify cell bounding boxes
-    // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
-    //    simply be the cell bounds.
-    direct_product_mesh_wrapper_test::check_cell_bounds<D>(
-        mesh_wrapper, indices, edges);
-    // Check IDs vs indices
-    direct_product_mesh_wrapper_test::check_indices_and_cellids<D>(
-        mesh_wrapper, indices, id);
-    // Increment to next cell ID
-    id++;
+  for (int k = 0; k < mesh_wrapper.axis_num_cells(2); ++k) {
+    for (int j = 0; j < mesh_wrapper.axis_num_cells(1); ++j) {
+      for (int i = 0; i < mesh_wrapper.axis_num_cells(0); ++i) {
+        const std::array<int,D> indices = {i, j, k};
+        // Verify cell bounding boxes
+        // -- Since this mesh is just axis-aligned boxes, the bounding boxes
+        //    will simply be the cell bounds.
+        direct_product_mesh_wrapper_test::check_cell_bounds<D>(
+            mesh_wrapper, indices, edges);
+        // Check IDs vs indices
+        direct_product_mesh_wrapper_test::check_indices_and_cellids<D>(
+            mesh_wrapper, indices, id);
+        // Increment to next cell ID
+        id++;
+      }
+    }
   }
 
 }
