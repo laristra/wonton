@@ -172,3 +172,11 @@ TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
 
 // ============================================================================
 
+TEST(Direct_Product_Mesh_Wrapper, SmalGrid10D) {
+  const std::vector<double> edges1 = {0.0, 0.5, 1.0};
+  direct_product_mesh_wrapper_test::run_all_tests<10>(edges1);
+}
+
+
+// ============================================================================
+
