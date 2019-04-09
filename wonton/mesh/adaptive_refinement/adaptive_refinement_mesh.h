@@ -74,10 +74,12 @@ class Adaptive_Refinement_Mesh {
     grid has a single refinement-level-zero cell, and then refines from there.
   */
   Adaptive_Refinement_Mesh(
-      double (*func)(const Point<D>), const Point<D> plo, const Point<D> phi);
+      double (*func)(const Point<D>),
+      const Point<D> &plo, const Point<D> &phi);
 
   //! Assignment operator (disabled).
-  Adaptive_Refinement_Mesh & operator=(const Adaptive_Refinement_Mesh<D> &) = delete;
+  Adaptive_Refinement_Mesh & operator=(
+      const Adaptive_Refinement_Mesh<D> &) = delete;
 
   //! Destructor
   ~Adaptive_Refinement_Mesh();
@@ -105,14 +107,14 @@ class Adaptive_Refinement_Mesh {
   // Private support methods
 
   //! Check to see if the current cell needs to be refined further
-  bool check_for_refinement(const BoundingBox<D> cell, const int level);
+  bool check_for_refinement(const BoundingBox<D> &cell, const int level);
 
   //! Recursive procedure to perform the actual splitting of a cell by axis.
-  mesh_data_t split_cell(const int d, const BoundingBox<D> cell);
+  mesh_data_t split_cell(const int d, const BoundingBox<D> &cell);
 
   // Refine a single cell.
   std::pair<mesh_data_t, std::vector<int>> refine_cell(
-      const mesh_data_t cells, const std::vector<int> level, const int n);
+      const mesh_data_t &cells, const std::vector<int> &level, const int n);
 
   //! Build the mesh based on the mesh corners and the refinement function.
   void build_mesh();
@@ -144,7 +146,7 @@ class Adaptive_Refinement_Mesh {
 // Constructor
 template<int D>
 Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
-    double (*func)(const Point<D>), const Point<D> plo, const Point<D> phi) {
+    double (*func)(const Point<D>), const Point<D> &plo, const Point<D> &phi) {
   // Verify dimensionality
   assert(D > 0);
   // Save refinement level function pointer
@@ -181,7 +183,7 @@ Adaptive_Refinement_Mesh<D>::~Adaptive_Refinement_Mesh() {
 // Check to see if the current cell needs to be refined further
 template<int D>
 bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
-    const BoundingBox<D> cell, const int level) {
+    const BoundingBox<D> &cell, const int level) {
   // Evaluate refinement function
   // -- In principle one could do something like integrate to get the
   //    average value or find the maximum value, but for now we'll just sample
@@ -207,7 +209,7 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
 template<int D>
 typename Adaptive_Refinement_Mesh<D>::mesh_data_t
     Adaptive_Refinement_Mesh<D>::split_cell(
-    const int d, const BoundingBox<D> cell) {
+    const int d, const BoundingBox<D> &cell) {
   // Splitting point
   double midpoint = 0.5 * (cell[d][LO] + cell[d][HI]);
   // Create the lower cell
@@ -255,8 +257,8 @@ typename Adaptive_Refinement_Mesh<D>::mesh_data_t
 template<int D>
 std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
     Adaptive_Refinement_Mesh<D>::refine_cell(
-    const Adaptive_Refinement_Mesh<D>::mesh_data_t cells,
-    const std::vector<int> level, const int n) {
+    const Adaptive_Refinement_Mesh<D>::mesh_data_t &cells,
+    const std::vector<int> &level, const int n) {
   assert(n >= 0);
   assert(n < cells.size());
   // Create new storage
