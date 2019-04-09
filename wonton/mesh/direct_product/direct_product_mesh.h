@@ -7,6 +7,7 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_DIRECT_PRODUCT_MESH_H_
 #define WONTON_DIRECT_PRODUCT_MESH_H_
 
+#include <array>
 #include <cassert>
 #include <vector>
 
@@ -59,7 +60,7 @@ class Direct_Product_Mesh {
     Specify the edge coordinates that delineate the cells of the mesh along
     each axis.
   */
-  Direct_Product_Mesh(const std::vector<double> edges[D]);
+  Direct_Product_Mesh(const std::array<std::vector<double>,D> &edges);
 
   //! Assignment operator (disabled).
   Direct_Product_Mesh & operator=(const Direct_Product_Mesh<D> &) = delete;
@@ -96,7 +97,7 @@ class Direct_Product_Mesh {
   // Class data
 
   //! Cell edge coordinates along the three axes
-  std::vector<double> edges_[D];
+  std::array<std::vector<double>,D> edges_;
 
 };  // class Direct_Product_Mesh
 
@@ -108,7 +109,7 @@ class Direct_Product_Mesh {
 // Constructor
 template<int D>
 Direct_Product_Mesh<D>::Direct_Product_Mesh(
-    const std::vector<double> edges[D]) {
+    const std::array<std::vector<double>,D> &edges) {
   for (int d = 0; d < D; ++d) {
     edges_[d] = edges[d];
   }

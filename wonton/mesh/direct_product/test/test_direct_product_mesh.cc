@@ -6,8 +6,9 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/mesh/direct_product/direct_product_mesh.h"
 
-#include <iostream>
+#include <array>
 #include <cmath>
+#include <iostream>
 #include <vector>
 
 #include "wonton/support/wonton.h"
@@ -26,7 +27,7 @@ TEST(Direct_Product_Mesh, SingleCell3D) {
 
   // Create a single cell mesh
   const std::vector<double> edges1 = {0.0, 1.0};
-  std::vector<double> edges[D];
+  std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
   }
@@ -58,7 +59,7 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
 
   // Create a simple 2x2 mesh
   const std::vector<double> edges1 = {0.0, 0.5, 1.0};
-  std::vector<double> edges[D];
+  std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
   }
@@ -91,7 +92,7 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
   // Create a single cell mesh
   //                           2^-4    2^-3   2^-2  2^-1 2^0
   const std::vector<double> edges1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  std::vector<double> edges[D];
+  std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
   }
