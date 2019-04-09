@@ -33,7 +33,7 @@ namespace Wonton {
   supports expands.
 */
 
-template<long D>
+template<int D>
 class Adaptive_Refinement_Mesh_Wrapper {
 
  public:
@@ -91,7 +91,7 @@ class Adaptive_Refinement_Mesh_Wrapper {
 
 // ____________________________________________________________________________
 // constructor
-template<long D>
+template<int D>
 Adaptive_Refinement_Mesh_Wrapper<D>::Adaptive_Refinement_Mesh_Wrapper(
     Adaptive_Refinement_Mesh<D> const & mesh) :
     mesh_(mesh) {
@@ -99,7 +99,7 @@ Adaptive_Refinement_Mesh_Wrapper<D>::Adaptive_Refinement_Mesh_Wrapper(
 
 // ____________________________________________________________________________
 // destructor
-template<long D>
+template<int D>
 Adaptive_Refinement_Mesh_Wrapper<D>::~Adaptive_Refinement_Mesh_Wrapper() {
 }
 
@@ -109,21 +109,21 @@ Adaptive_Refinement_Mesh_Wrapper<D>::~Adaptive_Refinement_Mesh_Wrapper() {
 
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
-template<long D>
+template<int D>
 int Adaptive_Refinement_Mesh_Wrapper<D>::space_dimension() const {
   return mesh_.space_dimension();
 }
 
 // ____________________________________________________________________________
 // Get number of cells in entire mesh.
-template<long D>
+template<int D>
 int Adaptive_Refinement_Mesh_Wrapper<D>::total_num_cells() const {
   return mesh_.num_cells();
 }
 
 // ____________________________________________________________________________
 // Get lower and upper corners of cell bounding box
-template<long D>
+template<int D>
 void Adaptive_Refinement_Mesh_Wrapper<D>::cell_get_bounds(
     const CellID id, Point<D> *plo, Point<D> *phi) const {
   auto bounding_box = mesh_.cell_get_bounds(id);

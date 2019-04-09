@@ -30,7 +30,7 @@ Please see the license file at the root of this repository, or at:
 namespace Adaptive_Refinement_Utilities {
 
 // Getting tired of typing this
-template<long D>
+template<int D>
 using BoxList = std::pair<std::vector<Wonton::CellID>,std::vector<Wonton::BoundingBox<D>>>;
 //using BoxList = std::vector<std::pair<Wonton::CellID,Wonton::BoundingBox<D>>>;
 
@@ -41,21 +41,21 @@ const int HI = Wonton::HI;
 // ============================================================================
 // Templates
 
-template<long D>
+template<int D>
 double refinement_function(const Wonton::Point<D> r) {
   return(0.0);
 }
 
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-template<long D>
+template<int D>
 int num_cells() {
   return(0);
 }
 
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-template<long D>
+template<int D>
 BoxList<D> get_sample_points() {
   BoxList<D> boxes;
   return(std::move(boxes));

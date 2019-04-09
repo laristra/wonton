@@ -26,7 +26,7 @@ Please see the license file at the root of this repository, or at:
 
 namespace adaptive_refinement_mesh_test {
 
-template <long D>
+template <int D>
 void run_basic_tests() {
   // Create a mesh
   // -- The tests are calibrated to a level-zero mesh ranging from 0 to 1 along
