@@ -242,6 +242,7 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
       CellID jmax = (CellID) axis_num_cells(1);
       id += k;
       id *= jmax;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     }
     case 2 :
     {
@@ -249,11 +250,13 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
       CellID imax = (CellID) axis_num_cells(0);
       id += j;
       id *= imax;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     }
     case 1 : 
     {
       CellID i = (CellID) indices[0];
       id += i;
+      break;
     }
   }
   return id;
@@ -274,13 +277,16 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
       index = residual / denom;
       residual -= index * denom;
       indices[2] = (int) index;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     case 2 :
       denom = (CellID) axis_num_cells(0);
       index = residual / denom;
       residual -= index * denom;
       indices[1] = (int) index;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     case 1 :
       indices[0] = (int) residual;
+      break;
   }
   return std::move(indices);
 }
