@@ -235,30 +235,16 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
     const std::array<int,D>& indices) const {
   assert(D == mesh_.space_dimension());
   CellID id = 0;
-  switch(D) {
-    case 3 :
-    {
-      CellID k = (CellID) indices[2];
-      CellID jmax = (CellID) axis_num_cells(1);
-      id += k;
-      id *= jmax;
-      // [[fallthrough]]; // The fallthrough attribute is C++17
-    }
-    case 2 :
-    {
-      CellID j = (CellID) indices[1];
-      CellID imax = (CellID) axis_num_cells(0);
-      id += j;
-      id *= imax;
-      // [[fallthrough]]; // The fallthrough attribute is C++17
-    }
-    case 1 : 
-    {
-      CellID i = (CellID) indices[0];
-      id += i;
-      break;
-    }
+  // Loop over all but the last dimension
+  for (int d = D-1; d > 0; --d) {
+    CellID idx = (CellID) indices[d];
+    CellID mult = (CellID) axis_num_cells(d-1);
+    id += idx;
+    id *= mult;
   }
+  // Handle the last dimension
+  id += (CellID) indices[0];
+  // Return
   return id;
 }
 
@@ -269,25 +255,22 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
     const CellID id) const {
   assert(D == mesh_.space_dimension());
   std::array<int,D> indices;
-  CellID index, denom;
   CellID residual = id;
-  switch(D) {
-    case 3 :
-      denom = (CellID) (axis_num_cells(1) * axis_num_cells(0));
-      index = residual / denom;
-      residual -= index * denom;
-      indices[2] = (int) index;
-      // [[fallthrough]]; // The fallthrough attribute is C++17
-    case 2 :
-      denom = (CellID) axis_num_cells(0);
-      index = residual / denom;
-      residual -= index * denom;
-      indices[1] = (int) index;
-      // [[fallthrough]]; // The fallthrough attribute is C++17
-    case 1 :
-      indices[0] = (int) residual;
-      break;
+  // Construct the denominators
+  std::array<CellID,D> denom;
+  denom[0] = 1;
+  for (int d = 1; d < D; ++d) {
+    denom[d] = denom[d-1] * axis_num_cells(d-1);
   }
+  // Loop over all but the last dimension
+  for (int d = D-1; d > 0; --d) {
+    CellID index = residual / denom[d];
+    residual -= index * denom[d];
+    indices[d] = (int) index;
+  }
+  // Handle the last dimension
+  indices[0] = (int) residual;
+  // Return
   return std::move(indices);
 }
 
