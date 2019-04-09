@@ -31,8 +31,11 @@ namespace Wonton {
   The methods implemented are those required by select parts of the Wonton and
   Portage code.  This will expand as the list of components that this wrapper
   supports expands.
+
+  This class is not meant to be used to be utilized with downstream classes
+  that assume an unstructured mesh (e.g. SearchKDTree or IntersectR2D etc.).
 */
-template<long D>
+template<int D>
 class Direct_Product_Mesh_Wrapper {
 
  public:
@@ -120,7 +123,7 @@ class Direct_Product_Mesh_Wrapper {
 
 // ____________________________________________________________________________
 // constructor
-template<long D>
+template<int D>
 Direct_Product_Mesh_Wrapper<D>::Direct_Product_Mesh_Wrapper(
     Direct_Product_Mesh<D> const & mesh) :
     mesh_(mesh) {
@@ -128,7 +131,7 @@ Direct_Product_Mesh_Wrapper<D>::Direct_Product_Mesh_Wrapper(
 
 // ____________________________________________________________________________
 // destructor
-template<long D>
+template<int D>
 Direct_Product_Mesh_Wrapper<D>::~Direct_Product_Mesh_Wrapper() {
 }
 
@@ -138,14 +141,14 @@ Direct_Product_Mesh_Wrapper<D>::~Direct_Product_Mesh_Wrapper() {
 
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
-template<long D>
+template<int D>
 int Direct_Product_Mesh_Wrapper<D>::space_dimension() const {
   return mesh_.space_dimension();
 }
 
 // ____________________________________________________________________________
 // Get global mesh bounds.
-template<long D>
+template<int D>
 void Direct_Product_Mesh_Wrapper<D>::get_global_bounds(
     Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension());
@@ -157,7 +160,7 @@ void Direct_Product_Mesh_Wrapper<D>::get_global_bounds(
 
 // ____________________________________________________________________________
 // Get iterator for axis edge coordinates (beginning of array).
-template<long D>
+template<int D>
 counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
     const int dim) const {
   assert(dim >= 0);
@@ -168,7 +171,7 @@ counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
 
 // ____________________________________________________________________________
 // Get iterator for axis edge coordinates (end of array).
-template<long D>
+template<int D>
 counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_end(
     const int dim) const {
   assert(dim >= 0);
@@ -179,7 +182,7 @@ counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_end(
 
 // ____________________________________________________________________________
 // Get edge coordinate value.
-template<long D>
+template<int D>
 double Direct_Product_Mesh_Wrapper<D>::axis_point_coordinate(
     const int dim, const int pointid) const {
   assert(dim >= 0);
@@ -189,7 +192,7 @@ double Direct_Product_Mesh_Wrapper<D>::axis_point_coordinate(
 
 // ____________________________________________________________________________
 // Get number of cells along axis.
-template<long D>
+template<int D>
 int Direct_Product_Mesh_Wrapper<D>::axis_num_cells(const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
@@ -198,7 +201,7 @@ int Direct_Product_Mesh_Wrapper<D>::axis_num_cells(const int dim) const {
 
 // ____________________________________________________________________________
 // Get number of cells in entire mesh.
-template<long D>
+template<int D>
 int Direct_Product_Mesh_Wrapper<D>::total_num_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
@@ -209,7 +212,7 @@ int Direct_Product_Mesh_Wrapper<D>::total_num_cells() const {
 
 // ____________________________________________________________________________
 // Get lower and upper corners of cell bounding box
-template<long D>
+template<int D>
 void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
     const CellID id, Point<D> *plo, Point<D> *phi) const {
   std::array<int,D> indices = cellid_to_indices(id);
@@ -227,7 +230,7 @@ void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
 
 // ____________________________________________________________________________
 // Convert from indices to ID
-template<long D>
+template<int D>
 CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
     const std::array<int,D>& indices) const {
   assert(D == mesh_.space_dimension());
@@ -239,6 +242,7 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
       CellID jmax = (CellID) axis_num_cells(1);
       id += k;
       id *= jmax;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     }
     case 2 :
     {
@@ -246,11 +250,13 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
       CellID imax = (CellID) axis_num_cells(0);
       id += j;
       id *= imax;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     }
     case 1 : 
     {
       CellID i = (CellID) indices[0];
       id += i;
+      break;
     }
   }
   return id;
@@ -258,7 +264,7 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
 
 // ____________________________________________________________________________
 // Convert from ID to indices
-template<long D>
+template<int D>
 std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
     const CellID id) const {
   assert(D == mesh_.space_dimension());
@@ -271,13 +277,16 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
       index = residual / denom;
       residual -= index * denom;
       indices[2] = (int) index;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     case 2 :
       denom = (CellID) axis_num_cells(0);
       index = residual / denom;
       residual -= index * denom;
       indices[1] = (int) index;
+      // [[fallthrough]]; // The fallthrough attribute is C++17
     case 1 :
       indices[0] = (int) residual;
+      break;
   }
   return std::move(indices);
 }

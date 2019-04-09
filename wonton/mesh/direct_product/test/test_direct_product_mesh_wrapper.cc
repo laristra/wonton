@@ -5,9 +5,10 @@ Please see the license file at the root of this repository, or at:
 */
 
 
+#include <array>
 #include <iostream>
-#include <vector>
 #include <iterator>
+#include <vector>
 
 #include "wonton/mesh/direct_product/direct_product_mesh.h"
 #include "wonton/mesh/direct_product/direct_product_mesh_wrapper.h"
@@ -21,10 +22,10 @@ Please see the license file at the root of this repository, or at:
 // ============================================================================
 
 namespace direct_product_mesh_wrapper_test {
-  template<long D>
+  template<int D>
   void check_basic_functions(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const std::vector<double> edges[D]) {
+      const std::array<std::vector<double>,(std::size_t)D> &edges) {
 
     // Check basic dimensionality
     ASSERT_EQ(mesh_wrapper.space_dimension(), D);
@@ -51,11 +52,11 @@ namespace direct_product_mesh_wrapper_test {
 
   // --------------------------------------------------------------------------
 
-  template<long D>
+  template<int D>
   void check_cell_bounds(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::array<int,D>& indices,
-      const std::vector<double> edges[D]) {
+      const std::array<std::vector<double>,D> &edges) {
     // Get the cell ID
     Wonton::CellID id = mesh_wrapper.indices_to_cellid(indices);
     // Get the bounding box
@@ -70,7 +71,7 @@ namespace direct_product_mesh_wrapper_test {
 
   // --------------------------------------------------------------------------
 
-  template<long D>
+  template<int D>
   void check_indices_and_cellids(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::array<int,D>& indices, const Wonton::CellID id) {
@@ -103,7 +104,7 @@ TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
 
   // Build a mesh and wrapper
   const std::vector<double> edges1 = {0.0, 1.0};
-  std::vector<double> edges[D];
+  std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
   }
@@ -144,7 +145,7 @@ TEST(Direct_Product_Mesh_Wrapper, SmallGrid2D) {
 
   // Build a mesh and wrapper
   const std::vector<double> edges1 = {0.0, 0.25, 0.75, 1.0};
-  std::vector<double> edges[D];
+  std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
   }
@@ -183,7 +184,7 @@ TEST(Direct_Product_Mesh_Wrapper, SmallGrid1D) {
 
   // Build a mesh and wrapper
   const std::vector<double> edges1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  std::vector<double> edges[D];
+  std::array<std::vector<double>,D> edges;
   for (int d = 0; d < D; ++d) {
     edges[d] = edges1;
   }

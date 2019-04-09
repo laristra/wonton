@@ -7,6 +7,7 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_DIRECT_PRODUCT_MESH_H_
 #define WONTON_DIRECT_PRODUCT_MESH_H_
 
+#include <array>
 #include <cassert>
 #include <vector>
 
@@ -41,7 +42,7 @@ namespace Wonton {
   of the tests expands, the scope of functionality of the Direct_Product_Mesh
   may also expand.
  */
-template<long D>
+template<int D>
 class Direct_Product_Mesh {
 
  public:
@@ -59,7 +60,7 @@ class Direct_Product_Mesh {
     Specify the edge coordinates that delineate the cells of the mesh along
     each axis.
   */
-  Direct_Product_Mesh(const std::vector<double> edges[D]);
+  Direct_Product_Mesh(const std::array<std::vector<double>,D> &edges);
 
   //! Assignment operator (disabled).
   Direct_Product_Mesh & operator=(const Direct_Product_Mesh<D> &) = delete;
@@ -96,7 +97,7 @@ class Direct_Product_Mesh {
   // Class data
 
   //! Cell edge coordinates along the three axes
-  std::vector<double> edges_[D];
+  std::array<std::vector<double>,D> edges_;
 
 };  // class Direct_Product_Mesh
 
@@ -106,8 +107,9 @@ class Direct_Product_Mesh {
 
 // ____________________________________________________________________________
 // Constructor
-template<long D>
-Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> edges[D]) {
+template<int D>
+Direct_Product_Mesh<D>::Direct_Product_Mesh(
+    const std::array<std::vector<double>,D> &edges) {
   for (int d = 0; d < D; ++d) {
     edges_[d] = edges[d];
   }
@@ -115,7 +117,7 @@ Direct_Product_Mesh<D>::Direct_Product_Mesh(const std::vector<double> edges[D]) 
 
 // ____________________________________________________________________________
 // Destructor
-template<long D>
+template<int D>
 Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
   for (int d = 0; d < D; ++d) {
     edges_[d].clear();
@@ -128,14 +130,14 @@ Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
 
 // ____________________________________________________________________________
 // Get the dimensionality of the mesh.
-template<long D>
+template<int D>
 int Direct_Product_Mesh<D>::space_dimension() const {
   return(D);
 }
 
 // ____________________________________________________________________________
 // Get the number of points (edge coordinates).
-template<long D>
+template<int D>
 int Direct_Product_Mesh<D>::axis_num_points(const int dim) const {
   assert(dim >= 0);
   assert(dim < D);
@@ -144,7 +146,7 @@ int Direct_Product_Mesh<D>::axis_num_points(const int dim) const {
 
 // ____________________________________________________________________________
 // Get the specified point (edge coordinate).
-template<long D>
+template<int D>
 double Direct_Product_Mesh<D>::axis_point_coordinate(
     const int dim, const int pointid) const {
   assert(dim >= 0);
