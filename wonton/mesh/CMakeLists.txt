@@ -54,7 +54,7 @@ if (ENABLE_UNIT_TESTS)
     POLICY SERIAL
     )
 
-  # Direct Product Mesh Wrapper
+# Direct Product Mesh Wrapper
   cinch_add_unit(test_direct_product_mesh_wrapper
     SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
     POLICY SERIAL
