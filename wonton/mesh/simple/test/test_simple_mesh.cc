@@ -200,16 +200,6 @@ TEST(Simple_Mesh3D, Transform) {
 
   // should get these results for the corners
   std::vector<std::vector<double>> expected(8,std::vector<double>(3));
-  /*
-  expected[0] = {10, 20, 30};
-  expected[1] = {10 + b, 20 + a + b, 30 - a + b};
-  expected[2] = {10 - a + 2*b, 20 + a + 2*b, 30 + 2*b};
-  expected[3] = {10 - a + b, 20 + b, 30 + a + b};
-  expected[4] = {10 + a + b, 20 - a + b, 30 + b};
-  expected[5] = {10 + a + 2*b, 20 + 2*b, 30 - a + 2*b};
-  expected[6] = {10 + 3*b, 20 + 3*b, 30 + 3*b};
-  expected[7] = {10 + 2*b, 20 - a + 2*b, 30 + a + 2*b};
-  */
   expected[0] = {10, 20, 30};
   expected[1] = {10 + b, 20 + a + b, 30 - a + b};
   expected[2] = {10 - a + b, 20 + b, 30 + a + b};
