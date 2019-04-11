@@ -9,9 +9,11 @@ Please see the license file at the root of this repository, or at:
 
 #include <vector>
 #include <memory>
+#include <cassert>
 
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
+#include "wonton/support/Matrix.h"
 
 /*!
   @file simple_mesh.h
@@ -282,6 +284,7 @@ Simple_Mesh(double x0, double y0, double z0,
 
   /*!
     @brief Get the coordinates of all nodes in a cell.
+    @fn 
     @tparam D Dimension of the cell.
     @param[in] cellid The ID of the cell.
     @param[out] ccords The array of @c Point object of dimension @c D containing the
@@ -304,6 +307,33 @@ Simple_Mesh(double x0, double y0, double z0,
     }
   }
  
+  /*!
+    @brief Perform an affine transform on the coordinates of the mesh.
+    @details The input transform matrix is of dimension D x (D+1), where first 
+    D columns are a linear transform, the last column is a translation 
+    vector, and D is the dimension of the mesh.
+    
+    @tparam[in] D dimension of the mesh
+    @param[in] affine a Matrix with D rows and D+1 columns
+  */
+    
+  template<long D>
+  void transform(const Matrix &affine) {
+    assert(D == space_dimension());
+    assert(affine.rows() == D);
+    assert(affine.columns() == D+1);
+    for (int i=0; i<num_nodes_; i++) {
+      Point<D> node;
+      node_get_coordinates<D>(i, &node);
+      std::vector<double> nodex(D+1);
+      for (int j=0; j<D; j++) nodex[j] = node[j];
+      nodex[D] = 1.;
+      std::vector<double> newnodev;
+      newnodev = affine*nodex;
+      Point<D> newnode(newnodev);
+      node_set_coordinates<D>(i, &newnode);
+    }
+  }
  
  
   
@@ -609,6 +639,27 @@ Simple_Mesh(double x0, double y0, double z0,
   
   }
 
+  // General specification - specialization follows at bottom of file
+  /*!
+    @brief Set the coordinates of a node.
+
+    This meant ONLY for internal use by methods in Simple_Mesh. Do not 
+    make public. Improper setting of coordinates from outside the class 
+    can invalidate the adjacency information, among other mischief.
+
+    @tparam D Dimension of the node.
+    @param[in] nodeid The ID of the node.
+    @param[out] pp The @c Point object of dimension @c D containing the
+    new coordinates of node @nodeid.
+
+    This is the general specification.  
+   */
+  template<long D>
+  void node_set_coordinates(const ID nodeid,
+                            Point<D> *pp) {
+    assert(D == space_dimension());
+  }
+
 
   /// @c Simple_Mesh can be 2D or 3D 
   int spacedim_ ;
@@ -692,6 +743,20 @@ void Simple_Mesh::node_get_coordinates<2>(const ID nodeid,
                                           Point<2> *pp) const {
   assert(spacedim_ == 2);
   *pp = coordinates2d_[nodeid];
+}
+
+template<>
+void Simple_Mesh::node_set_coordinates<3>(const ID nodeid,
+                                          Point<3> *pp) {
+  assert(spacedim_ == 3);
+  coordinates3d_[nodeid] = *pp;
+}
+
+template<>
+void Simple_Mesh::node_set_coordinates<2>(const ID nodeid,
+                                          Point<2> *pp) {
+  assert(spacedim_ == 2);
+  coordinates2d_[nodeid] = *pp;
 }
 
 
