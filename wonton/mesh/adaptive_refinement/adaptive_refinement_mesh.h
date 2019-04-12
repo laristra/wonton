@@ -14,7 +14,6 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/support/wonton.h"
 #include "wonton/support/BoundingBox.h"
-#include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -98,7 +97,7 @@ class Adaptive_Refinement_Mesh {
     @brief Get the lower and upper bounds of the specified cell.
     @param[in] id The ID of the cell to query.
   */
-  BoundingBox<D> cell_get_bounds(const CellID id) const;
+  BoundingBox<D> cell_get_bounds(const int id) const;
 
 
  private:
@@ -329,8 +328,8 @@ int Adaptive_Refinement_Mesh<D>::num_cells() const {
 // Get the lower and upper bounds of the specified cell.
 template<int D>
 BoundingBox<D> Adaptive_Refinement_Mesh<D>::cell_get_bounds(
-    const CellID id) const {
-  int n = (int) id;
+    const int id) const {
+  int n = id;
   return(cells_[n]);
 }
 

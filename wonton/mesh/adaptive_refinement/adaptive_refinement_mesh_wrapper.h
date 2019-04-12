@@ -13,7 +13,6 @@ Please see the license file at the root of this repository, or at:
 #include <algorithm>
 
 #include "wonton/support/wonton.h"
-#include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -72,7 +71,7 @@ class Adaptive_Refinement_Mesh_Wrapper {
   int total_num_cells() const;
 
   //! Get lower and upper corners of cell bounding box
-  void cell_get_bounds(const CellID id, Point<D> *plo, Point<D> *phi) const;
+  void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
 
  private:
@@ -125,7 +124,7 @@ int Adaptive_Refinement_Mesh_Wrapper<D>::total_num_cells() const {
 // Get lower and upper corners of cell bounding box
 template<int D>
 void Adaptive_Refinement_Mesh_Wrapper<D>::cell_get_bounds(
-    const CellID id, Point<D> *plo, Point<D> *phi) const {
+    const int id, Point<D> *plo, Point<D> *phi) const {
   auto bounding_box = mesh_.cell_get_bounds(id);
   for (int d = 0; d < D; ++d) {
     (*plo)[d] = bounding_box[d][LO];

@@ -12,7 +12,6 @@ Please see the license file at the root of this repository, or at:
 #include <vector>
 
 #include "wonton/support/wonton.h"
-#include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
 #include "gtest/gtest.h"
@@ -31,8 +30,7 @@ namespace Adaptive_Refinement_Utilities {
 
 // Getting tired of typing this
 template<int D>
-using BoxList = std::pair<std::vector<Wonton::CellID>,std::vector<Wonton::BoundingBox<D>>>;
-//using BoxList = std::vector<std::pair<Wonton::CellID,Wonton::BoundingBox<D>>>;
+using BoxList = std::pair<std::vector<int>,std::vector<Wonton::BoundingBox<D>>>;
 
 // Getting tired of typing Wonton::
 const int LO = Wonton::LO;
@@ -81,7 +79,7 @@ int num_cells<1>() {
 template<>
 BoxList<1> get_sample_points<1>() {
   // Declare storage and counter
-  std::vector<Wonton::CellID> id_list;
+  std::vector<int> id_list;
   std::vector<Wonton::BoundingBox<1>> box_list;
   int n;
   // First sample point
@@ -134,7 +132,7 @@ int num_cells<2>() {
 template<>
 BoxList<2> get_sample_points<2>() {
   // Declare storage and counter
-  std::vector<Wonton::CellID> id_list;
+  std::vector<int> id_list;
   std::vector<Wonton::BoundingBox<2>> box_list;
   int n;
   // First sample point
@@ -200,7 +198,7 @@ int num_cells<3>() {
 template<>
 BoxList<3> get_sample_points<3>() {
   // Declare storage and counter
-  std::vector<Wonton::CellID> id_list;
+  std::vector<int> id_list;
   std::vector<Wonton::BoundingBox<3>> box_list;
   int n;
   // First sample point
@@ -265,7 +263,7 @@ int num_cells<4>() {
 template<>
 BoxList<4> get_sample_points<4>() {
   // Declare storage and counter
-  std::vector<Wonton::CellID> id_list;
+  std::vector<int> id_list;
   std::vector<Wonton::BoundingBox<4>> box_list;
   int n;
   // First sample point

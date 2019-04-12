@@ -49,7 +49,7 @@ void run_basic_tests() {
   // -- These are known from testing
   Adaptive_Refinement_Utilities::BoxList<D> boxes =
     Adaptive_Refinement_Utilities::get_sample_points<D>();
-  auto id_list = std::get<std::vector<Wonton::CellID>>(boxes);
+  auto id_list = std::get<std::vector<int>>(boxes);
   auto box_list = std::get<std::vector<Wonton::BoundingBox<D>>>(boxes);
   ASSERT_TRUE(id_list.size() > 0); // Ensure that we got the explicit
                                    // specialization, rather than an automatic
