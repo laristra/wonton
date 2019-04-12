@@ -35,7 +35,7 @@ namespace Wonton {
   The discretizations need not be uniform -- that is, the cell sizes can vary
   across the mesh.  However, they are static.  Once set, they will not change.
 
-  Storage of the mesh is based on cell edge coordinates, aka points.
+  Storage of the mesh is based on cell boundary coordinates, aka axis points.
 
   The Direct_Product_Mesh is designed to implement only the necessary
   functionality to test certain components in Wonton and Portage.  As the scope
@@ -55,12 +55,12 @@ class Direct_Product_Mesh {
 
   /*!
     @brief Constructor to create a Direct_Product_Mesh.
-    @param[in] edges The cell edge coordinates along each axis.
+    @param[in] axis_points The cell boundary coordinates along each axis.
 
-    Specify the edge coordinates that delineate the cells of the mesh along
-    each axis.
+    Specify the axis point coordinates that delineate the cells of the mesh
+    along each axis.
   */
-  Direct_Product_Mesh(const std::array<std::vector<double>,D> &edges);
+  Direct_Product_Mesh(const std::array<std::vector<double>,D> &axis_points);
 
   //! Assignment operator (disabled).
   Direct_Product_Mesh & operator=(const Direct_Product_Mesh<D> &) = delete;
@@ -78,17 +78,17 @@ class Direct_Product_Mesh {
   int space_dimension() const;
 
   /*!
-    @brief Get the number of points (edge coordinates) along a specified axis.
-    @param[in] dim The axis to query.
+    @brief Get the number of axis points (cell boundary coordinates) along a
+    specified axis.  @param[in] dim The axis to query.
   */
-  int axis_num_points(const int dim) const;
+  int num_axis_points(const int dim) const;
 
   /*!
-    @brief Get the specified point (edge coordinate).
+    @brief Get the specified axis point (cell boundary coordinate).
     @param[in] dim The axis to query.
     @param[in] dim The point to query.
   */
-  double axis_point_coordinate(const int dim, const int pointid) const;
+  double get_axis_point(const int dim, const int pointid) const;
 
 
  private:
@@ -96,8 +96,8 @@ class Direct_Product_Mesh {
   // ==========================================================================
   // Class data
 
-  //! Cell edge coordinates along the three axes
-  std::array<std::vector<double>,D> edges_;
+  //! Axis points (cell boundary coordinates) along the three axes
+  std::array<std::vector<double>,D> axis_points_;
 
 };  // class Direct_Product_Mesh
 
@@ -109,9 +109,9 @@ class Direct_Product_Mesh {
 // Constructor
 template<int D>
 Direct_Product_Mesh<D>::Direct_Product_Mesh(
-    const std::array<std::vector<double>,D> &edges) {
+    const std::array<std::vector<double>,D> &axis_points) {
   for (int d = 0; d < D; ++d) {
-    edges_[d] = edges[d];
+    axis_points_[d] = axis_points[d];
   }
 }
 
@@ -120,7 +120,7 @@ Direct_Product_Mesh<D>::Direct_Product_Mesh(
 template<int D>
 Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
   for (int d = 0; d < D; ++d) {
-    edges_[d].clear();
+    axis_points_[d].clear();
   }
 }
 
@@ -136,24 +136,24 @@ int Direct_Product_Mesh<D>::space_dimension() const {
 }
 
 // ____________________________________________________________________________
-// Get the number of points (edge coordinates).
+// Get the number of axis points (cell boundary coordinates).
 template<int D>
-int Direct_Product_Mesh<D>::axis_num_points(const int dim) const {
+int Direct_Product_Mesh<D>::num_axis_points(const int dim) const {
   assert(dim >= 0);
   assert(dim < D);
-  return edges_[dim].size();
+  return axis_points_[dim].size();
 }
 
 // ____________________________________________________________________________
-// Get the specified point (edge coordinate).
+// Get the specified axis point (cell boundary coordinate).
 template<int D>
-double Direct_Product_Mesh<D>::axis_point_coordinate(
+double Direct_Product_Mesh<D>::get_axis_point(
     const int dim, const int pointid) const {
   assert(dim >= 0);
   assert(dim < D);
   assert(pointid >= 0);
-  assert(pointid < edges_[dim].size());
-  return edges_[dim][pointid];
+  assert(pointid < axis_points_[dim].size());
+  return axis_points_[dim][pointid];
 }
 
 }  // namespace Wonton
