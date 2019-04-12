@@ -13,7 +13,6 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/mesh/direct_product/direct_product_mesh.h"
 #include "wonton/mesh/direct_product/direct_product_mesh_wrapper.h"
 #include "wonton/support/wonton.h"
-#include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 #include "wonton/support/Vector.h"
 
@@ -59,7 +58,7 @@ namespace direct_product_mesh_wrapper_test {
       const std::array<int,D>& indices,
       const std::array<std::vector<double>,D> &axis_points) {
     // Get the cell ID
-    Wonton::CellID id = mesh_wrapper.indices_to_cellid(indices);
+    int id = mesh_wrapper.indices_to_cellid(indices);
     // Get the bounding box
     Wonton::Point<D> plo, phi;
     mesh_wrapper.cell_get_bounds(id, &plo, &phi);
@@ -75,7 +74,7 @@ namespace direct_product_mesh_wrapper_test {
   template<int D>
   void check_indices_and_cellids(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const std::array<int,D>& indices, const Wonton::CellID id) {
+      const std::array<int,D>& indices, const int id) {
     // Ensure indices to cell ID works.
     ASSERT_EQ(mesh_wrapper.indices_to_cellid(indices), id);
     // Ensure cell ID to indices works.
@@ -84,7 +83,7 @@ namespace direct_product_mesh_wrapper_test {
       ASSERT_EQ(indices2[d], indices[d]);
     }
     // Ensure cell ID to indices to cell ID works.
-    Wonton::CellID id2 = mesh_wrapper.indices_to_cellid(
+    int id2 = mesh_wrapper.indices_to_cellid(
         mesh_wrapper.cellid_to_indices(id));
     ASSERT_EQ(id2, id);
     // Ensure indices to cell ID to indices works.
@@ -99,7 +98,7 @@ namespace direct_product_mesh_wrapper_test {
 
   template<int D>
   void loop_over_grid(
-      const int d, std::array<int,D> &indices, Wonton::CellID &id,
+      const int d, std::array<int,D> &indices, int &id,
       const Wonton::Direct_Product_Mesh_Wrapper<D> &mesh_wrapper,
       const std::array<std::vector<double>,D> &axis_points) {
     if (d >= 0) {  // Recursive case
@@ -138,7 +137,7 @@ namespace direct_product_mesh_wrapper_test {
         mesh_wrapper, axis_points);
 
     // Run looping tests
-    Wonton::CellID id = 0;
+    int id = 0;
     std::array<int,D> indices;
     direct_product_mesh_wrapper_test::loop_over_grid<D>(
         D-1, indices, id, mesh_wrapper, axis_points);

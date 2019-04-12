@@ -14,7 +14,6 @@ Please see the license file at the root of this repository, or at:
 #include <vector>
 
 #include "wonton/support/wonton.h"
-#include "wonton/support/CellID.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -95,16 +94,16 @@ class Direct_Product_Mesh_Wrapper {
   int total_num_cells() const;
 
   //! Get lower and upper corners of cell bounding box
-  void cell_get_bounds(const CellID id, Point<D> *plo, Point<D> *phi) const;
+  void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
   // ==========================================================================
   // Index/ID conversions
 
   //! Convert from indices to cell ID
-  CellID indices_to_cellid(const std::array<int,D>& indices) const;
+  int indices_to_cellid(const std::array<int,D>& indices) const;
 
   //! Convert from ID to indices
-  std::array<int,D> cellid_to_indices(const CellID id) const;
+  std::array<int,D> cellid_to_indices(const int id) const;
 
 
  private:
@@ -214,7 +213,7 @@ int Direct_Product_Mesh_Wrapper<D>::total_num_cells() const {
 // Get lower and upper corners of cell bounding box
 template<int D>
 void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
-    const CellID id, Point<D> *plo, Point<D> *phi) const {
+    const int id, Point<D> *plo, Point<D> *phi) const {
   std::array<int,D> indices = cellid_to_indices(id);
   // Cell axis points are zero-indexed, cells are zero-indexed.  Thus cell 0 is
   // bounded by axis points 0 and 1, or more generally, cell N is bounded by
@@ -231,19 +230,19 @@ void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
 // ____________________________________________________________________________
 // Convert from indices to ID
 template<int D>
-CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
+int Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
     const std::array<int,D>& indices) const {
   assert(D == mesh_.space_dimension());
-  CellID id = 0;
+  int id = 0;
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
-    CellID idx = (CellID) indices[d];
-    CellID mult = (CellID) axis_num_cells(d-1);
+    int idx = indices[d];
+    int mult = axis_num_cells(d-1);
     id += idx;
     id *= mult;
   }
   // Handle the last dimension
-  id += (CellID) indices[0];
+  id += indices[0];
   // Return
   return id;
 }
@@ -252,19 +251,19 @@ CellID Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
 // Convert from ID to indices
 template<int D>
 std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
-    const CellID id) const {
+    const int id) const {
   assert(D == mesh_.space_dimension());
   std::array<int,D> indices;
-  CellID residual = id;
+  int residual = id;
   // Construct the denominators
-  std::array<CellID,D> denom;
+  std::array<int,D> denom;
   denom[0] = 1;
   for (int d = 1; d < D; ++d) {
     denom[d] = denom[d-1] * axis_num_cells(d-1);
   }
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
-    CellID index = residual / denom[d];
+    int index = residual / denom[d];
     residual -= index * denom[d];
     indices[d] = (int) index;
   }
