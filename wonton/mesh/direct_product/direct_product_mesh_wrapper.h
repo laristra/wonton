@@ -79,14 +79,14 @@ class Direct_Product_Mesh_Wrapper {
   */
   void get_global_bounds(Point<D> *plo, Point<D> *phi) const;
 
-  //! Get iterator for axis edge coordinates (beginning of array).
+  //! Get iterator for axis point (beginning of array).
   counting_iterator axis_point_begin(const int dim) const;
 
-  //! Get iterator for axis edge coordinates (end of array).
+  //! Get iterator for axis point (end of array).
   counting_iterator axis_point_end(const int dim) const;
 
-  //! Get edge coordinate value.
-  double axis_point_coordinate(const int dim, const int pointid) const;
+  //! Get axis point value.
+  double get_axis_point(const int dim, const int pointid) const;
 
   //! Get number of cells along axis.
   int axis_num_cells(const int dim) const;
@@ -153,13 +153,13 @@ void Direct_Product_Mesh_Wrapper<D>::get_global_bounds(
     Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension());
   for (int d = 0; d < D; ++d) {
-    (*plo)[d] = mesh_.axis_point_coordinate(d,0);
-    (*phi)[d] = mesh_.axis_point_coordinate(d,mesh_.axis_num_points(d)-1);
+    (*plo)[d] = mesh_.get_axis_point(d,0);
+    (*phi)[d] = mesh_.get_axis_point(d,mesh_.num_axis_points(d)-1);
   }
 }
 
 // ____________________________________________________________________________
-// Get iterator for axis edge coordinates (beginning of array).
+// Get iterator for axis points (beginning of array).
 template<int D>
 counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
     const int dim) const {
@@ -170,24 +170,24 @@ counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
 }
 
 // ____________________________________________________________________________
-// Get iterator for axis edge coordinates (end of array).
+// Get iterator for axis points (end of array).
 template<int D>
 counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_end(
     const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
   int start_index = 0;
-  return make_counting_iterator(start_index + mesh_.axis_num_points(dim));
+  return make_counting_iterator(start_index + mesh_.num_axis_points(dim));
 }
 
 // ____________________________________________________________________________
-// Get edge coordinate value.
+// Get axis point value.
 template<int D>
-double Direct_Product_Mesh_Wrapper<D>::axis_point_coordinate(
+double Direct_Product_Mesh_Wrapper<D>::get_axis_point(
     const int dim, const int pointid) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
-  return mesh_.axis_point_coordinate(dim, pointid);
+  return mesh_.get_axis_point(dim, pointid);
 }
 
 // ____________________________________________________________________________
@@ -196,7 +196,7 @@ template<int D>
 int Direct_Product_Mesh_Wrapper<D>::axis_num_cells(const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
-  return mesh_.axis_num_points(dim) - 1;
+  return mesh_.num_axis_points(dim) - 1;
 }
 
 // ____________________________________________________________________________
@@ -205,7 +205,7 @@ template<int D>
 int Direct_Product_Mesh_Wrapper<D>::total_num_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
-    count *= mesh_.axis_num_points(dim) - 1;
+    count *= mesh_.num_axis_points(dim) - 1;
   }
   return count;
 }
@@ -216,12 +216,12 @@ template<int D>
 void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
     const CellID id, Point<D> *plo, Point<D> *phi) const {
   std::array<int,D> indices = cellid_to_indices(id);
-  // Cell edges (points) are zero-indexed, cells are zero-indexed.  Thus cell 0
-  // is bounded by edges 0 and 1, or more generally, cell N is bounded by edges
-  // N and N+1.
+  // Cell axis points are zero-indexed, cells are zero-indexed.  Thus cell 0 is
+  // bounded by axis points 0 and 1, or more generally, cell N is bounded by
+  // axis points N and N+1.
   for (int d = 0; d < D; ++d) {
-    (*plo)[d] = mesh_.axis_point_coordinate(d, indices[d]);
-    (*phi)[d] = mesh_.axis_point_coordinate(d, indices[d]+1);
+    (*plo)[d] = mesh_.get_axis_point(d, indices[d]);
+    (*phi)[d] = mesh_.get_axis_point(d, indices[d]+1);
   }
 }
 

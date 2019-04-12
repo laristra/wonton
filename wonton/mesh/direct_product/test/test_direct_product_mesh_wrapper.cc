@@ -25,7 +25,7 @@ namespace direct_product_mesh_wrapper_test {
   template<int D>
   void check_basic_functions(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const std::array<std::vector<double>,(std::size_t)D> &edges) {
+      const std::array<std::vector<double>,(std::size_t)D> &axis_points) {
 
     // Check basic dimensionality
     ASSERT_EQ(mesh_wrapper.space_dimension(), D);
@@ -39,12 +39,13 @@ namespace direct_product_mesh_wrapper_test {
 
     // For each axis
     for (int d = 0; d < D; ++d) {
-      ASSERT_EQ(mesh_wrapper.axis_num_cells(d), edges[d].size()-1);
+      ASSERT_EQ(mesh_wrapper.axis_num_cells(d), axis_points[d].size()-1);
       int n = 0;
       for (auto iter = mesh_wrapper.axis_point_begin(d);
            iter != mesh_wrapper.axis_point_end(d);
            ++iter) {
-        ASSERT_EQ(mesh_wrapper.axis_point_coordinate(d,*iter), edges[d][n]);
+        ASSERT_EQ(mesh_wrapper.get_axis_point(d,*iter),
+            axis_points[d][n]);
         n++;
       }
     }
@@ -56,7 +57,7 @@ namespace direct_product_mesh_wrapper_test {
   void check_cell_bounds(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::array<int,D>& indices,
-      const std::array<std::vector<double>,D> &edges) {
+      const std::array<std::vector<double>,D> &axis_points) {
     // Get the cell ID
     Wonton::CellID id = mesh_wrapper.indices_to_cellid(indices);
     // Get the bounding box
@@ -64,8 +65,8 @@ namespace direct_product_mesh_wrapper_test {
     mesh_wrapper.cell_get_bounds(id, &plo, &phi);
     // Verify the bounding box
     for (int d = 0; d < D; ++d) {
-      ASSERT_EQ(plo[d], edges[d][indices[d]]);
-      ASSERT_EQ(phi[d], edges[d][indices[d]+1]);
+      ASSERT_EQ(plo[d], axis_points[d][indices[d]]);
+      ASSERT_EQ(phi[d], axis_points[d][indices[d]+1]);
     }
   }
 
@@ -100,18 +101,18 @@ namespace direct_product_mesh_wrapper_test {
   void loop_over_grid(
       const int d, std::array<int,D> &indices, Wonton::CellID &id,
       const Wonton::Direct_Product_Mesh_Wrapper<D> &mesh_wrapper,
-      const std::array<std::vector<double>,D> &edges) {
+      const std::array<std::vector<double>,D> &axis_points) {
     if (d >= 0) {  // Recursive case
       auto num_cells = mesh_wrapper.axis_num_cells(d);
       for (indices[d] = 0; indices[d] < num_cells; ++indices[d]) {
-        loop_over_grid<D>(d-1, indices, id, mesh_wrapper, edges);
+        loop_over_grid<D>(d-1, indices, id, mesh_wrapper, axis_points);
       }
     } else {  // Base case
       // Verify cell bounding boxes
       // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
       //    simply be the cell bounds.
       direct_product_mesh_wrapper_test::check_cell_bounds<D>(
-          mesh_wrapper, indices, edges);
+          mesh_wrapper, indices, axis_points);
       // Check IDs vs indices
       direct_product_mesh_wrapper_test::check_indices_and_cellids<D>(
           mesh_wrapper, indices, id);
@@ -123,24 +124,24 @@ namespace direct_product_mesh_wrapper_test {
   // --------------------------------------------------------------------------
 
   template<int D>
-  void run_all_tests(const std::vector<double> &edges1) {
+  void run_all_tests(const std::vector<double> &axis_points1) {
     // Build mesh and wrapper
-    std::array<std::vector<double>,D> edges;
+    std::array<std::vector<double>,D> axis_points;
     for (int d = 0; d < D; ++d) {
-      edges[d] = edges1;
+      axis_points[d] = axis_points1;
     }
-    Wonton::Direct_Product_Mesh<D> mesh(edges);
+    Wonton::Direct_Product_Mesh<D> mesh(axis_points);
     Wonton::Direct_Product_Mesh_Wrapper<D> mesh_wrapper(mesh);
 
     // Run basic tests
     direct_product_mesh_wrapper_test::check_basic_functions(
-        mesh_wrapper, edges);
+        mesh_wrapper, axis_points);
 
     // Run looping tests
     Wonton::CellID id = 0;
     std::array<int,D> indices;
     direct_product_mesh_wrapper_test::loop_over_grid<D>(
-        D-1, indices, id, mesh_wrapper, edges);
+        D-1, indices, id, mesh_wrapper, axis_points);
   }
 
 } // namespace direct_product_mesh_wrapper_test 
@@ -149,32 +150,32 @@ namespace direct_product_mesh_wrapper_test {
 // ============================================================================
 
 TEST(Direct_Product_Mesh_Wrapper, SmallGrid1D) {
-  const std::vector<double> edges1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
-  direct_product_mesh_wrapper_test::run_all_tests<1>(edges1);
+  const std::vector<double> axis_points1 = {0.0625, 0.125, 0.25, 0.5, 1.0};
+  direct_product_mesh_wrapper_test::run_all_tests<1>(axis_points1);
 }
 
 
 // ============================================================================
 
 TEST(Direct_Product_Mesh_Wrapper, SmallGrid2D) {
-  const std::vector<double> edges1 = {0.0, 0.25, 0.75, 1.0};
-  direct_product_mesh_wrapper_test::run_all_tests<2>(edges1);
+  const std::vector<double> axis_points1 = {0.0, 0.25, 0.75, 1.0};
+  direct_product_mesh_wrapper_test::run_all_tests<2>(axis_points1);
 }
 
 
 // ============================================================================
 
 TEST(Direct_Product_Mesh_Wrapper, OneCell3D) {
-  const std::vector<double> edges1 = {0.0, 1.0};
-  direct_product_mesh_wrapper_test::run_all_tests<3>(edges1);
+  const std::vector<double> axis_points1 = {0.0, 1.0};
+  direct_product_mesh_wrapper_test::run_all_tests<3>(axis_points1);
 }
 
 
 // ============================================================================
 
 TEST(Direct_Product_Mesh_Wrapper, SmalGrid10D) {
-  const std::vector<double> edges1 = {0.0, 0.5, 1.0};
-  direct_product_mesh_wrapper_test::run_all_tests<10>(edges1);
+  const std::vector<double> axis_points1 = {0.0, 0.5, 1.0};
+  direct_product_mesh_wrapper_test::run_all_tests<10>(axis_points1);
 }
 
 
