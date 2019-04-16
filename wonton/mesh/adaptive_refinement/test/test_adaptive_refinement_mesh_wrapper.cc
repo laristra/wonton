@@ -10,6 +10,7 @@ Please see the license file at the root of this repository, or at:
 
 #include <iostream>
 #include <cmath>
+#include <tuple>
 #include <vector>
 
 #include "wonton/support/wonton.h"
@@ -52,10 +53,10 @@ void run_basic_tests() {
 
   // Cell coordinates
   // -- These are known from testing
-  Adaptive_Refinement_Utilities::BoxList<D> boxes =
+  std::vector<int> id_list;
+  std::vector<Wonton::BoundingBox<D>> box_list;
+  std::tie(id_list, box_list) = 
     Adaptive_Refinement_Utilities::get_sample_points<D>();
-  auto id_list = std::get<std::vector<int>>(boxes);
-  auto box_list = std::get<std::vector<Wonton::BoundingBox<D>>>(boxes);
   ASSERT_TRUE(id_list.size() > 0); // Ensure that we got the explicit
                                    // specialization, rather than an automatic
                                    // specialization of the template.
