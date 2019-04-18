@@ -47,7 +47,7 @@ struct CartesianCoordinates {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
-} // Cartesian Coordinates
+};  // Cartesian Coordinates
 
 
 // ============================================================================
@@ -83,7 +83,7 @@ struct CylindricalRadialCoordinates {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
-} // Cylindrical (Radial) Coordinates
+};  // Cylindrical (Radial) Coordinates
 
 
 // ============================================================================
@@ -120,7 +120,7 @@ struct CylindricalAxisymmetricCoordinates {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
-} // Cylindrical (Axisymmetric) Coordinates
+};  // Cylindrical (Axisymmetric) Coordinates
 
 
 // ============================================================================
@@ -158,7 +158,7 @@ struct CylindricalPolarCoordinates {
     new_line_element[1] *= reference_point[0];
     return(std::move(new_line_element));
   }
-} // Cylindrical Polar Coordinates
+};  // Cylindrical Polar Coordinates
 
 
 // ============================================================================
@@ -196,7 +196,7 @@ struct Cylindrical3DCoordinates {
     new_line_element[1] *= reference_point[0];
     return(std::move(new_line_element));
   }
-} // Cylindrical (3D) Coordinates
+};  // Cylindrical (3D) Coordinates
 
 
 // ============================================================================
@@ -232,7 +232,7 @@ struct SphericalRadialCoordinates {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
-} // Spherical (Radial) Coordinates
+};  // Spherical (Radial) Coordinates
 
 
 // ============================================================================
@@ -272,7 +272,7 @@ struct Spherical3DCoordinates {
     new_line_element[2] *= (reference_point[0] * sin(reference_point[1]));
     return(std::move(new_line_element));
   }
-} // Spherical (3D) Coordinates
+};  // Spherical (3D) Coordinates
 
 
 // ============================================================================
