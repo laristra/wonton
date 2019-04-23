@@ -39,11 +39,11 @@ namespace Wonton {
 
 */
 
-template<long D, typename CS = CartesianCoordinates>
+template<long D, typename CoordSys = CartesianCoordinates>
 Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
                       std::vector<double> const & vals) {
 
-  CS::verify_coordinate_system<D>();
+  CoordSys::template verify_coordinate_system<D>();
 
   Point<D> coord0 = coords[0];
 
@@ -96,7 +96,7 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 
   // Corrections for curvilinear coordinates
 
-  CS::modify_gradient(gradient, coord0);
+  CoordSys::modify_gradient(gradient, coord0);
 
   // Return
 
