@@ -40,7 +40,7 @@ const int HI = Wonton::HI;
 // Templates
 
 template<int D>
-double refinement_function(const Wonton::Point<D> r) {
+double refinement_function(const Wonton::Point<D> r, double lo1, double hi1) {
   return(0.0);
 }
 
@@ -63,8 +63,11 @@ BoxList<D> get_sample_points() {
 // 1D
 
 template<>
-double refinement_function<1>(const Wonton::Point<1> r) {
-  return(2.0 + 3.0*r[0]);
+double refinement_function<1>(
+    const Wonton::Point<1> r, double lo1, double hi1) {
+  Wonton::Point<1> r_norm;
+  r_norm[0] = (r[0] - lo1) / (hi1 - lo1);
+  return(2.0 + 3.0*r_norm[0]);
 }
 
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -116,8 +119,13 @@ BoxList<1> get_sample_points<1>() {
 // ============================================================================
 
 template<>
-double refinement_function<2>(const Wonton::Point<2> r) {
-  return(1.2 - 1.1*r[0] + 2.4*r[1]);
+double refinement_function<2>(
+    const Wonton::Point<2> r, double lo1, double hi1) {
+  Wonton::Point<2> r_norm;
+  for (int d = 0; d < 2; ++d) {
+    r_norm[d] = (r[d] - lo1) / (hi1 - lo1);
+  }
+  return(1.2 - 1.1*r_norm[0] + 2.4*r_norm[1]);
 }
 
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -175,11 +183,16 @@ BoxList<2> get_sample_points<2>() {
 // ============================================================================
 
 template<>
-double refinement_function<3>(const Wonton::Point<3> r) {
+double refinement_function<3>(
+    const Wonton::Point<3> r, double lo1, double hi1) {
+  Wonton::Point<3> r_norm;
+  for (int d = 0; d < 3; ++d) {
+    r_norm[d] = (r[d] - lo1) / (hi1 - lo1);
+  }
   const int DIM = 3;
   double radius = 0;
   for (int d = 0; d < DIM; ++d) {
-    double x = r[d] - 0.5;
+    double x = r_norm[d] - 0.5;
     radius += x * x;
   }
   radius = sqrt(radius);
@@ -247,8 +260,17 @@ BoxList<3> get_sample_points<3>() {
 // ============================================================================
 
 template<>
-double refinement_function<4>(const Wonton::Point<4> r) {
-  return (2.0 - 3.0*r[0] + 1.2*r[1] - 0.5*r[2] + 0.3*r[3]);
+double refinement_function<4>(
+    const Wonton::Point<4> r, double lo1, double hi1) {
+  Wonton::Point<4> r_norm;
+  for (int d = 0; d < 4; ++d) {
+    r_norm[d] = (r[d] - lo1) / (hi1 - lo1);
+  }
+  return (2.0 - 1e-12 // 1e-12 to deal with round-off issues from rescaling
+      - 3.0*r_norm[0]
+      + 1.2*r_norm[1]
+      - 0.5*r_norm[2]
+      + 0.3*r_norm[3]);
 }
 
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

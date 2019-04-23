@@ -28,17 +28,19 @@ Please see the license file at the root of this repository, or at:
 namespace adaptive_refinement_mesh_test {
 
 template <int D>
-void run_basic_tests() {
+void run_basic_tests(double lo1, double hi1) {
   // Create a mesh
   // -- The tests are calibrated to a level-zero mesh ranging from 0 to 1 along
   //    every axis.
   Wonton::Point<D> lo, hi;
   for (int d = 0; d < D; ++d) {
-    lo[d] = 0.0;
-    hi[d] = 1.0;
+    lo[d] = lo1;
+    hi[d] = hi1;
   }
-  Wonton::Adaptive_Refinement_Mesh<D> mesh(
-      &Adaptive_Refinement_Utilities::refinement_function<D>, lo, hi);
+  auto refine_func = [lo1,hi1](Wonton::Point<D> r) {
+    return(Adaptive_Refinement_Utilities::refinement_function<D>(r, lo1, hi1));
+  };
+  Wonton::Adaptive_Refinement_Mesh<D> mesh(refine_func, lo, hi);
 
   // Create a wrapper
   Wonton::Adaptive_Refinement_Mesh_Wrapper<D> wrapper(mesh);
@@ -66,8 +68,8 @@ void run_basic_tests() {
     wrapper.cell_get_bounds(id_list[n], &plo, &phi);
     auto expected = box_list[n];
     for (int d = 0; d < D; ++d) {
-      ASSERT_EQ(plo[d], expected[d][Wonton::LO]);
-      ASSERT_EQ(phi[d], expected[d][Wonton::HI]);
+      ASSERT_DOUBLE_EQ(plo[d], (hi1-lo1)*expected[d][Wonton::LO]+lo1);
+      ASSERT_DOUBLE_EQ(phi[d], (hi1-lo1)*expected[d][Wonton::HI]+lo1);
     }
   }
 }   // void run_basic_tests
@@ -78,19 +80,19 @@ void run_basic_tests() {
 // ============================================================================
 
 TEST(Adaptive_Refinement_Mesh, Test1D) {
-  adaptive_refinement_mesh_test::run_basic_tests<1>();
+  adaptive_refinement_mesh_test::run_basic_tests<1>(-1.4, -0.4);
 }
 
 // ============================================================================
 
 TEST(Adaptive_Refinement_Mesh, Test2D) {
-  adaptive_refinement_mesh_test::run_basic_tests<2>();
+  adaptive_refinement_mesh_test::run_basic_tests<2>(99.0, 100.0);
 }
 
 // ============================================================================
 
 TEST(Adaptive_Refinement_Mesh, Test3D) {
-  adaptive_refinement_mesh_test::run_basic_tests<3>();
+  adaptive_refinement_mesh_test::run_basic_tests<3>(-0.01, 0.01);
 }
 
 // ============================================================================
@@ -99,6 +101,6 @@ TEST(Adaptive_Refinement_Mesh, Test3D) {
 // being <= 3, which I was worried about).
 
 TEST(Adaptive_Refinement_Mesh, Test4D) {
-  adaptive_refinement_mesh_test::run_basic_tests<4>();
+  adaptive_refinement_mesh_test::run_basic_tests<4>(0.0, 1.4);
 }
 

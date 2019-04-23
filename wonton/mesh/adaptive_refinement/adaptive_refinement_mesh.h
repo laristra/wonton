@@ -9,6 +9,7 @@ Please see the license file at the root of this repository, or at:
 
 #include <array>
 #include <cassert>
+#include <functional>
 #include <tuple>
 #include <vector>
 
@@ -73,7 +74,7 @@ class Adaptive_Refinement_Mesh {
     grid has a single refinement-level-zero cell, and then refines from there.
   */
   Adaptive_Refinement_Mesh(
-      double (*func)(const Point<D>),
+      std::function<double(const Point<D>)> func,
       const Point<D> &plo, const Point<D> &phi);
 
   //! Assignment operator (disabled).
@@ -127,7 +128,7 @@ class Adaptive_Refinement_Mesh {
    * @param[in] coords The coordinates of the point at which to evaluate the
    *                   mesh refinement function.
   */
-  double (*refinement_level_)(const Point<D> coords);
+  std::function<double(const Point<D>)> refinement_level_;
 
   //! Mesh corner coordinates
   BoundingBox<D> mesh_corners_;
@@ -145,7 +146,8 @@ class Adaptive_Refinement_Mesh {
 // Constructor
 template<int D>
 Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
-    double (*func)(const Point<D>), const Point<D> &plo, const Point<D> &phi) {
+    std::function<double(const Point<D>)> func,
+    const Point<D> &plo, const Point<D> &phi) {
   // Verify dimensionality
   assert(D > 0);
   // Save refinement level function pointer
