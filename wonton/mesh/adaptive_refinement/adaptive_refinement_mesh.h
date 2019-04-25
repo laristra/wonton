@@ -81,9 +81,6 @@ class Adaptive_Refinement_Mesh {
   Adaptive_Refinement_Mesh & operator=(
       const Adaptive_Refinement_Mesh<D> &) = delete;
 
-  //! Destructor
-  ~Adaptive_Refinement_Mesh();
-
 
   // ==========================================================================
   // Accessors
@@ -140,10 +137,8 @@ class Adaptive_Refinement_Mesh {
 
 
 // ============================================================================
-// Constructors and destructors
-
-// ____________________________________________________________________________
 // Constructor
+
 template<int D>
 Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
     std::function<double(const Point<D>)> func,
@@ -159,21 +154,6 @@ Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
   }
   // Build mesh
   build_mesh();
-}
-
-// ____________________________________________________________________________
-// Destructor
-template<int D>
-Adaptive_Refinement_Mesh<D>::~Adaptive_Refinement_Mesh() {
-  // Break down mesh info
-  cells_.clear();
-  // Clear the refinement function
-  refinement_level_ = NULL;
-  // Zero-out the corner coordinates
-  for (int d = 0; d < D; ++d) {
-    mesh_corners_[d][LO] = 0.0;
-    mesh_corners_[d][HI] = 0.0;
-  }
 }
 
 
