@@ -74,7 +74,7 @@ class Adaptive_Refinement_Mesh {
     grid has a single refinement-level-zero cell, and then refines from there.
   */
   Adaptive_Refinement_Mesh(
-      std::function<double(const Point<D>)> func,
+      std::function<int(const Point<D>)> func,
       const Point<D> &plo, const Point<D> &phi);
 
   //! Assignment operator (disabled).
@@ -125,7 +125,7 @@ class Adaptive_Refinement_Mesh {
    * @param[in] coords The coordinates of the point at which to evaluate the
    *                   mesh refinement function.
   */
-  std::function<double(const Point<D>)> refinement_level_;
+  std::function<int(const Point<D>)> refinement_level_;
 
   //! Mesh corner coordinates
   BoundingBox<D> mesh_corners_;
@@ -141,7 +141,7 @@ class Adaptive_Refinement_Mesh {
 
 template<int D>
 Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
-    std::function<double(const Point<D>)> func,
+    std::function<int(const Point<D>)> func,
     const Point<D> &plo, const Point<D> &phi) {
   // Verify dimensionality
   assert(D > 0);
@@ -175,7 +175,7 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
   for (int d = 0; d < D; ++d) {
     center[d] = 0.5 * (cell[d][LO] + cell[d][HI]);
   }
-  double value = refinement_level_(center);
+  int value = refinement_level_(center);
   // Some AMR grids enforce further restrictions, such as the requirement that
   // adjacent cells differ by no more than a single level of refinement, or
   // that you need to refine in larger patches rather than by cell, etc.  This
