@@ -67,8 +67,11 @@ class Adaptive_Refinement_Mesh_Wrapper {
   //! Get dimensionality of the mesh.
   int space_dimension() const;
 
-  //! Get number of cells in entire mesh.
-  int total_num_cells() const;
+  //! Get number of cells owned by this processing element.
+  int num_owned_cells() const;
+
+  //! Get number of ghost cells on this processing element.
+  int num_ghost_cells() const;
 
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
@@ -114,10 +117,17 @@ int Adaptive_Refinement_Mesh_Wrapper<D>::space_dimension() const {
 }
 
 // ____________________________________________________________________________
-// Get number of cells in entire mesh.
+// Get number of cells owned by this processing element.
 template<int D>
-int Adaptive_Refinement_Mesh_Wrapper<D>::total_num_cells() const {
+int Adaptive_Refinement_Mesh_Wrapper<D>::num_owned_cells() const {
   return mesh_.num_cells();
+}
+
+// ____________________________________________________________________________
+// Get number of ghost cells on this processing element.
+template<int D>
+int Adaptive_Refinement_Mesh_Wrapper<D>::num_ghost_cells() const {
+  return 0;
 }
 
 // ____________________________________________________________________________

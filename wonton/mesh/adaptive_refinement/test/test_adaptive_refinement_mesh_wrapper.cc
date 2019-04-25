@@ -50,7 +50,7 @@ void run_basic_tests(double lo1, double hi1) {
 
   // Cell counts
   // -- This is known from testing
-  ASSERT_EQ(wrapper.total_num_cells(),
+  ASSERT_EQ(wrapper.num_owned_cells(),
       Adaptive_Refinement_Utilities::num_cells<D>());
 
   // Cell coordinates
