@@ -90,8 +90,11 @@ class Direct_Product_Mesh_Wrapper {
   //! Get number of cells along axis.
   int axis_num_cells(const int dim) const;
 
-  //! Get number of cells in entire mesh.
-  int total_num_cells() const;
+  //! Get number of cells owned by this processing element.
+  int num_owned_cells() const;
+
+  //! Get number of ghost cells on this processing element.
+  int num_ghost_cells() const;
 
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
@@ -199,14 +202,21 @@ int Direct_Product_Mesh_Wrapper<D>::axis_num_cells(const int dim) const {
 }
 
 // ____________________________________________________________________________
-// Get number of cells in entire mesh.
+// Get number of cells owned by this processing element.
 template<int D>
-int Direct_Product_Mesh_Wrapper<D>::total_num_cells() const {
+int Direct_Product_Mesh_Wrapper<D>::num_owned_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
     count *= mesh_.num_axis_points(dim) - 1;
   }
   return count;
+}
+
+// ____________________________________________________________________________
+// Get number of ghost cells on this processing element.
+template<int D>
+int Direct_Product_Mesh_Wrapper<D>::num_ghost_cells() const {
+  return 0;
 }
 
 // ____________________________________________________________________________
