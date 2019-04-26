@@ -34,7 +34,7 @@ namespace direct_product_mesh_wrapper_test {
     for (int d = 0; d < D; ++d) {
       cell_count *= mesh_wrapper.axis_num_cells(d);
     }
-    ASSERT_EQ(mesh_wrapper.total_num_cells(), cell_count);
+    ASSERT_EQ(mesh_wrapper.num_owned_cells(), cell_count);
 
     // For each axis
     for (int d = 0; d < D; ++d) {
