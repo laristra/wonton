@@ -52,7 +52,7 @@ class StateVectorBase {
   }
 
 
-  virtual const std::type_info& data_type() = 0;
+  virtual const std::type_info& data_type() const = 0;
 
   //! Query Metadata
 
