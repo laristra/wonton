@@ -277,6 +277,11 @@ struct Spherical3DCoordinates {
 
 // ============================================================================
 
+// Default coordinate system for consistency across the code
+using DefaultCoordSys = CartesianCoordinates;
+
+// ============================================================================
+
 }  // namespace Wonton
 
 #endif  // WONTON_SUPPORT_COORDINATESYSTEM_H_
