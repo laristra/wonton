@@ -365,6 +365,32 @@ StateManager(const MeshWrapper& mesh,
 
 
   /*!
+    @brief Get a shared pointer to a const StateVectorBase from the state manager.
+    @param[in] name        name of the registered state vector
+    @return                        shared pointer to StateVectorBase
+
+    Gets a shared pointer to a StateVectorBase from the state
+    manager. The pointer is to the base class and can be dynamically
+    pointer cast to any type. The name is checked with the state
+    manager. If the name is not found, a nullptr is returned so
+    validity can be checked with a nullptr test.
+  */
+  std::shared_ptr<StateVectorBase const> get(std::string name) const {
+
+    // create the key
+    std::string key{name};
+
+    if (state_vectors_.find(key) == state_vectors_.end()) {
+      return nullptr;
+    }
+
+    // do the return all in one step
+    return state_vectors_.at(key);
+
+  }
+
+
+  /*!
     @brief Get a shared pointer to a templated type from the state manager.
     @param[in] name        name of the registered state vector
     @return                        shared pointer to a type T
