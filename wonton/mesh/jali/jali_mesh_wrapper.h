@@ -39,7 +39,7 @@ namespace Wonton {
 */
 
 //! helper function:  convert Jali point to Wonton point
-template <long D>
+template <int D>
 Point<D> toWontonPoint(const JaliGeometry::Point& jp) {
   Point<D> pp;
   assert(jp.dim() == D);
@@ -196,7 +196,7 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
   }
 
   //! coords of a node
-  template <long D>
+  template <int D>
   void node_get_coordinates(int const nodeid, Point<D>* pp) const {
     JaliGeometry::Point jp;
     jali_mesh_.node_get_coordinates(nodeid, &jp);

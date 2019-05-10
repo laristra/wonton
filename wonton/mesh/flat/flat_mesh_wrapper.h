@@ -354,7 +354,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   }
 
   //! Coords of a node
-  template <long D>
+  template <int D>
   void node_get_coordinates(int const nodeid, Point<D>* pp) const {
     assert(D == dim_);
     for (unsigned int j=0; j<dim_; j++)
@@ -444,7 +444,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   }
 
   //! Coords of nodes of a cell
-  template<long D>
+  template<int D>
   void cell_get_coordinates(int const cellid,
                             std::vector<Wonton::Point<D>> *pplist) const {
 
