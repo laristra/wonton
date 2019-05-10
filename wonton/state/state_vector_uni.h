@@ -67,7 +67,7 @@ class StateVectorUni : public StateVectorBase {
   }
 
   // get the data type
-  const std::type_info& data_type() {
+  const std::type_info& data_type() const {
     const std::type_info& ti = typeid(T);
     return ti;
   }
@@ -79,6 +79,14 @@ class StateVectorUni : public StateVectorBase {
     Return a reference to the data in the state vector.
   */
   std::vector<T>& get_data() { return data_; }
+
+  /*!
+    @brief Return a const reference to the data in the state vector.
+    @return a const reference to the vector of data in the state vector
+
+    Return a const reference to the data in the state vector.
+  */
+  std::vector<T> const & get_data() const { return data_; }
 
  private:
   std::vector<T> data_;
