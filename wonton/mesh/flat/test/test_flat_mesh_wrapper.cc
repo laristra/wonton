@@ -75,7 +75,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_3d) {
   }
 
   // Test global ids
-  std::vector<int>& gids = mesh_flat.get_global_cell_ids();
+  std::vector<Wonton::GID_t>& gids = mesh_flat.get_global_cell_ids();
   for (int c=0; c<8; ++c)
     ASSERT_EQ(c, gids[c]);
 
@@ -185,7 +185,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_2d) {
   }
 
   // Test global ids
-  std::vector<int>& gids = mesh_flat.get_global_cell_ids();
+  std::vector<Wonton::GID_t>& gids = mesh_flat.get_global_cell_ids();
   for (int c=0; c<16; ++c)
     ASSERT_EQ(c, gids[c]);
 

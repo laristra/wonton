@@ -86,6 +86,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
 
     // node global ids
     for (unsigned int n=0; n<numNodes; ++n) {
+
       nodeGlobalIds_.push_back(input.get_global_id(n, Entity_kind::NODE));
     }
     
@@ -527,15 +528,15 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
 
  
   //! get global cell ids
-  std::vector<int>& get_global_cell_ids() { return cellGlobalIds_; }
+  std::vector<GID_t>& get_global_cell_ids() { return cellGlobalIds_; }
   
   //! get global node ids
-  std::vector<int>& get_global_node_ids() { return nodeGlobalIds_; }
+  std::vector<GID_t>& get_global_node_ids() { return nodeGlobalIds_; }
  
   //! get global face ids
-  std::vector<int>& get_global_face_ids() { return faceGlobalIds_; }
+  std::vector<GID_t>& get_global_face_ids() { return faceGlobalIds_; }
  
-  void set_node_global_ids(std::vector<int>& nodeGlobalIds) 
+  void set_node_global_ids(std::vector<GID_t>& nodeGlobalIds) 
   { nodeGlobalIds_ = nodeGlobalIds; }
 
   //! set the number of owned cells
@@ -554,7 +555,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   int space_dimension() const { return dim_; }
 
   //! Get global ID of entities
-  int get_global_id(int ent, Entity_kind onwhat) const {
+  GID_t get_global_id(int ent, Entity_kind onwhat) const {
     switch (onwhat) {
       case Entity_kind::NODE: return nodeGlobalIds_[ent];
       case Entity_kind::FACE: return faceGlobalIds_[ent];
@@ -587,9 +588,9 @@ private:
   std::vector<int>  nodeCellCounts_;
   std::vector<int>  nodeCellOffsets_;
   
-  std::vector<int>  cellGlobalIds_;
-  std::vector<int>  faceGlobalIds_;
-  std::vector<int>  nodeGlobalIds_;
+  std::vector<GID_t>  cellGlobalIds_;
+  std::vector<GID_t>  faceGlobalIds_;
+  std::vector<GID_t>  nodeGlobalIds_;
   
 
   void reset_and_reserve(int numCells, int numFaces, int numNodes){

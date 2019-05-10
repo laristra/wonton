@@ -191,7 +191,7 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
   }
 
   //! Get global id
-  int get_global_id(int const id, Entity_kind const kind) const {
+  GID_t get_global_id(int const id, Entity_kind const kind) const {
     return jali_mesh_.GID(id, (Jali::Entity_kind)kind);
   }
 

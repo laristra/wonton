@@ -139,10 +139,11 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! void node_get_cells(int const nodeid, Wonton::Entity_type etype,
 //!                     std::vector<int> *ncells) const;
 //!
-//! int get_global_id(int const id, Entity_kind const kind) const;
-//!
-//! template<long D>
+//! template<int D>
 //! void node_get_coordinates(int const nodeid, Wonton::Point<D> *pp) const;
+//!
+//! GID_t get_global_id(int const id, Entity_kind const kind) const;
+//! (where GID_t == int64_t)
 //!
 //!~~~
 //! ******************************** NOTE ***********************************
