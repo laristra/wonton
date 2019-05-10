@@ -57,7 +57,8 @@ struct CylindricalRadialCoordinates {
  public:
 
   /// Geometry factor
-  /// A very common choice is 2 pi.  EAP uses pi.
+  /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
+  /// uses 1: a full cylinder.
   static constexpr double geometry_factor = 1;
 
   /// Verify coordinate system / dimensionality combination
@@ -94,7 +95,8 @@ struct CylindricalAxisymmetricCoordinates {
  public:
 
   /// Geometry factor
-  /// A very common choice is 2 pi.  EAP uses pi.
+  /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
+  /// uses 1: a full cylinder.
   static constexpr double geometry_factor = 1;
 
   /// Verify coordinate system / dimensionality combination
@@ -206,7 +208,8 @@ struct SphericalRadialCoordinates {
  public:
 
   /// Geometry factor
-  /// A very common choice is 4 pi.  EAP uses 4 pi / 3.
+  /// A very common choice is 4 pi: a one-steradian wedge of a sphere.  Portage
+  /// uses 1: a full sphere.
   static constexpr double geometry_factor = 1;
 
   /// Verify coordinate system / dimensionality combination
