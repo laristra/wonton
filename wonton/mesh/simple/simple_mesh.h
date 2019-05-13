@@ -276,7 +276,7 @@ Simple_Mesh(double x0, double y0, double z0,
 
     This is the general specification.  
    */
-  template<long D>
+  template<int D>
   void node_get_coordinates(const ID nodeid,
                             Point<D> *pp) const {
     assert(D == space_dimension());
@@ -290,7 +290,7 @@ Simple_Mesh(double x0, double y0, double z0,
     @param[out] ccords The array of @c Point object of dimension @c D containing the
     coordinates of nodes in cell @cellid.
    */
-  template<long D>
+  template<int D>
   void cell_get_coordinates(const ID cellid,
                             std::vector<Point<D>> *ccoords) const {
     assert(D == space_dimension());
@@ -317,7 +317,7 @@ Simple_Mesh(double x0, double y0, double z0,
     @param[in] affine a Matrix with D rows and D+1 columns
   */
     
-  template<long D>
+  template<int D>
   void transform(const Matrix &affine) {
     assert(D == space_dimension());
     assert(affine.rows() == D);
@@ -654,7 +654,7 @@ Simple_Mesh(double x0, double y0, double z0,
 
     This is the general specification.  
    */
-  template<long D>
+  template<int D>
   void node_set_coordinates(const ID nodeid,
                             Point<D> *pp) {
     assert(D == space_dimension());

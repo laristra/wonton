@@ -214,7 +214,7 @@ class Matrix {
     
   */
   
-  template<long D>
+  template<int D>
   Vector<D> operator*(Vector<D> const& X) const {
     assert(Rows_ == D && Columns_ == D);
 
@@ -338,7 +338,7 @@ const Matrix operator*(const double& s, const Matrix& A) {
 }
 
 // Multiply the first vector by the transpose of the second vector
-template<long D>
+template<int D>
 inline
 Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   Matrix prod(D, D);
@@ -355,7 +355,7 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   @param[in] b  The system right-hand side
   @param[out] x  The solution vector
 */
-template<long D>
+template<int D>
 void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   int n = A.rows();
   assert(n == A.columns());
@@ -446,7 +446,7 @@ void solve<2>(const Matrix& A, const Vector<2>& b, Vector<2>& x) {
   x[1] = (A[0][0]*b[1] - A[1][0]*b[0])/detA;
 }
 
-template<long D>
+template<int D>
 Vector<D> matsolve(Matrix const& matrix, Vector<D> const& rhs) {
   auto inverse = matrix.inverse();
   Vector<D> result = inverse*rhs;

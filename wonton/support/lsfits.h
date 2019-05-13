@@ -39,7 +39,7 @@ namespace Wonton {
 
 */
 
-template<long D, typename CoordSys = CartesianCoordinates>
+template<int D, typename CoordSys = CartesianCoordinates>
 Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
                       std::vector<double> const & vals) {
 
@@ -117,7 +117,7 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 
 */
 
-template<long D>
+template<int D>
   // int N = D*(D+3)/2;  
   Vector<D*(D+3)/2> ls_quadfit(std::vector<Point<D>> const & coords,
 			       std::vector<double> const & vals, 
