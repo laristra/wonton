@@ -297,7 +297,7 @@ class Flat_State_Wrapper {
    *
    * This function is provided to make the class compatible with other state wrappers.
    */
-  Entity_kind get_entity(std::string const& var_name) {
+  Entity_kind get_entity(std::string const& var_name) const {
     return entity_map_[var_name];
   }
 
