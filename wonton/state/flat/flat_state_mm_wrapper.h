@@ -628,7 +628,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     @return The Entity_kind enum for the entity type on which the field is
     defined
   */
-  Entity_kind get_entity(std::string field_name) {
+  Entity_kind get_entity(std::string field_name) const {
     return StateManager<MeshWrapper>::get(field_name)->get_kind();
   }
   
@@ -640,7 +640,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     the lengths of the material cell indices vectors. It is the number need to
     pass a flattened state vector.
   */ 
-    int num_material_cells(){
+    int num_material_cells() const {
         int n=0;
         for (auto& kv : StateManager<MeshWrapper>::material_cells_){
             n += kv.second.size();
