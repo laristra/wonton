@@ -13,6 +13,7 @@ set(support_HEADERS
   lsfits.h
   CoordinateSystem.h
   Matrix.h
+  moment_index.h
   Point.h
   svd.h
   Vector.h
@@ -36,5 +37,10 @@ if (ENABLE_UNIT_TESTS)
     LIBRARIES wonton
     POLICY MPI
     THREADS 1)
+
+  cinch_add_unit(moment_index
+    SOURCES test/test_moment_index.cc
+    POLICY SERIAL
+    )
 
 endif(ENABLE_UNIT_TESTS)
