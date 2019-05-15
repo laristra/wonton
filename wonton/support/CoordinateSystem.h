@@ -59,10 +59,9 @@ struct CartesianCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
@@ -147,10 +146,9 @@ struct CylindricalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
@@ -264,10 +262,9 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
@@ -380,11 +377,9 @@ struct CylindricalPolarCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
-    auto new_gradient = gradient;
-    new_gradient[1] /= reference_point[0];
-    return(std::move(new_gradient));
+    gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
@@ -497,11 +492,9 @@ struct Cylindrical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
-    auto new_gradient = gradient;
-    new_gradient[1] /= reference_point[0];
-    return(std::move(new_gradient));
+    gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
@@ -616,10 +609,9 @@ struct SphericalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
@@ -732,12 +724,10 @@ struct Spherical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
-    auto new_gradient = gradient;
-    new_gradient[1] /= reference_point[0];
-    new_gradient[2] /= (reference_point[0] * sin(reference_point[1]));
-    return(std::move(new_gradient));
+    gradient[1] /= reference_point[0];
+    gradient[2] /= (reference_point[0] * sin(reference_point[1]));
   }
 
   /// Modify line element to account for the coordinate system
