@@ -15,7 +15,7 @@ Please see the license file at the root of this repository, or at:
 //! moments list by converting between a moment specification and a moments
 //! list index.
 
-namespace Portage {
+namespace Wonton {
 
   // ==========================================================================
 
@@ -137,6 +137,6 @@ namespace Portage {
     return(std::move(std::make_pair(order,exponents)));
   }
 
-}  // namespace Portage
+}  // namespace Wonton
 
 #endif  // PORTAGE_SUPPORT_MOMENT_INDEX_
