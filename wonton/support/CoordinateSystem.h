@@ -73,6 +73,21 @@ struct CartesianCoordinates {
     return(std::move(line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 0;
+
+  /// Modify moments in-place to account for the coordinate system
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    // No change from "standard", Cartesian-like calculation
+    // --> Other than the geometry factor (which should be one, because any
+    //     other value would be highly unusual for Cartesian coordinates).
+    for (int n = 0; n < moments.size(); ++n) {
+      moments[n] *= inv_geo_fac;
+    }
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -84,20 +99,25 @@ struct CartesianCoordinates {
     auto volume = vol0 * inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
-    auto moments = mom0;
-    for (int d = 0; d < D; ++d) {
-      moments[d] * inv_geo_fac;
+    for (int d = 0; d < 1+D; ++d) {
+      moments[d] *= inv_geo_fac;
     }
-    return(std::move(moments));
   }
 
 };  // Cartesian Coordinates
@@ -141,6 +161,43 @@ struct CylindricalRadialCoordinates {
     return(std::move(line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments in-place to account for the coordinate system
+  ///   Cylindrical moments increment the radial coordinate exponent by one.
+  /// That reduces the maximum order of the available moments by one.
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    // Find the maximum moment provided
+    int order;
+    std::array<int,D> exponents;
+    std::tie(order,exponents) = index_to_moments<D>(moments.size()-1);
+    // Given that we are reducing by a single order, how many moments will we
+    // preserve?  In order words, how many moments are there from orders zero
+    // to (max input order) - 1?
+    int num = number_of_moments_through_order<D>(order-1);
+    // Shift the moments down
+    for (int n = 0; n < num; ++n) {
+      // Get the moment specification
+      std::tie(order,exponents) = index_to_moment<D>(n);
+      // Increment
+      order++;
+      exponents[0]++;
+      // Get the index
+      int index = moment_to_index<D>(order, exponents);
+      // Shift down
+      moments[n] = moments[index];
+    }
+    // Resize array
+    moments.resize(num);
+    // Apply geometry factor
+    for (int n = 0; n < moments.size(); ++n) {
+      moments[n] *= inv_geo_fac;
+    }
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -152,19 +209,30 @@ struct CylindricalRadialCoordinates {
     volume *= inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
-    moments[0] *= CoordinateSystem::twopi *
+    // -- Zeroth moment (volume)
+    moments[0] *= CoordinateSystem::twopi * rhobar;
+    // -- First moments (centroid * volume)
+    moments[1] *= CoordinateSystem::twopi *
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     // Apply geometry factor
-    moments[0] *= inv_geo_fac;
+    for (int d = 0; d < 1+D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
     return(std::move(moments));
   }
 
@@ -210,6 +278,43 @@ struct CylindricalAxisymmetricCoordinates {
     return(std::move(line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments in-place to account for the coordinate system
+  ///   Cylindrical moments increment the radial coordinate exponent by one.
+  /// That reduces the maximum order of the available moments by one.
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    // Find the maximum moment provided
+    int order;
+    std::array<int,D> exponents;
+    std::tie(order,exponents) = index_to_moments<D>(moments.size()-1);
+    // Given that we are reducing by a single order, how many moments will we
+    // preserve?  In order words, how many moments are there from orders zero
+    // to (max input order) - 1?
+    int num = number_of_moments_through_order<D>(order-1);
+    // Shift the moments down
+    for (int n = 0; n < num; ++n) {
+      // Get the moment specification
+      std::tie(order,exponents) = index_to_moment<D>(n);
+      // Increment
+      order++;
+      exponents[0]++;
+      // Get the index
+      int index = moment_to_index<D>(order, exponents);
+      // Shift down
+      moments[n] = moments[index];
+    }
+    // Resize array
+    moments.resize(num);
+    // Apply geometry factor
+    for (int n = 0; n < moments.size(); ++n) {
+      moments[n] *= inv_geo_fac;
+    }
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -221,20 +326,29 @@ struct CylindricalAxisymmetricCoordinates {
     volume *= inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
-    moments[0] *= CoordinateSystems::twopi *
+    // -- Zeroth moment (volume)
+    moments[0] *= CoordinateSystems::twopi * rhobar;
+    // -- First moments (centroid * volume)
+    moments[1] *= CoordinateSystems::twopi *
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
-    moments[1] *= CoordinateSystems::twopi * rhobar;
+    moments[2] *= CoordinateSystems::twopi * rhobar;
     // Apply geometry factor
-    for (int d = 0; d < D; ++d) {
+    for (int d = 0; d < 1+D; ++d) {
       moments[d] *= inv_geo_fac;
     }
     return(std::move(moments));
@@ -282,6 +396,43 @@ struct CylindricalPolarCoordinates {
     return(std::move(new_line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments in-place to account for the coordinate system
+  ///   Cylindrical moments increment the radial coordinate exponent by one.
+  /// That reduces the maximum order of the available moments by one.
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    // Find the maximum moment provided
+    int order;
+    std::array<int,D> exponents;
+    std::tie(order,exponents) = index_to_moments<D>(moments.size()-1);
+    // Given that we are reducing by a single order, how many moments will we
+    // preserve?  In order words, how many moments are there from orders zero
+    // to (max input order) - 1?
+    int num = number_of_moments_through_order<D>(order-1);
+    // Shift the moments down
+    for (int n = 0; n < num; ++n) {
+      // Get the moment specification
+      std::tie(order,exponents) = index_to_moment<D>(n);
+      // Increment
+      order++;
+      exponents[0]++;
+      // Get the index
+      int index = moment_to_index<D>(order, exponents);
+      // Shift down
+      moments[n] = moments[index];
+    }
+    // Resize array
+    moments.resize(num);
+    // Apply geometry factor
+    for (int n = 0; n < moments.size(); ++n) {
+      moments[n] *= inv_geo_fac;
+    }
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -293,19 +444,28 @@ struct CylindricalPolarCoordinates {
     volume *= inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
-    moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
-    moments[1] *= rhobar;
+    // -- Zeroth moment (volume)
+    moments[0] *= rhobar;
+    // -- First moments (centroid * volume)
+    moments[1] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
+    moments[2] *= rhobar;
     // Apply geometry factor
-    for (int d = 0; d < D; ++d) {
+    for (int d = 0; d < 1+D; ++d) {
       moments[d] *= inv_geo_fac;
     }
     return(std::move(moments));
@@ -353,6 +513,43 @@ struct Cylindrical3DCoordinates {
     return(std::move(new_line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments in-place to account for the coordinate system
+  ///   Cylindrical moments increment the radial coordinate exponent by one.
+  /// That reduces the maximum order of the available moments by one.
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    // Find the maximum moment provided
+    int order;
+    std::array<int,D> exponents;
+    std::tie(order,exponents) = index_to_moments<D>(moments.size()-1);
+    // Given that we are reducing by a single order, how many moments will we
+    // preserve?  In order words, how many moments are there from orders zero
+    // to (max input order) - 1?
+    int num = number_of_moments_through_order<D>(order-1);
+    // Shift the moments down
+    for (int n = 0; n < num; ++n) {
+      // Get the moment specification
+      std::tie(order,exponents) = index_to_moment<D>(n);
+      // Increment
+      order++;
+      exponents[0]++;
+      // Get the index
+      int index = moment_to_index<D>(order, exponents);
+      // Shift down
+      moments[n] = moments[index];
+    }
+    // Resize array
+    moments.resize(num);
+    // Apply geometry factor
+    for (int n = 0; n < moments.size(); ++n) {
+      moments[n] *= inv_geo_fac;
+    }
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -364,20 +561,29 @@ struct Cylindrical3DCoordinates {
     volume *= inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
-    moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
-    moments[1] *= rhobar;
+    // -- Zeroth moment (volume)
+    moments[0] *= rhobar;
+    // -- First moments (centroid * volume)
+    moments[1] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     moments[2] *= rhobar;
+    moments[3] *= rhobar;
     // Apply geometry factor
-    for (int d = 0; d < D; ++d) {
+    for (int d = 0; d < 1+D; ++d) {
       moments[d] *= inv_geo_fac;
     }
     return(std::move(moments));
@@ -424,6 +630,43 @@ struct SphericalRadialCoordinates {
     return(std::move(line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 2;
+
+  /// Modify moments in-place to account for the coordinate system
+  ///   Spherical moments increment the radial coordinate exponent by two.
+  /// That reduces the maximum order of the available moments by two.
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    // Find the maximum moment provided
+    int order;
+    std::array<int,D> exponents;
+    std::tie(order,exponents) = index_to_moments<D>(moments.size()-1);
+    // Given that we are reducing by a single order, how many moments will we
+    // preserve?  In order words, how many moments are there from orders zero
+    // to (max input order) - 1?
+    int num = number_of_moments_through_order<D>(order-1);
+    // Shift the moments down
+    for (int n = 0; n < num; ++n) {
+      // Get the moment specification
+      std::tie(order,exponents) = index_to_moment<D>(n);
+      // Increment
+      order += 2;
+      exponents[0] += 2;
+      // Get the index
+      int index = moment_to_index<D>(order, exponents);
+      // Shift down
+      moments[n] = moments[index];
+    }
+    // Resize array
+    moments.resize(num);
+    // Apply geometry factor
+    for (int n = 0; n < moments.size(); ++n) {
+      moments[n] *= inv_geo_fac;
+    }
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -437,18 +680,27 @@ struct SphericalRadialCoordinates {
     volume *= inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
     dr_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
-    moments[0] *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2);
+    // -- Zeroth moment (volume)
+    moments[0] *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2/3.0);
+    // -- First moments (centroid * volume)
+    moments[1] *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2);
     // Apply geometry factor
-    for (int d = 0; d < D; ++d) {
+    for (int d = 0; d < 1+D; ++d) {
       moments[d] *= inv_geo_fac;
     }
     return(std::move(moments));
@@ -498,6 +750,19 @@ struct Spherical3DCoordinates {
     return(std::move(new_line_element));
   }
 
+  /// How many orders of moments do you lose?
+  static constexpr int moment_shift = 0;
+
+  /// Modify moments in-place to account for the coordinate system
+  ///   You cannot use the moment-shift method with 3D spherical coordinates,
+  /// because the volume element includes a sin(theta) term.
+  template<long D>
+  static void modify_moments(std::vector<double> & moments) {
+    static_assert(false,
+        "Moment-shifting cannot be used with 3D spherical coordinates.")
+  }
+
+  /*
   /// Modify volume to account for the coordinate system
   template<long D>
   static double modify_volume(double const vol0,
@@ -514,10 +779,17 @@ struct Spherical3DCoordinates {
     volume *= inv_geo_fac;
     return(volume);
   }
+  */
 
   /// Modify moments to account for the coordinate system
+  ///   This is an optimization for cells that are axis-aligned boxes, in order
+  /// to avoid computing higher-order moments, then throwing away most or all
+  /// of them.  This routine is hard-coded to assume the zeroth and first
+  /// moments, because it is not obvious that higher-order moments are needed
+  /// and (for this optimization) it is necessary to explicitly derive the
+  /// appropriate expressions.
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static void modify_moments(std::vector<double> const & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
@@ -533,12 +805,14 @@ struct Spherical3DCoordinates {
     cosc_tb = cos(thetabar) / thetabar;
     cos_dt  = cos(dtheta_2);
     ss1 = sin_tb * sinc_dt;
-    auto moments = mom0;
-    moments[0] *= rr1 * ss1;
-    moments[1] *= rr2 * (ss1 + cosc_tb * (sinc_dt - cos_dt));
-    moments[2] *= rr2 * ss1;
+    // -- Zeroth moment (volume)
+    moments[0] *= (rbar*rbar + dr_2*dr_2/3.0) * (sin_tb * sinc_dt);
+    // -- First moments (centroid * volume)
+    moments[1] *= rr1 * ss1;
+    moments[2] *= rr2 * (ss1 + cosc_tb * (sinc_dt - cos_dt));
+    moments[3] *= rr2 * ss1;
     // Apply geometry factor
-    for (int d = 0; d < D; ++d) {
+    for (int d = 0; d < 1+D; ++d) {
       moments[d] *= inv_geo_fac;
     }
     return(std::move(moments));
