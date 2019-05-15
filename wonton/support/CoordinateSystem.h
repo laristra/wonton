@@ -66,10 +66,9 @@ struct CartesianCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
 
   /// How many orders of moments do you lose?
@@ -153,10 +152,9 @@ struct CylindricalRadialCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
 
   /// How many orders of moments do you lose?
@@ -269,10 +267,9 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
 
   /// How many orders of moments do you lose?
@@ -384,11 +381,9 @@ struct CylindricalPolarCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    return(std::move(new_line_element));
+    line_element[1] *= reference_point[0];
   }
 
   /// How many orders of moments do you lose?
@@ -499,11 +494,9 @@ struct Cylindrical3DCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    return(std::move(new_line_element));
+    line_element[1] *= reference_point[0];
   }
 
   /// How many orders of moments do you lose?
@@ -616,10 +609,9 @@ struct SphericalRadialCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
 
   /// How many orders of moments do you lose?
@@ -732,12 +724,10 @@ struct Spherical3DCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    new_line_element[2] *= (reference_point[0] * sin(reference_point[1]));
-    return(std::move(new_line_element));
+    line_element[1] *= reference_point[0];
+    line_element[2] *= (reference_point[0] * sin(reference_point[1]));
   }
 
   /// How many orders of moments do you lose?
