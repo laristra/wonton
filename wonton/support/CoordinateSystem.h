@@ -9,6 +9,9 @@ Please see the license file at the root of this repository, or at:
 
 #include <cmath>
 
+#include "wonton/support/Point.h"
+#include "wonton/support/Vector.h"
+
 /*
   @file CoordinateSystem.h
   @brief Defines quantities needed for non-Cartesian coordinates
@@ -59,15 +62,15 @@ struct CartesianCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
@@ -108,7 +111,7 @@ struct CartesianCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
@@ -145,15 +148,15 @@ struct CylindricalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
@@ -216,7 +219,7 @@ struct CylindricalRadialCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -260,15 +263,15 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
@@ -331,7 +334,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -374,15 +377,15 @@ struct CylindricalPolarCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     line_element[1] *= reference_point[0];
   }
 
@@ -445,7 +448,7 @@ struct CylindricalPolarCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -487,15 +490,15 @@ struct Cylindrical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     line_element[1] *= reference_point[0];
   }
 
@@ -558,7 +561,7 @@ struct Cylindrical3DCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -602,15 +605,15 @@ struct SphericalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
@@ -675,7 +678,7 @@ struct SphericalRadialCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
     dr_2 = 0.5 * (phi[0] - plo[0]);
@@ -716,16 +719,16 @@ struct Spherical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<long D>
-  static void modify_gradient(Vector<D> & gradient,
-      Point<D> const & reference_point) {
+  static void modify_gradient(Wonton::Vector<D> & gradient,
+      Wonton::Point<D> const & reference_point) {
     gradient[1] /= reference_point[0];
     gradient[2] /= (reference_point[0] * sin(reference_point[1]));
   }
 
   /// Modify line element to account for the coordinate system
   template<long D>
-  static void modify_line_element(Vector<D> & line_element,
-      Point<D> const & reference_point) {
+  static void modify_line_element(Wonton::Vector<D> & line_element,
+      Wonton::Point<D> const & reference_point) {
     line_element[1] *= reference_point[0];
     line_element[2] *= (reference_point[0] * sin(reference_point[1]));
   }
@@ -770,7 +773,7 @@ struct Spherical3DCoordinates {
   /// appropriate expressions.
   template<long D>
   static void modify_moments(std::vector<double> const & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
     dr_2 = 0.5 * (phi[0] - plo[0]);
