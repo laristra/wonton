@@ -53,7 +53,7 @@ struct CartesianCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid for any positive dimensionality
     static_assert(D >= 1,
@@ -61,14 +61,14 @@ struct CartesianCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -78,7 +78,7 @@ struct CartesianCoordinates {
   static constexpr int moment_shift = 0;
 
   /// Modify moments in-place to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation
     // --> Other than the geometry factor (which should be one, because any
@@ -90,7 +90,7 @@ struct CartesianCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // No change from "standard", Cartesian-like calculation.
@@ -109,7 +109,7 @@ struct CartesianCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
@@ -139,7 +139,7 @@ struct CylindricalRadialCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
@@ -147,14 +147,14 @@ struct CylindricalRadialCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -166,7 +166,7 @@ struct CylindricalRadialCoordinates {
   /// Modify moments in-place to account for the coordinate system
   ///   Cylindrical moments increment the radial coordinate exponent by one.
   /// That reduces the maximum order of the available moments by one.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     // Find the maximum moment provided
     int order;
@@ -198,7 +198,7 @@ struct CylindricalRadialCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -217,7 +217,7 @@ struct CylindricalRadialCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
@@ -254,7 +254,7 @@ struct CylindricalAxisymmetricCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
@@ -262,14 +262,14 @@ struct CylindricalAxisymmetricCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -281,7 +281,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// Modify moments in-place to account for the coordinate system
   ///   Cylindrical moments increment the radial coordinate exponent by one.
   /// That reduces the maximum order of the available moments by one.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     // Find the maximum moment provided
     int order;
@@ -313,7 +313,7 @@ struct CylindricalAxisymmetricCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -332,7 +332,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
@@ -368,7 +368,7 @@ struct CylindricalPolarCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
@@ -376,14 +376,14 @@ struct CylindricalPolarCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     line_element[1] *= reference_point[0];
@@ -395,7 +395,7 @@ struct CylindricalPolarCoordinates {
   /// Modify moments in-place to account for the coordinate system
   ///   Cylindrical moments increment the radial coordinate exponent by one.
   /// That reduces the maximum order of the available moments by one.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     // Find the maximum moment provided
     int order;
@@ -427,7 +427,7 @@ struct CylindricalPolarCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -446,7 +446,7 @@ struct CylindricalPolarCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
@@ -481,7 +481,7 @@ struct Cylindrical3DCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
@@ -489,14 +489,14 @@ struct Cylindrical3DCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     line_element[1] *= reference_point[0];
@@ -508,7 +508,7 @@ struct Cylindrical3DCoordinates {
   /// Modify moments in-place to account for the coordinate system
   ///   Cylindrical moments increment the radial coordinate exponent by one.
   /// That reduces the maximum order of the available moments by one.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     // Find the maximum moment provided
     int order;
@@ -540,7 +540,7 @@ struct Cylindrical3DCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -559,7 +559,7 @@ struct Cylindrical3DCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
@@ -596,7 +596,7 @@ struct SphericalRadialCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
@@ -604,14 +604,14 @@ struct SphericalRadialCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -623,7 +623,7 @@ struct SphericalRadialCoordinates {
   /// Modify moments in-place to account for the coordinate system
   ///   Spherical moments increment the radial coordinate exponent by two.
   /// That reduces the maximum order of the available moments by two.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     // Find the maximum moment provided
     int order;
@@ -655,7 +655,7 @@ struct SphericalRadialCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -676,7 +676,7 @@ struct SphericalRadialCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system
@@ -710,7 +710,7 @@ struct Spherical3DCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
@@ -718,7 +718,7 @@ struct Spherical3DCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_gradient(Wonton::Vector<D> & gradient,
       Wonton::Point<D> const & reference_point) {
     gradient[1] /= reference_point[0];
@@ -726,7 +726,7 @@ struct Spherical3DCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static void modify_line_element(Wonton::Vector<D> & line_element,
       Wonton::Point<D> const & reference_point) {
     line_element[1] *= reference_point[0];
@@ -739,7 +739,7 @@ struct Spherical3DCoordinates {
   /// Modify moments in-place to account for the coordinate system
   ///   You cannot use the moment-shift method with 3D spherical coordinates,
   /// because the volume element includes a sin(theta) term.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> & moments) {
     static_assert(false,
         "Moment-shifting cannot be used with 3D spherical coordinates.")
@@ -747,7 +747,7 @@ struct Spherical3DCoordinates {
 
   /*
   /// Modify volume to account for the coordinate system
-  template<long D>
+  template<int D>
   static double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -771,7 +771,7 @@ struct Spherical3DCoordinates {
   /// moments, because it is not obvious that higher-order moments are needed
   /// and (for this optimization) it is necessary to explicitly derive the
   /// appropriate expressions.
-  template<long D>
+  template<int D>
   static void modify_moments(std::vector<double> const & moments,
       Wonton::Point<D> const & plo, Wonton::Point<D> const phi) {
     // Adjust for different coordinate system

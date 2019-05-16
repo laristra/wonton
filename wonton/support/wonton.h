@@ -68,6 +68,8 @@ Please see the license file at the root of this repository, or at:
  */
 namespace Wonton {
 
+typedef int64_t GID_t;  /*! Global ID type */
+
 /// The type of mesh entity.
 enum Entity_kind {
   ALL_KIND = -3,     /*!< All possible types */
