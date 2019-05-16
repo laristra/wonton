@@ -123,6 +123,38 @@ namespace direct_product_mesh_wrapper_test {
   // --------------------------------------------------------------------------
 
   template<int D>
+  void verify_cell_iteration(
+      Wonton::Direct_Product_Mesh_Wrapper<D>& wrapper) {
+    // Declare an array of zeros for storage
+    std::vector<int> found(wrapper.num_owned_cells(), 0);
+    // Loop over all cell IDs
+    auto ekind = Wonton::Entity_kind::CELL;
+    auto etype = Wonton::Entity_type::PARALLEL_OWNED;
+    for (auto iter = wrapper.begin(ekind,etype);
+        iter != wrapper.end(ekind,etype); ++iter) {
+      // Get the indices from the cell ID
+      auto id = (*iter);
+      auto indices = wrapper.cellid_to_indices(id);
+      // Convert the indices to an arbitrary 1D index for storage array
+      std::size_t n = indices[0];
+      for (int d = 1; d < D; ++d) {
+        n *= wrapper.axis_num_cells(d-1);
+        n += indices[d];
+      }
+      // Ensure that the 1D index is in the valid range
+      ASSERT_GE(n, 0);
+      ASSERT_LT(n, wrapper.num_owned_cells());
+      // Mark that value as having been found
+      found[n] = 1;
+    }
+    // Verify that all elements were found
+    auto num_found = std::accumulate(found.begin(), found.end(), 0);
+    ASSERT_EQ(num_found, wrapper.num_owned_cells());
+  }
+
+  // --------------------------------------------------------------------------
+
+  template<int D>
   void run_all_tests(const std::vector<double> &axis_points1) {
     // Build mesh and wrapper
     std::array<std::vector<double>,D> axis_points;
@@ -141,6 +173,9 @@ namespace direct_product_mesh_wrapper_test {
     std::array<int,D> indices;
     direct_product_mesh_wrapper_test::loop_over_grid<D>(
         D-1, indices, id, mesh_wrapper, axis_points);
+
+    // Verify cell iteration
+    verify_cell_iteration(mesh_wrapper);
   }
 
 } // namespace direct_product_mesh_wrapper_test 

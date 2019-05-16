@@ -75,6 +75,14 @@ class Adaptive_Refinement_Mesh_Wrapper {
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
+  //! Iterators on mesh entity - begin
+  counting_iterator begin(Entity_kind const entity,
+      Entity_type const etype = Entity_type::ALL) const;
+
+  //! Iterator on mesh entity - end
+  counting_iterator end(Entity_kind const entity,
+      Entity_type const etype = Entity_type::ALL) const;
+
 
  private:
 
@@ -133,6 +141,34 @@ void Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::cell_get_bounds(
     (*plo)[d] = bounding_box[d][LO];
     (*phi)[d] = bounding_box[d][HI];
   }
+}
+
+// ____________________________________________________________________________
+// Iterators on mesh entity - begin
+template<int D, class CoordSys>
+counting_iterator Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::begin(
+    Entity_kind const entity, Entity_type const etype) const {
+  // Currently only valid for cells
+  assert(entity == Wonton::Entity_kind::CELL);
+  // Currently only valid for owned cells
+  assert(etype == Wonton::Entity_type::PARALLEL_OWNED);
+  // Return iterator
+  int start_index = 0;
+  return(make_counting_iterator(start_index));
+}
+
+// ____________________________________________________________________________
+// Iterator on mesh entity - end
+template<int D, class CoordSys>
+counting_iterator Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::end(
+    Entity_kind const entity, Entity_type const etype) const {
+  // Currently only valid for cells
+  assert(entity == Wonton::Entity_kind::CELL);
+  // Currently only valid for owned cells
+  assert(etype == Wonton::Entity_type::PARALLEL_OWNED);
+  // Return iterator
+  int start_index = 0;
+  return(make_counting_iterator(start_index) + num_owned_cells());
 }
 
 }  // namespace Wonton

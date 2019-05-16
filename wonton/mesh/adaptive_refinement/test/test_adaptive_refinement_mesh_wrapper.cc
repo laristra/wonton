@@ -27,6 +27,32 @@ Please see the license file at the root of this repository, or at:
 
 namespace adaptive_refinement_mesh_test {
 
+// ----------------------------------------------------------------------------
+
+template<int D>
+void verify_cell_iteration(
+    Wonton::Adaptive_Refinement_Mesh_Wrapper<D>& wrapper) {
+  // Declare an array of zeros for storage
+  std::vector<int> found(wrapper.num_owned_cells(), 0);
+  // Loop over all cell IDs
+  auto ekind = Wonton::Entity_kind::CELL;
+  auto etype = Wonton::Entity_type::PARALLEL_OWNED;
+  for (auto iter = wrapper.begin(ekind,etype);
+      iter != wrapper.end(ekind,etype); ++iter) {
+    auto id = (*iter);
+    // Ensure that the id is in the valid range
+    ASSERT_GE(id, 0);
+    ASSERT_LT(id, wrapper.num_owned_cells());
+    // Mark that value as having been found
+    found[id] = 1;
+  }
+  // Verify that all elements were found
+  auto num_found = std::accumulate(found.begin(), found.end(), 0);
+  ASSERT_EQ(num_found, wrapper.num_owned_cells());
+}
+
+// ----------------------------------------------------------------------------
+
 template <int D>
 void run_basic_tests(double lo1, double hi1) {
   // Create a mesh
@@ -72,6 +98,9 @@ void run_basic_tests(double lo1, double hi1) {
       ASSERT_DOUBLE_EQ(phi[d], (hi1-lo1)*expected[d][Wonton::HI]+lo1);
     }
   }
+
+  // Verify cell iteration
+  verify_cell_iteration(wrapper);
 }   // void run_basic_tests
 
 }
