@@ -24,7 +24,7 @@ fi
 
 # set modules and install paths
 
-jali_version=1.0.0
+jali_version=1.0.4
 lapack_version=3.8.0
 
 export NGC=/usr/local/codes/ngc
@@ -34,7 +34,7 @@ thrust_dir=${ngc_include_dir}
 
 
 # compiler-specific settings
-if [[ $compiler == "intel" ]]; then
+if [[ $compiler == "intel18" ]]; then
   intel_version=18.0.1
   cxxmodule=intel/${intel_version}
   # openmpi version that libs were built against
@@ -43,8 +43,17 @@ if [[ $compiler == "intel" ]]; then
   mpi_module=openmpi/2.1.2
   jali_install_dir=$NGC/private/jali/${jali_version}-intel-${intel_version}-openmpi-${openmpi_version}
   lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-intel-${intel_version}
-elif [[ $compiler == "gcc" ]]; then
+elif [[ $compiler == "gcc6" ]]; then
   gcc_version=6.4.0
+  cxxmodule=gcc/${gcc_version}
+  # openmpi version that libs were built against
+  openmpi_version=2.1.2
+  # openmpi module for compiling and linking
+  mpi_module=openmpi/2.1.2
+  jali_install_dir=$NGC/private/jali/${jali_version}-gcc-${gcc_version}-openmpi-${openmpi_version}
+  lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-gcc-${gcc_version}
+elif [[ $compiler == "gcc7" ]]; then
+  gcc_version=7.3.0
   cxxmodule=gcc/${gcc_version}
   # openmpi version that libs were built against
   openmpi_version=2.1.2
