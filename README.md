@@ -33,8 +33,8 @@ with Travis CI.
 
 ### Prerequisites
 Wonton uses standard C++11 features, so a fairly modern compiler 
-is needed. We regularly test with Intel 17+ or GCC 6.3+. The build 
-system _requires_ CMake version 3.0+. 
+is needed. We regularly test with Intel 18.0.1, GCC 6.4.0, and GCC 7.3.0. 
+The build system _requires_ CMake version 3.0+. 
 
 The following libraries are also _required_:
 
@@ -49,7 +49,7 @@ support for these is _optional_:
 
 - [Jali](http://github.com/lanl/jali):
 
-  We regularly test with verison 1.0.0.  You will need to set the
+  We regularly test with verison 1.0.4.  You will need to set the
   `Jali_Dir` CMake variable if you wish to build support for Jali and
   its tests (see examples below).
 
@@ -122,10 +122,10 @@ Execute the following from the wonton root directory:
 
 ```c++
 # machine=darwin-fe
-module load openmpi/2.1.2-intel_17.0.6 boost/1.58.0 cmake
-export JALI_INSTALL_PREFIX /usr/projects/ngc/private/jali/1.0.0-intel-17.0.6-openmpi-2.1.2
-export TPL_INSTALL_PREFIX /usr/projects/ngc/private/jali-tpl/1.1.0-intel-17.0.6-openmpi-2.1.2
-export LAPACKE_DIR=/usr/projects/ngc/private/lapack/3.8.0-patched-intel-17.0.6
+module load openmpi/2.1.2-intel_18.0.1 boost/1.58.0 cmake
+export JALI_INSTALL_PREFIX /usr/projects/ngc/private/jali/1.0.4-intel-18.0.1-openmpi-2.1.2
+export TPL_INSTALL_PREFIX /usr/projects/ngc/private/jali-tpl/1.2.0-intel-18.0.1-openmpi-2.1.2
+export LAPACKE_DIR=/usr/projects/ngc/private/lapack/3.8.0-patched-intel-18.0.1
 mkdir build
 cd build
 cmake \
