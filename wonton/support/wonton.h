@@ -24,6 +24,7 @@ Please see the license file at the root of this repository, or at:
 
 #include <vector>
 #include <algorithm>
+#include <string>
 
 #endif
 
