@@ -260,8 +260,6 @@ include_directories(${CMAKE_BINARY_DIRECTORY})
 # Libraries
 
 cinch_add_library_target(wonton wonton)
-# TODO - merge LAPACKE_LIBRARIES into WONTON_LIBRARIES
-cinch_target_link_libraries(wonton ${WONTON_LIBRARIES})
 cinch_target_link_libraries(wonton ${LAPACKE_LIBRARIES})
 
 
