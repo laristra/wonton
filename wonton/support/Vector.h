@@ -37,7 +37,7 @@ namespace Wonton {
   @tparam D Indicates the dimensionality of the Vector (this will generally be one
   of [1, 2, 3]).
 */
-template <long D> class Vector {
+template <int D> class Vector {
  private:
   double m_comp[D];
 
@@ -219,7 +219,7 @@ typedef Vector<3> Vector3;
 typedef Vector<2> Vector2;
 
 /// Dot product of two vectors, @f$\vec{a} \cdot \vec{b}@f$.
-template<long D>
+template<int D>
 inline
 double dot(const Vector<D>& a, const Vector<D>& b) {
   double r = 0.0;
@@ -228,49 +228,49 @@ double dot(const Vector<D>& a, const Vector<D>& b) {
 }
 
 /// Add two vectors.
-template<long D>
+template<int D>
 inline
 const Vector<D> operator+(const Vector<D>& a, const Vector<D>& b) {
   return Vector<D>(a) += b;
 }
 
 /// Subtract two vectors.
-template<long D>
+template<int D>
 inline
 const Vector<D> operator-(const Vector<D>& a, const Vector<D>& b) {
   return Vector<D>(a) -= b;
 }
 
 /// Multiply a vector by a scalar, @f$ s \vec{a}@f$.
-template<long D>
+template<int D>
 inline
 const Vector<D> operator*(const Vector<D>& a, const double& s) {
   return Vector<D>(a) *= s;
 }
 
 /// Multiply a vector by a scalar, @f$ s \vec{a}@f$.
-template<long D>
+template<int D>
 inline
 const Vector<D> operator*(const double& s, const Vector<D>& a) {
   return Vector<D>(a) *= s;
 }
 
 /// Divide a vector by a scalar, @f$ \frac{1}{s} \vec{a}@f$.
-template<long D>
+template<int D>
 inline
 const Vector<D> operator/(const Vector<D>& a, const double& s) {
   return Vector<D>(a) /= s;
 }
 
 /// Pretty printing of a Vector to an output stream.
-template<long D>
+template<int D>
 inline
 std::ostream& operator<<(std::ostream& os, const Vector<D>& v) {
   return v.writeToStream(os);
 }
 
 /// Read in a Vector from an input stream.
-template<long D> inline std::istream&
+template<int D> inline std::istream&
 operator>>(std::istream& is, Vector<D>& v) {
   return v.readFromStream(is);
 }
@@ -296,8 +296,8 @@ inline const Vector<3> cross(const Vector<3>& a, const Vector<3>& b) {
   @param[in,out] icomp The index of the maximum component of @c v.
   @return The maximum component of @c v.
 */
-template<long D>
-inline double MaxComponent(const Vector<D>& v, long& icomp) {
+template<int D>
+inline double MaxComponent(const Vector<D>& v, int& icomp) {
   double max = v[0];
   icomp = 0;
   for (int i = 1; i < D; i++)

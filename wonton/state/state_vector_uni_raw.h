@@ -19,41 +19,49 @@ namespace Wonton {
 template <class T=double>
 class StateVectorUniRaw : public StateVectorBase {
 
-	public:
+ public:
   
-		StateVectorUniRaw(
-			std::string name, 
-			Entity_kind kind=Entity_kind::CELL,
-			T* pdata=nullptr
-		) : StateVectorBase(name, Field_type::MESH_FIELD, kind),pdata_(pdata) {}
+  StateVectorUniRaw(
+      std::string name, 
+      Entity_kind kind=Entity_kind::CELL,
+      T* pdata=nullptr
+                    ) : StateVectorBase(name, Field_type::MESH_FIELD, kind),pdata_(pdata) {}
 
 
-		//! Destructor
-		~StateVectorUniRaw() {}
+  //! Destructor
+  ~StateVectorUniRaw() {}
 
-		// print
-		std::ostream & print(std::ostream & os) const {
-			os << "UniStateVector\n";
-			return os;
-		}
+  // print
+  std::ostream & print(std::ostream & os) const {
+    os << "UniStateVector\n";
+    return os;
+  }
 		
-		// get the data type
-		const std::type_info& data_type() {
-			const std::type_info& ti = typeid(T);
-			return ti;
-		}
+  // get the data type
+  const std::type_info& data_type() const {
+    const std::type_info& ti = typeid(T);
+    return ti;
+  }
 	
-		/*!
-			@brief Return a reference to the data in the state vector.
-			@return a reference to the vector of data in the state vector
+  /*!
+    @brief Return a pointer to the data in the state vector.
+    @return a pointer to the vector of data in the state vector
 
-			Return a reference to the data in the state vector.
-		*/
-		T* get_data() { return pdata_; }
+    Return a pointer to the data in the state vector.
+  */
+  T* get_data() { return pdata_; }
 
-	private:
+  /*!
+    @brief Return a pointer to the data in the state vector.
+    @return a pointer to the vector of data in the state vector
+
+    Return a pointer to the data in the state vector.
+  */
+  T const * get_data() const { return pdata_; }
+
+ private:
  
-		T* pdata_;
+  T* pdata_;
  
 };
 

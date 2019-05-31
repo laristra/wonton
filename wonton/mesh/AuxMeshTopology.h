@@ -139,10 +139,11 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! void node_get_cells(int const nodeid, Wonton::Entity_type etype,
 //!                     std::vector<int> *ncells) const;
 //!
-//! int get_global_id(int const id, Entity_kind const kind) const;
-//!
-//! template<long D>
+//! template<int D>
 //! void node_get_coordinates(int const nodeid, Wonton::Point<D> *pp) const;
+//!
+//! GID_t get_global_id(int const id, Entity_kind const kind) const;
+//! (where GID_t == int64_t)
 //!
 //!~~~
 //! ******************************** NOTE ***********************************
@@ -444,13 +445,13 @@ class AuxMeshTopology {
 
   //! Coordinates of nodes of cell
 
-  template <long D>
+  template <int D>
   void cell_get_coordinates(int const cellid,
                             std::vector<Point<D>> *pplist) const;
 
   //! Centroid of a cell
 
-  template <long D>
+  template <int D>
   void cell_centroid(int const cellid, Point<D> *ccen) const {
 #ifdef DEBUG
     assert(cellid < num_entities(CELL, ALL));
@@ -472,7 +473,7 @@ class AuxMeshTopology {
   
   //! Centroid of a face
 
-  template <long D>
+  template <int D>
   void face_centroid(int const faceid, Point<D> *fcen) const {
 #ifdef DEBUG
     assert(faceid < num_entities(FACE, ALL));
@@ -1223,7 +1224,7 @@ class AuxMeshTopology {
   //
   // Centroid of a dual cell.
 
-  template <long D>
+  template <int D>
   void dual_cell_centroid(int nodeid, Point<D> *centroid) const {
 #ifdef DEBUG
     assert(nodeid < num_entities(NODE, ALL));
@@ -2283,7 +2284,7 @@ void AuxMeshTopology<BasicMesh>::compute_cell_volumes() {
 
 //! coords of nodes of a cell
 template <typename BasicMesh>
-template<long D>
+template<int D>
 void AuxMeshTopology<BasicMesh>::cell_get_coordinates(int const cellid,
                           std::vector<Point<D>> *pplist) const {
   std::vector<int> cnodes;

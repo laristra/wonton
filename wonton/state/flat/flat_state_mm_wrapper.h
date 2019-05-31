@@ -188,6 +188,28 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             auto pv1 = StateManager<MeshWrapper>::get(varname);
             auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<Wonton::Point<2>>>(pv1);
           }
+        } else if (data_type == typeid(Wonton::Point<3>)){
+      
+          // create a uni state vector
+          std::shared_ptr<StateVectorMulti<Wonton::Point<3>>> pv =
+            std::make_shared<StateVectorMulti<Wonton::Point<3>>> (varname);
+                  
+          // add to database (inside loop, since pv is typed diffently below and 
+          // pv has local scope
+          StateManager<MeshWrapper>::add(pv);
+        
+          // loop over materials
+          for (int m=0; m<nmats; ++m){
+                     
+            // get the data from the input state wrapper
+            Wonton::Point<3> const* data;
+            input.mat_get_celldata(varname, m, &data);
+        
+            // add the data to the flat state
+            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);            
+            auto pv1 = StateManager<MeshWrapper>::get(varname);
+            auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<Wonton::Point<3>>>(pv1);
+          }
         } else {
       
           throw("found an unknown field type!");
@@ -278,7 +300,30 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         }
           
         return result;
+      } else if ( data_type == typeid(Wonton::Point<3>)){
+      
+        // field data is wonton 3d points
           
+        // get the ordered keys
+        std::vector<int> const ids = get_material_ids();
+          
+        // get the raw mm data
+        std::unordered_map<int, std::vector<Wonton::Point<3>>> mm_data =  
+            std::static_pointer_cast<StateVectorMulti<Wonton::Point<3>>>(pv)->get_data();
+        
+        // define the result
+        std::vector<double> result;
+        
+        // loop over material ids in the mm state in sort order
+        for (int id : ids){
+          for (auto& d : mm_data.at(id)){
+            result.emplace_back(d[0]);
+            result.emplace_back(d[1]);
+            result.emplace_back(d[2]);
+          }
+        }
+          
+        return result;
       } else if (data_type == typeid(double)){
         
         // field data is doubles
@@ -573,6 +618,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     
     if ( data_type == typeid(double)) return 1;
     else if ( data_type == typeid(Wonton::Point<2>)) return 2;
+    else if ( data_type == typeid(Wonton::Point<3>)) return 3;
     
   }
 
@@ -582,7 +628,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     @return The Entity_kind enum for the entity type on which the field is
     defined
   */
-  Entity_kind get_entity(std::string field_name) {
+  Entity_kind get_entity(std::string field_name) const {
     return StateManager<MeshWrapper>::get(field_name)->get_kind();
   }
   
@@ -594,7 +640,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     the lengths of the material cell indices vectors. It is the number need to
     pass a flattened state vector.
   */ 
-    int num_material_cells(){
+    int num_material_cells() const {
         int n=0;
         for (auto& kv : StateManager<MeshWrapper>::material_cells_){
             n += kv.second.size();

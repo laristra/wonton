@@ -18,6 +18,7 @@ Please see the license file at the root of this repository, or at:
 #include <stdlib.h>
 #include <iostream>
 
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/Point.h"
 #include "wonton/support/Matrix.h"
 #include "wonton/support/svd.h"
@@ -38,9 +39,11 @@ namespace Wonton {
 
 */
 
-template<long D>
+template<int D, typename CoordSys = CartesianCoordinates>
 Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
                       std::vector<double> const & vals) {
+
+  CoordSys::template verify_coordinate_system<D>();
 
   Point<D> coord0 = coords[0];
 
@@ -89,6 +92,14 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 
   // Gradient of length D
 
+  auto gradient = ATAinv*ATF;
+
+  // Corrections for curvilinear coordinates
+
+  CoordSys::modify_gradient(gradient, coord0);
+
+  // Return
+
   return ATAinv*ATF;
 }
 
@@ -106,7 +117,7 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 
 */
 
-template<long D>
+template<int D>
   // int N = D*(D+3)/2;  
   Vector<D*(D+3)/2> ls_quadfit(std::vector<Point<D>> const & coords,
 			       std::vector<double> const & vals, 

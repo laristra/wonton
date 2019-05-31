@@ -196,7 +196,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
   }
 
   /// Get the global ID. @b NOTE: Simple_Mesh only has local IDs.
-  int get_global_id(int const id, Entity_kind const kind) const {
+  GID_t get_global_id(int const id, Entity_kind const kind) const {
     return id;
   }
 
@@ -209,7 +209,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
     @param[out] The Wonton::Point containing the coordiantes of node @c nodeid.
    */
 
-  template<long D>
+  template<int D>
   void node_get_coordinates(int const nodeid, Point<D>* pp) const 
   {
     mesh_.node_get_coordinates(nodeid, pp);
