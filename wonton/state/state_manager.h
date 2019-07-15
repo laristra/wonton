@@ -179,7 +179,7 @@ StateManager(const MeshWrapper& mesh,
     Return the number of materials in the problem. Use the material_cells instead
     of material id's in case the material names aren't registered.
   */
-  int num_materials() const {return material_cells_.size();}
+  int num_materials() const {return material_names_.size();}
 
 
   //////////////////////////////////////////////////
