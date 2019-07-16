@@ -176,10 +176,11 @@ StateManager(const MeshWrapper& mesh,
     @brief Return the number of materials in the problem.
     @return        the integer number of materials
 
-    Return the number of materials in the problem. Use the material_cells instead
-    of material id's in case the material names aren't registered.
+    Return the number of materials in the problem. Uses material_names
+    to ensure that the materials that are expected to be, but haven't been
+    populated with cells yet are accounted for.
   */
-  int num_materials() const {return material_cells_.size();}
+  int num_materials() const {return material_names_.size();}
 
 
   //////////////////////////////////////////////////
