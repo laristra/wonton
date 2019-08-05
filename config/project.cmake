@@ -287,9 +287,9 @@ get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} 
 # WONTON was built and which TPLs it used
 #############################################################################
 
-configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton_config.cmake.in 
-  ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
-install(FILES ${PROJECT_BINARY_DIR}/wonton_config.cmake 
+configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton-config.cmake.in 
+  ${PROJECT_BINARY_DIR}/wonton-config.cmake @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton-config.cmake 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
 
 
