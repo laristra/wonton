@@ -177,7 +177,11 @@ template <int D> class Vector {
     for (int i = 0; i < D; i++) m_comp[i] = 0;
   }
 
-  /// Check if this Vector is a zero Vector.
+  /*!
+    @brief Check if this Vector is a zero Vector.
+    @param[in] dst_tol Distance tolerance: 
+    Vector is zero if its length is below this tolerance.
+  */
   bool is_zero(double dst_tol) const {
     return (norm() < dst_tol);
   }
