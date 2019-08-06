@@ -178,11 +178,17 @@ template <int D> class Vector {
   }
 
   /// Check if this Vector is a zero Vector.
-  bool is_zero() const {
-    for (int i = 0; i < D; i++) 
-      if (std::fabs(m_comp[i]) > std::numeric_limits<double>::epsilon()) 
-        return false;
-    return true;
+  bool is_zero(double dst_tol) const {
+    return (norm() < dst_tol);
+  }
+
+  /*!
+    @brief Convenience method for constructing a Vector 
+    with all components equal to a given value
+    @param[in] value Value to assign to all the components
+  */
+  void fill(double val) {
+    for (int i = 0; i < D; i++) m_comp[i] = val;
   }
 
   /*!
