@@ -92,7 +92,7 @@ enum Entity_kind {
 constexpr int NUM_ENTITY_KIND = 13;
 
 // Method to get Entity_kind in string form
-std::string to_string(Entity_kind entkind) {
+inline std::string to_string(Entity_kind entkind) {
   static const std::string kind2string[NUM_ENTITY_KIND] =
     {"Entity_kind::ALL_KIND",
      "Entity_kind::ANY_KIND",
@@ -128,7 +128,7 @@ enum Entity_type {
 constexpr int NUM_ENTITY_TYPE = 6;
 
 // Method to get Entity_type in string form
-std::string to_string(Entity_type enttype) {
+inline std::string to_string(Entity_type enttype) {
   static const std::string type2string[NUM_ENTITY_TYPE] =
     {"Entity_type::TYPE_UNKNOWN",
      "Entity_type::DELETED",
@@ -160,7 +160,7 @@ enum Element_type {
 constexpr int NUM_ELEMENT_TYPE = 9;
 
 // Method to get Element_type in string form
-std::string to_string(Element_type elemtype) {
+inline std::string to_string(Element_type elemtype) {
   static const std::string type2string[NUM_ELEMENT_TYPE] =
     {"Element_type::UNKNOWN_TOPOLOGY",
      "Element_type::TRI",
@@ -187,7 +187,7 @@ enum class Field_type {
 };
 constexpr int NUM_FIELD_TYPE = 3;
 
-std::string to_string(Field_type field_type) {
+inline std::string to_string(Field_type field_type) {
   static const std::string type2string[NUM_FIELD_TYPE] =
     {"Field_type::UNKNOWN_TYPE_FIELD",
      "Field_type::MESH_FIELD",
@@ -205,7 +205,7 @@ std::string to_string(Field_type field_type) {
 enum class Data_layout {CELL_CENTRIC, MATERIAL_CENTRIC};
 constexpr int NUM_DATA_LAYOUT = 2;
 
-std::string to_string(Data_layout layout) {
+inline std::string to_string(Data_layout layout) {
   static const std::string type2string[NUM_DATA_LAYOUT] =
     {"Data_layout::CELL_CENTRIC", "Data_layout::MATERIAL_CENTRIC"};
 
@@ -319,10 +319,10 @@ inline double pow2(double x) { return x*x; }
 
 // Convert from some Portage types to MPI types
 #ifdef WONTON_ENABLE_MPI
- template<typename T> MPI_Datatype to_MPI_Datatype() {}
- template<> MPI_Datatype to_MPI_Datatype<GID_t>() {
+template<typename T> inline MPI_Datatype to_MPI_Datatype() {}
+template<> inline MPI_Datatype to_MPI_Datatype<GID_t>() {
    return (sizeof(GID_t) == 8 ? MPI_LONG_LONG : MPI_INT);
-           }
+}
 #endif
 
 

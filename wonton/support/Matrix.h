@@ -348,6 +348,10 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   return prod;
 }
 
+namespace {
+// use anonymous namespace to avoid multiple identical definitions of
+// the solve functions from different translation units.
+
 /*!
   @brief  Computes the solution of A*x = b using the QR decomposition
   @tparam D Indicates the dimensionality of the Vector
@@ -452,7 +456,7 @@ Vector<D> matsolve(Matrix const& matrix, Vector<D> const& rhs) {
   Vector<D> result = inverse*rhs;
   return result;
 }
-
+}  // anonymous namespace
 
 }  // namespace Wonton
 
