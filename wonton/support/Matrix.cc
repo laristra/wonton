@@ -77,6 +77,11 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   if (method == "inverse") {
     auto inverse = this->inverse();
     X = inverse*B;
+
+    if (error != "ignore") {
+      if (is_singular_ == 2) error = "matrix is singular";
+      else                   error = "none";
+    }
     
   }
 #ifdef HAVE_LAPACKE    
@@ -150,6 +155,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
         error = 
 	    std::string("solve(posv): reciprocal condition number is less than machine precision");
       }
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
 
   } else if (method == "lapack-sysv") {  // LAPACK symmetric matrix
@@ -218,7 +225,10 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (info == n+1) {
         error = 
 	    std::string("solve(sysv): reciprocal condition number is less than machine precision");
+        is_singular_ = 2;
       }
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
     
   } else if (method == "lapack-gesv") {  // LAPACK general matrix
@@ -288,7 +298,10 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (info == n+1) {
         error = 
 	    std::string("solve(gesv): reciprocal condition number is less than machine precision");
+        is_singular_ = 2;
       } 
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
     
   } else if (method == "lapack-sytr") {  // LAPACK symmetric matrix
@@ -339,6 +352,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
         error = std::string("solve(sytr): diagonal entry ")+infoword.str()+" is zero";
         skip = true;
       }
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
     
     // solve it
@@ -352,6 +367,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
           infoword<<-info;
           error = std::string("solve(sytr): illegal value in ")+infoword.str()+"-th position";
         }
+        if (error != "none") is_singular_ = 2;
+        else                 is_singular_ = 1;
       }
     }
     
