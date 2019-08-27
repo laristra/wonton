@@ -69,6 +69,9 @@ class Matrix {
     for (int i = 0; i < Rows_; ++i)
       for (int j = 0; j < Columns_; ++j)
         A_[i*Columns_+j] = M[i][j];
+
+    is_singular_ = 0;
+
     return *this;
   }
 
@@ -79,6 +82,8 @@ class Matrix {
     for (int i = 0; i < Rows_; ++i)
       for (int j = 0; j < Columns_; ++j)
         A_[i*Columns_+j] += rhs[i][j];
+
+    is_singular_ = 0;
   
     return *this;
   }
@@ -90,6 +95,8 @@ class Matrix {
     for (int i = 0; i < Rows_; ++i)
       for (int j = 0; j < Columns_; ++j)
         A_[i*Columns_+j] -= rhs[i][j];
+
+    is_singular_ = 0;
   
     return *this;
   }  
@@ -98,6 +105,8 @@ class Matrix {
   Matrix& operator*=(const double rhs) {
     for (int i = 0; i < A_.size(); ++i)
       A_[i] *= rhs;
+
+    is_singular_ = 0;
   
     return *this;
   }
@@ -115,8 +124,11 @@ class Matrix {
   //
   // The main utility of this operator is to facilitate the use
   // of the [][] notation to refer to elements of the matrix
+  // Since we don't know what the host code will do with the pointer, 
+  // (i.e. change values) we invalidate the singularity indicator.
   
   double * operator[](int const RowIndex) {
+    is_singular_ = 0;
     return &(A_[RowIndex*Columns_]);
   }
   
@@ -140,9 +152,9 @@ class Matrix {
 
   //! Get Inverse - only if its a square matrix
 
-  Matrix inverse() const {
+  Matrix inverse() {
     if (Rows_ != Columns_) {
-      std::cerr << "Matrix is rectangular" << std::endl;
+      std::cerr << "Matrix is not rectangular" << std::endl;
       throw std::exception();
     }
     
@@ -165,7 +177,7 @@ class Matrix {
     for (int i = 0; i < Rows_; i++) {
       double alpha = D[i][i];
       if (alpha == 0.0) {
-        std::cerr << "invert: Singular Matrix" << std::endl;
+        is_singular_ = 2;
         return Ainv;
       }
       
@@ -181,6 +193,7 @@ class Matrix {
           D[k][j] = D[k][j] - beta*D[i][j];
       }
     }
+    is_singular_ = 1;
     
     // Copy result into output matrix
     for (int i = 0; i < Rows_; i++)
@@ -275,10 +288,22 @@ class Matrix {
                std::string method="inverse",
 	       std::string &error=ignore_msg_ref);
 
+  /*! 
+    @brief report whether matrix is singular or not
+    @return if 0: unknown, if 1: not singular, if 2: singular
+    A value of 0 indicates the inverse() or solve() methods have not been run.
+    A value of 1 indicates the methods have run and the result is definitely singular.
+    A value of 2 indicates the methods have run and the result is definitely non-singular.
+  */
+  int is_singular(){
+    return is_singular_;
+  }
+
  private:
   int Rows_, Columns_;
   std::vector<double> A_;
   std::string method_;
+  int is_singular_ = 0;
 };  // class Matrix
 
 // Add two matrices.
@@ -347,116 +372,6 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
       prod[i][j] = a[i]*b[j];
   return prod;
 }
-
-namespace {
-// use anonymous namespace to avoid multiple identical definitions of
-// the solve functions from different translation units.
-
-/*!
-  @brief  Computes the solution of A*x = b using the QR decomposition
-  @tparam D Indicates the dimensionality of the Vector
-  @param[in] A  The system matrix
-  @param[in] b  The system right-hand side
-  @param[out] x  The solution vector
-*/
-template<int D>
-void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
-  int n = A.rows();
-  assert(n == A.columns());
-  assert(D == n);
-
-  const std::vector<double>& a_ = A.data();
-  double s, norm;
-   
-  Matrix R(A);
-  Matrix Q(n, n, 0.0);
-  Matrix U(n, n);
-
-  std::vector<double> y(n);
-  
-  int i, j, k, l;
-  for (i = 0; i < n; i++)
-    Q[i][i] = 1.0;
-  
-  // Find A = QR using reflection method
-  for (i = 0; i < n - 1; i++) {
-    y[i] = R[i][i];
-    for (j = i + 1, s = 0.0; j < n; j++) {
-      y[j] = R[j][i];
-      s += pow2(R[j][i]);
-    }
-    norm = sqrt(s + pow2(y[i]));
-    assert(std::fabs(norm > std::numeric_limits<double>::epsilon()));
-    if (s == 0)
-      continue;
-    
-    y[i] -= norm;
-    norm = sqrt(s + pow2(y[i]));
-
-    for (j = i; j < n; j++)
-      y[j] /= norm;
-    
-    // Generate U matrix
-    for (k = 0; k < n; k++)
-      for (l = 0; l < n; l++)
-        if (k < i || l < i)
-          U[k][l] = (k == l) ? 1.0 : 0.0;
-        else
-          U[k][l] = (k == l) ? 1.0 - 2.0*y[k]*y[l] : -2.0*y[k]*y[l];
-    
-    // Modify Q matrix
-    Q = Q*U;
-    // Modify R matrix
-    R = U*R;
-  }
-  // We need to check last element for non-singularity
-  assert(std::fabs(R[n - 1][n - 1]) > std::numeric_limits<double>::epsilon());
-
-  Vector<D> QTb = Q.transpose()*b;
-  
-  // Now, use back substitution to find x
-  for (i = n - 1; i >= 0; i--) {
-    for (k = i + 1; k < n; k++)
-      QTb[i] -= R[i][k]*x[k];
-
-    x[i] = QTb[i]/R[i][i];
-  }
-}
-
-/*!
-  @brief  Computes the solution of A*x = b for 1x1 algebraic system
-  @param[in] A  The system matrix
-  @param[in] b  The system right-hand side
-  @param[out] x  The solution vector
-*/
-template<>
-void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
-  assert(std::fabs(A[0][0]) > std::numeric_limits<double>::epsilon());
-  x[0] = b[0]/A[0][0];
-}
-
-/*!
-  @brief  Computes the solution of A*x = b for 2x2 algebraic system
-  @param[in] A  The system matrix
-  @param[in] b  The system right-hand side
-  @param[out] x  The solution vector
-*/
-template<>
-void solve<2>(const Matrix& A, const Vector<2>& b, Vector<2>& x) {
-  double detA = A[0][0]*A[1][1] - A[0][1]*A[1][0];
-  assert(std::fabs(detA) > std::numeric_limits<double>::epsilon());
-
-  x[0] = (A[1][1]*b[0] - A[0][1]*b[1])/detA;
-  x[1] = (A[0][0]*b[1] - A[1][0]*b[0])/detA;
-}
-
-template<int D>
-Vector<D> matsolve(Matrix const& matrix, Vector<D> const& rhs) {
-  auto inverse = matrix.inverse();
-  Vector<D> result = inverse*rhs;
-  return result;
-}
-}  // anonymous namespace
 
 }  // namespace Wonton
 
