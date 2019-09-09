@@ -140,9 +140,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a694a2019a63e1dbc6e3959ce0bfb271a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Vector.html#a694a2019a63e1dbc6e3959ce0bfb271a">zero</a> ()</td></tr>
 <tr class="memdesc:a694a2019a63e1dbc6e3959ce0bfb271a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert this <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> into a zero <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="#a694a2019a63e1dbc6e3959ce0bfb271a">More...</a><br /></td></tr>
 <tr class="separator:a694a2019a63e1dbc6e3959ce0bfb271a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b205d1f5bb2c056ee2cdf4d7e5973cd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Vector.html#a4b205d1f5bb2c056ee2cdf4d7e5973cd">is_zero</a> () const</td></tr>
-<tr class="memdesc:a4b205d1f5bb2c056ee2cdf4d7e5973cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> is a zero <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="#a4b205d1f5bb2c056ee2cdf4d7e5973cd">More...</a><br /></td></tr>
-<tr class="separator:a4b205d1f5bb2c056ee2cdf4d7e5973cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a081deb581fc5a5c8b84fb293d354d6bd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Vector.html#a081deb581fc5a5c8b84fb293d354d6bd">is_zero</a> (double dst_tol) const</td></tr>
+<tr class="memdesc:a081deb581fc5a5c8b84fb293d354d6bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> is a zero <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="#a081deb581fc5a5c8b84fb293d354d6bd">More...</a><br /></td></tr>
+<tr class="separator:a081deb581fc5a5c8b84fb293d354d6bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24d87b891df4115c436b2b668ec3bc9a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Vector.html#a24d87b891df4115c436b2b668ec3bc9a">fill</a> (double val)</td></tr>
+<tr class="memdesc:a24d87b891df4115c436b2b668ec3bc9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience method for constructing a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> with all components equal to a given value.  <a href="#a24d87b891df4115c436b2b668ec3bc9a">More...</a><br /></td></tr>
+<tr class="separator:a24d87b891df4115c436b2b668ec3bc9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0436fa8159816a0efbddeccad4f311ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Vector.html#a0436fa8159816a0efbddeccad4f311ef">axis</a> (int nonZero)</td></tr>
 <tr class="memdesc:a0436fa8159816a0efbddeccad4f311ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience method for constructing a unit <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> along a particular axis.  <a href="#a0436fa8159816a0efbddeccad4f311ef">More...</a><br /></td></tr>
 <tr class="separator:a0436fa8159816a0efbddeccad4f311ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -395,8 +398,44 @@ template&lt;int D&gt; </div>
 
 </div>
 </div>
-<a id="a4b205d1f5bb2c056ee2cdf4d7e5973cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b205d1f5bb2c056ee2cdf4d7e5973cd">&#9670;&nbsp;</a></span>is_zero()</h2>
+<a id="a24d87b891df4115c436b2b668ec3bc9a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24d87b891df4115c436b2b668ec3bc9a">&#9670;&nbsp;</a></span>fill()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classWonton_1_1Vector.html">Wonton::Vector</a>&lt; D &gt;::fill </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>val</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convenience method for constructing a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> with all components equal to a given value. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to assign to all the components </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a081deb581fc5a5c8b84fb293d354d6bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a081deb581fc5a5c8b84fb293d354d6bd">&#9670;&nbsp;</a></span>is_zero()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -409,7 +448,8 @@ template&lt;int D&gt; </div>
         <tr>
           <td class="memname">bool <a class="el" href="classWonton_1_1Vector.html">Wonton::Vector</a>&lt; D &gt;::is_zero </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>dst_tol</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -421,6 +461,12 @@ template&lt;int D&gt; </div>
 </div><div class="memdoc">
 
 <p>Check if this <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> is a zero <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dst_tol</td><td>Distance tolerance: <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> is zero if its length is below this tolerance. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

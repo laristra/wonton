@@ -130,6 +130,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aef9dd512a60a92db1961fd7e55ca4ef0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh.html#aef9dd512a60a92db1961fd7e55ca4ef0">transform</a> (const Matrix &amp;affine)</td></tr>
 <tr class="memdesc:aef9dd512a60a92db1961fd7e55ca4ef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform an affine transform on the coordinates of the mesh.  <a href="#aef9dd512a60a92db1961fd7e55ca4ef0">More...</a><br /></td></tr>
 <tr class="separator:aef9dd512a60a92db1961fd7e55ca4ef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cee474db346668090fe2e3d40c13c24"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a4cee474db346668090fe2e3d40c13c24"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh.html#a4cee474db346668090fe2e3d40c13c24">node_set_coordinates</a> (const ID nodeid, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *pp)</td></tr>
+<tr class="memdesc:a4cee474db346668090fe2e3d40c13c24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the coordinates of a node.  <a href="#a4cee474db346668090fe2e3d40c13c24">More...</a><br /></td></tr>
+<tr class="separator:a4cee474db346668090fe2e3d40c13c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80e16244bca5eefb903a747018670df4"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
 <tr class="memitem:a80e16244bca5eefb903a747018670df4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh.html#a80e16244bca5eefb903a747018670df4">node_get_coordinates</a> (const ID nodeid, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; 3 &gt; *pp) const</td></tr>
 <tr class="memdesc:a80e16244bca5eefb903a747018670df4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the 2D/3D coordinates of a specific node as <code><a class="el" href="classWonton_1_1Point.html" title="Represents a point in an N-dimensional space. ">Wonton::Point</a></code> object.  <a href="#a80e16244bca5eefb903a747018670df4">More...</a><br /></td></tr>
@@ -137,6 +141,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a16c79a713d3665581a2fb7fceb8e8bfe"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
 <tr class="memitem:a16c79a713d3665581a2fb7fceb8e8bfe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh.html#a16c79a713d3665581a2fb7fceb8e8bfe">node_get_coordinates</a> (const ID nodeid, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; 2 &gt; *pp) const</td></tr>
 <tr class="separator:a16c79a713d3665581a2fb7fceb8e8bfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fced2d754c61779ff80bc1ae06c2925"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
+<tr class="memitem:a9fced2d754c61779ff80bc1ae06c2925"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh.html#a9fced2d754c61779ff80bc1ae06c2925">node_set_coordinates</a> (const ID nodeid, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; 3 &gt; *pp)</td></tr>
+<tr class="separator:a9fced2d754c61779ff80bc1ae06c2925"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f067c7882c66559922b0fae883cc461"><td class="memTemplParams" colspan="2">template&lt;&gt; </td></tr>
+<tr class="memitem:a4f067c7882c66559922b0fae883cc461"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh.html#a4f067c7882c66559922b0fae883cc461">node_set_coordinates</a> (const ID nodeid, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; 2 &gt; *pp)</td></tr>
+<tr class="separator:a4f067c7882c66559922b0fae883cc461"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A very light-weight, serial, 2D/3D Cartesian mesh. </p>
@@ -676,6 +686,121 @@ template&lt;&gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4cee474db346668090fe2e3d40c13c24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cee474db346668090fe2e3d40c13c24">&#9670;&nbsp;</a></span>node_set_coordinates() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Wonton::Simple_Mesh::node_set_coordinates </td>
+          <td>(</td>
+          <td class="paramtype">const ID&#160;</td>
+          <td class="paramname"><em>nodeid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *&#160;</td>
+          <td class="paramname"><em>pp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the coordinates of a node. </p>
+<p>USE WITH EXTREME CARE. Improper setting of coordinates from outside the class can invalidate the adjacency information, among other mischief.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">D</td><td>Dimension of the node. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">nodeid</td><td>The ID of the node. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">pp</td><td>The <code><a class="el" href="classWonton_1_1Point.html" title="Represents a point in an N-dimensional space. ">Point</a></code> object of dimension <code>D</code> containing the new coordinates of node .</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This is the general specification. </p>
+
+</div>
+</div>
+<a id="a9fced2d754c61779ff80bc1ae06c2925"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fced2d754c61779ff80bc1ae06c2925">&#9670;&nbsp;</a></span>node_set_coordinates() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Wonton::Simple_Mesh::node_set_coordinates </td>
+          <td>(</td>
+          <td class="paramtype">const ID&#160;</td>
+          <td class="paramname"><em>nodeid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classWonton_1_1Point.html">Point</a>&lt; 3 &gt; *&#160;</td>
+          <td class="paramname"><em>pp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4f067c7882c66559922b0fae883cc461"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f067c7882c66559922b0fae883cc461">&#9670;&nbsp;</a></span>node_set_coordinates() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Wonton::Simple_Mesh::node_set_coordinates </td>
+          <td>(</td>
+          <td class="paramtype">const ID&#160;</td>
+          <td class="paramname"><em>nodeid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classWonton_1_1Point.html">Point</a>&lt; 2 &gt; *&#160;</td>
+          <td class="paramname"><em>pp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
