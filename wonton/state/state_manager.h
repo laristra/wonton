@@ -65,7 +65,7 @@ StateManager(const MeshWrapper& mesh,
       material_ids_[kv.first]=kv.second;
       
       // likewise
-    	material_names_[kv.second] = kv.first;
+      material_names_[kv.second] = kv.first;
     }
   }
 
@@ -127,10 +127,15 @@ StateManager(const MeshWrapper& mesh,
         // add the material to the cell
         cell_materials_[cell].insert(kv.first);
       }
+      
+      // compute the cell index in material inverse map
+      for (int i = 0; i < kv.second.size(); i++)
+        cell_index_in_mat_[kv.first][kv.second[i]]=i;
     }
 
-    // set the
+    // set the cells of the material
     material_cells_ = cells;
+
   }
 
 
@@ -176,10 +181,11 @@ StateManager(const MeshWrapper& mesh,
     @brief Return the number of materials in the problem.
     @return        the integer number of materials
 
-    Return the number of materials in the problem. Use the material_cells instead
-    of material id's in case the material names aren't registered.
+    Return the number of materials in the problem. Uses material_names
+    to ensure that the materials that are expected to be, but haven't been
+    populated with cells yet are accounted for.
   */
-  int num_materials() const {return material_cells_.size();}
+  int num_materials() const {return material_names_.size();}
 
 
   //////////////////////////////////////////////////
@@ -525,18 +531,9 @@ StateManager(const MeshWrapper& mesh,
     int cell_index_in_material(int m, int c)
   */
   int cell_index_in_material(int c, int m) const {
-  
-    // get the cell ids for a material
-    std::vector<int> cells{material_cells_.at(m)};
-
-    // get an iterator to the element
-    auto it = std::find(cells.begin(), cells.end(), c);
-    
-    // if the cell is not found return -1
-    if (it == cells.end()) return -1;
-
-    // return the distance
-    return std::distance(cells.begin(), it);
+    auto const& cell_index_map = cell_index_in_mat_.at(m);
+    auto const it = cell_index_map.find(c);
+    return it == cell_index_map.end() ? -1 : it->second;
   }
 
 
@@ -728,6 +725,10 @@ StateManager(const MeshWrapper& mesh,
     // need to update cell_materials_ inverse map
     for (int c : newcells)
       cell_materials_[c].insert(m);
+
+    int i = 0;
+    for (auto const& c : material_cells_[m])
+      cell_index_in_mat_[m][c] = i++;
   }
 
 
@@ -850,6 +851,9 @@ StateManager(const MeshWrapper& mesh,
 
   // cell ids for a material
   std::unordered_map<int, std::vector<int>> material_cells_;
+
+  // cell indices for a material
+  std::unordered_map<int, std::unordered_map<int,int>> cell_index_in_mat_;
 
   // material id's for a cell
   std::unordered_map<int, std::unordered_set<int>> cell_materials_;

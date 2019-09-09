@@ -335,8 +335,25 @@ Simple_Mesh(double x0, double y0, double z0,
     }
   }
  
- 
-  
+  // General specification - specialization follows at bottom of file
+  /*!
+    @brief Set the coordinates of a node.
+
+    USE WITH EXTREME CARE. Improper setting of coordinates from outside the class 
+    can invalidate the adjacency information, among other mischief.
+
+    @tparam D Dimension of the node.
+    @param[in] nodeid The ID of the node.
+    @param[out] pp The @c Point object of dimension @c D containing the
+    new coordinates of node @nodeid.
+
+    This is the general specification.  
+  */
+  template<int D>
+  void node_set_coordinates(const ID nodeid,
+                            Point<D> *pp) {
+    assert(D == space_dimension());
+  }
   
  private:
   /*!
@@ -638,28 +655,6 @@ Simple_Mesh(double x0, double y0, double z0,
       }
   
   }
-
-  // General specification - specialization follows at bottom of file
-  /*!
-    @brief Set the coordinates of a node.
-
-    This meant ONLY for internal use by methods in Simple_Mesh. Do not 
-    make public. Improper setting of coordinates from outside the class 
-    can invalidate the adjacency information, among other mischief.
-
-    @tparam D Dimension of the node.
-    @param[in] nodeid The ID of the node.
-    @param[out] pp The @c Point object of dimension @c D containing the
-    new coordinates of node @nodeid.
-
-    This is the general specification.  
-   */
-  template<int D>
-  void node_set_coordinates(const ID nodeid,
-                            Point<D> *pp) {
-    assert(D == space_dimension());
-  }
-
 
   /// @c Simple_Mesh can be 2D or 3D 
   int spacedim_ ;

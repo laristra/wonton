@@ -230,7 +230,7 @@ operator/(const Point<D>& p, double s) {
 template <int D> inline bool
 operator==(const Point<D>& p1, const Point<D>& p2) {
   for (int i = 0; i < D; i++)
-    if (std::fabs(p1[i] - p2[i]) > std::numeric_limits<double>::epsilon())
+    if (p1[i] != p2[i])
       return false;
   return true;
 }
