@@ -381,6 +381,7 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   @param[out] x  The solution vector
 */
 template<int D>
+inline
 void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   int n = A.rows();
   assert(n == A.columns());
@@ -451,6 +452,7 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   @param[out] x  The solution vector
 */
 template<>
+inline
 void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
   assert(std::fabs(A[0][0]) > std::numeric_limits<double>::epsilon());
   x[0] = b[0]/A[0][0];
@@ -463,6 +465,7 @@ void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
   @param[out] x  The solution vector
 */
 template<>
+inline
 void solve<2>(const Matrix& A, const Vector<2>& b, Vector<2>& x) {
   double detA = A[0][0]*A[1][1] - A[0][1]*A[1][0];
   assert(std::fabs(detA) > std::numeric_limits<double>::epsilon());
