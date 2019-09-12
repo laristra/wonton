@@ -379,9 +379,13 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   @param[in] A  The system matrix
   @param[in] b  The system right-hand side
   @param[out] x  The solution vector
+
+  Apparently generic template function definitions don't need "inline"
+  keyword, only the specializations do
+
+  https://stackoverflow.com/questions/1759300/when-should-i-write-the-keyword-inline-for-a-function-method
 */
 template<int D>
-inline
 void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   int n = A.rows();
   assert(n == A.columns());
