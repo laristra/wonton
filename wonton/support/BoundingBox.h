@@ -7,6 +7,8 @@
 #ifndef WONTON_BOUNDING_BOX_H_
 #define WONTON_BOUNDING_BOX_H_
 
+#include <array>
+
 namespace Wonton {
 
 /*!
