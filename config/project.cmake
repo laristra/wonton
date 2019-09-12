@@ -274,6 +274,11 @@ include_directories(${CMAKE_BINARY_DIRECTORY})
 cinch_add_library_target(wonton wonton)
 cinch_target_link_libraries(wonton ${LAPACKE_LIBRARIES})
 
+# Application directory
+
+cinch_add_application_directory(app)
+
+
 
 # build the WONTON_LIBRARIES variable
 set(WONTON_LIBRARIES ${WONTON_LIBRARY} ${WONTON_EXTRA_LIBRARIES} CACHE STRING "List of libraries to link with wonton")
