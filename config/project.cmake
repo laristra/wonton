@@ -109,6 +109,8 @@ if (Jali_DIR AND NOT Jali_LIBRARIES)
    message(STATUS "Located Jali")
    message(STATUS "Jali_DIR=${Jali_DIR}")
 
+   set(ENABLE_Jali ON)
+
    # add full path to jali libs
    unset(_LIBS)
    foreach (_lib ${Jali_LIBRARIES})
@@ -346,7 +348,7 @@ include_directories(${CMAKE_BINARY_DIRECTORY})
 
 # Libraries
 
-cinch_add_library_target(wonton wonton)
+cinch_add_library_target(wonton wonton EXPORT_TARGET wonton-targets)
 cinch_target_link_libraries(wonton ${LAPACKE_LIBRARIES})
 
 # Application directory
@@ -371,6 +373,9 @@ configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton-config.cmake.in
   ${PROJECT_BINARY_DIR}/wonton-config.cmake @ONLY)
 install(FILES ${PROJECT_BINARY_DIR}/wonton-config.cmake 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
+
+install(EXPORT wonton-targets DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake
+ FILE wonton-targets.cmake)
 
 
 configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
