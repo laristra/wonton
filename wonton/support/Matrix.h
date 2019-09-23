@@ -379,6 +379,11 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   @param[in] A  The system matrix
   @param[in] b  The system right-hand side
   @param[out] x  The solution vector
+
+  Apparently generic template function definitions don't need "inline"
+  keyword, only the specializations do
+
+  https://stackoverflow.com/questions/1759300/when-should-i-write-the-keyword-inline-for-a-function-method
 */
 template<int D>
 void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
@@ -451,6 +456,7 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   @param[out] x  The solution vector
 */
 template<>
+inline
 void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
   assert(std::fabs(A[0][0]) > std::numeric_limits<double>::epsilon());
   x[0] = b[0]/A[0][0];
@@ -463,6 +469,7 @@ void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
   @param[out] x  The solution vector
 */
 template<>
+inline
 void solve<2>(const Matrix& A, const Vector<2>& b, Vector<2>& x) {
   double detA = A[0][0]*A[1][1] - A[0][1]*A[1][0];
   assert(std::fabs(detA) > std::numeric_limits<double>::epsilon());
