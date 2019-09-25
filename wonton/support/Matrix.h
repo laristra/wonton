@@ -103,8 +103,9 @@ class Matrix {
 
   /// Multiply this Matrix by a scalar
   Matrix& operator*=(const double rhs) {
-    for (int i = 0; i < A_.size(); ++i)
-      A_[i] *= rhs;
+    for (auto& a : A_) {
+      a *= rhs;
+    }
 
     is_singular_ = 0;
   
