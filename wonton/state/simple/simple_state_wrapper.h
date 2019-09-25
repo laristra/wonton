@@ -331,7 +331,7 @@ class Simple_State_Wrapper {
       return it->first.second;
     } else {
       // We don't know this variable, so bail.
-      std::runtime_error("Requested variable not found.");
+      throw std::runtime_error("Requested variable not found.");
     }
   }
 
