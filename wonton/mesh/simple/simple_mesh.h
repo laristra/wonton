@@ -727,6 +727,7 @@ Simple_Mesh(double x0, double y0, double z0,
   @c nodeid.
  */
 template<>
+inline
 void Simple_Mesh::node_get_coordinates<3>(const ID nodeid,
                                           Point<3> *pp) const {
   assert(spacedim_ == 3);
@@ -734,6 +735,7 @@ void Simple_Mesh::node_get_coordinates<3>(const ID nodeid,
 }
 
 template<>
+inline
 void Simple_Mesh::node_get_coordinates<2>(const ID nodeid,
                                           Point<2> *pp) const {
   assert(spacedim_ == 2);
@@ -741,6 +743,7 @@ void Simple_Mesh::node_get_coordinates<2>(const ID nodeid,
 }
 
 template<>
+inline
 void Simple_Mesh::node_set_coordinates<3>(const ID nodeid,
                                           Point<3> *pp) {
   assert(spacedim_ == 3);
@@ -748,6 +751,7 @@ void Simple_Mesh::node_set_coordinates<3>(const ID nodeid,
 }
 
 template<>
+inline
 void Simple_Mesh::node_set_coordinates<2>(const ID nodeid,
                                           Point<2> *pp) {
   assert(spacedim_ == 2);
