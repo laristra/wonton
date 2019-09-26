@@ -164,7 +164,7 @@ void Direct_Product_Mesh_Wrapper<D>::get_global_bounds(
 // Get iterator for axis points (beginning of array).
 template<int D>
 counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
-    const int dim) const {
+  __attribute__((unused)) const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
   int start_index = 0;
