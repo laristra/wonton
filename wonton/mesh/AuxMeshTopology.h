@@ -1662,10 +1662,6 @@ void build_sides_1D(AuxMeshTopology<BasicMesh>& mesh) {
   mesh.cell_side_ids_.clear();
   mesh.cell_side_ids_.resize(ncells);
   
-  int nnodes_owned = mesh.basicmesh_ptr_->num_owned_nodes();
-  int nnodes_ghost = mesh.basicmesh_ptr_->num_ghost_nodes();
-  int nnodes = nnodes_owned + nnodes_ghost;
-  
   int num_sides_all = 2*ncells;
   mesh.num_sides_owned_ = 2*ncells_owned;
   mesh.num_sides_ghost_ = 2*ncells_ghost;
@@ -1947,9 +1943,6 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh) {
 
 template<typename BasicMesh>
 void AuxMeshTopology<BasicMesh>::build_wedges() {
-  int ncells_owned = basicmesh_ptr_->num_owned_cells();
-  int ncells_ghost = basicmesh_ptr_->num_ghost_cells();
-  int ncells = ncells_owned + ncells_ghost;
 
   int nsides_owned = num_sides_owned_;
   int nsides_ghost = num_sides_ghost_;
@@ -2026,7 +2019,7 @@ void AuxMeshTopology<BasicMesh>::build_corners() {
   corner_node_id_.resize(num_corners_all);
 
   int cornerid = 0;
-  int iown = 0, ighost = 0, ibndry = 0;
+  int iown = 0, ighost = 0;
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> cnodes;
     basicmesh_ptr_->cell_get_nodes(c, &cnodes);

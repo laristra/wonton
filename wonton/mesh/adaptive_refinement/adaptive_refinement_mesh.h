@@ -227,7 +227,7 @@ typename Adaptive_Refinement_Mesh<D>::mesh_data_t
     newcells[0] = cell_lo;
     newcells[1] = cell_hi;
   }
-  return(std::move(newcells));
+  return newcells;
 }
 
 // ____________________________________________________________________________
@@ -257,12 +257,12 @@ std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
   }
   // Replace specified cell with new cells
   mesh_data_t tempcells = split_cell(D-1,cells[n]);
-  for (int i = 0; i < tempcells.size(); ++i) {
+  for (unsigned i = 0; i < tempcells.size(); ++i) {
     newcells[n+i] = tempcells[i];
     newlevel[n+i] = level[n] + 1;
   }
   // Copy elements after the one to refine
-  for (int i = n+1; i < level.size(); ++i) {
+  for (unsigned i = n+1; i < level.size(); ++i) {
     newcells[i+num_new_cells] = cells[i];
     newlevel[i+num_new_cells] = level[i];
   }
@@ -279,8 +279,7 @@ void Adaptive_Refinement_Mesh<D>::build_mesh() {
   cells_[0] = mesh_corners_;
   std::vector<int> level = {0};
   // Refinement loop
-  bool do_refinement;
-  for (int n = 0; n < level.size(); ++n) {
+  for (unsigned n = 0; n < level.size(); ++n) {
     if (check_for_refinement(cells_[n], level[n])) {
       std::tie(cells_, level) = refine_cell(cells_, level, n);
       --n;  // Decrement to repeat the current cell, as it was replaced

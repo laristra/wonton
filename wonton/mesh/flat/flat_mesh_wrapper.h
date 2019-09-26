@@ -308,14 +308,12 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   } // make_index_maps
 
   //! Compute offsets from counts
-  int compute_offsets(const std::vector<int>& counts,
+  void compute_offsets(const std::vector<int>& counts,
                       std::vector<int>* offsets) {
     offsets->resize(counts.size());
-    if (counts.size()) {
+    if (not counts.empty()) {
       (*offsets)[0] = 0;
-      std::partial_sum(counts.begin(),
-                       counts.end()-1,
-                       offsets->begin()+1);
+      std::partial_sum(counts.begin(), counts.end()-1, offsets->begin()+1);
     }
   }
 

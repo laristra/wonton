@@ -38,7 +38,7 @@ namespace direct_product_mesh_wrapper_test {
 
     // For each axis
     for (int d = 0; d < D; ++d) {
-      ASSERT_EQ(mesh_wrapper.axis_num_cells(d), axis_points[d].size()-1);
+      ASSERT_EQ(mesh_wrapper.axis_num_cells(d), (int) axis_points[d].size()-1);
       int n = 0;
       for (auto iter = mesh_wrapper.axis_point_begin(d);
            iter != mesh_wrapper.axis_point_end(d);
