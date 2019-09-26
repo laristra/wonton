@@ -25,7 +25,6 @@ TEST(StateMulti, BasicInt) {
   ASSERT_EQ(v.get_type(), Wonton::Field_type::MULTIMATERIAL_FIELD);
   ASSERT_EQ(v.data_type(), typeid(int));
   ASSERT_NE(v.data_type(), typeid(double));
-  
 }
 
 TEST(StateMulti, BasicDouble1) {
@@ -37,7 +36,6 @@ TEST(StateMulti, BasicDouble1) {
   ASSERT_EQ(v.get_name(), name);
   ASSERT_EQ(v.get_type(), Wonton::Field_type::MULTIMATERIAL_FIELD);
   ASSERT_EQ(v.data_type(), typeid(double));
-  
 }
 
 
@@ -50,12 +48,11 @@ TEST(StateMulti, DataAccess) {
 	
 	std::unordered_map<int, std::vector<double>>& out{sv.get_data()};
 
-	for (int i=0; i<data.size(); i++) {
-		for (int j=0; j<data[i].size(); j++){
+	for (unsigned i=0; i < data.size(); i++) {
+		for (unsigned j=0; j < data[i].size(); j++){
 			ASSERT_EQ(out[i][j],data[i][j]);
 		}
-	}  
-  
+	}
 }
 
 TEST(StateMulti, ModifyProtected) {
@@ -67,8 +64,8 @@ TEST(StateMulti, ModifyProtected) {
 	
 	std::unordered_map<int, std::vector<double>>& out{sv.get_data()};
 
-	for (int i=0; i<data.size(); i++) {
-		for (int j=0; j<data[i].size(); j++){
+	for (unsigned i=0; i < data.size(); i++) {
+		for (unsigned j=0; j < data[i].size(); j++){
 			ASSERT_EQ(out[i][j],data[i][j]);
 		}
 	}  
@@ -79,7 +76,6 @@ TEST(StateMulti, ModifyProtected) {
 	
 	// check that we are isolated from the original data vector
 	ASSERT_NE(sv.get_data()[1][1], data[1][1]);
-  
 }
 
 

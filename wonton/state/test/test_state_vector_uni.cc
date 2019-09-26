@@ -21,7 +21,6 @@ TEST(StateUni, BasicInt) {
   ASSERT_EQ(v.get_type(), Field_type::MESH_FIELD);
   ASSERT_EQ(v.data_type(), typeid(int));
   ASSERT_NE(v.data_type(), typeid(double));
-  
 }
 
 TEST(StateUni, BasicDouble1) {
@@ -34,7 +33,6 @@ TEST(StateUni, BasicDouble1) {
   ASSERT_EQ(v.get_type(), Field_type::MESH_FIELD);
   ASSERT_EQ(v.data_type(), typeid(double));
   ASSERT_EQ(v.get_data(), std::vector<double>());
-  
 }
 
 
@@ -50,10 +48,9 @@ TEST(StateUni, DataAccess) {
 	// get the data
 	std::vector<double>& out{sv.get_data()};
 
-	for (int i=0; i<data.size(); i++) {
+	for (unsigned i=0; i < data.size(); i++) {
 		ASSERT_EQ(out[i],data[i]);
-	}  
-  
+	}
 }
 
 TEST(StateUni, ModifyProtected) {
@@ -68,7 +65,7 @@ TEST(StateUni, ModifyProtected) {
 	std::vector<double>& out{sv.get_data()};
 
 	// test that the vector originally in the state vector is equal
-	for (int i=0; i<data.size(); i++) {
+	for (unsigned i=0; i < data.size(); i++) {
 		ASSERT_EQ(out[i],data[i]);
 	}  
 	
@@ -78,7 +75,6 @@ TEST(StateUni, ModifyProtected) {
 	
 	// check that we are isolated from the original data vector
 	ASSERT_NE(sv.get_data()[0], data[0]);
-  
 }
 
 
