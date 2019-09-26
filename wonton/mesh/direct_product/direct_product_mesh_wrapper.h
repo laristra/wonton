@@ -280,7 +280,7 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
   // Handle the last dimension
   indices[0] = (int) residual;
   // Return
-  return std::move(indices);
+  return indices;
 }
 
 }  // namespace Wonton
