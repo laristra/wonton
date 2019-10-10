@@ -13,8 +13,8 @@ cinch_minimum_required(VERSION 1.0)
 # tag the central repository.
 
 set(WONTON_VERSION_MAJOR 1)
-set(WONTON_VERSION_MINOR 0)
-set(WONTON_VERSION_PATCH 0)
+set(WONTON_VERSION_MINOR 1)
+set(WONTON_VERSION_PATCH 3)
 
 # If a C++14 compiler is available, then set the appropriate flags
 include(cxx14)
@@ -47,16 +47,6 @@ set(CINCH_HEADER_SUFFIXES "\\.h")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
-# set the name of the WONTON library
-
-set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
-
-#-----------------------------------------------------------------------------
-# Gather all the third party libraries needed for Wonton
-#-----------------------------------------------------------------------------
-
-set(WONTON_EXTRA_LIBRARIES)
-
 #------------------------------------------------------------------------------#
 # Set up MPI builds
 # (eventually most of this should be pushed down into cinch)
@@ -72,6 +62,18 @@ endif (ENABLE_MPI)
 
 set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
 
+
+
+
+# set the name of the WONTON library
+
+set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
+
+# Libraries
+
+cinch_add_library_target(wonton wonton EXPORT_TARGET wonton-targets)
+
+
 #-----------------------------------------------------------------------------
 # FleCSI and FleCSI-SP location
 #-----------------------------------------------------------------------------
@@ -80,16 +82,20 @@ set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
 if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
   find_package(FleCSI REQUIRED)
+
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
-  include_directories(${FleCSI_INCLUDE_DIR})
+  target_include_directories(wonton PUBLIC ${FleCSI_INCLUDE_DIR})
+
   message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
-  list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSI_LIBRARIES})
+  target_link_libaries(wonton PUBLIC ${FleCSI_LIBRARIES})
   
   find_package(FleCSISP REQUIRED)
+
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
-  include_directories(${FleCSISP_INCLUDE_DIR})
+  target_include_directories(wonton PUBLIC ${FleCSISP_INCLUDE_DIR})
+
   message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
-  list(APPEND WONTON_EXTRA_LIBRARIES ${FleCSISP_LIBRARIES})
+  target_link_libraries(wonton PUBLIC ${FleCSISP_LIBRARIES})
 
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
@@ -114,13 +120,11 @@ if (Jali_DIR AND NOT Jali_LIBRARIES)
    # add full path to jali libs
    unset(_LIBS)
    foreach (_lib ${Jali_LIBRARIES})
-      set(_LIBS ${_LIBS};${Jali_LIBRARY_DIRS}/lib${_lib}.a)
+     add_library(${_lib} UNKNOWN IMPORTED)
    endforeach()
-   set(Jali_LIBRARIES ${_LIBS})
 
-   include_directories(SYSTEM ${Jali_INCLUDE_DIRS} ${Jali_TPL_INCLUDE_DIRS})
-
-   list(APPEND WONTON_EXTRA_LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
+   target_include_directories(wonton SYSTEM PUBLIC
+     ${Jali_INCLUDE_DIRS} ${Jali_TPL_INCLUDE_DIRS})
 endif (Jali_DIR AND NOT Jali_LIBRARIES)
 
 #-----------------------------------------------------------------------------
@@ -130,7 +134,7 @@ endif (Jali_DIR AND NOT Jali_LIBRARIES)
 if ( NOT Jali_DIR)
 
   find_package(Boost REQUIRED)
-  include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+  target_include_directories(wonton SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
   message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
 
 endif( NOT Jali_DIR)
@@ -280,10 +284,10 @@ if (LAPACKE_FOUND)
   enable_language(Fortran)
   include(FortranCInterface)  # will ensure the fortran library is linked in
   
-  include_directories(${LAPACKE_INCLUDE_DIRS})
-  add_definitions("-DHAVE_LAPACKE")
+  target_include_directories(wonton PUBLIC ${LAPACKE_INCLUDE_DIRS})
+  target_compile_definitions(wonton PUBLIC HAVE_LAPACKE)
 
-  list(APPEND WONTON_EXTRA_LIBRARIES ${LAPACKE_LIBRARIES})
+  target_link_libraries(wonton PUBLIC ${LAPACKE_LIBRARIES})
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
@@ -311,8 +315,8 @@ if(ENABLE_THRUST)
   # Allow for swapping backends
   set(THRUST_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust backend")
   message(STATUS "Using ${THRUST_BACKEND} as Thrust backend.")
-  include_directories(SYSTEM ${THRUST_DIR})
-  add_definitions(-DTHRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
+  target_include_directories(wonton SYSTEM PUBLIC ${THRUST_DIR})
+  target_compile_definitions(wonton PUBLIC THRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
 
   set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
 
@@ -328,9 +332,9 @@ if(ENABLE_THRUST)
   if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_TBB")
     FIND_PACKAGE(TBB REQUIRED)
     if(TBB_FOUND)
-      include_directories(SYSTEM ${TBB_INCLUDE_DIRS})
-      link_directories(${TBB_LIBRARY_DIRS})
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -ltbb")
+      target_include_directories(wonton SYSTEM PUBLIC ${TBB_INCLUDE_DIRS})
+      target_link_libraries(wonton PUBLIC ${TBB_LIBRARIES})
+      target_compile_definitions(wonton PUBLIC ${TBB_DEFINITIONS})
     endif(TBB_FOUND)
   endif()
 
@@ -344,24 +348,22 @@ endif(ENABLE_THRUST)
 # we need to include the build directory to get the autogenerated
 # wonton-config.h
 
-include_directories(${CMAKE_BINARY_DIRECTORY})
+target_include_directories(wonton PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIRECTORY}>
+  $<INSTALL_INTERFACE:include>)  #<cmake_intall_prefix>/include
 
-# Libraries
-
-cinch_add_library_target(wonton wonton EXPORT_TARGET wonton-targets)
-cinch_target_link_libraries(wonton ${LAPACKE_LIBRARIES})
+target_link_libraries(wonton PUBLIC ${LAPACKE_LIBRARIES})
 
 # Application directory
 
-cinch_add_application_directory(app)
-
+add_subdirectory(app)
 
 
 # build the WONTON_LIBRARIES variable
-set(WONTON_LIBRARIES ${WONTON_LIBRARY} ${WONTON_EXTRA_LIBRARIES} CACHE STRING "List of libraries to link with wonton")
+#set(WONTON_LIBRARIES ${WONTON_LIBRARY} CACHE STRING "List of libraries to link with wonton")
 
 # retrieve all the definitions we added for compiling
-get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS)
+#get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS)
 
 ############################################################################## 
 # Write a configuration file from template replacing only variables enclosed
