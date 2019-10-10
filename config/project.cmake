@@ -69,18 +69,6 @@ set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
 cinch_add_library_target(wonton wonton EXPORT_TARGET wonton-targets)
 
 
-
-
-
-# set the name of the WONTON library
-
-set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
-
-# Libraries
-
-cinch_add_library_target(wonton wonton EXPORT_TARGET wonton-targets)
-
-
 #-----------------------------------------------------------------------------
 # FleCSI and FleCSI-SP location
 #-----------------------------------------------------------------------------
