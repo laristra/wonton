@@ -60,11 +60,6 @@ if (ENABLE_MPI)
 endif (ENABLE_MPI)
 
 
-set(ARCHOS ${CMAKE_SYSTEM_PROCESSOR}_${CMAKE_SYSTEM_NAME})
-
-
-
-
 # set the name of the WONTON library
 
 set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
