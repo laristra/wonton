@@ -102,7 +102,7 @@ if (ENABLE_UNIT_TESTS)
   if (Jali_DIR)
     cinch_add_unit(test_jali_mesh_wrapper
       SOURCES jali/test/test_jali_mesh_wrapper.cc
-      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
+      LIBRARIES wonton ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
       # this is relative to the wrapper directory
       INPUTS ../../test_data/shotshell.exo
       ../../test_data/shotshell-v.exo
@@ -113,7 +113,7 @@ if (ENABLE_UNIT_TESTS)
     # wrapper)
     cinch_add_unit(test_flat_mesh_wrapper
       SOURCES flat/test/test_flat_mesh_wrapper.cc
-      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
+      LIBRARIES wonton ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
       # this is relative to the wrapper directory
       INPUTS ../../test_data/shotshell.exo
       ../../test_data/shotshell-v.exo
