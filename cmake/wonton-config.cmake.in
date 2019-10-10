@@ -77,15 +77,13 @@ set(THRUST_BACKEND @THRUST_BACKEND@ CACHE STRING "Thrust backend to use")
 set(Boost_FOUND @Boost_FOUND@ CACHE BOOL "Boost status")
 set(Boost_INCLUDE_DIRS @Boost_INCLUDE_DIRS@ "Boost include directories")
 
-set(WONTON_COMPILE_DEFINITIONS @WONTON_COMPILE_DEFINITIONS@ CACHE STRING "All compiler definitions used at the top level directory")
+#set(WONTON_COMPILE_DEFINITIONS @WONTON_COMPILE_DEFINITIONS@ CACHE STRING "All compiler definitions used at the top level directory")
 
-set(WONTON_LIBRARIES @WONTON_LIBRARY@ ${FleCSI_LIBRARIES}
-    ${FleCSISP_LIBRARIES} ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-    ${LAPACKE_LIBRARIES}
-    CACHE STRING "All extra libraries needed to link with WONTON")
-
-
+#set(WONTON_LIBRARIES @WONTON_LIBRARY@ ${FleCSI_LIBRARIES}
+#    ${FleCSISP_LIBRARIES} ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
+#    ${LAPACKE_LIBRARIES}
+#    CACHE STRING "All extra libraries needed to link with WONTON")
 
 
-
-
+# Import targets from this installation (really, only wonton)
+include("wonton-targets.cmake")
