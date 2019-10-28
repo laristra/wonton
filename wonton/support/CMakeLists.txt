@@ -5,6 +5,7 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
+#cmake_policy(SET CMP0079 NEW)  # allow adding to target propert
 
 #-----------------------------------------------------------------------------~#
 
@@ -29,8 +30,17 @@ set(support_HEADERS
 set(support_SOURCES
   Matrix.cc
   svd.cc
-  PARENT_SCOPE
 )
+
+add_library(support ${support_SOURCES})
+target_include_directories(support PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(support PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIRECTORY}>
+  $<INSTALL_INTERFACE:include>)  #<cmake_intall_prefix>/include
+
+
+target_link_libraries(wonton PUBLIC support)
+
 
 # Unit tests
 
