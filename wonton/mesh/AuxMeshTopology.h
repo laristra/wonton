@@ -386,6 +386,36 @@ class AuxMeshTopology {
   }
 
   /*!
+    @brief Get the list of cell IDs for all cells attached to a specific
+    cell through its faces.
+    @param[in] cellid The ID of the cell.
+    @param[in] ptype The Entity_type (e.g. PARALLEL_OWNED)
+    @param[out] adjcells The list of cell IDs for all cells attached to
+    cell @c cellid through its faces, excluding @c cellid.
+   */
+  void cell_get_face_adj_cells(int const cellid,
+                               Entity_type const ptype,
+                               std::vector<int> *adjcells) const {
+    adjcells->clear();
+
+    // Find the faces attached to this cell
+    std::vector<int> cellfaces, cfdirs;
+    basicmesh_ptr_->cell_get_faces_and_dirs(cellid, &cellfaces, &cfdirs);
+
+    // Loop over these faces and find the cells on the other side
+    for (auto const& f : cellfaces) {
+      std::vector<int> facecells;
+      basicmesh_ptr_->face_get_cells(f, ptype, &facecells);
+
+      // Interfaces we need are always connected to two cells
+      if (facecells.size() == 2) {
+        int iac = (facecells[0] == cellid) ? 1 : 0;
+        adjcells.push_back(facecells[iac]);
+      }
+    }
+  }  // cell_get_face_adj_cells
+
+  /*!
     @brief Get the list of node IDs for all nodes attached to all cells
     attached to a specific node.
     @param[in] nodeid The ID of the node.
