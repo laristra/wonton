@@ -410,7 +410,7 @@ class AuxMeshTopology {
       // Interfaces we need are always connected to two cells
       if (facecells.size() == 2) {
         int iac = (facecells[0] == cellid) ? 1 : 0;
-        adjcells.push_back(facecells[iac]);
+        adjcells->push_back(facecells[iac]);
       }
     }
   }  // cell_get_face_adj_cells
