@@ -391,7 +391,9 @@ class AuxMeshTopology {
     @param[in] cellid The ID of the cell.
     @param[in] ptype The Entity_type (e.g. PARALLEL_OWNED)
     @param[out] adjcells The list of cell IDs for all cells attached to
-    cell @c cellid through its faces, excluding @c cellid.
+    cell @c cellid through its faces, excluding @c cellid. The order of cells
+    is consistent with the order of respective interfaces returned by 
+    cell_get_faces_and_dirs, but all the boundary faces are skipped.
    */
   void cell_get_face_adj_cells(int const cellid,
                                Entity_type const ptype,
