@@ -276,7 +276,7 @@ Simple_Mesh(double x0, double y0, double z0,
 
     This is the general specification.  
    */
-  template<long D>
+  template<int D>
   void node_get_coordinates(const ID nodeid,
                             Point<D> *pp) const {
     assert(D == space_dimension());
@@ -290,7 +290,7 @@ Simple_Mesh(double x0, double y0, double z0,
     @param[out] ccords The array of @c Point object of dimension @c D containing the
     coordinates of nodes in cell @cellid.
    */
-  template<long D>
+  template<int D>
   void cell_get_coordinates(const ID cellid,
                             std::vector<Point<D>> *ccoords) const {
     assert(D == space_dimension());
@@ -317,7 +317,7 @@ Simple_Mesh(double x0, double y0, double z0,
     @param[in] affine a Matrix with D rows and D+1 columns
   */
     
-  template<long D>
+  template<int D>
   void transform(const Matrix &affine) {
     assert(D == space_dimension());
     assert(affine.rows() == D);
@@ -335,8 +335,25 @@ Simple_Mesh(double x0, double y0, double z0,
     }
   }
  
- 
-  
+  // General specification - specialization follows at bottom of file
+  /*!
+    @brief Set the coordinates of a node.
+
+    USE WITH EXTREME CARE. Improper setting of coordinates from outside the class 
+    can invalidate the adjacency information, among other mischief.
+
+    @tparam D Dimension of the node.
+    @param[in] nodeid The ID of the node.
+    @param[out] pp The @c Point object of dimension @c D containing the
+    new coordinates of node @nodeid.
+
+    This is the general specification.  
+  */
+  template<int D>
+  void node_set_coordinates(const ID nodeid,
+                            Point<D> *pp) {
+    assert(D == space_dimension());
+  }
   
  private:
   /*!
@@ -639,28 +656,6 @@ Simple_Mesh(double x0, double y0, double z0,
   
   }
 
-  // General specification - specialization follows at bottom of file
-  /*!
-    @brief Set the coordinates of a node.
-
-    This meant ONLY for internal use by methods in Simple_Mesh. Do not 
-    make public. Improper setting of coordinates from outside the class 
-    can invalidate the adjacency information, among other mischief.
-
-    @tparam D Dimension of the node.
-    @param[in] nodeid The ID of the node.
-    @param[out] pp The @c Point object of dimension @c D containing the
-    new coordinates of node @nodeid.
-
-    This is the general specification.  
-   */
-  template<long D>
-  void node_set_coordinates(const ID nodeid,
-                            Point<D> *pp) {
-    assert(D == space_dimension());
-  }
-
-
   /// @c Simple_Mesh can be 2D or 3D 
   int spacedim_ ;
 
@@ -668,7 +663,7 @@ Simple_Mesh(double x0, double y0, double z0,
   int nx_, ny_, nz_;
 
   /// Coordinates of lower left front and upper right back of domain.
-  double x0_, x1_, y0_, y1_, z0_, z1_;
+  double x0_, y0_, z0_, x1_, y1_, z1_;
 
   /// Node positions.
   std::vector<Point<3>> coordinates3d_;
@@ -732,6 +727,7 @@ Simple_Mesh(double x0, double y0, double z0,
   @c nodeid.
  */
 template<>
+inline
 void Simple_Mesh::node_get_coordinates<3>(const ID nodeid,
                                           Point<3> *pp) const {
   assert(spacedim_ == 3);
@@ -739,6 +735,7 @@ void Simple_Mesh::node_get_coordinates<3>(const ID nodeid,
 }
 
 template<>
+inline
 void Simple_Mesh::node_get_coordinates<2>(const ID nodeid,
                                           Point<2> *pp) const {
   assert(spacedim_ == 2);
@@ -746,6 +743,7 @@ void Simple_Mesh::node_get_coordinates<2>(const ID nodeid,
 }
 
 template<>
+inline
 void Simple_Mesh::node_set_coordinates<3>(const ID nodeid,
                                           Point<3> *pp) {
   assert(spacedim_ == 3);
@@ -753,6 +751,7 @@ void Simple_Mesh::node_set_coordinates<3>(const ID nodeid,
 }
 
 template<>
+inline
 void Simple_Mesh::node_set_coordinates<2>(const ID nodeid,
                                           Point<2> *pp) {
   assert(spacedim_ == 2);

@@ -50,7 +50,7 @@ struct CartesianCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid for any positive dimensionality
     static_assert(D >= 1,
@@ -58,7 +58,7 @@ struct CartesianCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -66,7 +66,7 @@ struct CartesianCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -118,7 +118,7 @@ struct CylindricalRadialCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
@@ -126,7 +126,7 @@ struct CylindricalRadialCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -134,7 +134,7 @@ struct CylindricalRadialCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -187,7 +187,7 @@ struct CylindricalAxisymmetricCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
@@ -195,7 +195,7 @@ struct CylindricalAxisymmetricCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -203,7 +203,7 @@ struct CylindricalAxisymmetricCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -257,7 +257,7 @@ struct CylindricalPolarCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
@@ -265,7 +265,7 @@ struct CylindricalPolarCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
@@ -274,7 +274,7 @@ struct CylindricalPolarCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     auto new_line_element = line_element;
@@ -328,7 +328,7 @@ struct Cylindrical3DCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
@@ -336,7 +336,7 @@ struct Cylindrical3DCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
@@ -345,7 +345,7 @@ struct Cylindrical3DCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     auto new_line_element = line_element;
@@ -401,7 +401,7 @@ struct SphericalRadialCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
@@ -409,7 +409,7 @@ struct SphericalRadialCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -417,7 +417,7 @@ struct SphericalRadialCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
@@ -471,7 +471,7 @@ struct Spherical3DCoordinates {
   static constexpr double inv_geo_fac = 1.0 / geometry_factor;
 
   /// Verify coordinate system / dimensionality combination
-  template<long D>
+  template<int D>
   static void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
@@ -479,7 +479,7 @@ struct Spherical3DCoordinates {
   }
 
   /// Modify gradient to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
@@ -489,7 +489,7 @@ struct Spherical3DCoordinates {
   }
 
   /// Modify line element to account for the coordinate system
-  template<long D>
+  template<int D>
   static Vector<D> modify_line_element(Vector<D> const & line_element,
       Point<D> const & reference_point) {
     auto new_line_element = line_element;

@@ -154,7 +154,7 @@ TEST(Simple_State_Wrapper, multiMatField) {
   // now check data2 through state and dynamic casting
   for (auto& kv : pv->get_data()) {
     auto& out = kv.second;
-    for (int j = 0; j < out.size(); j++) {
+    for (unsigned j = 0; j < out.size(); j++) {
       ASSERT_EQ(data[kv.first][j], out[j]);
     }
   }
@@ -170,7 +170,7 @@ TEST(Simple_State_Wrapper, multiMatField) {
   // test that the value obtained through the state manager is correct
   for (auto& kv : out->get_data()) {
     auto& out = kv.second;
-    for (int j = 0; j < out.size(); j++) {
+    for (unsigned j = 0; j < out.size(); j++) {
       ASSERT_EQ(data[kv.first][j], out[j]);
     }
   }
@@ -202,7 +202,7 @@ TEST(Simple_State_Wrapper, mixedFields) {
   // test that the value obtained through the state manager is correct
   for (auto& kv : out->get_data()) {
     auto& out = kv.second;
-    for (int j = 0; j < out.size(); j++) {
+    for (unsigned j = 0; j < out.size(); j++) {
       ASSERT_EQ(data[kv.first][j], out[j]);
     }
   }
@@ -222,7 +222,7 @@ TEST(Simple_State_Wrapper, mixedFields) {
   auto sout = manager.get<StateVectorUni<double>>("temperature");
 
   // test that the values are correct
-  for (int i = 0; i < sdata.size(); i++) {
+  for (unsigned i = 0; i < sdata.size(); i++) {
     ASSERT_EQ(sdata[i], sout->get_data()[i]);
   }
 }
@@ -257,7 +257,7 @@ TEST(Simple_State_Wrapper, mixedFields2) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out0->get_data()) {
     auto& out = kv.second;
-    for (int j = 0; j < out.size(); j++) {
+    for (unsigned j = 0; j < out.size(); j++) {
       ASSERT_EQ(data0[kv.first][j], out[j]);
     }
   }
@@ -279,7 +279,7 @@ TEST(Simple_State_Wrapper, mixedFields2) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out1->get_data()) {
     auto& out = kv.second;
-    for (int j = 0; j < out.size(); j++) {
+    for (unsigned j = 0; j < out.size(); j++) {
       ASSERT_EQ(data1[kv.first][j], out[j]);
     }
   }
@@ -304,7 +304,7 @@ TEST(Simple_State_Wrapper, mixedFields2) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out2->get_data()) {
     auto& out = kv.second;
-    for (int j = 0; j < out.size(); j++) {
+    for (unsigned j = 0; j < out.size(); j++) {
        // x coord
       ASSERT_EQ(data2[kv.first][j][0], out2->get_data()[kv.first][j][0]);
        // y coord
@@ -327,7 +327,7 @@ TEST(Simple_State_Wrapper, mixedFields2) {
   auto out3 = manager.get<StateVectorUni<double>>("temperature");
 
   // test that the values are correct
-  for (int i = 0; i < data3.size(); i++) {
+  for (unsigned i = 0; i < data3.size(); i++) {
     ASSERT_EQ(data3[i], out3->get_data()[i]);
   }
 
@@ -348,7 +348,7 @@ TEST(Simple_State_Wrapper, mixedFields2) {
   auto out4 = manager.get<StateVectorUni<Point<2>>>("cell centroid");
 
   // test that the values are correct
-  for (int i = 0; i < data4.size(); i++) {
+  for (unsigned i = 0; i < data4.size(); i++) {
      // x coord
     ASSERT_EQ(data4[i][0], out4->get_data()[i][0]);
      // y coord
@@ -381,7 +381,7 @@ TEST(Simple_State_Wrapper, testUniIsolation) {
   auto& out = manager.get<StateVectorUni<double>>("temperature")->get_data();
 
   // test that the values are correct
-  for (int i = 0; i < data.size(); i++) {
+  for (unsigned i = 0; i < data.size(); i++) {
     ASSERT_EQ(data[i], out[i]);
   }
 
@@ -389,8 +389,8 @@ TEST(Simple_State_Wrapper, testUniIsolation) {
   out.push_back(-50.);
 
   // make sure the sizes are correct and data is unaltered
-  ASSERT_EQ(out.size(), 2);
-  ASSERT_EQ(data.size(), 1);
+  ASSERT_EQ(out.size(), unsigned(2));
+  ASSERT_EQ(data.size(), unsigned(1));
   ASSERT_EQ(out[1], -50.);
 }
 
@@ -420,7 +420,7 @@ TEST(Simple_State_Wrapper, testMultiIsolation) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out) {
     auto& d = kv.second;
-    for (int j = 0; j < d.size(); j++) {
+    for (unsigned j = 0; j < d.size(); j++) {
       ASSERT_EQ(data[kv.first][j], d[j]);
     }
   }
@@ -434,22 +434,22 @@ TEST(Simple_State_Wrapper, testMultiIsolation) {
   // make sure there are the correct number of materials in each map
   // we have a shallow copy of the map vectors
   ASSERT_NE(data.size(), out.size());
-  ASSERT_EQ(out.size(), 4);
-  ASSERT_EQ(data.size(), 3);
+  ASSERT_EQ(out.size(), unsigned(4));
+  ASSERT_EQ(data.size(), unsigned(3));
 
   // now check for a deep copy of the vector data
 
   // unmodified
   ASSERT_EQ(data[1].size(), out[1].size());
-  ASSERT_EQ(data[1].size(), 1);
+  ASSERT_EQ(data[1].size(), unsigned(1));
 
   // add data to a single material
   out[1].push_back(-50.);
 
   // check sizes
   ASSERT_NE(data[1].size(), out[1].size());
-  ASSERT_EQ(data[1].size(), 1);
-  ASSERT_EQ(out[1].size(), 2);
+  ASSERT_EQ(data[1].size(), unsigned(1));
+  ASSERT_EQ(out[1].size(), unsigned(2));
 }
 
 
@@ -482,7 +482,7 @@ TEST(Simple_State_Wrapper, testMultiIsolationPoint) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out) {
     auto& d = kv.second;
-    for (int j = 0; j < d.size(); j++) {
+    for (unsigned j = 0; j < d.size(); j++) {
       ASSERT_EQ(data[kv.first][j][0], d[j][0]);
       ASSERT_EQ(data[kv.first][j][1], d[j][1]);
     }
@@ -497,23 +497,23 @@ TEST(Simple_State_Wrapper, testMultiIsolationPoint) {
   // make sure there are the correct number of materials in each map
   // we have a shallow copy of the map vectors
   ASSERT_NE(data.size(), out.size());
-  ASSERT_EQ(out.size(), 4);
-  ASSERT_EQ(data.size(), 3);
+  ASSERT_EQ(out.size(), unsigned(4));
+  ASSERT_EQ(data.size(), unsigned(3));
 
 
   // now check for a deep copy of the vector data
 
   // unmodified
   ASSERT_EQ(data[1].size(), out[1].size());
-  ASSERT_EQ(data[1].size(), 1);
+  ASSERT_EQ(data[1].size(), unsigned(1));
 
   // add data to a single material
   out[1].push_back(Point<2>{20., -20.});
 
   // check sizes
   ASSERT_NE(data[1].size(), out[1].size());
-  ASSERT_EQ(data[1].size(), 1);
-  ASSERT_EQ(out[1].size(), 2);
+  ASSERT_EQ(data[1].size(), unsigned(1));
+  ASSERT_EQ(out[1].size(), unsigned(2));
 
   // finally check that the points themselves are copied
 
@@ -573,7 +573,7 @@ TEST(Simple_State_Wrapper, test4Cell) {
 
   // make sure the shape is correct
   for (const auto& kv : manager.get_material_shape()) {
-    ASSERT_EQ(cells[kv.first].size(), kv.second);
+    ASSERT_EQ((int) cells[kv.first].size(), kv.second);
   }
 
   // create the multi material data
@@ -612,12 +612,12 @@ TEST(Simple_State_Wrapper, test4Cell) {
 
   // check that the number of cells for each material is correct
   for (const auto& kv : cells) {
-    ASSERT_EQ(kv.second.size(), manager.num_material_cells(kv.first));
+    ASSERT_EQ((int) kv.second.size(), manager.num_material_cells(kv.first));
   }
 
   // check that the cells ids for each material are correct
   for (const auto& kv : cells) {
-    for (int i = 0; i < kv.second.size(); i++) {
+    for (unsigned i = 0; i < kv.second.size(); i++) {
       ASSERT_EQ(kv.second[i], manager.get_material_cells(kv.first)[i]);
     }
   }
@@ -658,7 +658,7 @@ TEST(Simple_State_Wrapper, test4Cell) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out_values) {
     auto& d = kv.second;
-    for (int j = 0; j < d.size(); j++) {
+    for (unsigned j = 0; j < d.size(); j++) {
       ASSERT_EQ(density[kv.first][j], d[j]);
     }
   }
@@ -683,7 +683,7 @@ TEST(Simple_State_Wrapper, test4Cell) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out2) {
     auto& d = kv.second;
-    for (int j = 0; j < d.size(); j++) {
+    for (unsigned j = 0; j < d.size(); j++) {
       ASSERT_EQ(centroid[kv.first][j][0], d[j][0]);
       ASSERT_EQ(centroid[kv.first][j][1], d[j][1]);
     }
@@ -695,7 +695,7 @@ TEST(Simple_State_Wrapper, test4Cell) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out3) {
     auto& d = kv.second;
-    for (int j = 0; j < d.size(); j++) {
+    for (unsigned j = 0; j < d.size(); j++) {
       ASSERT_EQ(centroid[kv.first][j][0], d[j][0]);
       ASSERT_EQ(centroid[kv.first][j][1], d[j][1]);
     }
@@ -708,7 +708,7 @@ TEST(Simple_State_Wrapper, test4Cell) {
   // test that the values obtained through the state manager are correct
   for (auto& kv : out4) {
     auto& d = kv.second;
-    for (int j = 0; j < d.size(); j++) {
+    for (unsigned j = 0; j < d.size(); j++) {
       ASSERT_EQ(centroid[kv.first][j][0], d[j][0]);
       ASSERT_EQ(centroid[kv.first][j][1], d[j][1]);
     }

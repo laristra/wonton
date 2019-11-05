@@ -43,7 +43,7 @@ const int Z = 2;
   @tparam D Indicates the dimensionality of the Point (this will generally be one
   of [1,2,3]).
 */
-template <long D>
+template <int D>
 class Point {
  private:
   double m_loc[D];
@@ -189,53 +189,53 @@ typedef Point<2> Point2;
 /// Alias for creating a Point in 1d.
 typedef Point<1> Point1;
 
-template <long D> inline std::ostream&
+template <int D> inline std::ostream&
 operator<<(std::ostream& os, const Point<D>& p) {
   return p.writeToStream(os);
 }
 
 
-template <long D> inline const Point<D>
+template <int D> inline const Point<D>
 operator+(const Point<D>& p, const Vector<D>& v) {
   return Point<D>(p) += v;
 }
 
-template <long D> inline const Point<D>
+template <int D> inline const Point<D>
 operator+(const Point<D>& p1, const Point<D>& p2) {
   return Point<D>(p1) += p2;
 }
 
-template <long D> inline const Vector<D>
+template <int D> inline const Vector<D>
 operator-(const Point<D>& p1, const Point<D>& p2) {
   Vector<D> v;
   for (int i = 0; i < D; i++) v[i] = p1[i] - p2[i];
   return v;
 }
 
-template <long D> inline const Point<D>
+template <int D> inline const Point<D>
 operator*(const Point<D>& p, double s) {
   return Point<D>(p) *= s;
 }
 
-template <long D> inline const Point<D>
+template <int D> inline const Point<D>
 operator*(double s, const Point<D>& p) {
   return Point<D>(p) *= s;
 }
 
-template <long D> inline const Point<D>
+template <int D> inline const Point<D>
 operator/(const Point<D>& p, double s) {
   return Point<D>(p) /= s;
 }
 
-template <long D> inline bool
+template <int D> inline bool
 operator==(const Point<D>& p1, const Point<D>& p2) {
   for (int i = 0; i < D; i++)
-    if (std::fabs(p1[i] - p2[i]) > std::numeric_limits<double>::epsilon())
+    if (p1[i] != p2[i])
       return false;
   return true;
 }
 
-template <long D> inline bool
+template <int D> inline bool
 approxEq(const Point<D>& p1, const Point<D>& p2, double tol = 1.0e-8) {
   // This uses the L_infty norm to avoid nearby subtractions
   for (int i = 0; i < D; i++)
@@ -244,7 +244,7 @@ approxEq(const Point<D>& p1, const Point<D>& p2, double tol = 1.0e-8) {
   return true;
 }
 
-template <long D> bool
+template <int D> bool
 operator<(const Point<D>& p1, const Point<D>& p2) {
   if (approxEq(p1, p2))
     return false;

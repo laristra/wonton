@@ -51,9 +51,9 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
                                bool request_sides = true,
                                bool request_wedges = true,
                                bool request_corners = true) :
-  mesh_(mesh),
-      AuxMeshTopology<Simple_Mesh_Wrapper>(request_sides, request_wedges,
-                                           request_corners) {
+      AuxMeshTopology<Simple_Mesh_Wrapper>(
+        request_sides, request_wedges, request_corners),
+      mesh_(mesh) {
     AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities();
   }  // explicit constructor
 
@@ -64,7 +64,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
   Simple_Mesh_Wrapper & operator=(Simple_Mesh_Wrapper const & inmesh) = delete;
 
   /// Destructor
-  ~Simple_Mesh_Wrapper() {}
+  ~Simple_Mesh_Wrapper() = default;
 
   //////////////////////////////////////////////////////////////////////
   // The following methods are needed somewhere within AuxMeshTopology
@@ -196,7 +196,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
   }
 
   /// Get the global ID. @b NOTE: Simple_Mesh only has local IDs.
-  int get_global_id(int const id, Entity_kind const kind) const {
+  GID_t get_global_id(int const id, Entity_kind const kind) const {
     return id;
   }
 
@@ -209,7 +209,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
     @param[out] The Wonton::Point containing the coordiantes of node @c nodeid.
    */
 
-  template<long D>
+  template<int D>
   void node_get_coordinates(int const nodeid, Point<D>* pp) const 
   {
     mesh_.node_get_coordinates(nodeid, pp);

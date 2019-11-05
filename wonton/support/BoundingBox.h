@@ -7,6 +7,8 @@
 #ifndef WONTON_BOUNDING_BOX_H_
 #define WONTON_BOUNDING_BOX_H_
 
+#include <array>
+
 namespace Wonton {
 
 /*!
@@ -15,7 +17,7 @@ namespace Wonton {
   Represents the bounding box of a cell by listing the lower and upper corners
   of the box.
 */
-template<long D>
+template<int D>
 using BoundingBox = std::array<std::array<double,2>,D>;
 
 const int LO = 0;

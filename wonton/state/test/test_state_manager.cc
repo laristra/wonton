@@ -31,7 +31,7 @@ TEST(StateManager, testPointerStateManager){
 
 	// check we can get the data out
 	std::vector<double>& out = sv.get_data();
-	for (int i=0; i<out.size(); i++) {
+	for (unsigned i=0; i < out.size(); ++i) {
 		ASSERT_EQ(out[i],data[i]);
 	}  
 
@@ -45,7 +45,7 @@ TEST(StateManager, testPointerStateManager){
 	ASSERT_EQ("field", pout->get_name());
 	
 	// make sure the data comes out correctly
-	for (int i=0; i<data.size(); ++i){
+	for (unsigned i=0; i < data.size(); ++i) {
 		ASSERT_EQ(data[i], pout->get_data()[i]);
 	}
 
@@ -69,7 +69,7 @@ TEST(StateManager, testSharedPointerStateManager){
 	
 	// check we can get the data out
 	std::vector<double>& out = spsv->get_data();
-	for (int i=0; i<data.size(); i++) {
+	for (unsigned i=0; i < data.size(); ++i) {
 		ASSERT_EQ(out[i],data[i]);
 	} 
 	 
@@ -84,7 +84,7 @@ TEST(StateManager, testSharedPointerStateManager){
 	ASSERT_EQ(name, sp_out->get_name());
 	
 	// make sure the data comes out correctly
-	for (int i=0; i<data.size(); ++i){
+	for (unsigned i=0; i < data.size(); ++i){
 		ASSERT_EQ(data[i], sp_out->get_data()[i]);
 	}
 
@@ -102,7 +102,7 @@ TEST(StateManager, testSharedPointerStateManagerMap){
 	auto spv = std::make_shared<StateVectorUni<>> (name, Entity_kind::CELL, data);
 
 	// check we can get the data out
-	for (int i=0; i<data.size(); i++) {
+	for (unsigned i=0; i < data.size(); ++i) {
 		ASSERT_EQ(spv->get_data()[i],data[i]);
 	} 
 
@@ -120,7 +120,7 @@ TEST(StateManager, testSharedPointerStateManagerMap){
 	ASSERT_EQ(name, sp_out->get_name());
 	
 	// make sure the data comes out correctly
-	for (int i=0; i<data.size(); ++i){
+	for (unsigned i=0; i < data.size(); ++i) {
 		ASSERT_EQ(data[i], sp_out->get_data()[i]);
 	}
 
@@ -134,9 +134,9 @@ TEST(StateManager, testSharedPointerStateManagerMap){
 	
 	// add an element and make sure it does the right thing
 	out.push_back(100);
-	ASSERT_EQ(out.size(),4);
+	ASSERT_EQ(out.size(), unsigned(4));
 	ASSERT_EQ(out[3], sp_out->get_data()[3]);
-	ASSERT_EQ(data.size(),3);
+	ASSERT_EQ(data.size(), unsigned(3));
 	
 }
 
@@ -153,7 +153,7 @@ TEST(StateManager, testStateVectorMultiAccess){
 	// check equality
 	for (auto& kv : sv1_data) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++) {
 			ASSERT_EQ(data1[kv.first][j], out[j]);
 		}
 	}  
@@ -169,7 +169,7 @@ TEST(StateManager, testStateVectorMultiAccess){
 	// check equality
 	for (auto& kv : sv2_data) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++) {
 			ASSERT_EQ(data2[kv.first][j], out[j]);
 		}
 	}  
@@ -188,7 +188,7 @@ TEST(StateManager, testStateVectorMultiAccess){
 	auto& sv1_data_state = (std::dynamic_pointer_cast<StateVectorMulti<double>>(state[0]))->get_data();
 	for (auto& kv : sv1_data_state) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++) {
 			ASSERT_EQ(data1[kv.first][j], out[j]);
 		}
 	} 
@@ -197,7 +197,7 @@ TEST(StateManager, testStateVectorMultiAccess){
 	sv1_data_state = (std::static_pointer_cast<StateVectorMulti<double>>(state[0]))->get_data();
 	for (auto& kv : sv1_data_state) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++) {
 			ASSERT_EQ(data1[kv.first][j], out[j]);
 		}
 	} 
@@ -206,7 +206,7 @@ TEST(StateManager, testStateVectorMultiAccess){
 	auto& sv2_data_state = (std::dynamic_pointer_cast<StateVectorMulti<int>>(state[1]))->get_data();
 	for (auto& kv : sv2_data_state) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++) {
 			ASSERT_EQ(data2[kv.first][j], out[j]);
 		}
 	} 
@@ -215,7 +215,7 @@ TEST(StateManager, testStateVectorMultiAccess){
 	sv2_data_state = (std::static_pointer_cast<StateVectorMulti<int>>(state[1]))->get_data();
 	for (auto& kv : sv2_data_state) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++) {
 			ASSERT_EQ(data2[kv.first][j], out[j]);
 		}
 	} 
@@ -356,7 +356,7 @@ TEST(StateManager, multiMatField){
 	// now check data2 through state and dynamic casting
 	for (auto& kv : pv->get_data()) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++){
 			ASSERT_EQ(data[kv.first][j], out[j]);
 		}
 	} 
@@ -372,7 +372,7 @@ TEST(StateManager, multiMatField){
 	// test that the value obtained through the state manager is correct
 	for (auto& kv : out->get_data()) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++){
 			ASSERT_EQ(data[kv.first][j], out[j]);
 		}
 	} 
@@ -405,7 +405,7 @@ TEST(StateManager, mixedFields){
 	// test that the value obtained through the state manager is correct
 	for (auto& kv : out->get_data()) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++){
 			ASSERT_EQ(data[kv.first][j], out[j]);
 		}
 	} 
@@ -423,7 +423,7 @@ TEST(StateManager, mixedFields){
 	auto sout = manager.get<StateVectorUni<double>>("temperature");
 	
 	// test that the values are correct
-	for (int i=0; i<sdata.size();i++) {
+	for (unsigned i=0; i < sdata.size(); i++) {
 		ASSERT_EQ(sdata[i], sout->get_data()[i]);
 	}
 
@@ -459,7 +459,7 @@ TEST(StateManager, mixedFields2){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out0->get_data()) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++){
 			ASSERT_EQ(data0[kv.first][j], out[j]);
 		}
 	} 
@@ -480,7 +480,7 @@ TEST(StateManager, mixedFields2){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out1->get_data()) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++){
 			ASSERT_EQ(data1[kv.first][j], out[j]);
 		}
 	} 
@@ -502,7 +502,7 @@ TEST(StateManager, mixedFields2){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out2->get_data()) {
 		auto& out=kv.second;
-		for (int j=0; j<out.size(); j++){
+		for (unsigned j=0; j < out.size(); j++){
 			ASSERT_EQ(data2[kv.first][j][0], out2->get_data()[kv.first][j][0]); //x coord
 			ASSERT_EQ(data2[kv.first][j][1], out2->get_data()[kv.first][j][1]); //y coord
 		}
@@ -523,7 +523,7 @@ TEST(StateManager, mixedFields2){
 	auto out3 = manager.get<StateVectorUni<double>>("temperature");
 	
 	// test that the values are correct
-	for (int i=0; i<data3.size();i++) {
+	for (unsigned i=0; i < data3.size(); i++) {
 		ASSERT_EQ(data3[i], out3->get_data()[i]);
 	}
 
@@ -543,7 +543,7 @@ TEST(StateManager, mixedFields2){
 	auto out4 = manager.get<StateVectorUni<Point<2>>>("cell centroid");
 	
 	// test that the values are correct
-	for (int i=0; i<data4.size();i++) {
+	for (unsigned i=0; i < data4.size(); i++) {
 		ASSERT_EQ(data4[i][0], out4->get_data()[i][0]); //x coord
 		ASSERT_EQ(data4[i][1], out4->get_data()[i][1]); //y coord
 	}
@@ -574,7 +574,7 @@ TEST(StateManager, testUniIsolation){
 	auto& out = manager.get<StateVectorUni<double>>("temperature")->get_data();
 	
 	// test that the values are correct
-	for (int i=0; i<data.size();i++) {
+	for (unsigned i=0; i < data.size(); i++) {
 		ASSERT_EQ(data[i], out[i]);
 	}
 	
@@ -582,8 +582,8 @@ TEST(StateManager, testUniIsolation){
 	out.push_back(-50.);
 	
 	// make sure the sizes are correct and data is unaltered
-	ASSERT_EQ(out.size(), 2);
-	ASSERT_EQ(data.size(), 1);
+	ASSERT_EQ(out.size(), unsigned(2));
+	ASSERT_EQ(data.size(), unsigned(1));
 	ASSERT_EQ(out[1], -50.);
 }
 
@@ -613,7 +613,7 @@ TEST(StateManager, testMultiIsolation){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out) {
 		auto& d=kv.second;
-		for (int j=0; j<d.size(); j++){
+		for (unsigned j=0; j < d.size(); j++){
 			ASSERT_EQ(data[kv.first][j], d[j]);
 		}
 	} 
@@ -626,22 +626,22 @@ TEST(StateManager, testMultiIsolation){
 
 	// make sure there are the correct number of materials in each map
 	ASSERT_NE(data.size(), out.size()); // we have a shallow copy of the map vectors
-	ASSERT_EQ(out.size(), 4);
-	ASSERT_EQ(data.size(), 3);
+	ASSERT_EQ(out.size(), unsigned(4));
+	ASSERT_EQ(data.size(), unsigned(3));
 	
 	// now check for a deep copy of the vector data
 	
 	// unmodified
 	ASSERT_EQ(data[1].size(), out[1].size());
-	ASSERT_EQ(data[1].size(), 1);
+	ASSERT_EQ(data[1].size(), unsigned(1));
 	
 	// add data to a single material
 	out[1].push_back(-50.);
 	
 	// check sizes
 	ASSERT_NE(data[1].size(), out[1].size());
-	ASSERT_EQ(data[1].size(), 1);
-	ASSERT_EQ(out[1].size(), 2);
+	ASSERT_EQ(data[1].size(), unsigned(1));
+	ASSERT_EQ(out[1].size(), unsigned(2));
 }
 
 
@@ -672,7 +672,7 @@ TEST(StateManager, testMultiIsolationPoint){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out) {
 		auto& d=kv.second;
-		for (int j=0; j<d.size(); j++){
+		for (unsigned j=0; j < d.size(); j++){
 			ASSERT_EQ(data[kv.first][j][0], d[j][0]);
 			ASSERT_EQ(data[kv.first][j][1], d[j][1]);
 		}
@@ -686,23 +686,23 @@ TEST(StateManager, testMultiIsolationPoint){
 
 	// make sure there are the correct number of materials in each map
 	ASSERT_NE(data.size(), out.size()); // we have a shallow copy of the map vectors
-	ASSERT_EQ(out.size(), 4);
-	ASSERT_EQ(data.size(), 3);
+	ASSERT_EQ(out.size(), unsigned(4));
+	ASSERT_EQ(data.size(), unsigned(3));
 
 	
 	// now check for a deep copy of the vector data
 	
 	// unmodified
 	ASSERT_EQ(data[1].size(), out[1].size());
-	ASSERT_EQ(data[1].size(), 1);
+	ASSERT_EQ(data[1].size(), unsigned(1));
 	
 	// add data to a single material
 	out[1].push_back(Point<2>{20.,-20.});
 	
 	// check sizes
 	ASSERT_NE(data[1].size(), out[1].size());
-	ASSERT_EQ(data[1].size(), 1);
-	ASSERT_EQ(out[1].size(), 2);
+	ASSERT_EQ(data[1].size(), unsigned(1));
+	ASSERT_EQ(out[1].size(), unsigned(2));
 	
 	// finally check that the points themselves are copied
 	
@@ -759,7 +759,7 @@ TEST(StateManager,test4Cell){
 	
 	// make sure the shape is correct
 	for (const auto& kv : manager.get_material_shape()){
-		ASSERT_EQ(cells[kv.first].size(), kv.second);
+		ASSERT_EQ((int) cells[kv.first].size(), kv.second);
 	}
 	
 	// create the multi material data
@@ -795,13 +795,13 @@ TEST(StateManager,test4Cell){
 	
 	// check that the number of cells for each material is correct
 	for (const auto& kv: cells){
-			ASSERT_EQ(kv.second.size(), manager.num_material_cells(kv.first));
+			ASSERT_EQ((int) kv.second.size(), manager.num_material_cells(kv.first));
 	}
 	
 	// check that the cells ids for each material are correct
 	for (const auto& kv: cells){
-		for (int i=0; i<kv.second.size(); i++){	
-			ASSERT_EQ(kv.second[i],manager.get_material_cells(kv.first)[i]);
+		for (unsigned i=0; i < kv.second.size(); i++){
+			ASSERT_EQ(kv.second[i], manager.get_material_cells(kv.first)[i]);
 		}
 	}
 
@@ -841,7 +841,7 @@ TEST(StateManager,test4Cell){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out_values) {
 		auto& d=kv.second;
-		for (int j=0; j<d.size(); j++){
+		for (unsigned j=0; j < d.size(); j++){
 			ASSERT_EQ(density[kv.first][j], d[j]);
 		}
 	} 
@@ -864,7 +864,7 @@ TEST(StateManager,test4Cell){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out2) {
 		auto& d=kv.second;
-		for (int j=0; j<d.size(); j++){
+		for (unsigned j=0; j < d.size(); j++){
 			ASSERT_EQ(centroid[kv.first][j][0], d[j][0]);
 			ASSERT_EQ(centroid[kv.first][j][1], d[j][1]);
 		}
@@ -876,7 +876,7 @@ TEST(StateManager,test4Cell){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out3) {
 		auto& d=kv.second;
-		for (int j=0; j<d.size(); j++){
+		for (unsigned j=0; j < d.size(); j++){
 			ASSERT_EQ(centroid[kv.first][j][0], d[j][0]);
 			ASSERT_EQ(centroid[kv.first][j][1], d[j][1]);
 		}
@@ -889,7 +889,7 @@ TEST(StateManager,test4Cell){
 	// test that the values obtained through the state manager are correct
 	for (auto& kv : out4) {
 		auto& d=kv.second;
-		for (int j=0; j<d.size(); j++){
+		for (unsigned j=0; j < d.size(); j++){
 			ASSERT_EQ(centroid[kv.first][j][0], d[j][0]);
 			ASSERT_EQ(centroid[kv.first][j][1], d[j][1]);
 		}

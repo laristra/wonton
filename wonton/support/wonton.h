@@ -24,6 +24,7 @@ Please see the license file at the root of this repository, or at:
 
 #include <vector>
 #include <algorithm>
+#include <string>
 
 #endif
 
@@ -68,6 +69,10 @@ Please see the license file at the root of this repository, or at:
  */
 namespace Wonton {
 
+typedef int64_t GID_t;  /*! Global ID type */
+
+
+
 /// The type of mesh entity.
 enum Entity_kind {
   ALL_KIND = -3,     /*!< All possible types */
@@ -84,6 +89,31 @@ enum Entity_kind {
   BOUNDARY_FACE,
   PARTICLE
 };
+constexpr int NUM_ENTITY_KIND = 13;
+
+// Method to get Entity_kind in string form
+inline std::string to_string(Entity_kind entkind) {
+  static const std::string kind2string[NUM_ENTITY_KIND] =
+    {"Entity_kind::ALL_KIND",
+     "Entity_kind::ANY_KIND",
+     "Entity_kind::UNKNOWN_KIND",
+     "Entity_kind::NODE",
+     "Entity_kind::EDGE",
+     "Entity_kind::FACE",
+     "Entity_kind::CELL",
+     "Entity_kind::SIDE",
+     "Entity_kind::WEDGE",
+     "Entity_kind::CORNER",
+     "Entity_kind::FACET",
+     "Entity_kind::BOUNDARY_FACE",
+     "Entity_kind::PARTICLE"};
+
+  int itype = static_cast<int>(entkind)+3;
+  return ((itype >= 0 && itype < NUM_ENTITY_KIND) ? kind2string[itype] :
+          "INVALID Entity_kind");
+}
+
+
 
 // Parallel status of entity
 /// The parallel type of a given entity.
@@ -95,6 +125,25 @@ enum Entity_type {
   BOUNDARY_GHOST = 3,   /*!< Ghost/Virtual entity on boundary */
   ALL  = 4              /*!< PARALLEL_OWNED + PARALLEL_GHOST + BOUNDARY_GHOST */
 };
+constexpr int NUM_ENTITY_TYPE = 6;
+
+// Method to get Entity_type in string form
+inline std::string to_string(Entity_type enttype) {
+  static const std::string type2string[NUM_ENTITY_TYPE] =
+    {"Entity_type::TYPE_UNKNOWN",
+     "Entity_type::DELETED",
+     "Entity_type::PARALLEL_OWNED",
+     "Entity_type::PARALLEL_GHOST",
+     "Entity_type::BOUNDARY_GHOST",
+     "Entity_type::ALL"};
+
+  int itype = static_cast<int>(enttype)+1;
+  return ((itype >= 0 && itype < NUM_ENTITY_TYPE) ? type2string[itype] :
+          "INVALID Entity_type");
+}
+
+
+
 
 /// Element (cell topology) type
 enum Element_type {
@@ -108,6 +157,27 @@ enum Element_type {
   HEX,
   POLYHEDRON
 };
+constexpr int NUM_ELEMENT_TYPE = 9;
+
+// Method to get Element_type in string form
+inline std::string to_string(Element_type elemtype) {
+  static const std::string type2string[NUM_ELEMENT_TYPE] =
+    {"Element_type::UNKNOWN_TOPOLOGY",
+     "Element_type::TRI",
+     "Element_type::QUAD",
+     "Element_type::POLYGON",
+     "Element_type::TET",
+     "Element_type::PRISM",
+     "Element_type::PYRAMID",
+     "Element_type::HEX",
+     "Element_type::POLYHEDRON"};
+
+  int itype = static_cast<int>(elemtype)+1;
+  return ((itype >= 0 && itype < NUM_ELEMENT_TYPE) ? type2string[itype] :
+          "INVALID Element_type");
+}
+
+
 
 /// Field type - whether it is mesh field or multi-material field
 enum class Field_type {
@@ -115,11 +185,35 @@ enum class Field_type {
   MESH_FIELD,
   MULTIMATERIAL_FIELD
 };
+constexpr int NUM_FIELD_TYPE = 3;
+
+inline std::string to_string(Field_type field_type) {
+  static const std::string type2string[NUM_FIELD_TYPE] =
+    {"Field_type::UNKNOWN_TYPE_FIELD",
+     "Field_type::MESH_FIELD",
+     "Field_type::MULTIMATERIAL_FIELD"};
+
+  int itype = static_cast<int>(field_type)+1;
+  return ((itype >= 0 && itype < NUM_FIELD_TYPE) ? type2string[itype] :
+          "INVALID FIELD TYPE");
+}
+
 
 /// Layout of 2D input data to state - CELL_CENTRIC means the first
 /// index is the cell and the second is the material; MATERIAL_CENTRIC
 /// means the first index is the material and the second is the cell
 enum class Data_layout {CELL_CENTRIC, MATERIAL_CENTRIC};
+constexpr int NUM_DATA_LAYOUT = 2;
+
+inline std::string to_string(Data_layout layout) {
+  static const std::string type2string[NUM_DATA_LAYOUT] =
+    {"Data_layout::CELL_CENTRIC", "Data_layout::MATERIAL_CENTRIC"};
+
+  int itype = static_cast<int>(layout)+1;
+  return ((itype >= 0 && itype < NUM_DATA_LAYOUT) ? type2string[itype] :
+          "INVALID DATA LAYOUT");
+}
+
 
 
 /// Executor definition that lets us distinguish between serial and
@@ -221,6 +315,16 @@ struct Weights_t {
 };
 
 inline double pow2(double x) { return x*x; }
+
+
+// Convert from some Portage types to MPI types
+#ifdef WONTON_ENABLE_MPI
+template<typename T> MPI_Datatype to_MPI_Datatype();
+template<> inline MPI_Datatype to_MPI_Datatype<GID_t>() {
+   return (sizeof(GID_t) == 8 ? MPI_LONG_LONG : MPI_INT);
+}
+#endif
+
 
 }  // namespace Wonton
 

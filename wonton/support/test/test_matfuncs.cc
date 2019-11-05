@@ -158,12 +158,16 @@ TEST(Matrix, SolveWithInverse) {
                      {0, 1.1, 2.3, -3.0},
                      {-2, 1, -1, 2}});
 
+  ASSERT_EQ(A.is_singular(), 0);
+
   Wonton::Matrix B({{-0.7296116504854356, -1.313592233009709},
          {13.111650485436888,-1.207766990291261},
       {-27.286407766990273, 1.1242718446601963},
      {-19.37864077669902, 2.9524271844660195}});
 
   Wonton::Matrix AinvB = A.solve(B);
+
+  ASSERT_EQ(A.is_singular(), 1);
 
   Wonton::Matrix AinvB_expected({{5.530888867942306, -1.2175181449712502},
     {-49.705372796682, 3.2958148741634483},
@@ -174,6 +178,49 @@ TEST(Matrix, SolveWithInverse) {
     for (int j = 0; j < B.columns(); ++j)
       ASSERT_NEAR(AinvB_expected[i][j], AinvB[i][j], 1.0e-6);
 
+  Wonton::Matrix AinvB2 = A.solve(B,"inverse");
+  for (int i = 0; i < B.rows(); ++i)
+    for (int j = 0; j < B.columns(); ++j)
+      ASSERT_EQ(AinvB2[i][j], AinvB[i][j]);
+
+  std::string error="check";
+  Wonton::Matrix AinvB3 = A.solve(B,"inverse",error);
+  for (int i = 0; i < B.rows(); ++i)
+    for (int j = 0; j < B.columns(); ++j)
+      ASSERT_EQ(AinvB3[i][j], AinvB[i][j]);
+  ASSERT_STREQ(error.c_str(), "none");
+
+  Wonton::Matrix C({{1, 2.5, -1, 3.0},
+                     {0, 1, -2, 1.0},
+                     {0, 0, 0, -3.0},
+                     {0, 0, 0, 2}});
+
+  Wonton::Matrix D=C, E;
+  E = C.inverse();
+  ASSERT_EQ(C.is_singular(), 2);
+
+  C = D;
+  ASSERT_EQ(C.is_singular(), 0);
+
+  C = D;
+  E = C.inverse();
+  C[3][3] = 1.0;
+  ASSERT_EQ(C.is_singular(), 0);
+
+  C = D;
+  E = C.inverse();
+  C *= 1.4;
+  ASSERT_EQ(C.is_singular(), 0);
+
+  C = D;
+  E = C.inverse();
+  C += D;
+  ASSERT_EQ(C.is_singular(), 0);
+
+  C = D;
+  E = C.inverse();
+  C -= D;
+  ASSERT_EQ(C.is_singular(), 0);
 }
 
 /*!

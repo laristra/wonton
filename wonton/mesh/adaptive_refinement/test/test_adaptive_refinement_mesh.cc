@@ -58,7 +58,7 @@ void run_basic_tests(double lo1, double hi1) {
                                    // specialization, rather than an automatic
                                    // specialization of the template.
   ASSERT_EQ(id_list.size(), box_list.size());
-  for (int n = 0; n < id_list.size(); ++n) {
+  for (unsigned n = 0; n < id_list.size(); ++n) {
     auto bounds = mesh.cell_get_bounds(id_list[n]);
     auto expected = box_list[n];
     for (int d = 0; d < D; ++d) {
