@@ -77,17 +77,25 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   if (method == "inverse") {
     auto inverse = this->inverse();
     X = inverse*B;
-    
+
+    if (error != "ignore") {
+      if (is_singular_ == 2) error = "matrix is singular";
+      else                   error = "none";
+    }
   }
 #ifdef HAVE_LAPACKE    
   else if (method == "lapack-posv") {  // LAPACK positive-definite matrix
     
     // check symmetric
     bool symm = true;
-    for (size_t i=0; i<Rows_; i++) for (size_t j=i; j<Columns_; j++) {
+    for (int i=0; i < Rows_; i++) {
+      for (int j = i; j < Columns_; j++) {
         symm = symm and ((*this)[i][j] - (*this)[j][i]) < 1.e-13;
       }
-    if (not symm) std::cerr << "solve(dposv): matrix is not symmetric" << std::endl;
+    }
+
+    if (not symm)
+      std::cerr << "solve(dposv): matrix is not symmetric" << std::endl;
     assert(symm);
     
     // setup
@@ -150,14 +158,18 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
         error = 
 	    std::string("solve(posv): reciprocal condition number is less than machine precision");
       }
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
 
   } else if (method == "lapack-sysv") {  // LAPACK symmetric matrix
     // check symmetric
     bool symm = true;
-    for (size_t i=0; i<Rows_; i++) for (size_t j=i; j<Columns_; j++) {
+    for (int i=0; i < Rows_; i++) {
+      for (int j = i; j < Columns_; j++) {
         symm = symm and ((*this)[i][j] - (*this)[j][i]) < 1.e-13;
       }
+    }
     if (not symm) std::cerr << "solve(dposv): matrix is not symmetric" << std::endl;
     assert(symm);
     
@@ -218,7 +230,10 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (info == n+1) {
         error = 
 	    std::string("solve(sysv): reciprocal condition number is less than machine precision");
+        is_singular_ = 2;
       }
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
     
   } else if (method == "lapack-gesv") {  // LAPACK general matrix
@@ -288,17 +303,24 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (info == n+1) {
         error = 
 	    std::string("solve(gesv): reciprocal condition number is less than machine precision");
+        is_singular_ = 2;
       } 
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
     
   } else if (method == "lapack-sytr") {  // LAPACK symmetric matrix
     
     // check symmetric
     bool symm = true;
-    for (size_t i=0; i<Rows_; i++) for (size_t j=i; j<Columns_; j++) {
+    for (int i=0; i < Rows_; i++) {
+      for (int j=i; j < Columns_; j++) {
         symm = symm and ((*this)[i][j] - (*this)[j][i]) < 1.e-13;
       }
-    if (not symm) std::cerr << "solve(sytr): matrix is not symmetric" << std::endl;
+    }
+
+    if (not symm)
+      std::cerr << "solve(sytr): matrix is not symmetric" << std::endl;
     assert(symm);
     
     // setup
@@ -339,6 +361,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
         error = std::string("solve(sytr): diagonal entry ")+infoword.str()+" is zero";
         skip = true;
       }
+      if (error != "none") is_singular_ = 2;
+      else                 is_singular_ = 1;
     }
     
     // solve it
@@ -352,6 +376,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
           infoword<<-info;
           error = std::string("solve(sytr): illegal value in ")+infoword.str()+"-th position";
         }
+        if (error != "none") is_singular_ = 2;
+        else                 is_singular_ = 1;
       }
     }
     

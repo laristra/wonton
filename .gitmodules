@@ -1,6 +1,6 @@
 [submodule "cinch"]
 	path = cinch
-	url = ssh://xcp-stash.lanl.gov:7999/laristra/cinch
+	url = ../../laristra/cinch.git
 [submodule "wonton/intersect/r3d"]
 	path = wonton/intersect/r3d
-	url = https://github.com/devonmpowell/r3d.git
+	url = ../../laristra/r3d.git

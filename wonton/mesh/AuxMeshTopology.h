@@ -386,6 +386,38 @@ class AuxMeshTopology {
   }
 
   /*!
+    @brief Get the list of cell IDs for all cells attached to a specific
+    cell through its faces.
+    @param[in] cellid The ID of the cell.
+    @param[in] ptype The Entity_type (e.g. PARALLEL_OWNED)
+    @param[out] adjcells The list of cell IDs for all cells attached to
+    cell @c cellid through its faces, excluding @c cellid. The order of cells
+    is consistent with the order of respective interfaces returned by 
+    cell_get_faces_and_dirs, but all the boundary faces are skipped.
+   */
+  void cell_get_face_adj_cells(int const cellid,
+                               Entity_type const ptype,
+                               std::vector<int> *adjcells) const {
+    adjcells->clear();
+
+    // Find the faces attached to this cell
+    std::vector<int> cellfaces, cfdirs;
+    basicmesh_ptr_->cell_get_faces_and_dirs(cellid, &cellfaces, &cfdirs);
+
+    // Loop over these faces and find the cells on the other side
+    for (auto const& f : cellfaces) {
+      std::vector<int> facecells;
+      basicmesh_ptr_->face_get_cells(f, ptype, &facecells);
+
+      // Interfaces we need are always connected to two cells
+      if (facecells.size() == 2) {
+        int iac = (facecells[0] == cellid) ? 1 : 0;
+        adjcells->push_back(facecells[iac]);
+      }
+    }
+  }  // cell_get_face_adj_cells
+
+  /*!
     @brief Get the list of node IDs for all nodes attached to all cells
     attached to a specific node.
     @param[in] nodeid The ID of the node.
@@ -1662,10 +1694,6 @@ void build_sides_1D(AuxMeshTopology<BasicMesh>& mesh) {
   mesh.cell_side_ids_.clear();
   mesh.cell_side_ids_.resize(ncells);
   
-  int nnodes_owned = mesh.basicmesh_ptr_->num_owned_nodes();
-  int nnodes_ghost = mesh.basicmesh_ptr_->num_ghost_nodes();
-  int nnodes = nnodes_owned + nnodes_ghost;
-  
   int num_sides_all = 2*ncells;
   mesh.num_sides_owned_ = 2*ncells_owned;
   mesh.num_sides_ghost_ = 2*ncells_ghost;
@@ -1947,9 +1975,6 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh) {
 
 template<typename BasicMesh>
 void AuxMeshTopology<BasicMesh>::build_wedges() {
-  int ncells_owned = basicmesh_ptr_->num_owned_cells();
-  int ncells_ghost = basicmesh_ptr_->num_ghost_cells();
-  int ncells = ncells_owned + ncells_ghost;
 
   int nsides_owned = num_sides_owned_;
   int nsides_ghost = num_sides_ghost_;
@@ -2026,7 +2051,7 @@ void AuxMeshTopology<BasicMesh>::build_corners() {
   corner_node_id_.resize(num_corners_all);
 
   int cornerid = 0;
-  int iown = 0, ighost = 0, ibndry = 0;
+  int iown = 0, ighost = 0;
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> cnodes;
     basicmesh_ptr_->cell_get_nodes(c, &cnodes);

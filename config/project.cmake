@@ -200,6 +200,9 @@ else (LAPACKE_DIR)
 endif (LAPACKE_DIR)
 
 if (LAPACKE_FOUND)
+  enable_language(Fortran)
+  include(FortranCInterface)  # will ensure the fortran library is linked in
+  
   include_directories(${LAPACKE_INCLUDE_DIRS})
   add_definitions("-DHAVE_LAPACKE")
 
@@ -269,9 +272,12 @@ include_directories(${CMAKE_BINARY_DIRECTORY})
 # Libraries
 
 cinch_add_library_target(wonton wonton)
-# TODO - merge LAPACKE_LIBRARIES into WONTON_LIBRARIES
-cinch_target_link_libraries(wonton ${WONTON_LIBRARIES})
 cinch_target_link_libraries(wonton ${LAPACKE_LIBRARIES})
+
+# Application directory
+
+cinch_add_application_directory(app)
+
 
 
 # build the WONTON_LIBRARIES variable
@@ -286,9 +292,9 @@ get_directory_property(WONTON_COMPILE_DEFINITIONS DIRECTORY ${CMAKE_SOURCE_DIR} 
 # WONTON was built and which TPLs it used
 #############################################################################
 
-configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton_config.cmake.in 
-  ${PROJECT_BINARY_DIR}/wonton_config.cmake @ONLY)
-install(FILES ${PROJECT_BINARY_DIR}/wonton_config.cmake 
+configure_file(${PROJECT_SOURCE_DIR}/cmake/wonton-config.cmake.in 
+  ${PROJECT_BINARY_DIR}/wonton-config.cmake @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton-config.cmake 
   DESTINATION ${CMAKE_INSTALL_PREFIX}/share/cmake/)
 
 

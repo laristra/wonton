@@ -51,9 +51,9 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
                                bool request_sides = true,
                                bool request_wedges = true,
                                bool request_corners = true) :
-  mesh_(mesh),
-      AuxMeshTopology<Simple_Mesh_Wrapper>(request_sides, request_wedges,
-                                           request_corners) {
+      AuxMeshTopology<Simple_Mesh_Wrapper>(
+        request_sides, request_wedges, request_corners),
+      mesh_(mesh) {
     AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities();
   }  // explicit constructor
 
@@ -64,7 +64,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
   Simple_Mesh_Wrapper & operator=(Simple_Mesh_Wrapper const & inmesh) = delete;
 
   /// Destructor
-  ~Simple_Mesh_Wrapper() {}
+  ~Simple_Mesh_Wrapper() = default;
 
   //////////////////////////////////////////////////////////////////////
   // The following methods are needed somewhere within AuxMeshTopology

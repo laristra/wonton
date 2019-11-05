@@ -38,7 +38,7 @@ TEST(Direct_Product_Mesh, SingleCell3D) {
 
   // Cell counts
   for (int d = 0; d < D; ++d) {
-    ASSERT_EQ(mesh.num_axis_points(d), axis_points1.size());
+    ASSERT_EQ(mesh.num_axis_points(d), (int) axis_points1.size());
   }
 
   // Cell coordinates
@@ -70,7 +70,7 @@ TEST(Direct_Product_Mesh, SmallGrid2D) {
 
   // Cell counts
   for (int d = 0; d < D; ++d) {
-    ASSERT_EQ(mesh.num_axis_points(d), axis_points1.size());
+    ASSERT_EQ(mesh.num_axis_points(d), (int) axis_points1.size());
   }
 
   // Cell coordinates
@@ -102,7 +102,7 @@ TEST(Direct_Product_Mesh, SmallGrid1D) {
   ASSERT_EQ(mesh.space_dimension(), D);
 
   // Cell counts
-  ASSERT_EQ(mesh.num_axis_points(0), axis_points1.size());
+  ASSERT_EQ(mesh.num_axis_points(0), (int) axis_points1.size());
 
   // Cell coordinates
   for (int d = 0; d < D; ++d) {

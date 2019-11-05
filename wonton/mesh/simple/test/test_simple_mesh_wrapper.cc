@@ -96,7 +96,7 @@ TEST(Simple_Mesh, OneCell) {
     mesh_wrapper.node_get_cell_adj_nodes(i,
                                          Wonton::Entity_type::PARALLEL_OWNED,
                                          &adjnodes);
-    ASSERT_EQ(adjnodes.size(), 7);
+    ASSERT_EQ((int) adjnodes.size(), 7);
   }
 
   // Check for cells adjacent to this cell; adjacency determined from
@@ -106,7 +106,7 @@ TEST(Simple_Mesh, OneCell) {
   mesh_wrapper.cell_get_node_adj_cells(0,
                                        Wonton::Entity_type::PARALLEL_OWNED,
                                        &adjcells);
-  ASSERT_EQ(adjcells.size(), 0);
+  ASSERT_EQ((int) adjcells.size(), 0);
 
   // Get the tet decomposition of the cell (ask for general cell
   // decomposition with and without using the fact that its a planar
@@ -395,7 +395,7 @@ TEST(Simple_Mesh, MultiCell) {
     mesh_wrapper.node_get_cell_adj_nodes(i,
                                          Wonton::Entity_type::PARALLEL_OWNED,
                                          &adjNodes);
-    ASSERT_EQ(adjExpectedNumNodes, adjNodes.size());
+    ASSERT_EQ(adjExpectedNumNodes, (int) adjNodes.size());
 
     for (int j(0); j < adjExpectedNumNodes; ++j)
       ASSERT_EQ(adjExpectedNodes[i][j], adjNodes[j]);
@@ -409,7 +409,7 @@ TEST(Simple_Mesh, MultiCell) {
     mesh_wrapper.cell_get_node_adj_cells(i,
                                          Wonton::Entity_type::PARALLEL_OWNED,
                                          &adjCells);
-    ASSERT_EQ(expectedNumAdjCells, adjCells.size());
+    ASSERT_EQ(expectedNumAdjCells, (int) adjCells.size());
   }
 }
 
@@ -448,10 +448,10 @@ TEST(Simple_Mesh, AdjCell) {
   std::vector<int> adjCells;
   for (int i(0); i < ncells; ++i) {
     int expectedNumAdjCells = expectedAdjCells[i].size();
-    mesh_wrapper.cell_get_node_adj_cells(i,
-                                         Wonton::Entity_type::PARALLEL_OWNED,
-                                         &adjCells);
-    ASSERT_EQ(expectedNumAdjCells, adjCells.size());
+    mesh_wrapper.cell_get_node_adj_cells(
+      i, Wonton::Entity_type::PARALLEL_OWNED, &adjCells);
+    ASSERT_EQ(expectedNumAdjCells, (int) adjCells.size());
+
     for (int j(0); j < expectedNumAdjCells; ++j)
       ASSERT_EQ(expectedAdjCells[i][j], adjCells[j]);
   }
