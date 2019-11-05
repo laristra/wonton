@@ -303,6 +303,8 @@ std::vector<double> Polytope<2>::moments() const {
   poly_moments[0] /= 2.0;  
   for (int ixy = 0; ixy < 2; ixy++)
     poly_moments[ixy + 1] /= 6.0;
+
+  return poly_moments;
 }
 
 /*!
@@ -356,6 +358,8 @@ std::vector<double> Polytope<3>::moments() const {
   poly_moments[0] /= 6.0;
   for (int ixyz = 0; ixyz < 3; ixyz++)
     poly_moments[ixyz + 1] /= 48.0;
+
+  return poly_moments;
 }
 
 
