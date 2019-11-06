@@ -31,11 +31,11 @@ namespace Wonton {
 
   // Because C++ never bothered to define pi for some bizarre reason
   namespace CoordinateSystems {
-    // Ensure we have pi to double precision
-    double const minus_one = -1.0;
-    double const pi = acos(minus_one);
-    double const twopi = 2.0 * pi;
-    double const fourpi = 2.0 * pi;
+    // atan, acos, and similar are not (by the standard) constexpr, so we can't use them to define
+    // constexpr values for pi
+    constexpr double pi = 3.141592653589793238462643383279502884L;
+    constexpr double twopi = 2.0 * pi;
+    constexpr double fourpi = 2.0 * pi;
   }
 
 // ============================================================================
