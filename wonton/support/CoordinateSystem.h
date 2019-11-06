@@ -97,6 +97,9 @@ struct CartesianCoordinates {
     }
   }
 
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 0;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
@@ -169,6 +172,9 @@ struct CylindricalRadialCoordinates {
     moments[0] *= inv_geo_fac;
   }
 
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
@@ -181,13 +187,12 @@ struct CylindricalRadialCoordinates {
     auto order = std::get<0>(top_moment) - 1;
     std::vector<double> new_moments(count_moments<D>(order));
     // Shift moments
-    int const shift = 1;
     for (int old_index = 0; old_index < moments.size(); old_index++) {
       int order;
       std::array<int,D> exponents;
       std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += shift;
-      exponents[0] += shift;
+      order += moment_shift;
+      exponents[0] += moment_shift;
       auto new_index = moment_to_index<D>(order, exponents);
       new_moments[new_index] = moments[old_index];
     }
@@ -264,6 +269,9 @@ struct CylindricalAxisymmetricCoordinates {
     }
   }
 
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
@@ -276,13 +284,12 @@ struct CylindricalAxisymmetricCoordinates {
     auto order = std::get<0>(top_moment) - 1;
     std::vector<double> new_moments(count_moments<D>(order));
     // Shift moments
-    int const shift = 1;
     for (int old_index = 0; old_index < moments.size(); old_index++) {
       int order;
       std::array<int,D> exponents;
       std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += shift;
-      exponents[0] += shift;
+      order += moment_shift;
+      exponents[0] += moment_shift;
       auto new_index = moment_to_index<D>(order, exponents);
       new_moments[new_index] = moments[old_index];
     }
@@ -356,6 +363,9 @@ struct CylindricalPolarCoordinates {
     }
   }
 
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
@@ -368,13 +378,12 @@ struct CylindricalPolarCoordinates {
     auto order = std::get<0>(top_moment) - 1;
     std::vector<double> new_moments(count_moments<D>(order));
     // Shift moments
-    int const shift = 1;
     for (int old_index = 0; old_index < moments.size(); old_index++) {
       int order;
       std::array<int,D> exponents;
       std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += shift;
-      exponents[0] += shift;
+      order += moment_shift;
+      exponents[0] += moment_shift;
       auto new_index = moment_to_index<D>(order, exponents);
       new_moments[new_index] = moments[old_index];
     }
@@ -449,6 +458,9 @@ struct Cylindrical3DCoordinates {
     }
   }
 
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
@@ -461,13 +473,12 @@ struct Cylindrical3DCoordinates {
     auto order = std::get<0>(top_moment) - 1;
     std::vector<double> new_moments(count_moments<D>(order));
     // Shift moments
-    int const shift = 1;
     for (int old_index = 0; old_index < moments.size(); old_index++) {
       int order;
       std::array<int,D> exponents;
       std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += shift;
-      exponents[0] += shift;
+      order += moment_shift;
+      exponents[0] += moment_shift;
       auto new_index = moment_to_index<D>(order, exponents);
       new_moments[new_index] = moments[old_index];
     }
@@ -542,6 +553,9 @@ struct SphericalRadialCoordinates {
     }
   }
 
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 2;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
@@ -554,13 +568,12 @@ struct SphericalRadialCoordinates {
     auto order = std::get<0>(top_moment) - 1;
     std::vector<double> new_moments(count_moments<D>(order));
     // Shift moments
-    int const shift = 2;
     for (int old_index = 0; old_index < moments.size(); old_index++) {
       int order;
       std::array<int,D> exponents;
       std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += shift;
-      exponents[0] += shift;
+      order += moment_shift;
+      exponents[0] += moment_shift;
       auto new_index = moment_to_index<D>(order, exponents);
       new_moments[new_index] = moments[old_index];
     }
@@ -652,6 +665,9 @@ struct Spherical3DCoordinates {
       moments[d] *= inv_geo_fac;
     }
   }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  static constexpr int moment_shift = 2;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
