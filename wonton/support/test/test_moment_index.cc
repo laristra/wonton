@@ -4,6 +4,8 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/portage/blob/master/LICENSE
 */
 
+#include <numeric>
+
 #include "gtest/gtest.h"
 
 #include "wonton/support/moment_index.h"

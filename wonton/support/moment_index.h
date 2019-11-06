@@ -9,6 +9,7 @@ Please see the license file at the root of this repository, or at:
 #include <array>
 #include <cassert>
 #include <cmath>
+#include <numeric>
 #include <utility>
 
 //! This file contains convenience functions to help extract moments from the
