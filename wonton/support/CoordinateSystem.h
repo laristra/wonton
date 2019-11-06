@@ -73,14 +73,13 @@ struct CartesianCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
-    auto volume = vol0 * inv_geo_fac;
-    return volume;
+    volume *= inv_geo_fac;
   }
 
   /// Modify moments to account for the coordinate system
@@ -139,14 +138,13 @@ struct CylindricalRadialCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
-    auto volume = CoordinateSystems::twopi * mean_radius * vol0;
+    volume *= CoordinateSystems::twopi * mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -206,14 +204,13 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
-    auto volume = CoordinateSystems::twopi * mean_radius * vol0;
+    volume *= CoordinateSystems::twopi * mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -274,14 +271,13 @@ struct CylindricalPolarCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
-    auto volume = mean_radius * vol0;
+    volume *= mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -341,14 +337,13 @@ struct Cylindrical3DCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
-    auto volume = mean_radius * vol0;
+    volume *= mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -410,16 +405,14 @@ struct SphericalRadialCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (plo[0] + phi[0]);
     dr_2 = 0.5 * (phi[0] - plo[0]);
-    auto volume = CoordinateSystems::fourpi *
-      (rbar*rbar + dr_2*dr_2/3.0) * vol0;
+    volume *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2/3.0);
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -480,7 +473,7 @@ struct Spherical3DCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static constexpr double modify_volume(double const vol0,
+  static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (plo[0] + phi[0]);
@@ -489,10 +482,9 @@ struct Spherical3DCoordinates {
     dtheta_2 = 0.5 * (phi[1] - plo[1]);
     sin_tb  = sin(thetabar);
     sinc_dt = sin(dtheta_2) / dtheta_2;
-    auto volume *= (rbar*rbar + dr_2*dr_2/3.0) * (sin_tb * sinc_dt) * vol0;
+    volume *= (rbar*rbar + dr_2*dr_2/3.0) * (sin_tb * sinc_dt);
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return volume;
   }
 
   /// Modify moments to account for the coordinate system
