@@ -228,14 +228,14 @@ Vector<2> Polytope<2>::face_normal(int const face_id) const {
   int nfaces = num_faces();
   assert((face_id >= 0) && (face_id < nfaces));
 
-  int ifn = face_id, isn = (face_id + 1)%nfaces;
-  double flen = (vertex_points_[isn] - vertex_points_[ifn]).norm();
+  int ifv = face_id, isv = (face_id + 1)%nfaces;
+  double flen = (vertex_points_[isv] - vertex_points_[ifv]).norm();
   if (flen == 0.0)
     return Vector<2>(0.0, 0.0);
 
   Vector<2> fnormal(
-    (vertex_points_[isn][1] - vertex_points_[ifn][1])/flen,
-    -(vertex_points_[isn][0] - vertex_points_[isn][0])/flen);
+    (vertex_points_[isv][1] - vertex_points_[ifv][1])/flen,
+    -(vertex_points_[isv][0] - vertex_points_[isv][0])/flen);
 
   return fnormal;
 }
@@ -273,9 +273,10 @@ Vector<3> Polytope<3>::face_normal(int const face_id) const {
     fcentroid[ixyz] = fmoments[ixyz + 1]/fmoments[0];
 
   for (int ivrt = 0; ivrt < nfvrts; ivrt++) {
+    int ifv = fvertices[ivrt], isv = fvertices[(ivrt + 1)%nfvrts];
     Vector<3> tri_normal = cross(
-      vertex_points_[fvertices[(ivrt + 1)%nfvrts]] - vertex_points_[fvertices[ivrt]], 
-      fcentroid - vertex_points_[fvertices[ivrt]]);
+      vertex_points_[isv] - vertex_points_[ifv], 
+      fcentroid - vertex_points_[ifv]);
     fnormal += tri_normal;
   }
   fnormal /= fmoments[0];
@@ -295,12 +296,13 @@ std::vector<double> Polytope<2>::moments() const {
   int nvrts = num_vertices();
 
   for (int ivrt = 0; ivrt < nvrts; ivrt++) {
-    double cur_term = vertex_points_[ivrt][0]*vertex_points_[(ivrt + 1)%nvrts][1] - 
-                      vertex_points_[ivrt][1]*vertex_points_[(ivrt + 1)%nvrts][0];
+    int ifv = ivrt, isv = (ivrt + 1)%nvrts;
+    double cur_term = vertex_points_[ifv][0]*vertex_points_[isv][1] - 
+                      vertex_points_[ifv][1]*vertex_points_[isv][0];
     poly_moments[0] += cur_term;
     for (int ixy = 0; ixy < 2; ixy++)
       poly_moments[ixy + 1] += cur_term*(
-        vertex_points_[ivrt][ixy] + vertex_points_[(ivrt + 1)%nvrts][ixy]);
+        vertex_points_[ifv][ixy] + vertex_points_[isv][ixy]);
   }
   poly_moments[0] /= 2.0;  
   for (int ixy = 0; ixy < 2; ixy++)
@@ -350,9 +352,11 @@ std::vector<double> Polytope<3>::moments() const {
 
       poly_moments[0] += dot(vcp, face_pts[point[0]].asV());
       for (int ixyz = 0; ixyz < 3; ixyz++) {
-        for (int ivrt = 0; ivrt < 3; ivrt++)
-          poly_moments[ixyz + 1] += vcp[ixyz]*pow(face_pts[point[ivrt]][ixyz] +
-                                                  face_pts[point[(ivrt + 1)%3]][ixyz], 2);
+        for (int ivrt = 0; ivrt < 3; ivrt++) {
+          int ifv = point[ivrt], isv = point[(ivrt + 1)%3];
+          poly_moments[ixyz + 1] += vcp[ixyz]*pow(face_pts[ifv][ixyz] +
+                                                  face_pts[isv][ixyz], 2);
+        }
       }
     }
   }
