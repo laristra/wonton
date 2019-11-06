@@ -62,7 +62,8 @@ public:
 
   /*!
     @brief Indices of vertices of the polytope's face
-    in counter-clockwise order
+    in counter-clockwise order (i.e. so that the normal
+    to the face is pointing outside of the polytope)
     @param face_id  ID of the face of the polytope
     @return  Vector of indices of the face's vertices
   */
@@ -73,7 +74,8 @@ public:
   
   /*!
     @brief Coordinates of vertices of the polytope's face
-    in counter-clockwise order
+    in counter-clockwise order (i.e. so that the normal
+    to the face is pointing outside of the polytope)
     @param face_id  ID of the face of the polytope
     @return  Vector of coordinates of face's vertices
   */
