@@ -84,17 +84,15 @@ struct CartesianCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
-    auto moments = mom0;
     for (int d = 0; d < D; ++d) {
-      moments[d] * inv_geo_fac;
+      moments[d] *= inv_geo_fac;
     }
-    return moments;
   }
 
 };  // Cartesian Coordinates
@@ -149,17 +147,15 @@ struct CylindricalRadialCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
     moments[0] *= CoordinateSystem::twopi *
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     // Apply geometry factor
     moments[0] *= inv_geo_fac;
-    return moments;
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -215,12 +211,11 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
     moments[0] *= CoordinateSystems::twopi *
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     moments[1] *= CoordinateSystems::twopi * rhobar;
@@ -228,7 +223,6 @@ struct CylindricalAxisymmetricCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return moments;
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -282,19 +276,17 @@ struct CylindricalPolarCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
     moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     moments[1] *= rhobar;
     // Apply geometry factor
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return moments;
   }
 
 };  // Cylindrical Polar Coordinates
@@ -348,12 +340,11 @@ struct Cylindrical3DCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
     drho_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
     moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     moments[1] *= rhobar;
     moments[2] *= rhobar;
@@ -361,7 +352,6 @@ struct Cylindrical3DCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return moments;
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -417,18 +407,16 @@ struct SphericalRadialCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
     dr_2 = 0.5 * (phi[0] - plo[0]);
-    auto moments = mom0;
     moments[0] *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2);
     // Apply geometry factor
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return moments;
   }
 
 };  // Spherical (Radial) Coordinates
@@ -489,7 +477,7 @@ struct Spherical3DCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static constexpr Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
@@ -505,7 +493,6 @@ struct Spherical3DCoordinates {
     cosc_tb = cos(thetabar) / thetabar;
     cos_dt  = cos(dtheta_2);
     ss1 = sin_tb * sinc_dt;
-    auto moments = mom0;
     moments[0] *= rr1 * ss1;
     moments[1] *= rr2 * (ss1 + cosc_tb * (sinc_dt - cos_dt));
     moments[2] *= rr2 * ss1;
@@ -513,7 +500,6 @@ struct Spherical3DCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return moments;
   }
 
 };  // Spherical (3D) Coordinates
