@@ -73,6 +73,30 @@ namespace Portage {
 
   // ==========================================================================
 
+  //! Count the number of moments up to specified order
+  //! @param[in] order  The order up to which to count the moments (inclusive)
+  template<int D>
+  int count_moments(int const order) {
+      static_assert(false, "\"count_moments\" only works in 1, 2, or 3D");
+  }
+
+  template<>
+  int count_moments<3>(int const order) {
+      return (order+3) * (order+2) * (order+1) / 6;
+  }
+
+  template<>
+  int count_moments<2>(int const order) {
+      return (order+2) * (order+1) / 2;
+  }
+
+  template<>
+  int count_moments<1>(int const order) {
+      return order+1;
+  }
+
+  // ==========================================================================
+
   //! Convert from index to moment specification
   //! @param[in]  index  Index in moment list
   template<int D>

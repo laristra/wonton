@@ -29,14 +29,14 @@ Please see the license file at the root of this repository, or at:
 
 namespace Wonton {
 
-  // Because C++ never bothered to define pi for some bizarre reason
-  namespace CoordinateSystems {
-    // atan, acos, and similar are not (by the standard) constexpr, so we can't
-    // use them to define constexpr values for pi
-    constexpr double pi = 3.141592653589793238462643383279502884L;
-    constexpr double twopi = 2.0 * pi;
-    constexpr double fourpi = 2.0 * pi;
-  }
+// Because C++ never bothered to define pi for some bizarre reason
+namespace CoordinateSystems {
+  // atan, acos, and similar are not (by the standard) constexpr, so we can't
+  // use them to define constexpr values for pi
+  constexpr double pi = 3.141592653589793238462643383279502884L;
+  constexpr double twopi = 2.0 * pi;
+  constexpr double fourpi = 2.0 * pi;
+}
 
 // ============================================================================
 /// Cartesian Coordinates
@@ -72,6 +72,7 @@ struct CartesianCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -83,6 +84,7 @@ struct CartesianCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -93,6 +95,13 @@ struct CartesianCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> const & moments) {
+    // No change from "standard", Cartesian-like calculation.
   }
 
 };  // Cartesian Coordinates
@@ -135,6 +144,7 @@ struct CylindricalRadialCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -146,6 +156,7 @@ struct CylindricalRadialCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -156,6 +167,32 @@ struct CylindricalRadialCoordinates {
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     // Apply geometry factor
     moments[0] *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> & moments) {
+    // Cylindrical coordinates include an extra factor of r, which reduces the
+    // order of available moments by one.
+
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto order = std::get<0>(top_moment) - 1;
+    std::vector<double> new_moments(count_moments<D>(order));
+    // Shift moments
+    int const shift = 1;
+    for (int old_index = 0; old_index < moments.size(); old_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(old_index);
+      order += shift;
+      exponents[0] += shift;
+      auto new_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -199,6 +236,7 @@ struct CylindricalAxisymmetricCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -210,6 +248,7 @@ struct CylindricalAxisymmetricCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -223,6 +262,32 @@ struct CylindricalAxisymmetricCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> & moments) {
+    // Cylindrical coordinates include an extra factor of r, which reduces the
+    // order of available moments by one.
+
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto order = std::get<0>(top_moment) - 1;
+    std::vector<double> new_moments(count_moments<D>(order));
+    // Shift moments
+    int const shift = 1;
+    for (int old_index = 0; old_index < moments.size(); old_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(old_index);
+      order += shift;
+      exponents[0] += shift;
+      auto new_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -264,6 +329,7 @@ struct CylindricalPolarCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -275,6 +341,7 @@ struct CylindricalPolarCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -287,6 +354,32 @@ struct CylindricalPolarCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> & moments) {
+    // Cylindrical coordinates include an extra factor of r, which reduces the
+    // order of available moments by one.
+
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto order = std::get<0>(top_moment) - 1;
+    std::vector<double> new_moments(count_moments<D>(order));
+    // Shift moments
+    int const shift = 1;
+    for (int old_index = 0; old_index < moments.size(); old_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(old_index);
+      order += shift;
+      exponents[0] += shift;
+      auto new_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
   }
 
 };  // Cylindrical Polar Coordinates
@@ -328,6 +421,7 @@ struct Cylindrical3DCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -339,6 +433,7 @@ struct Cylindrical3DCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -352,6 +447,32 @@ struct Cylindrical3DCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> & moments) {
+    // Cylindrical coordinates include an extra factor of r, which reduces the
+    // order of available moments by one.
+
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto order = std::get<0>(top_moment) - 1;
+    std::vector<double> new_moments(count_moments<D>(order));
+    // Shift moments
+    int const shift = 1;
+    for (int old_index = 0; old_index < moments.size(); old_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(old_index);
+      order += shift;
+      exponents[0] += shift;
+      auto new_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -394,6 +515,7 @@ struct SphericalRadialCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -406,6 +528,7 @@ struct SphericalRadialCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -417,6 +540,32 @@ struct SphericalRadialCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> & moments) {
+    // Spherical coordinates include an extra factor of r^2, which reduces the
+    // order of available moments by two.
+
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto order = std::get<0>(top_moment) - 1;
+    std::vector<double> new_moments(count_moments<D>(order));
+    // Shift moments
+    int const shift = 2;
+    for (int old_index = 0; old_index < moments.size(); old_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(old_index);
+      order += shift;
+      exponents[0] += shift;
+      auto new_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
   }
 
 };  // Spherical (Radial) Coordinates
@@ -460,6 +609,7 @@ struct Spherical3DCoordinates {
   }
 
   /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
@@ -476,6 +626,7 @@ struct Spherical3DCoordinates {
   }
 
   /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
   template<long D>
   static constexpr void modify_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
@@ -500,6 +651,16 @@ struct Spherical3DCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void modify_moments(std::vector<double> & moments) {
+    // Spherical coordinates include an extra factor of r^2 sin(theta), which
+    // cannot be managed by shifting moments.
+    static_assert(false, "The modify_moments method using the moment-shift "
+        "algorithm does not work in 3D spherical coordinates.");
   }
 
 };  // Spherical (3D) Coordinates
