@@ -62,7 +62,7 @@ struct CartesianCoordinates {
   static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
+    return gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -70,7 +70,7 @@ struct CartesianCoordinates {
   static constexpr Vector<D> modify_line_element(
       Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
+    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -82,7 +82,7 @@ struct CartesianCoordinates {
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
     auto volume = vol0 * inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -97,7 +97,7 @@ struct CartesianCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] * inv_geo_fac;
     }
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Cartesian Coordinates
@@ -130,7 +130,7 @@ struct CylindricalRadialCoordinates {
   static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
+    return gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -138,7 +138,7 @@ struct CylindricalRadialCoordinates {
   static constexpr Vector<D> modify_line_element(
       Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
+    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -150,7 +150,7 @@ struct CylindricalRadialCoordinates {
     auto volume = CoordinateSystems::twopi * mean_radius * vol0;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -165,7 +165,7 @@ struct CylindricalRadialCoordinates {
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     // Apply geometry factor
     moments[0] *= inv_geo_fac;
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -199,7 +199,7 @@ struct CylindricalAxisymmetricCoordinates {
   static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
+    return gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -207,7 +207,7 @@ struct CylindricalAxisymmetricCoordinates {
   static constexpr Vector<D> modify_line_element(
       Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
+    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -219,7 +219,7 @@ struct CylindricalAxisymmetricCoordinates {
     auto volume = CoordinateSystems::twopi * mean_radius * vol0;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -237,7 +237,7 @@ struct CylindricalAxisymmetricCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -270,7 +270,7 @@ struct CylindricalPolarCoordinates {
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
     new_gradient[1] /= reference_point[0];
-    return(std::move(new_gradient));
+    return new_gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -279,7 +279,7 @@ struct CylindricalPolarCoordinates {
       Vector<D> const & line_element, Point<D> const & reference_point) {
     auto new_line_element = line_element;
     new_line_element[1] *= reference_point[0];
-    return(std::move(new_line_element));
+    return new_line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -291,7 +291,7 @@ struct CylindricalPolarCoordinates {
     auto volume = mean_radius * vol0;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -308,7 +308,7 @@ struct CylindricalPolarCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Cylindrical Polar Coordinates
@@ -341,7 +341,7 @@ struct Cylindrical3DCoordinates {
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
     new_gradient[1] /= reference_point[0];
-    return(std::move(new_gradient));
+    return new_gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -350,7 +350,7 @@ struct Cylindrical3DCoordinates {
       Vector<D> const & line_element, Point<D> const & reference_point) {
     auto new_line_element = line_element;
     new_line_element[1] *= reference_point[0];
-    return(std::move(new_line_element));
+    return new_line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -362,7 +362,7 @@ struct Cylindrical3DCoordinates {
     auto volume = mean_radius * vol0;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -380,7 +380,7 @@ struct Cylindrical3DCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -413,7 +413,7 @@ struct SphericalRadialCoordinates {
   static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
+    return gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -421,7 +421,7 @@ struct SphericalRadialCoordinates {
   static constexpr Vector<D> modify_line_element(
       Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
+    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -435,7 +435,7 @@ struct SphericalRadialCoordinates {
       (rbar*rbar + dr_2*dr_2/3.0) * vol0;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -451,7 +451,7 @@ struct SphericalRadialCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Spherical (Radial) Coordinates
@@ -485,7 +485,7 @@ struct Spherical3DCoordinates {
     auto new_gradient = gradient;
     new_gradient[1] /= reference_point[0];
     new_gradient[2] /= (reference_point[0] * sin(reference_point[1]));
-    return(std::move(new_gradient));
+    return new_gradient;
   }
 
   /// Modify line element to account for the coordinate system
@@ -495,7 +495,7 @@ struct Spherical3DCoordinates {
     auto new_line_element = line_element;
     new_line_element[1] *= reference_point[0];
     new_line_element[2] *= (reference_point[0] * sin(reference_point[1]));
-    return(std::move(new_line_element));
+    return new_line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -512,7 +512,7 @@ struct Spherical3DCoordinates {
     auto volume *= (rbar*rbar + dr_2*dr_2/3.0) * (sin_tb * sinc_dt) * vol0;
     // Apply geometry factor
     volume *= inv_geo_fac;
-    return(volume);
+    return volume;
   }
 
   /// Modify moments to account for the coordinate system
@@ -541,7 +541,7 @@ struct Spherical3DCoordinates {
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
     }
-    return(std::move(moments));
+    return moments;
   }
 
 };  // Spherical (3D) Coordinates
