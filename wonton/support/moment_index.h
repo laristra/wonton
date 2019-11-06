@@ -24,12 +24,14 @@ namespace Portage {
   //! @param[in]  order  Order of the moment
   //! @param[in]  exponents  Powers for the coordinate axes
   template<int D>
-  int moment_to_index(int const order, std::array<int,D> const exponents) {
+  constexpr int moment_to_index(
+      int const order, std::array<int,D> const exponents) {
     static_assert(false, "\"moment_to_index\" only works in 1, 2, or 3D");
   }
 
   template<>
-  int moment_to_index<3>(int const order, std::array<int,3> const exponents) {
+  constexpr int moment_to_index<3>(
+      int const order, std::array<int,3> const exponents) {
     int constexpr D = 3;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
@@ -45,7 +47,8 @@ namespace Portage {
   }
 
   template<>
-  int moment_to_index<2>(int const order, std::array<int,2> const exponents) {
+  constexpr int moment_to_index<2>(
+      int const order, std::array<int,2> const exponents) {
     int constexpr D = 2;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
@@ -59,7 +62,8 @@ namespace Portage {
   }
 
   template<>
-  int moment_to_index<1>(int const order, std::array<int,1> const exponents) {
+  constexpr int moment_to_index<1>(
+      int const order, std::array<int,1> const exponents) {
     int constexpr D = 1;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
@@ -76,23 +80,23 @@ namespace Portage {
   //! Count the number of moments up to specified order
   //! @param[in] order  The order up to which to count the moments (inclusive)
   template<int D>
-  int count_moments(int const order) {
-      static_assert(false, "\"count_moments\" only works in 1, 2, or 3D");
+  constexpr int count_moments(int const order) {
+    static_assert(false, "\"count_moments\" only works in 1, 2, or 3D");
   }
 
   template<>
-  int count_moments<3>(int const order) {
-      return (order+3) * (order+2) * (order+1) / 6;
+  constexpr int count_moments<3>(int const order) {
+    return (order+3) * (order+2) * (order+1) / 6;
   }
 
   template<>
-  int count_moments<2>(int const order) {
-      return (order+2) * (order+1) / 2;
+  constexpr int count_moments<2>(int const order) {
+    return (order+2) * (order+1) / 2;
   }
 
   template<>
-  int count_moments<1>(int const order) {
-      return order+1;
+  constexpr int count_moments<1>(int const order) {
+    return order+1;
   }
 
   // ==========================================================================
@@ -100,12 +104,14 @@ namespace Portage {
   //! Convert from index to moment specification
   //! @param[in]  index  Index in moment list
   template<int D>
-  std::pair<int,std::array<int,D>> index_to_moment(int const index) {
+  constexpr std::pair<int,std::array<int,D>> index_to_moment(
+      int const index) {
     static_assert(false, "\"index_to_moment\" only works in 1, 2, or 3D");
   }
 
   template<>
-  std::pair<int,std::array<int,3>> index_to_moment<3>(int const index) {
+  constexpr std::pair<int,std::array<int,3>> index_to_moment<3>(
+      int const index) {
     int constexpr D = 3;
     int n = index;
     // Declare the output variables
@@ -145,7 +151,8 @@ namespace Portage {
   }
 
   template<>
-  std::pair<int,std::array<int,2>> index_to_moment<2>(int const index) {
+  constexpr std::pair<int,std::array<int,2>> index_to_moment<2>(
+      int const index) {
     int constexpr D = 2;
     int n = index;
     // Declare the output variables
@@ -170,7 +177,8 @@ namespace Portage {
   }
 
   template<>
-  std::pair<int,std::array<int,1>> index_to_moment<1>(int const index) {
+  constexpr std::pair<int,std::array<int,1>> index_to_moment<1>(
+      int const index) {
     int constexpr D = 1;
     // Declare the output variables
     int order;
