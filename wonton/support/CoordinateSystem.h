@@ -31,8 +31,8 @@ namespace Wonton {
 
   // Because C++ never bothered to define pi for some bizarre reason
   namespace CoordinateSystems {
-    // atan, acos, and similar are not (by the standard) constexpr, so we can't use them to define
-    // constexpr values for pi
+    // atan, acos, and similar are not (by the standard) constexpr, so we can't
+    // use them to define constexpr values for pi
     constexpr double pi = 3.141592653589793238462643383279502884L;
     constexpr double twopi = 2.0 * pi;
     constexpr double fourpi = 2.0 * pi;
@@ -51,7 +51,7 @@ struct CartesianCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid for any positive dimensionality
     static_assert(D >= 1,
         "Cartesian coordinates must have positive dimensionality.");
@@ -59,7 +59,7 @@ struct CartesianCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(gradient));
@@ -67,15 +67,15 @@ struct CartesianCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
@@ -87,7 +87,7 @@ struct CartesianCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
@@ -119,7 +119,7 @@ struct CylindricalRadialCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
         "Cylindrical (radial) coordinates only valid in 1D.");
@@ -127,7 +127,7 @@ struct CylindricalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(gradient));
@@ -135,15 +135,15 @@ struct CylindricalRadialCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
@@ -155,7 +155,7 @@ struct CylindricalRadialCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -188,7 +188,7 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
         "Cylindrical (axisymmetric) coordinates only valid in 2D.");
@@ -196,7 +196,7 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(gradient));
@@ -204,15 +204,15 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
@@ -224,7 +224,7 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -258,7 +258,7 @@ struct CylindricalPolarCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
         "Cylindrical (polar) coordinates only valid in 2D.");
@@ -266,7 +266,7 @@ struct CylindricalPolarCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
     new_gradient[1] /= reference_point[0];
@@ -275,8 +275,8 @@ struct CylindricalPolarCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     auto new_line_element = line_element;
     new_line_element[1] *= reference_point[0];
     return(std::move(new_line_element));
@@ -284,7 +284,7 @@ struct CylindricalPolarCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
@@ -296,7 +296,7 @@ struct CylindricalPolarCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -329,7 +329,7 @@ struct Cylindrical3DCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
         "Cylindrical (3D) coordinates only valid in 3D.");
@@ -337,7 +337,7 @@ struct Cylindrical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
     new_gradient[1] /= reference_point[0];
@@ -346,8 +346,8 @@ struct Cylindrical3DCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     auto new_line_element = line_element;
     new_line_element[1] *= reference_point[0];
     return(std::move(new_line_element));
@@ -355,7 +355,7 @@ struct Cylindrical3DCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     mean_radius = 0.5 * (plo[0] + phi[0]);
@@ -367,7 +367,7 @@ struct Cylindrical3DCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -402,7 +402,7 @@ struct SphericalRadialCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
         "Spherical (radial) coordinates only valid in 1D.");
@@ -410,7 +410,7 @@ struct SphericalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(gradient));
@@ -418,15 +418,15 @@ struct SphericalRadialCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
     return(std::move(line_element));
   }
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (plo[0] + phi[0]);
@@ -440,7 +440,7 @@ struct SphericalRadialCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
@@ -472,7 +472,7 @@ struct Spherical3DCoordinates {
 
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
         "Spherical (3D) coordinates only valid in 3D.");
@@ -480,7 +480,7 @@ struct Spherical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr Vector<D> modify_gradient(Vector<D> const & gradient,
       Point<D> const & reference_point) {
     auto new_gradient = gradient;
     new_gradient[1] /= reference_point[0];
@@ -490,8 +490,8 @@ struct Spherical3DCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
-      Point<D> const & reference_point) {
+  static constexpr Vector<D> modify_line_element(
+      Vector<D> const & line_element, Point<D> const & reference_point) {
     auto new_line_element = line_element;
     new_line_element[1] *= reference_point[0];
     new_line_element[2] *= (reference_point[0] * sin(reference_point[1]));
@@ -500,7 +500,7 @@ struct Spherical3DCoordinates {
 
   /// Modify volume to account for the coordinate system
   template<long D>
-  static double modify_volume(double const vol0,
+  static constexpr double modify_volume(double const vol0,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (plo[0] + phi[0]);
@@ -517,7 +517,7 @@ struct Spherical3DCoordinates {
 
   /// Modify moments to account for the coordinate system
   template<long D>
-  static Point<D> modify_moments(Point<D> const & mom0,
+  static constexpr Point<D> modify_moments(Point<D> const & mom0,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
