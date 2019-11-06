@@ -66,10 +66,9 @@ struct CartesianCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -133,10 +132,9 @@ struct CylindricalRadialCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -201,10 +199,9 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -270,11 +267,9 @@ struct CylindricalPolarCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    return new_line_element;
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
+    line_element[1] *= reference_point[0];
   }
 
   /// Modify volume to account for the coordinate system
@@ -339,11 +334,9 @@ struct Cylindrical3DCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    return new_line_element;
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
+    line_element[1] *= reference_point[0];
   }
 
   /// Modify volume to account for the coordinate system
@@ -410,10 +403,9 @@ struct SphericalRadialCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return line_element;
   }
 
   /// Modify volume to account for the coordinate system
@@ -480,12 +472,10 @@ struct Spherical3DCoordinates {
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static constexpr Vector<D> modify_line_element(
-      Vector<D> const & line_element, Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    new_line_element[2] *= (reference_point[0] * sin(reference_point[1]));
-    return new_line_element;
+  static constexpr void modify_line_element(Vector<D> & line_element,
+      Point<D> const & reference_point) {
+    line_element[1] *= reference_point[0];
+    line_element[2] *= (reference_point[0] * sin(reference_point[1]));
   }
 
   /// Modify volume to account for the coordinate system
