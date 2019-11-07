@@ -115,14 +115,14 @@ namespace Portage {
     int constexpr D = 3;
     int n = index;
     // Declare the output variables
-    int order;
-    std::array<int,D> exponents;
+    int order = 0;
+    std::array<int,D> exponents = {};
     // Find order
     //    While this could be done analytically, the expression is ugly and
     // involves cube roots and complex numbers.  With only a small number of
     // orders, this should be plenty fast enough (and possibly faster than the
     // ugly expression).
-    order = 0;
+    //order = 0;
     while (true) {
       if (n < (order+2)*(order+1)*order/6)
         break;
@@ -156,8 +156,8 @@ namespace Portage {
     int constexpr D = 2;
     int n = index;
     // Declare the output variables
-    int order;
-    std::array<int,D> exponents;
+    int order = 0;
+    std::array<int,D> exponents = {};
     // Find order
     order = (int) floor((sqrt((double)8*n+1) - 1) / 2);
     // Skip the lower-order moments
@@ -181,8 +181,8 @@ namespace Portage {
       int const index) {
     int constexpr D = 1;
     // Declare the output variables
-    int order;
-    std::array<int,D> exponents;
+    int order = 0;
+    std::array<int,D> exponents = {};
     // Find order
     order = index;
     // Find the first exponent
