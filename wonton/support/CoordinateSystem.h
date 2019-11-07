@@ -35,7 +35,32 @@ namespace CoordinateSystems {
   // use them to define constexpr values for pi
   constexpr double pi = 3.141592653589793238462643383279502884L;
   constexpr double twopi = 2.0 * pi;
-  constexpr double fourpi = 2.0 * pi;
+  constexpr double fourpi = 4.0 * pi;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list_core(
+      std::vector<double> & moments, int const shift) {
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto max_order = std::get<0>(top_moment) - shift;
+    auto num_new_moments = count_moments<D>(max_order);
+    std::vector<double> new_moments(num_new_moments);
+    // Shift moments
+    for (int new_index = 0; new_index < new_moments.size(); new_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(new_index);
+      order += shift;
+      exponents[0] += shift;
+      auto old_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
+  }
+
 }
 
 // ============================================================================
@@ -86,7 +111,7 @@ struct CartesianCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
@@ -98,12 +123,13 @@ struct CartesianCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
   static constexpr int moment_shift = 0;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> const & moments) {
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation.
   }
 
@@ -161,7 +187,7 @@ struct CylindricalRadialCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -173,31 +199,15 @@ struct CylindricalRadialCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> & moments) {
-    // Cylindrical coordinates include an extra factor of r, which reduces the
-    // order of available moments by one.
-
-    // Allocate new storage
-    auto top_moment = index_to_moment<D>(moments.size() - 1);
-    auto order = std::get<0>(top_moment) - 1;
-    std::vector<double> new_moments(count_moments<D>(order));
-    // Shift moments
-    for (int old_index = 0; old_index < moments.size(); old_index++) {
-      int order;
-      std::array<int,D> exponents;
-      std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += moment_shift;
-      exponents[0] += moment_shift;
-      auto new_index = moment_to_index<D>(order, exponents);
-      new_moments[new_index] = moments[old_index];
-    }
-    // Swap vectors
-    new_moments.swap(moments);
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -255,7 +265,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -270,31 +280,15 @@ struct CylindricalAxisymmetricCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> & moments) {
-    // Cylindrical coordinates include an extra factor of r, which reduces the
-    // order of available moments by one.
-
-    // Allocate new storage
-    auto top_moment = index_to_moment<D>(moments.size() - 1);
-    auto order = std::get<0>(top_moment) - 1;
-    std::vector<double> new_moments(count_moments<D>(order));
-    // Shift moments
-    for (int old_index = 0; old_index < moments.size(); old_index++) {
-      int order;
-      std::array<int,D> exponents;
-      std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += moment_shift;
-      exponents[0] += moment_shift;
-      auto new_index = moment_to_index<D>(order, exponents);
-      new_moments[new_index] = moments[old_index];
-    }
-    // Swap vectors
-    new_moments.swap(moments);
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -350,7 +344,7 @@ struct CylindricalPolarCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -364,31 +358,15 @@ struct CylindricalPolarCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> & moments) {
-    // Cylindrical coordinates include an extra factor of r, which reduces the
-    // order of available moments by one.
-
-    // Allocate new storage
-    auto top_moment = index_to_moment<D>(moments.size() - 1);
-    auto order = std::get<0>(top_moment) - 1;
-    std::vector<double> new_moments(count_moments<D>(order));
-    // Shift moments
-    for (int old_index = 0; old_index < moments.size(); old_index++) {
-      int order;
-      std::array<int,D> exponents;
-      std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += moment_shift;
-      exponents[0] += moment_shift;
-      auto new_index = moment_to_index<D>(order, exponents);
-      new_moments[new_index] = moments[old_index];
-    }
-    // Swap vectors
-    new_moments.swap(moments);
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical Polar Coordinates
@@ -444,7 +422,7 @@ struct Cylindrical3DCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rhobar = 0.5 * (phi[0] + plo[0]);
@@ -459,31 +437,15 @@ struct Cylindrical3DCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> & moments) {
-    // Cylindrical coordinates include an extra factor of r, which reduces the
-    // order of available moments by one.
-
-    // Allocate new storage
-    auto top_moment = index_to_moment<D>(moments.size() - 1);
-    auto order = std::get<0>(top_moment) - 1;
-    std::vector<double> new_moments(count_moments<D>(order));
-    // Shift moments
-    for (int old_index = 0; old_index < moments.size(); old_index++) {
-      int order;
-      std::array<int,D> exponents;
-      std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += moment_shift;
-      exponents[0] += moment_shift;
-      auto new_index = moment_to_index<D>(order, exponents);
-      new_moments[new_index] = moments[old_index];
-    }
-    // Swap vectors
-    new_moments.swap(moments);
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -541,7 +503,7 @@ struct SphericalRadialCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
@@ -554,31 +516,15 @@ struct SphericalRadialCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Spherical coordinates include an extra factor of r^2, which reduces the
+  /// order of available moments by two.
   static constexpr int moment_shift = 2;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> & moments) {
-    // Spherical coordinates include an extra factor of r^2, which reduces the
-    // order of available moments by two.
-
-    // Allocate new storage
-    auto top_moment = index_to_moment<D>(moments.size() - 1);
-    auto order = std::get<0>(top_moment) - 1;
-    std::vector<double> new_moments(count_moments<D>(order));
-    // Shift moments
-    for (int old_index = 0; old_index < moments.size(); old_index++) {
-      int order;
-      std::array<int,D> exponents;
-      std::tie(order,exponents) = index_to_moment<D>(old_index);
-      order += moment_shift;
-      exponents[0] += moment_shift;
-      auto new_index = moment_to_index<D>(order, exponents);
-      new_moments[new_index] = moments[old_index];
-    }
-    // Swap vectors
-    new_moments.swap(moments);
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Spherical (Radial) Coordinates
@@ -641,7 +587,7 @@ struct Spherical3DCoordinates {
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
   template<long D>
-  static constexpr void modify_moments(Point<D> & moments,
+  static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
     rbar = 0.5 * (phi[0] + plo[0]);
@@ -667,16 +613,18 @@ struct Spherical3DCoordinates {
   }
 
   /// How many orders of moments the moment-shift algorithm loses
+  /// Spherical coordinates include an extra factor of r^2, which reduces the
+  /// order of available moments by two.
   static constexpr int moment_shift = 2;
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
-  static constexpr void modify_moments(std::vector<double> & moments) {
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
     // Spherical coordinates include an extra factor of r^2 sin(theta), which
     // cannot be managed by shifting moments.
-    static_assert(false, "The modify_moments method using the moment-shift "
-        "algorithm does not work in 3D spherical coordinates.");
+    static_assert(false, "The shift_moments_list method does not work in 3D "
+        "spherical coordinates.");
   }
 
 };  // Spherical (3D) Coordinates
