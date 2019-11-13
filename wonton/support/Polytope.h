@@ -25,7 +25,7 @@ public:
     @param vertex_points  Vector of coordinates of the polygon's vertices
     listed counter-clockwise
   */
-  Polytope(const std::vector< Point<2> >& vertex_points) {
+  explicit Polytope(const std::vector< Point<2> >& vertex_points) {
     int nfaces = static_cast<int>(vertex_points.size());
     assert(nfaces > 2);
 
