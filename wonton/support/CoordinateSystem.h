@@ -8,6 +8,7 @@ Please see the license file at the root of this repository, or at:
 #define WONTON_SUPPORT_COORDINATESYSTEM_H_
 
 #include <cmath>
+#include <tuple>
 
 #include "moment_index.h"
 
@@ -32,7 +33,7 @@ Please see the license file at the root of this repository, or at:
 namespace Wonton {
 
 // Because C++ never bothered to define pi for some bizarre reason
-namespace CoordinateSystems {
+namespace CoordinateSystem {
   // atan, acos, and similar are not (by the standard) constexpr, so we can't
   // use them to define constexpr values for pi
   constexpr double pi = 3.141592653589793238462643383279502884L;
@@ -180,8 +181,8 @@ struct CylindricalRadialCoordinates {
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
-    mean_radius = 0.5 * (plo[0] + phi[0]);
-    volume *= CoordinateSystems::twopi * mean_radius;
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
+    volume *= CoordinateSystem::twopi * mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
   }
@@ -192,8 +193,8 @@ struct CylindricalRadialCoordinates {
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
-    rhobar = 0.5 * (phi[0] + plo[0]);
-    drho_2 = 0.5 * (phi[0] - plo[0]);
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
     moments[0] *= CoordinateSystem::twopi *
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     // Apply geometry factor
@@ -209,7 +210,7 @@ struct CylindricalRadialCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    shift_moments_list_core<D>(moments, moment_shift);
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -258,8 +259,8 @@ struct CylindricalAxisymmetricCoordinates {
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
-    mean_radius = 0.5 * (plo[0] + phi[0]);
-    volume *= CoordinateSystems::twopi * mean_radius;
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
+    volume *= CoordinateSystem::twopi * mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
   }
@@ -270,11 +271,11 @@ struct CylindricalAxisymmetricCoordinates {
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
-    rhobar = 0.5 * (phi[0] + plo[0]);
-    drho_2 = 0.5 * (phi[0] - plo[0]);
-    moments[0] *= CoordinateSystems::twopi *
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= CoordinateSystem::twopi *
       (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
-    moments[1] *= CoordinateSystems::twopi * rhobar;
+    moments[1] *= CoordinateSystem::twopi * rhobar;
     // Apply geometry factor
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
@@ -290,7 +291,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    shift_moments_list_core<D>(moments, moment_shift);
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -337,7 +338,7 @@ struct CylindricalPolarCoordinates {
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
-    mean_radius = 0.5 * (plo[0] + phi[0]);
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
     volume *= mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
@@ -349,8 +350,8 @@ struct CylindricalPolarCoordinates {
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
-    rhobar = 0.5 * (phi[0] + plo[0]);
-    drho_2 = 0.5 * (phi[0] - plo[0]);
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
     moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     moments[1] *= rhobar;
     // Apply geometry factor
@@ -368,7 +369,7 @@ struct CylindricalPolarCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    shift_moments_list_core<D>(moments, moment_shift);
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical Polar Coordinates
@@ -415,7 +416,7 @@ struct Cylindrical3DCoordinates {
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
-    mean_radius = 0.5 * (plo[0] + phi[0]);
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
     volume *= mean_radius;
     // Apply geometry factor
     volume *= inv_geo_fac;
@@ -427,8 +428,8 @@ struct Cylindrical3DCoordinates {
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
-    rhobar = 0.5 * (phi[0] + plo[0]);
-    drho_2 = 0.5 * (phi[0] - plo[0]);
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
     moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
     moments[1] *= rhobar;
     moments[2] *= rhobar;
@@ -447,7 +448,7 @@ struct Cylindrical3DCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    shift_moments_list_core<D>(moments, moment_shift);
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -495,9 +496,9 @@ struct SphericalRadialCoordinates {
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
-    rbar = 0.5 * (plo[0] + phi[0]);
-    dr_2 = 0.5 * (phi[0] - plo[0]);
-    volume *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2/3.0);
+    auto rbar = 0.5 * (plo[0] + phi[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    volume *= CoordinateSystem::fourpi * (rbar*rbar + dr_2*dr_2/3.0);
     // Apply geometry factor
     volume *= inv_geo_fac;
   }
@@ -508,9 +509,9 @@ struct SphericalRadialCoordinates {
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
-    rbar = 0.5 * (phi[0] + plo[0]);
-    dr_2 = 0.5 * (phi[0] - plo[0]);
-    moments[0] *= CoordinateSystems::fourpi * (rbar*rbar + dr_2*dr_2);
+    auto rbar = 0.5 * (phi[0] + plo[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= CoordinateSystem::fourpi * (rbar*rbar + dr_2*dr_2);
     // Apply geometry factor
     for (int d = 0; d < D; ++d) {
       moments[d] *= inv_geo_fac;
@@ -526,7 +527,7 @@ struct SphericalRadialCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    shift_moments_list_core<D>(moments, moment_shift);
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
   }
 
 };  // Spherical (Radial) Coordinates
@@ -575,12 +576,12 @@ struct Spherical3DCoordinates {
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
-    rbar = 0.5 * (plo[0] + phi[0]);
-    dr_2 = 0.5 * (phi[0] - plo[0]);
-    thetabar = 0.5 * (phi[1] + plo[1]);
-    dtheta_2 = 0.5 * (phi[1] - plo[1]);
-    sin_tb  = sin(thetabar);
-    sinc_dt = sin(dtheta_2) / dtheta_2;
+    auto rbar = 0.5 * (plo[0] + phi[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    auto thetabar = 0.5 * (phi[1] + plo[1]);
+    auto dtheta_2 = 0.5 * (phi[1] - plo[1]);
+    auto sin_tb  = sin(thetabar);
+    auto sinc_dt = sin(dtheta_2) / dtheta_2;
     volume *= (rbar*rbar + dr_2*dr_2/3.0) * (sin_tb * sinc_dt);
     // Apply geometry factor
     volume *= inv_geo_fac;
@@ -592,19 +593,19 @@ struct Spherical3DCoordinates {
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
-    rbar = 0.5 * (phi[0] + plo[0]);
-    dr_2 = 0.5 * (phi[0] - plo[0]);
-    rbar_sq = rbar * rbar;
-    dr_2_sq = dr_2 * dr_2;
-    rr1 = rbar_sq + dr_2_sq;
-    rr2 = rbar_sq + dr_2_sq/3.0;
-    thetabar = 0.5 * (phi[1] + plo[1]);
-    dtheta_2 = 0.5 * (phi[1] - plo[1]);
-    sin_tb  = sin(thetabar);
-    sinc_dt = sin(dtheta_2) / dtheta_2;
-    cosc_tb = cos(thetabar) / thetabar;
-    cos_dt  = cos(dtheta_2);
-    ss1 = sin_tb * sinc_dt;
+    auto rbar = 0.5 * (phi[0] + plo[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    auto rbar_sq = rbar * rbar;
+    auto dr_2_sq = dr_2 * dr_2;
+    auto rr1 = rbar_sq + dr_2_sq;
+    auto rr2 = rbar_sq + dr_2_sq/3.0;
+    auto thetabar = 0.5 * (phi[1] + plo[1]);
+    auto dtheta_2 = 0.5 * (phi[1] - plo[1]);
+    auto sin_tb  = sin(thetabar);
+    auto sinc_dt = sin(dtheta_2) / dtheta_2;
+    auto cosc_tb = cos(thetabar) / thetabar;
+    auto cos_dt  = cos(dtheta_2);
+    auto ss1 = sin_tb * sinc_dt;
     moments[0] *= rr1 * ss1;
     moments[1] *= rr2 * (ss1 + cosc_tb * (sinc_dt - cos_dt));
     moments[2] *= rr2 * ss1;

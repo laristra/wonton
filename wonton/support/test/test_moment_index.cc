@@ -71,7 +71,7 @@ void run_moment_index_test() {
     // Convert index to moment specification
     int order;
     std::array<int,D> exponents;
-    std::tie(order,exponents) = Portage::index_to_moment<D>(index);
+    std::tie(order,exponents) = Wonton::index_to_moment<D>(index);
     // Verify moment specification is internally consistent
     ASSERT_GE(order, 0);
     for (int d = 0; d < D; ++d) {
@@ -79,7 +79,7 @@ void run_moment_index_test() {
     }
     ASSERT_EQ(order, std::accumulate(exponents.begin(), exponents.end(), 0));
     // Convert moment specification back to index
-    auto index2 = Portage::moment_to_index<D>(order, exponents);
+    auto index2 = Wonton::moment_to_index<D>(order, exponents);
     // Ensure the round trip is self-consistent
     ASSERT_EQ(index, index2);
   }
@@ -90,8 +90,8 @@ void run_moment_index_test() {
   std::array<int,D> exponents_in = get_exponents<D>();
   int order_out;
   std::array<int,D> exponents_out;
-  std::tie(order_out,exponents_out) = Portage::index_to_moment<D>(index_in);
-  int index_out = Portage::moment_to_index<D>(order_in, exponents_in);
+  std::tie(order_out,exponents_out) = Wonton::index_to_moment<D>(index_in);
+  int index_out = Wonton::moment_to_index<D>(order_in, exponents_in);
   ASSERT_EQ(index_in, index_out);
   ASSERT_EQ(order_out, order_out);
   for (int d = 0; d < D; ++d) {
@@ -99,7 +99,7 @@ void run_moment_index_test() {
   }
   int order0;
   std::array<int,D> exponents0;
-  std::tie(order0,exponents0) = Portage::index_to_moment<D>(0);
+  std::tie(order0,exponents0) = Wonton::index_to_moment<D>(0);
   ASSERT_EQ(order0,0);
   for (int d = 0; d < D; ++d) {
     ASSERT_EQ(exponents0[d],0);

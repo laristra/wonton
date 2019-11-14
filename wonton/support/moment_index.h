@@ -3,8 +3,8 @@ This file is part of the Ristra portage project.
 Please see the license file at the root of this repository, or at:
     https://github.com/laristra/portage/blob/master/LICENSE
 */
-#ifndef PORTAGE_SUPPORT_MOMENT_INDEX_
-#define PORTAGE_SUPPORT_MOMENT_INDEX_
+#ifndef WONTON_SUPPORT_MOMENT_INDEX_
+#define WONTON_SUPPORT_MOMENT_INDEX_
 
 #include <array>
 #include <cassert>
@@ -16,7 +16,7 @@ Please see the license file at the root of this repository, or at:
 //! moments list by converting between a moment specification and a moments
 //! list index.
 
-namespace Portage {
+namespace Wonton {
 
   // ==========================================================================
 
@@ -33,10 +33,11 @@ namespace Portage {
   constexpr int moment_to_index<3>(
       int const order, std::array<int,3> const exponents) {
     int constexpr D = 3;
+    int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
+      exponent_sum += exponents[d];
     }
-    auto exponent_sum = std::accumulate(exponents.begin(), exponents.end(), 0);
     assert(exponent_sum == order);
     int index = 0;
     index += (order+2) * (order+1) * order / 6;
@@ -50,10 +51,11 @@ namespace Portage {
   constexpr int moment_to_index<2>(
       int const order, std::array<int,2> const exponents) {
     int constexpr D = 2;
+    int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
+      exponent_sum += exponents[d];
     }
-    auto exponent_sum = std::accumulate(exponents.begin(), exponents.end(), 0);
     assert(exponent_sum == order);
     int index = 0;
     index += (order+1) * order / 2;
@@ -65,10 +67,11 @@ namespace Portage {
   constexpr int moment_to_index<1>(
       int const order, std::array<int,1> const exponents) {
     int constexpr D = 1;
+    int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
+      exponent_sum += exponents[d];
     }
-    auto exponent_sum = std::accumulate(exponents.begin(), exponents.end(), 0);
     assert(exponent_sum == order);
     int index = 0;
     index += order;
@@ -100,6 +103,9 @@ namespace Portage {
   }
 
   // ==========================================================================
+  // TODO: We can't get a non-const reference to a std::array element in a
+  //       constexpr function until C++17.  Thus these routines cannot be
+  //       constexpr until Wonton starts using C++17.
 
   //! Convert from index to moment specification
   //! @param[in]  index  Index in moment list
@@ -110,7 +116,7 @@ namespace Portage {
   }
 
   template<>
-  constexpr std::pair<int,std::array<int,3>> index_to_moment<3>(
+  std::pair<int,std::array<int,3>> index_to_moment<3>(
       int const index) {
     int constexpr D = 3;
     int n = index;
@@ -141,17 +147,18 @@ namespace Portage {
     // Find the third exponent
     exponents[2] = n;
     // Verify results
+    int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
+      exponent_sum += exponents[d];
     }
-    auto exponent_sum = std::accumulate(exponents.begin(), exponents.end(), 0);
     assert(exponent_sum == order);
     // Return
     return(std::move(std::make_pair(order,exponents)));
   }
 
   template<>
-  constexpr std::pair<int,std::array<int,2>> index_to_moment<2>(
+  std::pair<int,std::array<int,2>> index_to_moment<2>(
       int const index) {
     int constexpr D = 2;
     int n = index;
@@ -167,17 +174,18 @@ namespace Portage {
     // Find the second exponent
     exponents[1] = n;
     // Verify results
+    int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
+      exponent_sum += exponents[d];
     }
-    auto exponent_sum = std::accumulate(exponents.begin(), exponents.end(), 0);
     assert(exponent_sum == order);
     // Return
     return(std::move(std::make_pair(order,exponents)));
   }
 
   template<>
-  constexpr std::pair<int,std::array<int,1>> index_to_moment<1>(
+  std::pair<int,std::array<int,1>> index_to_moment<1>(
       int const index) {
     int constexpr D = 1;
     // Declare the output variables
@@ -188,15 +196,16 @@ namespace Portage {
     // Find the first exponent
     exponents[0] = index;
     // Verify results
+    int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
+      exponent_sum += exponents[d];
     }
-    auto exponent_sum = std::accumulate(exponents.begin(), exponents.end(), 0);
     assert(exponent_sum == order);
     // Return
     return(std::move(std::make_pair(order,exponents)));
   }
 
-}  // namespace Portage
+}  // namespace Wonton
 
-#endif  // PORTAGE_SUPPORT_MOMENT_INDEX_
+#endif  // WONTON_SUPPORT_MOMENT_INDEX_
