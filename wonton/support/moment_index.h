@@ -25,9 +25,7 @@ namespace Wonton {
   //! @param[in]  exponents  Powers for the coordinate axes
   template<int D>
   constexpr int moment_to_index(
-      int const order, std::array<int,D> const exponents) {
-    static_assert(false, "\"moment_to_index\" only works in 1, 2, or 3D");
-  }
+      int const order, std::array<int,D> const exponents);
 
   template<>
   constexpr int moment_to_index<3>(
@@ -83,9 +81,7 @@ namespace Wonton {
   //! Count the number of moments up to specified order
   //! @param[in] order  The order up to which to count the moments (inclusive)
   template<int D>
-  constexpr int count_moments(int const order) {
-    static_assert(false, "\"count_moments\" only works in 1, 2, or 3D");
-  }
+  constexpr int count_moments(int const order);
 
   template<>
   constexpr int count_moments<3>(int const order) {
@@ -105,18 +101,16 @@ namespace Wonton {
   // ==========================================================================
   // TODO: We can't get a non-const reference to a std::array element in a
   //       constexpr function until C++17.  Thus these routines cannot be
-  //       constexpr until Wonton starts using C++17.
+  //       constexpr until Wonton starts using C++17.  Once these become
+  //       constexpr the inline specifier is redundant.
 
   //! Convert from index to moment specification
   //! @param[in]  index  Index in moment list
   template<int D>
-  constexpr std::pair<int,std::array<int,D>> index_to_moment(
-      int const index) {
-    static_assert(false, "\"index_to_moment\" only works in 1, 2, or 3D");
-  }
+  inline std::pair<int,std::array<int,D>> index_to_moment(int const index);
 
   template<>
-  std::pair<int,std::array<int,3>> index_to_moment<3>(
+  inline std::pair<int,std::array<int,3>> index_to_moment<3>(
       int const index) {
     int constexpr D = 3;
     int n = index;
@@ -158,7 +152,7 @@ namespace Wonton {
   }
 
   template<>
-  std::pair<int,std::array<int,2>> index_to_moment<2>(
+  inline std::pair<int,std::array<int,2>> index_to_moment<2>(
       int const index) {
     int constexpr D = 2;
     int n = index;
@@ -185,7 +179,7 @@ namespace Wonton {
   }
 
   template<>
-  std::pair<int,std::array<int,1>> index_to_moment<1>(
+  inline std::pair<int,std::array<int,1>> index_to_moment<1>(
       int const index) {
     int constexpr D = 1;
     // Declare the output variables
