@@ -392,7 +392,7 @@ class AuxMeshTopology {
    * @param face: the current face of the given cell.
    * @return the index of the incident cell to the given face or -1.
    */
-  int cell_get_face_incident_neigh(int cell, int face) const {
+  int cell_get_face_adj_cell(int cell, int face) const {
     std::vector<int> cellfaces;
     basicmesh_ptr_->face_get_cells(face, Entity_type::ALL, &cellfaces);
     int const nb_adj_cells = cellfaces.size();
