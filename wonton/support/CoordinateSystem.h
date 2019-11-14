@@ -7,6 +7,7 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_SUPPORT_COORDINATESYSTEM_H_
 #define WONTON_SUPPORT_COORDINATESYSTEM_H_
 
+#include <cassert>
 #include <cmath>
 #include <tuple>
 
@@ -626,8 +627,9 @@ struct Spherical3DCoordinates {
   static constexpr void shift_moments_list(std::vector<double> & moments) {
     // Spherical coordinates include an extra factor of r^2 sin(theta), which
     // cannot be managed by shifting moments.
-    static_assert(false, "The shift_moments_list method does not work in 3D "
-        "spherical coordinates.");
+    std::cerr << "The shift_moments_list method does not work in 3D " << 
+        "spherical coordinates." << std::endl;
+    assert(false);
   }
 
 };  // Spherical (3D) Coordinates
