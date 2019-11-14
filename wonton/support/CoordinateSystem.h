@@ -9,6 +9,8 @@ Please see the license file at the root of this repository, or at:
 
 #include <cmath>
 
+#include "moment_index.h"
+
 /*
   @file CoordinateSystem.h
   @brief Defines quantities needed for non-Cartesian coordinates
