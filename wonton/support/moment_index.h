@@ -122,7 +122,6 @@ namespace Wonton {
     // involves cube roots and complex numbers.  With only a small number of
     // orders, this should be plenty fast enough (and possibly faster than the
     // ugly expression).
-    //order = 0;
     while (true) {
       if (n < (order+2)*(order+1)*order/6)
         break;
