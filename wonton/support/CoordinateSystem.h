@@ -7,14 +7,65 @@ Please see the license file at the root of this repository, or at:
 #ifndef WONTON_SUPPORT_COORDINATESYSTEM_H_
 #define WONTON_SUPPORT_COORDINATESYSTEM_H_
 
+#include <cassert>
 #include <cmath>
+#include <tuple>
+
+#include "moment_index.h"
 
 /*
   @file CoordinateSystem.h
   @brief Defines quantities needed for non-Cartesian coordinates
+
+  Portage prefers to work with geometry factors of unity (actual volumes rather
+  than wedges).  Because of this, a geometry factor is unnecessary.  However,
+  to help emphasize to users of Portage that this is the assumption, the
+  geometry factor is listed explicitly for every coordinate system.  This also
+  makes it easier to change to different geometry factors in the future if
+  desired.
+
+  The modify_* routines all take an input calculated using the "standard",
+  Cartesian-like expression, and then modify it to be appropriate for the
+  selected coordinate system.  For Cartesian coordinates, this becomes a no-op
+  because the expression is already calculated correctly.
  */
 
+
 namespace Wonton {
+
+// Because C++ never bothered to define pi for some bizarre reason
+namespace CoordinateSystem {
+  // atan, acos, and similar are not (by the standard) constexpr, so we can't
+  // use them to define constexpr values for pi
+  constexpr double pi = 3.141592653589793238462643383279502884L;
+  constexpr double twopi = 2.0 * pi;
+  constexpr double fourpi = 4.0 * pi;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list_core(
+      std::vector<double> & moments, int const shift) {
+    // Allocate new storage
+    auto top_moment = index_to_moment<D>(moments.size() - 1);
+    auto max_order = std::get<0>(top_moment) - shift;
+    auto num_new_moments = count_moments<D>(max_order);
+    std::vector<double> new_moments(num_new_moments);
+    // Shift moments
+    for (int new_index = 0; new_index < new_moments.size(); new_index++) {
+      int order;
+      std::array<int,D> exponents;
+      std::tie(order,exponents) = index_to_moment<D>(new_index);
+      order += shift;
+      exponents[0] += shift;
+      auto old_index = moment_to_index<D>(order, exponents);
+      new_moments[new_index] = moments[old_index];
+    }
+    // Swap vectors
+    new_moments.swap(moments);
+  }
+
+}
 
 // ============================================================================
 /// Cartesian Coordinates
@@ -24,9 +75,12 @@ struct CartesianCoordinates {
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid for any positive dimensionality
     static_assert(D >= 1,
         "Cartesian coordinates must have positive dimensionality.");
@@ -34,19 +88,55 @@ struct CartesianCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // No change from "standard", Cartesian-like calculation.
+    // --> Other than the geometry factor (which should be one, because any
+    //     other value would be highly unusual for Cartesian coordinates, but
+    //     we verify this anyway).
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // No change from "standard", Cartesian-like calculation.
+    // --> Other than the geometry factor (which should be one, because any
+    //     other value would be highly unusual for Cartesian coordinates, but
+    //     we verify this anyway).
+    for (int d = 0; d < D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr int moment_shift = 0;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    // No change from "standard", Cartesian-like calculation.
+  }
+
 };  // Cartesian Coordinates
 
 
@@ -61,9 +151,12 @@ struct CylindricalRadialCoordinates {
   /// uses 1: a full cylinder.
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
         "Cylindrical (radial) coordinates only valid in 1D.");
@@ -71,19 +164,56 @@ struct CylindricalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // Adjust for different coordinate system
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
+    volume *= CoordinateSystem::twopi * mean_radius;
+    // Apply geometry factor
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // Adjust for different coordinate system
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= CoordinateSystem::twopi *
+      (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
+    // Apply geometry factor
+    moments[0] *= inv_geo_fac;
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+  }
+
 };  // Cylindrical (Radial) Coordinates
 
 
@@ -99,9 +229,12 @@ struct CylindricalAxisymmetricCoordinates {
   /// uses 1: a full cylinder.
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
         "Cylindrical (axisymmetric) coordinates only valid in 2D.");
@@ -109,19 +242,59 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // Adjust for different coordinate system
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
+    volume *= CoordinateSystem::twopi * mean_radius;
+    // Apply geometry factor
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // Adjust for different coordinate system
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= CoordinateSystem::twopi *
+      (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
+    moments[1] *= CoordinateSystem::twopi * rhobar;
+    // Apply geometry factor
+    for (int d = 0; d < D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+  }
+
 };  // Cylindrical (Axisymmetric) Coordinates
 
 
@@ -135,9 +308,12 @@ struct CylindricalPolarCoordinates {
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 2D
     static_assert(D == 2,
         "Cylindrical (polar) coordinates only valid in 2D.");
@@ -145,21 +321,58 @@ struct CylindricalPolarCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
-    auto new_gradient = gradient;
-    new_gradient[1] /= reference_point[0];
-    return(std::move(new_gradient));
+    gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    return(std::move(new_line_element));
+    line_element[1] *= reference_point[0];
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // Adjust for different coordinate system
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
+    volume *= mean_radius;
+    // Apply geometry factor
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // Adjust for different coordinate system
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
+    moments[1] *= rhobar;
+    // Apply geometry factor
+    for (int d = 0; d < D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+  }
+
 };  // Cylindrical Polar Coordinates
 
 
@@ -173,9 +386,12 @@ struct Cylindrical3DCoordinates {
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
         "Cylindrical (3D) coordinates only valid in 3D.");
@@ -183,21 +399,59 @@ struct Cylindrical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
-    auto new_gradient = gradient;
-    new_gradient[1] /= reference_point[0];
-    return(std::move(new_gradient));
+    gradient[1] /= reference_point[0];
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    return(std::move(new_line_element));
+    line_element[1] *= reference_point[0];
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // Adjust for different coordinate system
+    auto mean_radius = 0.5 * (plo[0] + phi[0]);
+    volume *= mean_radius;
+    // Apply geometry factor
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // Adjust for different coordinate system
+    auto rhobar = 0.5 * (phi[0] + plo[0]);
+    auto drho_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= (rhobar*rhobar + drho_2*drho_2/3.0) / rhobar;
+    moments[1] *= rhobar;
+    moments[2] *= rhobar;
+    // Apply geometry factor
+    for (int d = 0; d < D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Cylindrical coordinates include an extra factor of r, which reduces the
+  /// order of available moments by one.
+  static constexpr int moment_shift = 1;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+  }
+
 };  // Cylindrical (3D) Coordinates
 
 
@@ -212,9 +466,12 @@ struct SphericalRadialCoordinates {
   /// uses 1: a full sphere.
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 1D
     static_assert(D == 1,
         "Spherical (radial) coordinates only valid in 1D.");
@@ -222,19 +479,58 @@ struct SphericalRadialCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(gradient));
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
     // No change from "standard", Cartesian-like calculation.
-    return(std::move(line_element));
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // Adjust for different coordinate system
+    auto rbar = 0.5 * (plo[0] + phi[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    volume *= CoordinateSystem::fourpi * (rbar*rbar + dr_2*dr_2/3.0);
+    // Apply geometry factor
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // Adjust for different coordinate system
+    auto rbar = 0.5 * (phi[0] + plo[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    moments[0] *= CoordinateSystem::fourpi * (rbar*rbar + dr_2*dr_2);
+    // Apply geometry factor
+    for (int d = 0; d < D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Spherical coordinates include an extra factor of r^2, which reduces the
+  /// order of available moments by two.
+  static constexpr int moment_shift = 2;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+  }
+
 };  // Spherical (Radial) Coordinates
 
 
@@ -248,9 +544,12 @@ struct Spherical3DCoordinates {
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
+  /// Inverse geometry factor
+  static constexpr double inv_geo_fac = 1.0 / geometry_factor;
+
   /// Verify coordinate system / dimensionality combination
   template<int D>
-  static void verify_coordinate_system() {
+  static constexpr void verify_coordinate_system() {
     // Valid only in 3D
     static_assert(D == 3,
         "Spherical (3D) coordinates only valid in 3D.");
@@ -258,23 +557,81 @@ struct Spherical3DCoordinates {
 
   /// Modify gradient to account for the coordinate system
   template<int D>
-  static Vector<D> modify_gradient(Vector<D> const & gradient,
+  static constexpr void modify_gradient(Vector<D> & gradient,
       Point<D> const & reference_point) {
-    auto new_gradient = gradient;
-    new_gradient[1] /= reference_point[0];
-    new_gradient[2] /= (reference_point[0] * sin(reference_point[1]));
-    return(std::move(new_gradient));
+    gradient[1] /= reference_point[0];
+    gradient[2] /= (reference_point[0] * sin(reference_point[1]));
   }
 
   /// Modify line element to account for the coordinate system
   template<int D>
-  static Vector<D> modify_line_element(Vector<D> const & line_element,
+  static constexpr void modify_line_element(Vector<D> & line_element,
       Point<D> const & reference_point) {
-    auto new_line_element = line_element;
-    new_line_element[1] *= reference_point[0];
-    new_line_element[2] *= (reference_point[0] * sin(reference_point[1]));
-    return(std::move(new_line_element));
+    line_element[1] *= reference_point[0];
+    line_element[2] *= (reference_point[0] * sin(reference_point[1]));
   }
+
+  /// Modify volume to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_volume(double & volume,
+      Point<D> const & plo, Point<D> const & phi) {
+    // Adjust for different coordinate system
+    auto rbar = 0.5 * (plo[0] + phi[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    auto thetabar = 0.5 * (phi[1] + plo[1]);
+    auto dtheta_2 = 0.5 * (phi[1] - plo[1]);
+    auto sin_tb  = sin(thetabar);
+    auto sinc_dt = sin(dtheta_2) / dtheta_2;
+    volume *= (rbar*rbar + dr_2*dr_2/3.0) * (sin_tb * sinc_dt);
+    // Apply geometry factor
+    volume *= inv_geo_fac;
+  }
+
+  /// Modify moments to account for the coordinate system
+  /// Only works for axis-aligned boxes.
+  template<long D>
+  static constexpr void modify_first_moments(Point<D> & moments,
+      Point<D> const & plo, Point<D> const phi) {
+    // Adjust for different coordinate system
+    auto rbar = 0.5 * (phi[0] + plo[0]);
+    auto dr_2 = 0.5 * (phi[0] - plo[0]);
+    auto rbar_sq = rbar * rbar;
+    auto dr_2_sq = dr_2 * dr_2;
+    auto rr1 = rbar_sq + dr_2_sq;
+    auto rr2 = rbar_sq + dr_2_sq/3.0;
+    auto thetabar = 0.5 * (phi[1] + plo[1]);
+    auto dtheta_2 = 0.5 * (phi[1] - plo[1]);
+    auto sin_tb  = sin(thetabar);
+    auto sinc_dt = sin(dtheta_2) / dtheta_2;
+    auto cosc_tb = cos(thetabar) / thetabar;
+    auto cos_dt  = cos(dtheta_2);
+    auto ss1 = sin_tb * sinc_dt;
+    moments[0] *= rr1 * ss1;
+    moments[1] *= rr2 * (ss1 + cosc_tb * (sinc_dt - cos_dt));
+    moments[2] *= rr2 * ss1;
+    // Apply geometry factor
+    for (int d = 0; d < D; ++d) {
+      moments[d] *= inv_geo_fac;
+    }
+  }
+
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Spherical coordinates include an extra factor of r^2, which reduces the
+  /// order of available moments by two.
+  static constexpr int moment_shift = 2;
+
+  /// Modify moments to account for the coordinate system
+  /// Handles any shape cell, but may reduce order of moments available.
+  template<long D>
+  static constexpr void shift_moments_list(std::vector<double> & moments) {
+    // Spherical coordinates include an extra factor of r^2 sin(theta), which
+    // cannot be managed by shifting moments.
+    std::cerr << "The shift_moments_list method does not work in 3D " << 
+        "spherical coordinates." << std::endl;
+    assert(false);
+  }
+
 };  // Spherical (3D) Coordinates
 
 
