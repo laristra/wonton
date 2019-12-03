@@ -15,6 +15,31 @@ Please see the license file at the root of this repository, or at:
 //! This file contains convenience functions to help extract moments from the
 //! moments list by converting between a moment specification and a moments
 //! list index.
+//!
+//! A moment specification consists of two parts: an order and the exponents of
+//! the basis axes.  Consider some 2D Cartesian examples, so that the basis
+//! axes are x and y.  The sum of the exponents is required to be equal to the
+//! order.  So if, for example, you are asking for the moment
+//! integral{x y^2 dx dy} then the moment specification would be order = 3 and
+//! exponents = {1, 2}.  If you wanted to enumerate all 2nd-order moments, then
+//! the options would be:
+//!    order = 2, exponents = {0, 2}
+//!    order = 2, exponents = {1, 1}
+//!    order = 2, exponents = {2, 0}
+//!
+//! A more complex example could be 3D cylindrical coordinates.  Because this
+//! is in cylindrical coordinates, the basis axes are rho, phi, and z.  The
+//! second-order moments would be:
+//!    order = 2, exponents = {0, 0, 2}
+//!    order = 2, exponents = {0, 2, 0}
+//!    order = 2, exponents = {2, 0, 0}
+//!    order = 2, exponents = {0, 1, 1}
+//!    order = 2, exponents = {1, 0, 1}
+//!    order = 2, exponents = {1, 1, 0}
+//! However, because the volume element dV is equal to drho rho dphi dz, then
+//! the moment with exponents {0,1,1} is be computed as
+//! integral{phi z dV} = integral{rho phi z drho dphi dz} rather than as
+//! integral{phi z drho dphi dz}.
 
 namespace Wonton {
 
