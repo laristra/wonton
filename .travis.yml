@@ -5,13 +5,9 @@ sudo: required
 services:
 - docker
 
-python:
-  - "3.6"
+dist: xenial
 
 env:
-  global:
-    # Doctr deploy key for laristra/wonton
-    - secure: "QjsnGDiCYerawsgriJl2jFzc+Ow4v8Sm37SaWPLK66pkepJCeoxCqdFjD2VEbGsavlsbatcM1+Wi74URgIGRVdqX+qi4I/FufvVVVi8WCKC7IcrHqp1JOj5jZZ9gjO/YLdsv82g1i3Rag6PzZduINJBvLONA84K+iz+3IIb8X+FzVtBYdDqz1quLRsaJhiozIxCT1TWbtcuxR6PCdWjqVt39fDkADZk2KpDxugzuEvy9xlUdYcPypypb+dHruKPwoVsxtzrJp6niVmEgTAgmyAq4KCFMejP8R4HEGKFeuxwYmOwaUPh7mM0DD78Hr4w74OHa/DFTndUyvi/lwgNiFy/LY+ji1QeUxG+d0y4TbnQY5xrj+Gp2CMIExkq8tPRlxMsDdLlnnb1+++x91X4knYjJ7rC2DJhfrCnKxUf2fBNKMJwVD9gpWeilHzbMaKYH0yWwUCtR2sRWdHRto+7PNEL3Bpbv69Euy8Us77YyJh6wJAdyG4JkWrEjDaohUDndwbhX4OeEy9Vx8PndYTkwG+5a6+7nLfzm9OSHTznJInuy1KbX0SLp3FzBUKR+YVWq8ID2o64Y87aLXF2v/QKYoNKwQS+FQ5uxUoRUbr+MSnFZWRVg8bZRACztkuS6l1V58OlghmXL/K2IPgvZu9bftC9eYsQM7eqVjQDnJVU7JSU="
   matrix:
     - MPI=OFF DOCS=true
     - MPI=ON DOCKERHUB=true
@@ -31,6 +27,9 @@ script:
                  --build-arg DOCS=${DOCS}
                  -t ${TRAVIS_REPO_SLUG}:latest ${HOME}/docker/
 
+before_install:
+  - openssl aes-256-cbc -K $encrypted_8ed8d51c0912_key -iv $encrypted_8ed8d51c0912_iv -in github_deploy_key_laristra_wonton.enc -out github_deploy_key_laristra_wonton -d
+
 after_success:
   - if [[ ${DOCKERHUB} = true && ${DOCKER_USERNAME} && ${DOCKER_PASSWORD} && ${TRAVIS_PULL_REQUEST} == false && ${TRAVIS_BRANCH} == master ]]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
@@ -39,7 +38,14 @@ after_success:
   - if [[ ${DOCS} || -n ${TRAVIS_TAG} ]]; then
       cd ${HOME}/docker/wonton;
       CON=$(docker run -d ${TRAVIS_REPO_SLUG}:latest) && docker cp ${CON}:/home/wonton/wonton/build/doc . ;
-      pyenv local 3.6;
-      pip install doctr;
-      doctr deploy --built-docs doc/doxygen/html . ;
     fi
+
+deploy:
+  provider: pages:git
+  edge: true # opt into version 2 of the dpl
+  deploy_key: github_deploy_key_laristra_wonton
+  local_dir: doc/doxygen/html
+  verbose: true
+  on:
+    tags: true  # only deploy on tagged versions
+    condition:  ${DOCS} && -d doc/doxygen/html
