@@ -670,9 +670,9 @@ struct Spherical3DCoordinates {
     //       case, we should still leave moment_shift as 2, because you
     //       definitely lose two orders, and then any order you keep has an
     //       accuracy limited by how many moments are available.  But in that
-    //       case, we would definitely want to the user to be aware of this,
-    //       such as by a compiler flag that compiles in the approximate
-    //       formula vs compiling in the failed assertion below.
+    //       case, we would definitely want the user to be aware of this, such
+    //       as by a compiler flag that compiles in the approximate formula vs
+    //       compiling in the failed assertion below.
     // Spherical coordinates include an extra factor of r^2 sin(theta), which
     // cannot be managed by shifting moments.
     std::cerr << "The shift_moments_list method does not work in 3D " << 
