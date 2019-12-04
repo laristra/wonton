@@ -270,7 +270,7 @@ std::pair<
     newlevel[i+num_new_cells] = level[i];
   }
   // Return
-  return(std::move(std::make_pair(newcells, newlevel)));
+  return std::make_pair(newcells, newlevel);
 }
 
 // ____________________________________________________________________________

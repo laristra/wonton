@@ -171,8 +171,7 @@ namespace Wonton {
     }
     assert(exponent_sum == order);
     // Return
-    return(std::move(std::make_pair(order,exponents)));
-    // TODO: Never return std::move
+    return std::make_pair(order,exponents);
   }
 
   template<>
@@ -199,8 +198,7 @@ namespace Wonton {
     }
     assert(exponent_sum == order);
     // Return
-    return(std::move(std::make_pair(order,exponents)));
-    // TODO: Never return std::move
+    return std::make_pair(order,exponents);
   }
 
   template<>
@@ -222,8 +220,7 @@ namespace Wonton {
     }
     assert(exponent_sum == order);
     // Return
-    return(std::move(std::make_pair(order,exponents)));
-    // TODO: Never return std::move
+    return std::make_pair(order,exponents);
   }
 
   // ==========================================================================
@@ -345,7 +342,7 @@ namespace Wonton {
     int order;
     std::array<int,D> exponents;
     index_to_moment_recursive<D>(index, order, exponents.data());
-    return(std::move(std::make_pair(order,exponents)));
+    return std::make_pair(order,exponents);
   }
   */
 
