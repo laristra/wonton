@@ -385,6 +385,26 @@ class AuxMeshTopology {
     }
   }
 
+  /**
+   * @brief Retrieve the cell incident to a given face of a given cell.
+   *
+   * @param cell: the current cell.
+   * @param face: the current face of the given cell.
+   * @return the index of the incident cell to the given face or -1.
+   */
+  int cell_get_face_adj_cell(int cell, int face) const {
+    std::vector<int> cellfaces;
+    basicmesh_ptr_->face_get_cells(face, Entity_type::ALL, &cellfaces);
+    int const nb_adj_cells = cellfaces.size();
+
+    // Interfaces we need are always connected to two cells
+    if (nb_adj_cells == 2) {
+      int index = (cellfaces[0] == cell ? 1 : 0);
+      return cellfaces[index];
+    }
+    return -1;
+  } // cell_get_face_incident_neigh
+
   /*!
     @brief Get the list of cell IDs for all cells attached to a specific
     cell through its faces.
