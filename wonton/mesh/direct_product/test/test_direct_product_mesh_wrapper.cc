@@ -8,6 +8,7 @@ Please see the license file at the root of this repository, or at:
 #include <array>
 #include <iostream>
 #include <iterator>
+#include <numeric>
 #include <vector>
 
 #include "wonton/mesh/direct_product/direct_product_mesh.h"

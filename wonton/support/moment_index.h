@@ -9,7 +9,6 @@ Please see the license file at the root of this repository, or at:
 #include <array>
 #include <cassert>
 #include <cmath>
-#include <numeric> // TODO: Is this needed?
 #include <utility>
 
 //! This file contains convenience functions to help extract moments from the
@@ -93,7 +92,7 @@ namespace Wonton {
     int exponent_sum = 0;
     for (int d = 0; d < D; ++d) {
       assert(exponents[d] >= 0);
-
+      exponent_sum += exponents[d];
     }
     assert(exponent_sum == order);
     int index = 0;
