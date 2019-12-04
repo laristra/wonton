@@ -137,7 +137,12 @@ struct CartesianCoordinates {
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation.
-    // TODO: Do I need to correct for the geometry factor?
+    // --> Other than the geometry factor (which should be one, because any
+    //     other value would be highly unusual for Cartesian coordinates, but
+    //     we verify this anyway).
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= inv_geo_fac;
+    }
   }
 
 };  // Cartesian Coordinates
@@ -214,8 +219,13 @@ struct CylindricalRadialCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // TODO: Do I need to correct for the geometry factor?
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::twopi;
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= scaling_factor;
+    }
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -296,8 +306,13 @@ struct CylindricalAxisymmetricCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // TODO: Do I need to correct for the geometry factor?
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::twopi;
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= scaling_factor;
+    }
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -375,8 +390,12 @@ struct CylindricalPolarCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // TODO: Do I need to correct for the geometry factor?
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= inv_geo_fac;
+    }
   }
 
 };  // Cylindrical Polar Coordinates
@@ -455,8 +474,12 @@ struct Cylindrical3DCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // TODO: Do I need to correct for the geometry factor?
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= inv_geo_fac;
+    }
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -535,8 +558,13 @@ struct SphericalRadialCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // TODO: Do I need to correct for the geometry factor?
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::fourpi;
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= scaling_factor;
+    }
   }
 
 };  // Spherical (Radial) Coordinates
@@ -633,6 +661,18 @@ struct Spherical3DCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
+    // TODO: The precise expression is M^{\rm sph}[i,j,k] = (1/G)
+    //       sum_{n=0}^{\infty} \left[ \frac{(-1)^n}{(2n)!} M^{\rm
+    //       Cart}[i+2,j+2n,k]\right].  We could allow an approximation that
+    //       performs that summation over however many moments are available,
+    //       and higher moments will be progressively lower accuracy (because
+    //       there will be less moments available for the summation).  In that
+    //       case, we should still leave moment_shift as 2, because you
+    //       definitely lose two orders, and then any order you keep has an
+    //       accuracy limited by how many moments are available.  But in that
+    //       case, we would definitely want to the user to be aware of this,
+    //       such as by a compiler flag that compiles in the approximate
+    //       formula vs compiling in the failed assertion below.
     // Spherical coordinates include an extra factor of r^2 sin(theta), which
     // cannot be managed by shifting moments.
     std::cerr << "The shift_moments_list method does not work in 3D " << 
