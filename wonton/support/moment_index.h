@@ -44,12 +44,17 @@ Please see the license file at the root of this repository, or at:
 //! The moments list index is the index for a given moment used in such a list
 //! of moments.  To give an example, using the notation from the 2D Cartesian
 //! example above, the ordering is:
-//! -- order = 0, exponents = {0, 0}  <==>  in Cartesian: integral{dx dy}
-//! -- order = 1, exponents = {1, 0}  <==>  in Cartesian: integral{x dx dy}
-//! -- order = 1, exponents = {0, 1}  <==>  in Cartesian: integral{y dx dy}
-//! -- order = 2, exponents = {2, 0}  <==>  in Cartesian: integral{x^2 dx dy}
-//! -- order = 2, exponents = {1, 1}  <==>  in Cartesian: integral{x y dx dy}
-//! -- order = 2, exponents = {0, 2}  <==>  in Cartesian: integral{y^2 dx dy}
+//!   index   order    exponents    integral in Cartesian coordinates
+//!     0       0       {0, 0}          integral{        dx dy})
+//!     1       1       {1, 0}          integral{x       dx dy})
+//!     2       1       {0, 1}          integral{    y   dx dy})
+//!     3       2       {2, 0}          integral{x^2     dx dy})
+//!     4       2       {1, 1}          integral{x   y   dx dy})
+//!     5       2       {0, 2}          integral{    y^2 dx dy})
+//!     6       3       {3, 0}          integral{x^3     dx dy})
+//!     7       3       {2, 1}          integral{x^2 y   dx dy})
+//!     8       3       {1, 2}          integral{x   y^2 dx dy})
+//!     9       3       {0, 3}          integral{    y^3 dx dy})
 //! And so on, depending on how many moments are available in the list.  Other
 //! dimensionalities have analogous orderings (see the implementations below
 //! for precise details).
