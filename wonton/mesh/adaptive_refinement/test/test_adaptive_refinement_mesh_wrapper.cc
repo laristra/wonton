@@ -45,11 +45,16 @@ void verify_cell_iteration(
     ASSERT_GE(id, 0);
     ASSERT_LT(id, wrapper.num_owned_cells());
     // Mark that value as having been found
-    found[id] = 1;
+    found[id] += 1;
   }
   // Verify that all elements were found
+  // -- Did we find the right number?
   auto num_found = std::accumulate(found.begin(), found.end(), 0);
   ASSERT_EQ(num_found, wrapper.num_owned_cells());
+  // -- Was every element found?
+  ASSERT_EQ(std::min_element(found.begin(), found.end()), 1);
+  // -- Was every element found only once?
+  ASSERT_EQ(std::max_element(found.begin(), found.end()), 1);
 }
 
 // ----------------------------------------------------------------------------
