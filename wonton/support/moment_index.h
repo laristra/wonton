@@ -39,6 +39,20 @@ Please see the license file at the root of this repository, or at:
 //! the moment with exponents {0,1,1} is be computed as
 //! integral{phi z dV} = integral{rho phi z drho dphi dz} rather than as
 //! integral{phi z drho dphi dz}.
+//!
+//! Moments are stored in one-dimensional lists, with a specified ordering.
+//! The moments list index is the index for a given moment used in such a list
+//! of moments.  To give an example, using the notation from the 2D Cartesian
+//! example above, the ordering is:
+//! -- order = 0, exponents = {0, 0}  <==>  in Cartesian: integral{dx dy}
+//! -- order = 1, exponents = {1, 0}  <==>  in Cartesian: integral{x dx dy}
+//! -- order = 1, exponents = {0, 1}  <==>  in Cartesian: integral{y dx dy}
+//! -- order = 2, exponents = {2, 0}  <==>  in Cartesian: integral{x^2 dx dy}
+//! -- order = 2, exponents = {1, 1}  <==>  in Cartesian: integral{x y dx dy}
+//! -- order = 2, exponents = {0, 2}  <==>  in Cartesian: integral{y^2 dx dy}
+//! And so on, depending on how many moments are available in the list.  Other
+//! dimensionalities have analogous orderings (see the implementations below
+//! for precise details).
 
 namespace Wonton {
 
