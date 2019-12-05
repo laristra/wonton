@@ -12,6 +12,8 @@ Please see the license file at the root of this repository, or at:
 #include <tuple>
 
 #include "moment_index.h"
+#include "wonton/support/Point.h"
+#include "wonton/support/Vector.h"
 
 /*
   @file CoordinateSystem.h
@@ -33,7 +35,7 @@ Please see the license file at the root of this repository, or at:
 
 namespace Wonton {
 
-// Because C++ never bothered to define pi for some bizarre reason
+  // Because C++ never bothered to define pi for some bizarre reason
 namespace CoordinateSystem {
   // atan, acos, and similar are not (by the standard) constexpr, so we can't
   // use them to define constexpr values for pi
@@ -65,7 +67,7 @@ namespace CoordinateSystem {
     new_moments.swap(moments);
   }
 
-}
+  }
 
 // ============================================================================
 /// Cartesian Coordinates
@@ -102,7 +104,7 @@ struct CartesianCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // No change from "standard", Cartesian-like calculation.
@@ -114,7 +116,7 @@ struct CartesianCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // No change from "standard", Cartesian-like calculation.
@@ -135,6 +137,12 @@ struct CartesianCoordinates {
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation.
+    // --> Other than the geometry factor (which should be one, because any
+    //     other value would be highly unusual for Cartesian coordinates, but
+    //     we verify this anyway).
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= inv_geo_fac;
+    }
   }
 
 };  // Cartesian Coordinates
@@ -178,7 +186,7 @@ struct CylindricalRadialCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -211,7 +219,13 @@ struct CylindricalRadialCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::twopi;
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= scaling_factor;
+    }
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -256,7 +270,7 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -268,7 +282,7 @@ struct CylindricalAxisymmetricCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
@@ -292,7 +306,13 @@ struct CylindricalAxisymmetricCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::twopi;
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= scaling_factor;
+    }
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -335,7 +355,7 @@ struct CylindricalPolarCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -347,7 +367,7 @@ struct CylindricalPolarCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
@@ -370,7 +390,12 @@ struct CylindricalPolarCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= inv_geo_fac;
+    }
   }
 
 };  // Cylindrical Polar Coordinates
@@ -413,7 +438,7 @@ struct Cylindrical3DCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -425,7 +450,7 @@ struct Cylindrical3DCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
@@ -449,7 +474,12 @@ struct Cylindrical3DCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= inv_geo_fac;
+    }
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -493,7 +523,7 @@ struct SphericalRadialCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -506,7 +536,7 @@ struct SphericalRadialCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
@@ -528,7 +558,13 @@ struct SphericalRadialCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-      CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Shift moments
+    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
+    // Rescale moments
+    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::fourpi;
+    for (int d = 0; d < moments.size(); ++d) {
+      moments[d] *= scaling_factor;
+    }
   }
 
 };  // Spherical (Radial) Coordinates
@@ -573,7 +609,7 @@ struct Spherical3DCoordinates {
 
   /// Modify volume to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_volume(double & volume,
       Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
@@ -590,7 +626,7 @@ struct Spherical3DCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
       Point<D> const & plo, Point<D> const phi) {
     // Adjust for different coordinate system
@@ -625,6 +661,18 @@ struct Spherical3DCoordinates {
   /// Handles any shape cell, but may reduce order of moments available.
   template<long D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
+    // TODO: The precise expression is M^{\rm sph}[i,j,k] = (1/G)
+    //       sum_{n=0}^{\infty} \left[ \frac{(-1)^n}{(2n)!} M^{\rm
+    //       Cart}[i+2,j+2n,k]\right].  We could allow an approximation that
+    //       performs that summation over however many moments are available,
+    //       and higher moments will be progressively lower accuracy (because
+    //       there will be less moments available for the summation).  In that
+    //       case, we should still leave moment_shift as 2, because you
+    //       definitely lose two orders, and then any order you keep has an
+    //       accuracy limited by how many moments are available.  But in that
+    //       case, we would definitely want the user to be aware of this, such
+    //       as by a compiler flag that compiles in the approximate formula vs
+    //       compiling in the failed assertion below.
     // Spherical coordinates include an extra factor of r^2 sin(theta), which
     // cannot be managed by shifting moments.
     std::cerr << "The shift_moments_list method does not work in 3D " << 

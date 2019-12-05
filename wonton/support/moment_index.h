@@ -9,7 +9,6 @@ Please see the license file at the root of this repository, or at:
 #include <array>
 #include <cassert>
 #include <cmath>
-#include <numeric>
 #include <utility>
 
 //! This file contains convenience functions to help extract moments from the
@@ -40,6 +39,25 @@ Please see the license file at the root of this repository, or at:
 //! the moment with exponents {0,1,1} is be computed as
 //! integral{phi z dV} = integral{rho phi z drho dphi dz} rather than as
 //! integral{phi z drho dphi dz}.
+//!
+//! Moments are stored in one-dimensional lists, with a specified ordering.
+//! The moments list index is the index for a given moment used in such a list
+//! of moments.  To give an example, using the notation from the 2D Cartesian
+//! example above, the ordering is:
+//!   index   order    exponents    integral in Cartesian coordinates
+//!     0       0       {0, 0}          integral{        dx dy})
+//!     1       1       {1, 0}          integral{x       dx dy})
+//!     2       1       {0, 1}          integral{    y   dx dy})
+//!     3       2       {2, 0}          integral{x^2     dx dy})
+//!     4       2       {1, 1}          integral{x   y   dx dy})
+//!     5       2       {0, 2}          integral{    y^2 dx dy})
+//!     6       3       {3, 0}          integral{x^3     dx dy})
+//!     7       3       {2, 1}          integral{x^2 y   dx dy})
+//!     8       3       {1, 2}          integral{x   y^2 dx dy})
+//!     9       3       {0, 3}          integral{    y^3 dx dy})
+//! And so on, depending on how many moments are available in the list.  Other
+//! dimensionalities have analogous orderings (see the implementations below
+//! for precise details).
 
 namespace Wonton {
 
@@ -136,7 +154,7 @@ namespace Wonton {
 
   template<>
   inline std::pair<int,std::array<int,3>> index_to_moment<3>(
-      int const index) {
+     int const index) {
     int constexpr D = 3;
     int n = index;
     // Declare the output variables
@@ -172,7 +190,7 @@ namespace Wonton {
     }
     assert(exponent_sum == order);
     // Return
-    return(std::move(std::make_pair(order,exponents)));
+    return std::make_pair(order,exponents);
   }
 
   template<>
@@ -199,7 +217,7 @@ namespace Wonton {
     }
     assert(exponent_sum == order);
     // Return
-    return(std::move(std::make_pair(order,exponents)));
+    return std::make_pair(order,exponents);
   }
 
   template<>
@@ -221,7 +239,7 @@ namespace Wonton {
     }
     assert(exponent_sum == order);
     // Return
-    return(std::move(std::make_pair(order,exponents)));
+    return std::make_pair(order,exponents);
   }
 
 }  // namespace Wonton
