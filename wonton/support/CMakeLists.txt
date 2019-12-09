@@ -17,6 +17,8 @@ set(support_HEADERS
   svd.h
   Vector.h
   Polytope.h
+  prime_factors.h
+  equipartition.h
   wonton.h
   PARENT_SCOPE
 )
@@ -46,4 +48,12 @@ if (ENABLE_UNIT_TESTS)
     SOURCES test/test_Polytope3.cc
     POLICY SERIAL)   
 
+  cinch_add_unit(test_prime_factors
+    SOURCES test/test_prime_factors.cc
+    POLICY SERIAL)
+
+  cinch_add_unit(test_equipartition
+    SOURCES test/test_equipartition.cc
+    POLICY SERIAL)
+  
 endif(ENABLE_UNIT_TESTS)
