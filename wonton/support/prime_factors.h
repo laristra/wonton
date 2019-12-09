@@ -43,6 +43,8 @@ std::vector<int> prime_factors(unsigned int const N) {
     }
   }
 
+  if (factors.size() == 0)
+    factors.push_back(N);  // prime number or couldn't factorize
   return factors;
 }
         
