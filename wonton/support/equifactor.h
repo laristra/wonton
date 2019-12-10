@@ -4,8 +4,8 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_EQUIPARTITION_H
-#define WONTON_EQUIPARTITION_H_
+#ifndef WONTON_EQUIFACTOR_H
+#define WONTON_EQUIFACTOR_H_
 
 #include <vector>
 #include <algorithm>
@@ -40,7 +40,7 @@ namespace Wonton {
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
 
-std::vector<int64_t> equipartition(int const N, int const D, int const randseed = 0) {
+std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0) {
   clock_t startclock, curclock;
   startclock = clock();
 
