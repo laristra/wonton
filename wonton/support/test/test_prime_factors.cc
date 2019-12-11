@@ -21,7 +21,7 @@ TEST(PrimeFactors, PrimeFactors) {
   ASSERT_EQ(0, factors.size());
 
   factors = Wonton::prime_factors(1);
-  ASSERT_EQ(0, factors.size());
+  ASSERT_EQ(1, factors.size());
 
   factors = Wonton::prime_factors(2);
   ASSERT_EQ(1, factors.size());
