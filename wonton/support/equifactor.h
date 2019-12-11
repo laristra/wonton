@@ -34,20 +34,25 @@ namespace Wonton {
   factors will be 1. The algorithm is like simulated annealing (swap
   random numbers between random min and max sets, allow objective
   function to rise if stalled)
+
+  For the designed usage (parallel partitioning), t is inconceivable
+  that we will generate factors greater than what is accommodated by
+  an int. If it is, we have to make the 'products' vector and the
+  return vector int64_t
 */
 
 #ifdef ENABLE_DEBUG
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
 
-std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0) {
+std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
   clock_t startclock, curclock;
   startclock = clock();
 
   assert(N > 0 && D > 0);
 
   if (D == 1)
-    return std::vector<int64_t>(1, N);
+    return std::vector<int>(1, N);
 
   // Find all the prime factors of N (with duplicates)
 
@@ -81,7 +86,7 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
 #endif
 
 
-  std::vector<int64_t> products(D);
+  std::vector<int> products(D);
 
   bool outer_done = false;
   int maxiter = 100*D;
@@ -89,7 +94,7 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
   int num_no_change = 0;
   bool allow_swap_climb = false, allow_move_climb = false;
   int nclimbs = 0;
-  int64_t olddiff = 0;
+  int olddiff = 0;
 
   minsets = sets;
 
@@ -106,10 +111,10 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
         products[i] *= n;
 
     // Min and max products
-    int64_t minprod = *(std::min_element(products.begin(), products.end()));
-    int64_t maxprod = *(std::max_element(products.begin(), products.end()));
+    int minprod = *(std::min_element(products.begin(), products.end()));
+    int maxprod = *(std::max_element(products.begin(), products.end()));
 
-    int64_t diff = maxprod-minprod;
+    int diff = maxprod-minprod;
     if (diff == 0) {  // all sets have same measure
       outer_done = true;
       continue;
@@ -134,8 +139,8 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
 
     std::vector<int>& set1 = sets[iset1];
     std::vector<int>& set2 = sets[iset2];
-    int64_t & prod1 = products[iset1];
-    int64_t & prod2 = products[iset2];
+    int & prod1 = products[iset1];
+    int & prod2 = products[iset2];
 
 
     // swap/move elements between sets to try to reduce difference
@@ -178,10 +183,10 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
       // random kick because we are stalled?
 
 
-      int64_t prod1_new = val_set2*prod1/val_set1;
-      int64_t prod2_new = val_set1*prod2/val_set2;
+      int prod1_new = val_set2*prod1/val_set1;
+      int prod2_new = val_set1*prod2/val_set2;
 
-      int64_t diff1 = prod2_new - prod1_new;
+      int diff1 = prod2_new - prod1_new;
 
       if (std::abs(diff1) < std::abs(diff) || allow_swap_climb) {
 
@@ -225,7 +230,7 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
     minprod = *(std::min_element(products.begin(), products.end()));
     maxprod = *(std::max_element(products.begin(), products.end()));
 
-    int64_t maxdiff = maxprod-minprod;
+    int maxdiff = maxprod-minprod;
 
     if (maxdiff == olddiff)
       num_no_change++;
@@ -276,11 +281,11 @@ std::vector<int64_t> equifactor(int const N, int const D, int const randseed = 0
 #ifdef ENABLE_DEBUG
 void print_sets(std::vector<std::vector<int>> sets) {
   int nsets = sets.size();
-  int64_t minprod = std::numeric_limits<int64_t>::max();
-  int64_t maxprod = std::numeric_limits<int64_t>::min();
+  int minprod = std::numeric_limits<int>::max();
+  int maxprod = std::numeric_limits<int>::min();
   for (int i = 0; i < nsets; i++) {
     std::cerr << "Set " << i << ": ";
-    int64_t prod = 1;
+    int prod = 1;
     for (int const n : sets[i]) {
       prod *= n;
       std::cerr << n << " ";
@@ -291,7 +296,7 @@ void print_sets(std::vector<std::vector<int>> sets) {
     if (prod > maxprod)
       maxprod = prod;
   }
-  int64_t maxdiff = maxprod - minprod;
+  int maxdiff = maxprod - minprod;
   std::cerr << "Max diff: " << maxdiff << "\n";
 }
 #endif

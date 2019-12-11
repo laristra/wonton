@@ -10,7 +10,7 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/support/equifactor.h"
 
 TEST(EquiFactor, EquiFactor) {
-  std::vector<int64_t> factors;
+  std::vector<int> factors;
   
   // Try factoring a square
   factors = Wonton::equifactor(64, 2);
