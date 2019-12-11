@@ -19,11 +19,13 @@ template<int N, int D, int d=D>
 std::array<std::array<int, 2*D>, N>
 structured_partitioner(std::array<int, D> ncells, int randseed = 0) {
 
+  // factor the number of processors/partitions into D, nearly equal numbers
   std::vector<int> nbins = equifactor(N, d, randseed);
   for (int i = d; i < D; i++)
     nbins.push_back(1);
 
-  std::array<std::vector<int>, D> bincounts;  // num cells in each bin along each axis
+  // compute num cells in each bin along each axis
+  std::array<std::vector<int>, D> bincounts;
 
   for (int i = 0; i < D; i++) {
     int nperbin = ncells[i]/nbins[i];
@@ -37,7 +39,8 @@ structured_partitioner(std::array<int, D> ncells, int randseed = 0) {
       bincounts[i][j]++;
   }
 
-  std::array<std::vector<int>, D> binoffsets; // cell offsets of each bin along each axis
+  // cell offsets of each bin along each axis
+  std::array<std::vector<int>, D> binoffsets;
 
   for (int i = 0; i < D; i++) {
     binoffsets[i].resize(nbins[i]+1);
