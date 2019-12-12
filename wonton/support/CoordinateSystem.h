@@ -15,9 +15,6 @@ Please see the license file at the root of this repository, or at:
 #include "wonton/support/Point.h"
 #include "wonton/support/Vector.h"
 
-#include "wonton/support/Point.h"
-#include "wonton/support/Vector.h"
-
 /*
   @file CoordinateSystem.h
   @brief Defines quantities needed for non-Cartesian coordinates
@@ -48,9 +45,10 @@ namespace CoordinateSystem {
 
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list_core(
-      std::vector<double> & moments, int const shift) {
+      std::vector<double> & moments, int const shift,
+      double const scaling_factor) {
     // Allocate new storage
     auto top_moment = index_to_moment<D>(moments.size() - 1);
     auto max_order = std::get<0>(top_moment) - shift;
@@ -58,19 +56,23 @@ namespace CoordinateSystem {
     std::vector<double> new_moments(num_new_moments);
     // Shift moments
     for (int new_index = 0; new_index < new_moments.size(); new_index++) {
-      int order;
-      std::array<int,D> exponents;
-      std::tie(order,exponents) = index_to_moment<D>(new_index);
+      auto moment_spec = index_to_moment<D>(new_index);
+      auto order = std::get<0>(moment_spec);
+      auto exponents = std::get<1>(moment_spec);
       order += shift;
       exponents[0] += shift;
       auto old_index = moment_to_index<D>(order, exponents);
       new_moments[new_index] = moments[old_index];
     }
+    // Rescale moments
+    for (int d = 0; d < new_moments.size(); ++d) {
+      new_moments[d] *= scaling_factor;
+    }
     // Swap vectors
     new_moments.swap(moments);
   }
 
-  }
+}
 
 // ============================================================================
 /// Cartesian Coordinates
@@ -121,7 +123,7 @@ struct CartesianCoordinates {
   /// Only works for axis-aligned boxes.
   template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
@@ -135,9 +137,13 @@ struct CartesianCoordinates {
   /// Calculations are already done assuming Cartesian, so no shift is needed.
   static constexpr int moment_shift = 0;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
@@ -201,9 +207,9 @@ struct CylindricalRadialCoordinates {
 
   /// Modify moments to account for the coordinate system
   /// Only works for axis-aligned boxes.
-  template<long D>
+  template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     auto rhobar = 0.5 * (phi[0] + plo[0]);
     auto drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -218,17 +224,17 @@ struct CylindricalRadialCoordinates {
   /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = CoordinateSystem::twopi;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    // Shift moments
-    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // Rescale moments
-    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::twopi;
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= scaling_factor;
-    }
+    // Shift and rescale moments
+    CoordinateSystem::shift_moments_list_core<D>(
+        moments, moment_shift, inv_geo_fac * moment_coefficient);
   }
 
 };  // Cylindrical (Radial) Coordinates
@@ -287,7 +293,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// Only works for axis-aligned boxes.
   template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     auto rhobar = 0.5 * (phi[0] + plo[0]);
     auto drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -305,17 +311,17 @@ struct CylindricalAxisymmetricCoordinates {
   /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = CoordinateSystem::twopi;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    // Shift moments
-    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // Rescale moments
-    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::twopi;
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= scaling_factor;
-    }
+    // Shift and rescale moments
+    CoordinateSystem::shift_moments_list_core<D>(
+        moments, moment_shift, inv_geo_fac * moment_coefficient);
   }
 
 };  // Cylindrical (Axisymmetric) Coordinates
@@ -372,7 +378,7 @@ struct CylindricalPolarCoordinates {
   /// Only works for axis-aligned boxes.
   template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     auto rhobar = 0.5 * (phi[0] + plo[0]);
     auto drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -389,16 +395,17 @@ struct CylindricalPolarCoordinates {
   /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    // Shift moments
-    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // Rescale moments
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= inv_geo_fac;
-    }
+    // Shift and rescale moments
+    CoordinateSystem::shift_moments_list_core<D>(
+        moments, moment_shift, inv_geo_fac * moment_coefficient);
   }
 
 };  // Cylindrical Polar Coordinates
@@ -455,7 +462,7 @@ struct Cylindrical3DCoordinates {
   /// Only works for axis-aligned boxes.
   template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     auto rhobar = 0.5 * (phi[0] + plo[0]);
     auto drho_2 = 0.5 * (phi[0] - plo[0]);
@@ -473,16 +480,17 @@ struct Cylindrical3DCoordinates {
   /// order of available moments by one.
   static constexpr int moment_shift = 1;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    // Shift moments
-    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // Rescale moments
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= inv_geo_fac;
-    }
+    // Shift and rescale moments
+    CoordinateSystem::shift_moments_list_core<D>(
+        moments, moment_shift, inv_geo_fac * moment_coefficient);
   }
 
 };  // Cylindrical (3D) Coordinates
@@ -541,7 +549,7 @@ struct SphericalRadialCoordinates {
   /// Only works for axis-aligned boxes.
   template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     auto rbar = 0.5 * (phi[0] + plo[0]);
     auto dr_2 = 0.5 * (phi[0] - plo[0]);
@@ -557,17 +565,17 @@ struct SphericalRadialCoordinates {
   /// order of available moments by two.
   static constexpr int moment_shift = 2;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = CoordinateSystem::fourpi;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
-    // Shift moments
-    CoordinateSystem::shift_moments_list_core<D>(moments, moment_shift);
-    // Rescale moments
-    constexpr auto scaling_factor = inv_geo_fac * CoordinateSystem::fourpi;
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= scaling_factor;
-    }
+    // Shift and rescale moments
+    CoordinateSystem::shift_moments_list_core<D>(
+        moments, moment_shift, inv_geo_fac * moment_coefficient);
   }
 
 };  // Spherical (Radial) Coordinates
@@ -631,7 +639,7 @@ struct Spherical3DCoordinates {
   /// Only works for axis-aligned boxes.
   template<int D>
   static constexpr void modify_first_moments(Point<D> & moments,
-      Point<D> const & plo, Point<D> const phi) {
+      Point<D> const & plo, Point<D> const & phi) {
     // Adjust for different coordinate system
     auto rbar = 0.5 * (phi[0] + plo[0]);
     auto dr_2 = 0.5 * (phi[0] - plo[0]);
@@ -660,9 +668,13 @@ struct Spherical3DCoordinates {
   /// order of available moments by two.
   static constexpr int moment_shift = 2;
 
+  /// How many orders of moments the moment-shift algorithm loses
+  /// Calculations are already done assuming Cartesian, so no shift is needed.
+  static constexpr double moment_coefficient = 1;
+
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
-  template<long D>
+  template<int D>
   static constexpr void shift_moments_list(std::vector<double> & moments) {
     // TODO: The precise expression is M^{\rm sph}[i,j,k] = (1/G)
     //       sum_{n=0}^{\infty} \left[ \frac{(-1)^n}{(2n)!} M^{\rm
