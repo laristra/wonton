@@ -1015,7 +1015,7 @@ constexpr void run_shift_test() {
   // Construct original list of moments
   auto moments = get_sample_moments<D,0>();
   // Shift moments
-  CoordSys::shift_moments_list<D>(moments);
+  CoordSys::template shift_moments_list<D>(moments);
   // Construct expected list of moments
   auto new_moments = get_sample_moments<D,CoordSys::moment_shift>();
   // Verify
