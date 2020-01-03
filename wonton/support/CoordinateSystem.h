@@ -46,7 +46,7 @@ namespace CoordinateSystem {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list_core(
+  static void shift_moments_list_core(
       std::vector<double> & moments, int const shift,
       double const scaling_factor) {
     // Allocate new storage
@@ -144,7 +144,7 @@ struct CartesianCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
@@ -231,7 +231,7 @@ struct CylindricalRadialCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -318,7 +318,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -402,7 +402,7 @@ struct CylindricalPolarCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -487,7 +487,7 @@ struct Cylindrical3DCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -572,7 +572,7 @@ struct SphericalRadialCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -675,7 +675,7 @@ struct Spherical3DCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // TODO: The precise expression is M^{\rm sph}[i,j,k] = (1/G)
     //       sum_{n=0}^{\infty} \left[ \frac{(-1)^n}{(2n)!} M^{\rm
     //       Cart}[i+2,j+2n,k]\right].  We could allow an approximation that
