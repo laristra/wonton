@@ -1015,6 +1015,11 @@ constexpr void run_shift_test() {
   // Construct original list of moments
   auto moments = get_sample_moments<D,0>();
   // Shift moments
+  //    For many coordinate systems, a moment in that coordinate system is
+  // equal to a higher-order moment in Cartesian coordinates.  Portage does
+  // many of its calculations assuming Cartesian coordinates, and this method
+  // will shift the moments around to get the correct moments in the current
+  // coordinate system.
   CoordSys::template shift_moments_list<D>(moments);
   // Construct expected list of moments
   auto new_moments = get_sample_moments<D,CoordSys::moment_shift>();
