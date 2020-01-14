@@ -13,6 +13,7 @@ set(support_HEADERS
   lsfits.h
   CoordinateSystem.h
   Matrix.h
+  moment_index.h
   Point.h
   svd.h
   Vector.h
@@ -41,13 +42,18 @@ if (ENABLE_UNIT_TESTS)
     POLICY MPI
     THREADS 1)
 
+  cinch_add_unit(moment_index
+    SOURCES test/test_moment_index.cc
+    POLICY SERIAL
+    )
+
   cinch_add_unit(test_Polytope2
     SOURCES test/test_Polytope2.cc
     POLICY SERIAL)
 
   cinch_add_unit(test_Polytope3
     SOURCES test/test_Polytope3.cc
-    POLICY SERIAL)   
+    POLICY SERIAL) 
 
   cinch_add_unit(test_prime_factors
     SOURCES test/test_prime_factors.cc

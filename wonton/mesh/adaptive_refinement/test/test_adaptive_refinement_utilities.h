@@ -56,7 +56,7 @@ int num_cells() {
 template<int D>
 BoxList<D> get_sample_points() {
   BoxList<D> boxes;
-  return(std::move(boxes));
+  return boxes;
 }
 
 // ============================================================================
@@ -114,7 +114,7 @@ BoxList<1> get_sample_points<1>() {
   box_list[n][0][LO] = 1.0 - 4.0 / 32.0;
   box_list[n][0][HI] = 1.0 - 3.0 / 32.0;
   // Return
-  return(std::move(std::make_pair(id_list,box_list)));
+  return std::make_pair(id_list,box_list);
 }
 
 // ============================================================================
@@ -179,7 +179,7 @@ BoxList<2> get_sample_points<2>() {
   box_list[n][1][LO] = 5.0 / 8.0;
   box_list[n][1][HI] = 6.0 / 8.0;
   // Return
-  return(std::move(std::make_pair(id_list,box_list)));
+  return std::make_pair(id_list,box_list);
 }
 
 // ============================================================================
@@ -257,7 +257,7 @@ BoxList<3> get_sample_points<3>() {
   box_list[n][2][LO] = 0.75;
   box_list[n][2][HI] = 1.0;
   // Return
-  return(std::move(std::make_pair(id_list,box_list)));
+  return std::make_pair(id_list,box_list);
 }
 
 // ============================================================================
@@ -339,7 +339,7 @@ BoxList<4> get_sample_points<4>() {
   box_list[n][3][LO] = 2.0 / 8.0;
   box_list[n][3][HI] = 3.0 / 8.0;
   // Return
-  return(std::move(std::make_pair(id_list,box_list)));
+  return std::make_pair(id_list,box_list);
 }
 
 // ============================================================================
