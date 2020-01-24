@@ -41,6 +41,8 @@ namespace Wonton {
   return vector int64_t
 */
 
+namespace {  // for ODR
+
 #ifdef ENABLE_DEBUG
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
@@ -300,6 +302,8 @@ void print_sets(std::vector<std::vector<int>> sets) {
   std::cerr << "Max diff: " << maxdiff << "\n";
 }
 #endif
+
+}
 
 }  // namespace Wonton
 
