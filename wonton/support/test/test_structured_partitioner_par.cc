@@ -22,14 +22,16 @@ TEST(StructuredPartioner, Parallel) {
       // number of processors we run this on has no relation to how
       // many partitions we are requesting).
 
-      int randseed = 42;
+      int seed = 42;
       std::array<int, 3> ncells = {144, 256, 16};
-      auto partlimits = Wonton::structured_partitioner<16, 3>(ncells, randseed);
+      auto partlimits = Wonton::structured_partitioner<3>(16, ncells, 3, seed);
 
       int limitsarray[96];  // flattened array
       for (int i = 0; i < 16; i++)
-        for (int j = 0; j < 6; j++)
-          limitsarray[i*6+j] = partlimits[i][j];
+        for (int j = 0; j < 3; j++) {
+          limitsarray[i*6+j]   = partlimits[i][0][j];  // lower limit
+          limitsarray[i*6+j+3] = partlimits[i][1][j];  // upper limit
+        }
 
       int limitsarray_all[384];
       MPI_Allgather(limitsarray, 96, MPI_INT, limitsarray_all, 96, MPI_INT,
