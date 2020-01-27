@@ -18,9 +18,9 @@ Please see the license file at the root of this repository, or at:
 
 #ifdef WONTON_ENABLE_MPI
 
-using Wonton::Entity_type::PARALLEL_OWNED;
-using Wonton::Entity_type::PARALLEL_GHOST;
-using Wonton::Entity_type::ALL;
+using Wonton::PARALLEL_OWNED;
+using Wonton::PARALLEL_GHOST;
+using Wonton::ALL;
 
 // ============================================================================
 /*!

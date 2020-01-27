@@ -154,8 +154,8 @@ namespace direct_product_mesh_wrapper_test {
     int num_cells_all = wrapper.num_owned_cells()+wrapper.num_ghost_cells();
     std::vector<int> found(num_cells_all, 0);
     // Loop over all cell IDs
-    auto ekind = Wonton::Entity_kind::CELL;
-    auto etype = Wonton::Entity_type::ALL;
+    Wonton::Entity_kind ekind = Wonton::CELL;
+    Wonton::Entity_type etype = Wonton::ALL;
     for (auto iter = wrapper.begin(ekind,etype);
         iter != wrapper.end(ekind,etype); ++iter) {
       // Get the indices from the cell ID
