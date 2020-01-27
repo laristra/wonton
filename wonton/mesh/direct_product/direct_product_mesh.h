@@ -12,6 +12,7 @@ Please see the license file at the root of this repository, or at:
 #include <vector>
 
 #include "wonton/support/wonton.h"
+#include "wonton/support/CoordinateSystem.h"
 
 /*!
   @file direct_product_mesh.h
@@ -42,7 +43,7 @@ namespace Wonton {
   of the tests expands, the scope of functionality of the Direct_Product_Mesh
   may also expand.
  */
-template<int D>
+template<int D, class CoordSys=Wonton::DefaultCoordSys>
 class Direct_Product_Mesh {
 
  public:
@@ -63,7 +64,8 @@ class Direct_Product_Mesh {
   Direct_Product_Mesh(const std::array<std::vector<double>,D> &axis_points);
 
   //! Assignment operator (disabled).
-  Direct_Product_Mesh & operator=(const Direct_Product_Mesh<D> &) = delete;
+  Direct_Product_Mesh & operator=(
+      const Direct_Product_Mesh<D,CoordSys> &) = delete;
 
   //! Destructor
   ~Direct_Product_Mesh();
@@ -107,8 +109,8 @@ class Direct_Product_Mesh {
 
 // ____________________________________________________________________________
 // Constructor
-template<int D>
-Direct_Product_Mesh<D>::Direct_Product_Mesh(
+template<int D, class CoordSys>
+Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
     const std::array<std::vector<double>,D> &axis_points) {
   for (int d = 0; d < D; ++d) {
     axis_points_[d] = axis_points[d];
@@ -117,8 +119,8 @@ Direct_Product_Mesh<D>::Direct_Product_Mesh(
 
 // ____________________________________________________________________________
 // Destructor
-template<int D>
-Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
+template<int D, class CoordSys>
+Direct_Product_Mesh<D,CoordSys>::~Direct_Product_Mesh() {
   for (int d = 0; d < D; ++d) {
     axis_points_[d].clear();
   }
@@ -130,15 +132,15 @@ Direct_Product_Mesh<D>::~Direct_Product_Mesh() {
 
 // ____________________________________________________________________________
 // Get the dimensionality of the mesh.
-template<int D>
-int Direct_Product_Mesh<D>::space_dimension() const {
+template<int D, class CoordSys>
+int Direct_Product_Mesh<D,CoordSys>::space_dimension() const {
   return(D);
 }
 
 // ____________________________________________________________________________
 // Get the number of axis points (cell boundary coordinates).
-template<int D>
-int Direct_Product_Mesh<D>::num_axis_points(const int dim) const {
+template<int D, class CoordSys>
+int Direct_Product_Mesh<D,CoordSys>::num_axis_points(const int dim) const {
   assert(dim >= 0);
   assert(dim < D);
   return axis_points_[dim].size();
@@ -146,8 +148,8 @@ int Direct_Product_Mesh<D>::num_axis_points(const int dim) const {
 
 // ____________________________________________________________________________
 // Get the specified axis point (cell boundary coordinate).
-template<int D>
-double Direct_Product_Mesh<D>::get_axis_point(
+template<int D, class CoordSys>
+double Direct_Product_Mesh<D,CoordSys>::get_axis_point(
     const int dim, const int pointid) const {
   assert(dim >= 0);
   assert(dim < D);

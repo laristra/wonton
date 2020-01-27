@@ -15,6 +15,7 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/support/wonton.h"
 #include "wonton/support/BoundingBox.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -46,7 +47,7 @@ namespace Wonton {
   of the tests expands, the scope of functionality of the
   Adaptive_Refinement_Mesh may also expand.
  */
-template<int D>
+template<int D, class CoordSys=DefaultCoordSys>
 class Adaptive_Refinement_Mesh {
 
  private:
@@ -79,7 +80,7 @@ class Adaptive_Refinement_Mesh {
 
   //! Assignment operator (disabled).
   Adaptive_Refinement_Mesh & operator=(
-      const Adaptive_Refinement_Mesh<D> &) = delete;
+      const Adaptive_Refinement_Mesh<D,CoordSys> &) = delete;
 
 
   // ==========================================================================
@@ -139,8 +140,8 @@ class Adaptive_Refinement_Mesh {
 // ============================================================================
 // Constructor
 
-template<int D>
-Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
+template<int D, class CoordSys>
+Adaptive_Refinement_Mesh<D,CoordSys>::Adaptive_Refinement_Mesh(
     std::function<int(const Point<D>)> func,
     const Point<D> &plo, const Point<D> &phi) {
   // Verify dimensionality
@@ -162,8 +163,8 @@ Adaptive_Refinement_Mesh<D>::Adaptive_Refinement_Mesh(
 
 // ____________________________________________________________________________
 // Check to see if the current cell needs to be refined further
-template<int D>
-bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
+template<int D, class CoordSys>
+bool Adaptive_Refinement_Mesh<D,CoordSys>::check_for_refinement(
     const BoundingBox<D> &cell, const int level) {
   // Evaluate refinement function
   // -- In principle one could do something like integrate to get the
@@ -187,9 +188,9 @@ bool Adaptive_Refinement_Mesh<D>::check_for_refinement(
 // ____________________________________________________________________________
 // Recursive procedure to perform the actual splitting of a cell by axis.
 // -- Refinement is done by splitting in half along each axis.
-template<int D>
-typename Adaptive_Refinement_Mesh<D>::mesh_data_t
-    Adaptive_Refinement_Mesh<D>::split_cell(
+template<int D, class CoordSys>
+typename Adaptive_Refinement_Mesh<D,CoordSys>::mesh_data_t
+    Adaptive_Refinement_Mesh<D,CoordSys>::split_cell(
     const int d, const BoundingBox<D> &cell) {
   // Splitting point
   double midpoint = 0.5 * (cell[d][LO] + cell[d][HI]);
@@ -235,10 +236,12 @@ typename Adaptive_Refinement_Mesh<D>::mesh_data_t
 // -- Remove the specified cell and replace it with refined cells.
 //    -- Some AMR meshes preserve non-leaf cells, but this mesh throws them
 //       away as they are irrelevant to mapping to another grid.
-template<int D>
-std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
-    Adaptive_Refinement_Mesh<D>::refine_cell(
-    const Adaptive_Refinement_Mesh<D>::mesh_data_t &cells,
+template<int D, class CoordSys>
+std::pair<
+    typename Adaptive_Refinement_Mesh<D,CoordSys>::mesh_data_t,
+    std::vector<int>>
+    Adaptive_Refinement_Mesh<D,CoordSys>::refine_cell(
+    const Adaptive_Refinement_Mesh<D,CoordSys>::mesh_data_t &cells,
     const std::vector<int> &level, const int n) {
   assert(n >= 0);
   assert(n < cells.size());
@@ -267,13 +270,13 @@ std::pair<typename Adaptive_Refinement_Mesh<D>::mesh_data_t, std::vector<int>>
     newlevel[i+num_new_cells] = level[i];
   }
   // Return
-  return(std::move(std::make_pair(newcells, newlevel)));
+  return std::make_pair(newcells, newlevel);
 }
 
 // ____________________________________________________________________________
 // Build the mesh based on the mesh corners and the refinement function.
-template<int D>
-void Adaptive_Refinement_Mesh<D>::build_mesh() {
+template<int D, class CoordSys>
+void Adaptive_Refinement_Mesh<D,CoordSys>::build_mesh() {
   // Build the level-zero grid
   cells_.resize(1);
   cells_[0] = mesh_corners_;
@@ -293,22 +296,22 @@ void Adaptive_Refinement_Mesh<D>::build_mesh() {
 
 // ____________________________________________________________________________
 // Get the dimensionality of the mesh.
-template<int D>
-int Adaptive_Refinement_Mesh<D>::space_dimension() const {
+template<int D, class CoordSys>
+int Adaptive_Refinement_Mesh<D,CoordSys>::space_dimension() const {
   return(D);
 }
 
 // ____________________________________________________________________________
 // Get the total number of cells in the mesh.
-template<int D>
-int Adaptive_Refinement_Mesh<D>::num_cells() const {
+template<int D, class CoordSys>
+int Adaptive_Refinement_Mesh<D,CoordSys>::num_cells() const {
   return cells_.size();
 }
 
 // ____________________________________________________________________________
 // Get the lower and upper bounds of the specified cell.
-template<int D>
-BoundingBox<D> Adaptive_Refinement_Mesh<D>::cell_get_bounds(
+template<int D, class CoordSys>
+BoundingBox<D> Adaptive_Refinement_Mesh<D,CoordSys>::cell_get_bounds(
     const int id) const {
   int n = id;
   return(cells_[n]);
