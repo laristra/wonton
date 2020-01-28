@@ -31,19 +31,19 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "@CMAKE_CXX_FLAGS_MINSIZEREL@" CACHE STRING "WONT
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "@CMAKE_CXX_FLAGS_RELWITHDEBINFO@" CACHE STRING "WONTON C compiler flags")
 
 # WONTON Build info
-set(WONTON_BUILD_TYPE @CMAKE_BUILD_TYPE@ CACHE STRING "WONTON build type")
+set(WONTON_BUILD_TYPE @CMAKE_BUILD_TYPE@ CACHE STRING "DEPRECATE? WONTON build type")
 
 # Wonton installation path
-set(WONTON_DIR @WONTON_DIR@ CACHE PATH "Path to WONTON INSTALLATION")
+set(WONTON_DIR @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
+set(WONTON_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
 
 # WONTON library 
-set(WONTON_LIBRARY_NAME @WONTON_LIBRARY@ CACHE STRING "Name of the Wonton library")
+set(WONTON_LIBRARY @WONTON_LIBRARY@ CACHE STRING "Name of the Wonton library")
 
 # WONTON includes
 set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "WONTON include file locations")
 
 # WONTON options
-
 set(WONTON_ENABLE_MPI @WONTON_ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
 
 # Thrust options
@@ -52,38 +52,70 @@ set(THRUST_DIR @THRUST_DIR@ CACHE BOOL "Thrust directory")
 set(THRUST_BACKEND @THRUST_BACKEND@ "Thrust backend")
 
 set(ENABLE_FleCSI @ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
-set(FleCSI_INCLUDE_DIRS @FleCSI_INCLUDE_DIR@ CACHE PATH "FleCSI include dirs")
-set(FleCSISP_INCLUDE_DIRS @FleCSISP_INCLUDE_DIR@ CACHE PATH "FleCSI-SP include dirs")
-set(FleCSI_LIBRARIES @FleCSI_LIBRARIES@ CACHE STRING "FleCSI Libraries")
-set(FleCSISP_LIBRARIES @FleCSISP_LIBRARIES@ CACHE PATH "FleCSI-SP Libraries")
+set(FleCSI_DIR @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
+set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
 
 
 set(ENABLE_Jali @ENABLE_Jali@ CACHE STRING "Use Jali")
-set(Jali_INCLUDE_DIRS @Jali_INCLUDE_DIRS@ CACHE PATH "Jali include dirs")
-set(Jali_LIBRARIES @Jali_LIBRARIES@ CACHE STRING "Jali libraries")
+set(Jali_DIR @Jali_DIR@ CACHE PATH "Jali installation root")
+set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root")
 
-
-set(Jali_TPL_INCLUDE_DIRS @Jali_TPL_INCLUDE_DIRS@ CACHE PATH "Jali TPL include dirs")
-set(Jali_TPL_LIBRARIES @Jali_TPL_LIBRARIES@ CACHE STRING "Jali TPL libraries")
-
+set(LAPACKE_DIR @LAPACKE_DIR@ CACHE PATH "LAPACKE installation dir")
+set(LAPACKE_ROOT @LAPACKE_DIR@ CACHE PATH "LAPACKE installation dir")
 
 set(LAPACKE_LIBRARIES @LAPACKE_LIBRARIES@ CACHE STRING "LAPACKE libraries")
 set(LAPACK_INCLUDE_DIRS @LAPACKE_INCLUDE_DIRS@ CACHE STRING "LAPACKE include dirs")
 
-set(ENABLE_THRUST @ENABLE_THRUST@ CACHE BOOL "Enable NVIDIA Thrust")
-set(THRUST_DIR @THRUST_DIR@ CACHE PATH "Thrust installation directory")
-set(THRUST_BACKEND @THRUST_BACKEND@ CACHE STRING "Thrust backend to use")
-
 set(Boost_FOUND @Boost_FOUND@ CACHE BOOL "Boost status")
-set(Boost_INCLUDE_DIRS @Boost_INCLUDE_DIRS@ "Boost include directories")
-
-#set(WONTON_COMPILE_DEFINITIONS @WONTON_COMPILE_DEFINITIONS@ CACHE STRING "All compiler definitions used at the top level directory")
-
-#set(WONTON_LIBRARIES @WONTON_LIBRARY@ ${FleCSI_LIBRARIES}
-#    ${FleCSISP_LIBRARIES} ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-#    ${LAPACKE_LIBRARIES}
-#    CACHE STRING "All extra libraries needed to link with WONTON")
+set(Boost_DIR @Boost_DIR@ CACHE PATH "Boost installation directories")
+set(Boost_ROOT @Boost_ROOT@ CACHE PATH "Boost installation directories")
 
 
-# Import targets from this installation (really, only wonton)
-include("wonton-targets.cmake")
+
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
+  cmake_policy(SET CMP0074 NEW)  # find_package honors Pkg_ROOT variables 
+endif ()
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+  set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)  # search for PkgConfig.cmake files first
+endif ()
+
+
+# Find target dependencies
+
+# Temporarily modify CMAKE module path so we can find our custom
+# modules for packages that don't have config files
+
+set(SAVED_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+  list(PREPEND CMAKE_MODULE_PATH @CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/modules)
+else ()
+  set(CMAKE_MODULE_PATH "@CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/modules;${CMAKE_MODULE_PATH}")
+endif ()
+
+include(CMakeFindDependencyMacro)
+if (ENABLE_Jali)
+  find_dependency(Jali)
+  if (TARGET ${Jali_LIBRARIES})
+    set_property(TARGET ${Jali_LIBRARIES} PROPERTY IMPORTED_GLOBAL TRUE)
+  endif ()
+endif ()
+
+find_dependency(Boost)
+if (TARGET ${Boost_LIBRARIES})
+  set_property(TARGET ${Boost_LIBRARIES} PROPERTY IMPORTED_GLOBAL TRUE)
+endif ()
+
+if (LAPACKE_FOUND)
+  find_dependency(LAPACKE)   # WILL THIS WORK???
+endif ()
+
+# Restore original CMAKE_MODULE_PATH
+set(CMAKE_MODULE_PATH ${SAVED_CMAKE_MODULE_PATH})
+
+#
+# Import wonton targets
+#
+
+include("@CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/wonton-targets.cmake")
