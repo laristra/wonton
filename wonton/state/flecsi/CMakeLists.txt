@@ -16,8 +16,22 @@ if (FleCSI_DIR)
 
   target_sources(flecsi_state_wrapper INTERFACE ${flecsi_state_wrapper_HEADERS})
 
-  # Add flecsi dependencies
-  target_link_libraries(mesh INTERFACE ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES})
+  target_include_directories(flecsi_state_wrapper PUBLIC
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
+    $<INSTALL_INTERFACE:include)
 
+  # Add flecsi dependencies
+  target_link_libraries(wonton_state INTERFACE flecsi_state_wrapper)
+
+  install(TARGETS flecsi_state_wrapper
+    EXPORT wonton-targets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+    PUBLIC_HEADER DESTINATION include/wonton/state/flecsi
+    INCLUDES DESTINATION include/wonton/state/flecsi
+    )
+  
   # Have to add FleCSI state wrapper tests
 endif (FleCSI_DIR)

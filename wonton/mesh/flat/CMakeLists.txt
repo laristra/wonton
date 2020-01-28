@@ -9,7 +9,27 @@ set(flat_mesh_wapper_HEADERS
   flat_mesh_wrapper.h
   )
 
-target_sources(mesh INTERFACE ${flat_mesh_wrapper_HEADERS})
+add_library(flat_mesh_wrapper INTERFACE)
+
+
+target_include_directories(flat_mesh_wrapper INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include>)
+
+# add this header-only library as a dependency of upper level mesh library
+
+target_link_libraries(wonton_mesh INTERFACE flat_mesh_wrapper)
+
+install(TARGETS flat_state_wrapper
+  EXPORT wonton-targets
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include/wonton/mesh/flat
+  INCLUDES DESTINATION include/wonton/mesh/flat
+  )
+      
 
 # HOW DO WE ENSURE THAT JALI IS PROCESSED BEFORE WE ADD THIS TEST
 

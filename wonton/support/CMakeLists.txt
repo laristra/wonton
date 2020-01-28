@@ -4,10 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
 #-----------------------------------------------------------------------------~#
-
-#cmake_policy(SET CMP0079 NEW)  # allow adding to target propert
-
-#-----------------------------------------------------------------------------~#
+project(support)
 
 # Add header files
 set(support_HEADERS
@@ -23,7 +20,6 @@ set(support_HEADERS
   equifactor.h
   structured_partitioner.h
   wonton.h
-  PARENT_SCOPE
 )
 
 # Add source files
@@ -32,15 +28,25 @@ set(support_SOURCES
   svd.cc
 )
 
-add_library(support ${support_SOURCES})
-target_include_directories(support PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(support PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIRECTORY}>
-  $<INSTALL_INTERFACE:include>)  #<cmake_intall_prefix>/include
+add_library(wonton_support ${support_SOURCES})
 
+target_include_directories(wonton_support PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
+  $<INSTALL_INTERFACE:include/wonton/support>)
 
-target_link_libraries(wonton PUBLIC support)
+set_target_properties(wonton_support PROPERTIES PUBLIC_HEADER ${support_HEADERS})
 
+target_link_libraries(wonton INTERFACE wonton_support)
+
+install(TARGETS wonton_support
+  EXPORT wonton_LIBRARIES
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include
+  INCLUDES DESTINATION include
+  )
 
 # Unit tests
 
@@ -56,7 +62,7 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
-    LIBRARIES wonton
+    LIBRARIES wonton_support
     POLICY MPI
     THREADS 1)
 

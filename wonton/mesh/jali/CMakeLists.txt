@@ -10,22 +10,37 @@ if (Jali_DIR)
     jali_mesh_wrapper.h
     )
 
-  target_sources(mesh INTERFACE ${jali_mesh_wrapper_HEADERS})
+  add_library(jali_mesh_wrapper INTERFACE)
+
+  target_include_directories(jali_mesh_wrapper INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>)
 
   # Jali dependencies
-  target_include_directories(mesh INTERFACE ${Jali_INCLUDE_DIRS})
-  target_link_libraries(mesh INTERFACE ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES})
+  target_include_directories(jali_mesh_wrapper INTERFACE ${Jali_INCLUDE_DIRS})
+  target_link_libraries(jali_mesh_wrapper INTERFACE ${Jali_LIBRARIES})
 
-  cinch_add_unit(test_jali_mesh_wrapper
-    SOURCES test/test_jali_mesh_wrapper.cc
-    LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-    # this is relative to the wrapper directory
-    INPUTS ../../../test_data/shotshell.exo
-    ../../../test_data/shotshell-v.exo
-    POLICY MPI
-    THREADS 1)
+  target_link_libraries(wonton_mesh INTERFACE jali_mesh_wrapper)
 
-  # unit test needs Jali includes to compile
-  target_include_directories(test_jali_mesh_wrapper PRIVATE ${Jali_INCLUDE_DIRS})
+  install(TARGETS jali_mesh_wrapper
+  EXPORT wonton-targets
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include/wonton/mesh/jali
+  INCLUDES DESTINATION include/wonton/mesh/jali
+  )
+
+  if (ENABLE_UNIT_TESTS)
+    cinch_add_unit(test_jali_mesh_wrapper
+      SOURCES test/test_jali_mesh_wrapper.cc
+      LIBRARIES wonton_mesh
+      # this is relative to the wrapper directory
+      INPUTS ../../../test_data/shotshell.exo
+      ../../../test_data/shotshell-v.exo
+      POLICY MPI
+      THREADS 1)
+  endif ()
 
 endif (Jali_DIR)

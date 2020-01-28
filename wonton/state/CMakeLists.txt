@@ -14,7 +14,13 @@ set(state_HEADERS
   state_manager.h
   )
 
-add_library(state INTERFACE)
+add_library(wonton_state INTERFACE)
+
+target_include_directories(wonton_state INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include/wonton/state>)
+
 
 if (Jali_DIR)
   add_subdirectory(jali)
@@ -28,6 +34,15 @@ add_subdirectory(simple)
 
 add_subdirectory(flat)
 
+
+install(TARGETS wonton_state
+  EXPORT wonton-targets
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include/wonton/state
+  INCLUDES DESTINATION include/wonton/state
+  )
 
 # Unit tests
 

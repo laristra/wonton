@@ -12,12 +12,34 @@ if (ENABLE_FleCSI)
   set(flecsi_mesh_wrapper_HEADERS
     flecsi_mesh_wrapper.h
     )
-  
-  target_sources(mesh INTERFACE ${flecsi_mesh_wrapper_HEADERS})
 
+  add_library(flecsi_mesh_wrapper INTERFACE)
+  
+  target_include_directories(flecsi_mesh_wrapper INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>)
+  
   # FleCSI dependencies
-  target_include_directories(mesh INTERFACE ${FleCSI_INCLUDE_DIRS} ${FleCSISP_INCLUDE_DIRS})
-  target_link_libraries(mesh INTERFACE ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES})
+  target_include_directories(flecsi_mesh_wrapper INTERFACE
+    ${FleCSI_INCLUDE_DIRS} ${FleCSISP_INCLUDE_DIRS})
+
+  target_link_libraries(flecsi_mesh_wrapper INTERFACE
+    ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES})
+
+  # add this header-only library as a dependency of upper level mesh library
+  
+  target_link_libraries(wonton_mesh INTERFACE flecsi_mesh_wrapper)
+  
+  install(TARGETS flecsi_mesh_wrapper
+    EXPORT wonton-targets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+    PUBLIC_HEADER DESTINATION include/wonton/mesh/flecsi
+    INCLUDES DESTINATION include/wonton/mesh/flecsi
+    )
+
 
   cinch_add_unit(test_flecsi_mesh_wrapper
     SOURCES flecsi/test/test_flecsi_mesh_wrapper.cc
