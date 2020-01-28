@@ -10,11 +10,23 @@ set(simple_mesh_wapper_HEADERS
   simple_mesh.h
   )
 
-add_library(simple_mesh_wrapper INTERFACE ${simple_mesh_wrapper_HEADERS})
+add_library(simple_mesh_wrapper INTERFACE)
+
 target_include_directories(simple_mesh_wrapper INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:${PROJECT_BINARY_DIR}>)
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include>)
 
 # add this header-only library as a dependency of upper level mesh library
 
-target_link_libraries(mesh INTERFACE simple_mesh_wrapper)
+target_link_libraries(wonton_mesh INTERFACE simple_mesh_wrapper)
+
+install(TARGETS simple_mesh_wrapper
+  EXPORT wonton-targets
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include/wonton/mesh/simple
+  INCLUDES DESTINATION include/wonton/mesh/simple
+  )
+      

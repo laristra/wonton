@@ -11,12 +11,29 @@ if (Jali_DIR)
   add_library(jali_state_wrapper INTERFACE)
   
   set(jali_state_wrapper_HEADERS
-    jali/jali_state_wrapper.h
+    jali_state_wrapper.h
     )
 
-  target_sources(jali_state_wrapper INTERFACE ${jali_state_wrapper_HEADERS})
+  target_include_directories(jali_state_wrapper INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>
+    )
+
+  target_link_libraries(jali_state_wrapper INTERFACE jali_mesh_wrapper)
   target_link_libraries(jali_state_wrapper INTERFACE ${Jali_LIBRARIES})
 
+  target_link_libraries(wonton_state INTERFACE jali_state_wrapper)
+
+  install(TARGETS jali_state_wrapper
+    EXPORT wonton-targets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+    PUBLIC_HEADER DESTINATION include/wonton/state/jali
+    INCLUDES DESTINATION include/wonton/state/jali
+    )
+      
   if (ENABLE_UNIT_TESTS)
     cinch_add_unit(test_jali_state_wrapper
       SOURCES test/test_jali_state_wrapper.cc
