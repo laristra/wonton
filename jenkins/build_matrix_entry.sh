@@ -24,7 +24,7 @@ fi
 
 # set modules and install paths
 
-jali_version=1.0.4
+jali_version=1.1.1
 lapack_version=3.8.0
 
 export NGC=/usr/local/codes/ngc
@@ -88,7 +88,7 @@ module load $cxxmodule
 if [[ -n "$mpi_flags" ]]; then
     module load ${mpi_module}
 fi
-module load cmake # 3.0 or higher is required
+module load cmake/3.14.0 # 3.13 or higher is required
 
 echo $WORKSPACE
 cd $WORKSPACE
