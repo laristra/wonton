@@ -34,7 +34,7 @@ with Travis CI.
 ### Prerequisites
 Wonton uses standard C++11 features, so a fairly modern compiler 
 is needed. We regularly test with Intel 18.0.1, GCC 6.4.0, and GCC 7.3.0. 
-The build system _requires_ CMake version 3.0+. 
+The build system _requires_ CMake version 3.13+. 
 
 The following libraries are also _required_:
 
@@ -124,16 +124,15 @@ Execute the following from the Wonton root directory:
 # machine=varan
 export MODULEPATH=""
 . /opt/local/packages/Modules/default/init/sh
-module load intel/18.0.1 openmpi/2.1.2 cmake/3.10.2
+module load intel/18.0.1 openmpi/2.1.2 cmake/3.14.0
 NGC_INCLUDE_DIR=/usr/local/codes/ngc/private/include
-TPL_INSTALL_PREFIX=/usr/local/codes/ngc/private/jali-tpl/1.2.0-intel-18.0.1-openmpi-2.1.2
-JALI_INSTALL_PREFIX=/usr/local/codes/ngc/private/jali/1.0.4-intel-18.0.1-openmpi-2.1.2
+JALI_INSTALL_PREFIX=/usr/local/codes/ngc/private/jali/1.1.0-intel-18.0.1-openmpi-2.1.2
 LAPACKE_INSTALL_PREFIX=/usr/local/codes/ngc/private/lapack/3.8.0-patched-intel-18.0.1
 mkdir build
 cd build
 cmake \
-  -D CMAKE_C_COMPILER=`which mpicc` \
-  -D CMAKE_CXX_COMPILER=`which mpiCC` \
+  -D CMAKE_C_COMPILER=`which icc` \
+  -D CMAKE_CXX_COMPILER=`which icpc` \
   -D CMAKE_BUILD_TYPE=Release \
   -D ENABLE_UNIT_TESTS=True \
   -D ENABLE_MPI=True \
