@@ -22,7 +22,7 @@ target_include_directories(flat_mesh_wrapper INTERFACE
 target_link_libraries(wonton_mesh INTERFACE flat_mesh_wrapper)
 
 install(TARGETS flat_state_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -31,8 +31,6 @@ install(TARGETS flat_state_wrapper
   )
       
 
-# HOW DO WE ENSURE THAT JALI IS PROCESSED BEFORE WE ADD THIS TEST
-
 if (ENABLE_UNIT_TESTS)
 
   if (Jali_DIR)
@@ -40,16 +38,14 @@ if (ENABLE_UNIT_TESTS)
     # Flat mesh wrapper (has to be paired with a real MPI capable mesh wrapper)
     
     cinch_add_unit(test_flat_mesh_wrapper
-      SOURCES flat/test/test_flat_mesh_wrapper.cc
-      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
+      SOURCES test/test_flat_mesh_wrapper.cc
+      LIBRARIES flat_mesh_wrapper jali_mesh_wrapper
       # this is relative to the wrapper directory
-      INPUTS ../../test_data/shotshell.exo
-      ../../test_data/shotshell-v.exo
+      INPUTS ${CMAKE_SOURCE_DIR}/test_data/shotshell.exo
+      ${CMAKE_SOURCE_DIR}/test_data/shotshell-v.exo
       POLICY MPI
       THREADS 1)
     
-    target_include_directories(test_flat_mesh_wrapper PRIVATE ${Jali_INCLUDE_DIRS})
-
   endif (Jali_DIR)
 
 endif (ENABLE_UNIT_TESTS)  

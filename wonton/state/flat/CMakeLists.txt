@@ -19,7 +19,7 @@ target_include_directories(flat_state_wrapper INTERFACE
 target_link_libraries(wonton_state INTERFACE flat_state_wrapper)
 
 install(TARGETS flat_state_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

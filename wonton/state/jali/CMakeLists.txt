@@ -26,7 +26,7 @@ if (Jali_DIR)
   target_link_libraries(wonton_state INTERFACE jali_state_wrapper)
 
   install(TARGETS jali_state_wrapper
-    EXPORT wonton-targets
+    EXPORT wonton_LIBRARIES
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin

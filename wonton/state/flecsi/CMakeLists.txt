@@ -25,7 +25,7 @@ if (FleCSI_DIR)
   target_link_libraries(wonton_state INTERFACE flecsi_state_wrapper)
 
   install(TARGETS flecsi_state_wrapper
-    EXPORT wonton-targets
+    EXPORT wonton_LIBRARIES
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin

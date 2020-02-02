@@ -22,7 +22,7 @@ target_link_libraries(simple_state_wrapper INTERFACE simple_mesh_wrapper)
 target_link_libraries(wonton_state INTERFACE simple_state_wrapper)
 
 install(TARGETS simple_state_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin

@@ -24,7 +24,7 @@ if (Jali_DIR)
   target_link_libraries(wonton_mesh INTERFACE jali_mesh_wrapper)
 
   install(TARGETS jali_mesh_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -35,10 +35,10 @@ if (Jali_DIR)
   if (ENABLE_UNIT_TESTS)
     cinch_add_unit(test_jali_mesh_wrapper
       SOURCES test/test_jali_mesh_wrapper.cc
-      LIBRARIES wonton_mesh
+      LIBRARIES jali_mesh_wrapper
       # this is relative to the wrapper directory
-      INPUTS ../../../test_data/shotshell.exo
-      ../../../test_data/shotshell-v.exo
+      INPUTS ${CMAKE_SOURCE_DIR}/test_data/shotshell.exo
+      ${CMAKE_SOURCE_DIR}/test_data/shotshell-v.exo
       POLICY MPI
       THREADS 1)
   endif ()

@@ -21,7 +21,7 @@ target_include_directories(direct_product_mesh_wrapper INTERFACE
 target_link_libraries(wonton_mesh INTERFACE direct_product_mesh_wrapper)
 
 install(TARGETS direct_product_mesh_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -35,12 +35,14 @@ if (ENABLE_UNIT_TESTING)
   # Direct Product Mesh
   cinch_add_unit(test_direct_product_mesh
     SOURCES test/test_direct_product_mesh.cc
+    LIBRARIES direct_product_mesh_wrapper
     POLICY SERIAL
     )
   
   # Direct Product Mesh Wrapper
   cinch_add_unit(test_direct_product_mesh_wrapper
     SOURCES test/test_direct_product_mesh_wrapper.cc
+    LIBRARIES direct_product_mesh_wrapper
     POLICY SERIAL
     )
 
