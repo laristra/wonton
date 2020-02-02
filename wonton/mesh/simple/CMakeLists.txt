@@ -22,7 +22,7 @@ target_include_directories(simple_mesh_wrapper INTERFACE
 target_link_libraries(wonton_mesh INTERFACE simple_mesh_wrapper)
 
 install(TARGETS simple_mesh_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -30,3 +30,16 @@ install(TARGETS simple_mesh_wrapper
   INCLUDES DESTINATION include/wonton/mesh/simple
   )
       
+if (ENABLE_UNIT_TESTS)
+  cinch_add_unit(test_simple_mesh
+    SOURCES test/test_simple_mesh.cc
+    LIBRARIES simple_mesh_wrapper
+    POLICY SERIAL
+    )
+
+  # Simple Mesh wrapper
+  cinch_add_unit(test_simple_mesh_wrapper
+    SOURCES test/test_simple_mesh_wrapper.cc
+    LIBRARIES simple_mesh_wrapper
+    POLICY SERIAL)  
+endif ()

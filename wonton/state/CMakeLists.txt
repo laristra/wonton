@@ -36,7 +36,7 @@ add_subdirectory(flat)
 
 
 install(TARGETS wonton_state
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -50,6 +50,7 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_state_vector_uni
     SOURCES test/test_state_vector_uni.cc
+    LIBRARIES wonton_state
     POLICY SERIAL
     )
 
@@ -60,11 +61,13 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_state_manager
     SOURCES test/test_state_manager.cc
+    LIBRARIES wonton_state
     POLICY SERIAL
     )
 
   cinch_add_unit(test_state_vector_uni_raw
     SOURCES test/test_state_vector_uni_raw.cc
+    LIBRARIES wonton_state
     POLICY SERIAL
     )
 
@@ -75,6 +78,7 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_state_manager_raw
     SOURCES test/test_state_manager_raw.cc
+    LIBRARIES wonton_state
     POLICY SERIAL
     )
 

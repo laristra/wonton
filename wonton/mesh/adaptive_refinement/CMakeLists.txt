@@ -21,7 +21,7 @@ target_include_directories(adaptive_refinement_mesh_wrapper INTERFACE
 target_link_libraries(wonton_mesh INTERFACE adaptive_refinement_mesh_wrapper)
 
 install(TARGETS adaptive_refinement_mesh_wrapper
-  EXPORT wonton-targets
+  EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -35,12 +35,14 @@ if (ENABLE_UNIT_TESTS)
   # Adaptive Refinement Mesh
   cinch_add_unit(test_adaptive_refinement_mesh
     SOURCES test/test_adaptive_refinement_mesh.cc
+    LIBRARIES adaptive_refinement_mesh_wrapper
     POLICY SERIAL
     )
 
   # Adaptive Refinement Mesh Wrapper
   cinch_add_unit(test_adaptive_refinement_mesh_wrapper
     SOURCES test/test_adaptive_refinement_mesh_wrapper.cc
+    LIBRARIES adaptive_refinement_mesh_wrapper
     POLICY SERIAL
     )
 
