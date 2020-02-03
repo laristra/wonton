@@ -131,7 +131,7 @@ LAPACKE_INSTALL_PREFIX=/usr/local/codes/ngc/private/lapack/3.8.0-patched-intel-1
 mkdir build
 cd build
 cmake \
-  -D CMAKE_PREFIX_PATH:FILEPATH=$NGC_INCLUDE_DIR \
+  -D CMAKE_PREFIX_PATH=$NGC_INCLUDE_DIR \
   -D CMAKE_C_COMPILER=`which icc` \
   -D CMAKE_CXX_COMPILER=`which icpc` \
   -D CMAKE_BUILD_TYPE=Release \
