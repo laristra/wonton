@@ -69,7 +69,7 @@ cmake_build_type=Release
 mpi_flags="-D ENABLE_MPI=True"
 extra_flags=
 thrust_flags=
-jali_flags="-DENABLE_Jali -D Jali_ROOT:FILEPATH=$jali_install_dir/lib"
+jali_flags="-D ENABLE_Jali=True -D Jali_ROOT:FILEPATH=$jali_install_dir"
 lapacke_flags="-D LAPACKE_DIR:FILEPATH=$lapacke_dir"
 if [[ $build_type == "debug" ]]; then
     cmake_build_type=Debug
@@ -98,10 +98,10 @@ cd build
 
 cmake \
     -D CMAKE_BUILD_TYPE=$cmake_build_type \
+    -D CMAKE_PREFIX_PATH=$ngc_include_dir \
     -D ENABLE_UNIT_TESTS=True \
     -D ENABLE_APP_TESTS=True \
     -D ENABLE_JENKINS_OUTPUT=True \
-    -D NGC_INCLUDE_DIR:FILEPATH=$ngc_include_dir \
     $mpi_flags \
     $jali_flags \
     $lapacke_flags \
