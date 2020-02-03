@@ -33,7 +33,7 @@ install(TARGETS flat_state_wrapper
 
 if (ENABLE_UNIT_TESTS)
 
-  if (Jali_DIR)
+  if (ENABLE_Jali)
 
     # Flat mesh wrapper (has to be paired with a real MPI capable mesh wrapper)
     
@@ -46,6 +46,6 @@ if (ENABLE_UNIT_TESTS)
       POLICY MPI
       THREADS 1)
     
-  endif (Jali_DIR)
+  endif (ENABLE_Jali)
 
 endif (ENABLE_UNIT_TESTS)  

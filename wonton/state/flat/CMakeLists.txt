@@ -27,7 +27,7 @@ install(TARGETS flat_state_wrapper
   INCLUDES DESTINATION include/wonton/state/flat
   )
       
-if (Jali_DIR)  
+if (ENABLE_Jali)  
   if (ENABLE_UNIT_TESTS)
 
     # has to be processed after directory jali_state_wrapper is processed
@@ -39,4 +39,4 @@ if (Jali_DIR)
       THREADS 1)
   endif (ENABLE_UNIT_TESTS)
   
-endif (Jali_DIR)
+endif (ENABLE_Jali)

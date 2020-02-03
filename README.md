@@ -49,9 +49,9 @@ support for these is _optional_:
 
 - [Jali](http://github.com/lanl/jali):
 
-  We regularly test with verison 1.0.4.  You will need to set the
-  `Jali_Dir` CMake variable if you wish to build support for Jali and
-  its tests (see examples below).
+  We regularly test with verison 1.1,1.  You will need to set the
+  `ENABLE_Jali` and `Jali_ROOT` CMake variable if you wish to build
+  support for Jali and its tests (see examples below).
 
 - [FleCSI Burton Specialization](http://github.com/laristra/flecsi-sp):
 
@@ -131,6 +131,7 @@ LAPACKE_INSTALL_PREFIX=/usr/local/codes/ngc/private/lapack/3.8.0-patched-intel-1
 mkdir build
 cd build
 cmake \
+  -D CMAKE_PREFIX_PATH:FILEPATH=$NGC_INCLUDE_DIR \
   -D CMAKE_C_COMPILER=`which icc` \
   -D CMAKE_CXX_COMPILER=`which icpc` \
   -D CMAKE_BUILD_TYPE=Release \
@@ -138,8 +139,8 @@ cmake \
   -D ENABLE_MPI=True \
   -D ENABLE_JENKINS_OUTPUT=True \
   -D LAPACKE_DIR:FILEPATH=$LAPACKE_INSTALL_PREFIX \
-  -D Jali_DIR:FILEPATH=$JALI_INSTALL_PREFIX/lib \
-  -D NGC_INCLUDE_DIR:FILEPATH=$NGC_INCLUDE_DIR \
+  -D ENABLE_Jali=True \
+  -D Jali_ROOT:FILEPATH=$JALI_INSTALL_PREFIX \
   ..
 make -j2
 ctest --output-on-failure
