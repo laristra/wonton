@@ -7,7 +7,7 @@ Please see the license file at the root of this repository, or at:
 
 # Add header files
 
-if (Jali_DIR)
+if (ENABLE_Jali)
   add_library(jali_state_wrapper INTERFACE)
   
   set(jali_state_wrapper_HEADERS
@@ -39,4 +39,4 @@ if (Jali_DIR)
       SOURCES test/test_jali_state_wrapper.cc
       LIBRARIES jali_state_wrapper)
   endif (ENABLE_UNIT_TESTS)
-endif (Jali_DIR)
+endif (ENABLE_Jali)

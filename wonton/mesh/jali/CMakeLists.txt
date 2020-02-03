@@ -5,7 +5,7 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
-if (Jali_DIR)
+if (ENABLE_Jali)
   set(jali_mesh_wrapper_HEADERS
     jali_mesh_wrapper.h
     )
@@ -43,4 +43,4 @@ if (Jali_DIR)
       THREADS 1)
   endif ()
 
-endif (Jali_DIR)
+endif (ENABLE_Jali)

@@ -112,14 +112,14 @@ endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 # (this includes the TPLs that Jali will need)
 #------------------------------------------------------------------------------#
 
-if (Jali_DIR AND NOT Jali_LIBRARIES)
+if (ENABLE_Jali AND NOT Jali_LIBRARIES)
 
    # Look for the Jali package
 
-   find_package(Jali REQUIRED PATHS ${Jali_DIR})
+   find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
 
    message(STATUS "Located Jali")
-   message(STATUS "Jali_DIR=${Jali_DIR}")
+   message(STATUS "Jali_ROOT=${Jali_ROOT}")
 
    set(ENABLE_Jali ON)
 
@@ -133,7 +133,7 @@ endif (Jali_DIR AND NOT Jali_LIBRARIES)
 # Include Boost libraries for builds without Jali
 #-----------------------------------------------------------------------------
 
-if (NOT Jali_DIR)
+if (NOT ENABLE_Jali)
   find_package(Boost REQUIRED)
   target_include_directories(wonton SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
   message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
