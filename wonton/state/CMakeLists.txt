@@ -3,7 +3,7 @@ This file is part of the Ristra wonton project.
 Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
-
+project(state)
 
 set(state_HEADERS
   state_vector_base.h
@@ -22,9 +22,9 @@ target_include_directories(wonton_state INTERFACE
   $<INSTALL_INTERFACE:include/wonton/state>)
 
 
-if (Jali_DIR)
+if (ENABLE_Jali)
   add_subdirectory(jali)
-endif (Jali_DIR)
+endif (ENABLE_Jali)
 
 if (ENABLE_FleCSI)
   add_subdirectory(flecsi)
@@ -81,39 +81,6 @@ if (ENABLE_UNIT_TESTS)
     LIBRARIES wonton_state
     POLICY SERIAL
     )
-
-  # Simple State
-  # cinch_add_unit(test_simple_state
-  #   SOURCES simple/test/test_simple_state.cc
-  #   POLICY SERIAL
-  #   )
-  
-  # # Simple State wrapper
-  # cinch_add_unit(test_simple_state_wrapper
-  #   SOURCES simple/test/test_simple_state_wrapper.cc
-  #   POLICY SERIAL)
-  
-  # # Simple State MMwrapper
-  # cinch_add_unit(test_simple_state_mm_wrapper
-  #   SOURCES simple/test/test_simple_state_mm_wrapper.cc
-  #   POLICY SERIAL)
-  
-  
-#  if (Jali_DIR)
-#    cinch_add_unit(test_jali_state_wrapper
-#      SOURCES jali/test/test_jali_state_wrapper.cc
-#      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-#      POLICY MPI
-#      THREADS 1)
-    
-    # Flat state wrapper
-#    cinch_add_unit(test_flat_state_wrapper
-#      SOURCES flat/test/test_flat_state_wrapper.cc
-#      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-#      POLICY MPI
-#      THREADS 1)
-#  endif (Jali_DIR)
-  
   
   # HAVE TO ADD FLECSI STATE WRAPPER TESTS
   
