@@ -16,6 +16,8 @@ target_include_directories(flat_state_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+target_link_libraries(flat_state_wrapper INTERFACE wonton_support)
+
 target_link_libraries(wonton_state INTERFACE flat_state_wrapper)
 
 install(TARGETS flat_state_wrapper

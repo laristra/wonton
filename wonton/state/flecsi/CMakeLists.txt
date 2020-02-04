@@ -21,6 +21,8 @@ if (FleCSI_DIR)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
     $<INSTALL_INTERFACE:include)
 
+  target_link_libraries(flecsi_state_wrapper INTERFACE wonton_support)
+
   # Add flecsi dependencies
   target_link_libraries(wonton_state INTERFACE flecsi_state_wrapper)
 

@@ -17,6 +17,8 @@ target_include_directories(flat_mesh_wrapper INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+target_link_libraries(flat_mesh_wrapper INTERFACE wonton_support)
+
 # add this header-only library as a dependency of upper level mesh library
 
 target_link_libraries(wonton_mesh INTERFACE flat_mesh_wrapper)

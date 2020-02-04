@@ -21,6 +21,8 @@ if (ENABLE_Jali)
     )
 
   target_link_libraries(jali_state_wrapper INTERFACE jali_mesh_wrapper)
+  target_link_libraries(jali_state_wrapper INTERFACE wonton_support)
+
   target_link_libraries(jali_state_wrapper INTERFACE ${Jali_LIBRARIES})
 
   target_link_libraries(wonton_state INTERFACE jali_state_wrapper)

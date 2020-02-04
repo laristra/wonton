@@ -21,6 +21,7 @@ target_include_directories(wonton_state INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include/wonton/state>)
 
+target_link_libraries(wonton_state INTERFACE wonton_support)
 
 if (ENABLE_Jali)
   add_subdirectory(jali)
@@ -56,6 +57,7 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_state_vector_multi
     SOURCES test/test_state_vector_multi.cc
+    LIBRARIES wonton_state
     POLICY SERIAL
     )
 
@@ -73,6 +75,7 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_state_vector_multi_raw
     SOURCES test/test_state_vector_multi_raw.cc
+    LIBRARIES wonton_state
     POLICY SERIAL
     )
 

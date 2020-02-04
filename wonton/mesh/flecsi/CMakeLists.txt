@@ -20,6 +20,8 @@ if (ENABLE_FleCSI)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>)
   
+  target_link_libraries(flecsi_mesh_wrapper INTERFACE wonton_support)
+
   # FleCSI dependencies
   target_include_directories(flecsi_mesh_wrapper INTERFACE
     ${FleCSI_INCLUDE_DIRS} ${FleCSISP_INCLUDE_DIRS})
