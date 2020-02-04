@@ -37,6 +37,8 @@ if (ENABLE_Jali)
   if (ENABLE_UNIT_TESTS)
     cinch_add_unit(test_jali_state_wrapper
       SOURCES test/test_jali_state_wrapper.cc
-      LIBRARIES jali_state_wrapper)
+      LIBRARIES jali_state_wrapper
+      POLICY MPI
+      THREADS 1)
   endif (ENABLE_UNIT_TESTS)
 endif (ENABLE_Jali)
