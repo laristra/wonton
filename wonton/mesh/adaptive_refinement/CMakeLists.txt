@@ -18,6 +18,8 @@ target_include_directories(adaptive_refinement_mesh_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+target_link_libraries(adaptive_refinement_mesh_wrapper INTERFACE wonton_support)
+
 target_link_libraries(wonton_mesh INTERFACE adaptive_refinement_mesh_wrapper)
 
 install(TARGETS adaptive_refinement_mesh_wrapper

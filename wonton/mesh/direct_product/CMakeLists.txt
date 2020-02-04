@@ -18,6 +18,8 @@ target_include_directories(direct_product_mesh_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+target_link_libraries(direct_product_mesh_wrapper INTERFACE wonton_support)
+
 target_link_libraries(wonton_mesh INTERFACE direct_product_mesh_wrapper)
 
 install(TARGETS direct_product_mesh_wrapper

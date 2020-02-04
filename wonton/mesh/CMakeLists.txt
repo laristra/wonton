@@ -20,6 +20,7 @@ target_include_directories(wonton_mesh INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+target_link_libraries(wonton_mesh INTERFACE wonton_support)
 
 if (ENABLE_Jali)
   add_subdirectory(jali)

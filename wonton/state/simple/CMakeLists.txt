@@ -19,6 +19,8 @@ target_include_directories(simple_state_wrapper INTERFACE
 
 target_link_libraries(simple_state_wrapper INTERFACE simple_mesh_wrapper)
 
+target_link_libraries(simple_state_wrapper INTERFACE wonton_support)
+
 target_link_libraries(wonton_state INTERFACE simple_state_wrapper)
 
 install(TARGETS simple_state_wrapper

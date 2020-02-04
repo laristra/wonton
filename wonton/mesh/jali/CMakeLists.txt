@@ -17,6 +17,9 @@ if (ENABLE_Jali)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>)
 
+  target_link_libraries(jali_mesh_wrapper INTERFACE wonton_support)
+
+
   # Jali dependencies
   target_include_directories(jali_mesh_wrapper INTERFACE ${Jali_INCLUDE_DIRS})
   target_link_libraries(jali_mesh_wrapper INTERFACE ${Jali_LIBRARIES})

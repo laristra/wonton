@@ -37,6 +37,45 @@ target_include_directories(wonton_support PUBLIC
 
 set_target_properties(wonton_support PROPERTIES PUBLIC_HEADER ${support_HEADERS})
 
+
+#-----------------------------------------------------------------------------
+# Thrust information
+#-----------------------------------------------------------------------------
+set(ENABLE_THRUST FALSE CACHE BOOL "Use Thrust")  # create a cache var with default
+if (ENABLE_THRUST)   # if it is overridden by the command line
+
+  message(STATUS "Enabling compilation with Thrust")
+  message(STATUS "Using THRUST_ROOT=${THRUST_ROOT}")
+
+  # Allow for swapping backends
+  set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_CPP"  CACHE STRING "Thrust host backend")
+  set(THRUST_DEVICE_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust device backend")
+  message(STATUS "Using ${THRUST_HOST_BACKEND} as Thrust host backend and ${THRUST_DEVICE_BACKEND} as Thrust device backend.")
+
+  target_include_directories(wonton_support PUBLIC ${THRUST_ROOT})
+  target_compile_definitions(wonton_support PUBLIC THRUST)
+  target_compile_definitions(wonton_support PUBLIC THRUST_HOST_SYSTEM=${THRUST_HOST_BACKEND})
+  target_compile_definitions(wonton_support PUBLIC THRUST_DEVICE_SYSTEM=${THRUST_DEVICE_BACKEND})
+
+  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?" FORCE)
+
+  if ("${THRUST_DEVICE_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_OMP")
+    find_package(OpenMP REQUIRED)
+    target_link_libraries(wonton_support PUBLIC ${OpenMP_LIBRARIES})
+  endif ()
+
+endif()
+
+if (ENABLE_TCMALLOC)
+  if (NOT TCMALLOC_LIB)
+    message(WARNING "TCMALLOC enabled but TCMALLOC_LIB not specified")
+  else ()
+    target_link_libraries(wonton_support PUBLIC ${TCMALLOC_LIB})
+  endif ()
+endif ()
+
+
+
 target_link_libraries(wonton INTERFACE wonton_support)
 
 install(TARGETS wonton_support
@@ -68,20 +107,24 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_coord_sys
     SOURCES test/test_coord_sys.cc
+    LIBRARIES wonton_support
     POLICY SERIAL
     )
 
   cinch_add_unit(test_moment_index
     SOURCES test/test_moment_index.cc
+    LIBRARIES wonton_support
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_polytope_2
-    SOURCES test/test_polytope_2.cc
+  cinch_add_unit(test_Polytope2
+    SOURCES test/test_Polytope2.cc
+    LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_polytope_3
-    SOURCES test/test_polytope_3.cc
+  cinch_add_unit(test_Polytope3
+    SOURCES test/test_Polytope3.cc
+    LIBRARIES wonton_support
     POLICY SERIAL) 
 
   cinch_add_unit(test_prime_factors
