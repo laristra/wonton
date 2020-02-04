@@ -91,15 +91,15 @@ if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   find_package(FleCSI REQUIRED)
 
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
-  target_include_directories(wonton PUBLIC ${FleCSI_INCLUDE_DIR})
+  target_include_directories(wonton INTERFACE ${FleCSI_INCLUDE_DIR})
 
   message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
-  target_link_libaries(wonton PUBLIC ${FleCSI_LIBRARIES})
+  target_link_libaries(wonton INTERFACE ${FleCSI_LIBRARIES})
   
   find_package(FleCSISP REQUIRED)
 
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
-  target_include_directories(wonton PUBLIC ${FleCSISP_INCLUDE_DIR})
+  target_include_directories(wonton INTERFACE ${FleCSISP_INCLUDE_DIR})
 
   message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
@@ -120,8 +120,6 @@ if (ENABLE_Jali AND NOT Jali_LIBRARIES)
 
    message(STATUS "Located Jali")
    message(STATUS "Jali_ROOT=${Jali_ROOT}")
-
-   set(ENABLE_Jali ON)
 
    message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
    target_link_libraries(wonton INTERFACE ${Jali_LIBRARIES})
@@ -317,8 +315,8 @@ if(ENABLE_THRUST)
   # Allow for swapping backends
   set(THRUST_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust backend")
   message(STATUS "Using ${THRUST_BACKEND} as Thrust backend.")
-  target_include_directories(wonton SYSTEM PUBLIC ${THRUST_DIR})
-  target_compile_definitions(wonton PUBLIC THRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
+  target_include_directories(wonton SYSTEM INTERFACE ${THRUST_DIR})
+  target_compile_definitions(wonton INTERFACE THRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
 
   set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
 
@@ -334,9 +332,9 @@ if(ENABLE_THRUST)
   if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_TBB")
     FIND_PACKAGE(TBB REQUIRED)
     if(TBB_FOUND)
-      target_include_directories(wonton SYSTEM PUBLIC ${TBB_INCLUDE_DIRS})
-      target_link_libraries(wonton PUBLIC ${TBB_LIBRARIES})
-      target_compile_definitions(wonton PUBLIC ${TBB_DEFINITIONS})
+      target_include_directories(wonton SYSTEM INTERFACE ${TBB_INCLUDE_DIRS})
+      target_link_libraries(wonton SYSTEM INTERFACE ${TBB_LIBRARIES})
+      target_compile_definitions(wonton INTERFACE ${TBB_DEFINITIONS})
     endif(TBB_FOUND)
   endif()
 
