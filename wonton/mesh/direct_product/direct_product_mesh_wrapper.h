@@ -173,7 +173,7 @@ class Direct_Product_Mesh_Wrapper {
     @param[in] d           Dimension below which to populate coordinates
     @param[in] coords      Pre-sized list of coordinates (size = pow(2,D))
   */
-  void populate_cell_node_coords(int cellid, std::array<int,D> lowindices,
+  void populate_cell_node_coords(int cellid, std::array<int, D> lowindices,
                                  int d, std::vector<Point<D>> *coords) const;
 };  // class Direct_Product_Mesh_Wrapper
 
@@ -236,7 +236,7 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_num_points(
 // Get iterator for axis points (beginning of array).
 template<int D, class CoordSys>
 counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_point_begin(
-    [[gnu::unused]] const int dim) const {
+    const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
   int start_index = mesh_.distributed() ? -1 : 0;
@@ -349,13 +349,13 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_nodes() const {
 // ____________________________________________________________________________
 // Populate the d'th coordinate of cell nodes and recurse
 template<int D, class CoordSys>
-void Direct_Product_Mesh_Wrapper<D,CoordSys>::populate_cell_node_coords(
-    int cellid, std::array<int,D> lowindices, int d,
+void Direct_Product_Mesh_Wrapper<D, CoordSys>::populate_cell_node_coords(
+    int cellid, std::array<int, D> lowindices, int d,
     std::vector<Point<D>> *coords) const {
   int ncoords = coords->size()/2;
   double plo = mesh_.get_axis_point(d, lowindices[d]);
   double phi = mesh_.get_axis_point(d, lowindices[d]+1);
-  int fac = pow(2,d);
+  int fac = pow(2, d);
   for (int i = 0; i < ncoords; i++) {
     coords[i][d] = plo;
     coords[i+fac][d] = phi;
@@ -377,7 +377,6 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_coordinates(
   for (int d = 0; d < D; d++) ncoords *= 2;
 
   ccoords->resize(ncoords);
-  Point<D> pnt;
   std::array<int,D> indices;
   cellid_to_indices(cellid, &indices);
   populate_cell_node_coords(cellid, indices, D, ccoords);
