@@ -69,11 +69,16 @@ namespace Wonton {
   it is PARALLEL_OWNED
 
   The labeling scheme for nodes and cells is shown in the figure below
+  (g is ghost and o is owned)
 
-                Rank 0                               Rank 1
-
-  g---G---o---O---o---O---o---G---g    g---G---o---O---o---O---o---G---G     
-
+            lower       upper       lower       upper       lower       upper
+           GLOBAL     partition   partition   partition   partition    GLOBAL
+          boundary    boundary    boundary    boundary    boundary    boundary
+              |           |           |           |           |           |
+axis pts  g   o   o   o   o   g   g   g   o   o   o   g   g   g   o   o   o   g 
+          +---+---+---+---+---+   +---+---+---+---+---+   +---+---+---+---+---+ 
+   cells    g   o   o   o   g       g   o   o   o   g       g   o   o   o   g 
+ 
  */
 template<int D, class CoordSys=Wonton::DefaultCoordSys>
 class Direct_Product_Mesh {
