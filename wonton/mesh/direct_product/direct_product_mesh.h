@@ -302,14 +302,6 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
 
 }
 
-// ____________________________________________________________________________
-// Destructor
-template<int D, class CoordSys>
-Direct_Product_Mesh<D,CoordSys>::~Direct_Product_Mesh() {
-  for (int d = 0; d < D; ++d)
-    axis_points_[d].clear();
-}
-
 
 // ============================================================================
 // Accessors
