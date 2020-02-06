@@ -16,8 +16,6 @@ Please see the license file at the root of this repository, or at:
 
 #include "gtest/gtest.h"
 
-#ifdef WONTON_ENABLE_MPI
-
 using Wonton::PARALLEL_OWNED;
 using Wonton::PARALLEL_GHOST;
 using Wonton::ALL;
@@ -411,5 +409,3 @@ TEST(Direct_Product_Mesh, Parallel3D) {
   }
 }
 
-
-#endif  // WONTON_ENABLE_MPI
