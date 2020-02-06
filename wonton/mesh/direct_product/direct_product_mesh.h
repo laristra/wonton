@@ -46,9 +46,10 @@ namespace Wonton {
   by Portage. All getters in this class are per axis.
 
   The scheme for labeling cells as PARALLEL_OWNED or PARALLEL_GHOST is
-  simple - each rank has a contiguous set of owned cells bounded by a
+  simple - each rank has a contiguous set of owned cells bounded by
   ghost cells on either side in each direction
 
+  LABELING CONVENTIONS:
   The scheme for labeling points as PARALLEL_OWNED or PARALLEL_GHOST
   on a parallel partition is PER AXIS coordinate. That means when
   considering a node as a whole, the parallel status of each of its
@@ -62,11 +63,14 @@ namespace Wonton {
   PARALLEL_OWNED (i.e., if all cells connected to it are
   PARALLEL_OWNED)
 
-  3. The high boundary of owned cells of a partition is PARALLEL_OWNED
+  3. The high boundary of owned cells of a partition (i.e. the axis
+  point with a PARALLEL_OWNED cell before it and a PARALLEL_GHOST
+  after it) is PARALLEL_OWNED
 
-  4. The low boundary of owned cells of a partition is PARALLEL_GHOST
-  unless it forms the low boundary of the global domain in which case
-  it is PARALLEL_OWNED
+  4. The low boundary of owned cells of a partition (i.e. the axis
+  point with a PARALLEL_GHOST cell before it and a PARALLEL_OWNED cell
+  after it) is PARALLEL_GHOST unless it forms the low boundary of the
+  global domain in which case it is PARALLEL_OWNED
 
   The labeling scheme for nodes and cells is shown in the figure below
   (g is ghost and o is owned)
@@ -79,6 +83,19 @@ axis pts  g   o   o   o   o   g   g   g   o   o   o   g   g   g   o   o   o   g
           +---+---+---+---+---+   +---+---+---+---+---+   +---+---+---+---+---+ 
    cells    g   o   o   o   g       g   o   o   o   g       g   o   o   o   g 
  
+
+   Indexing conventions:
+   0. Both points and cells have one index per axis
+   1. The local index for the lowest PARALLEL_OWNED point is 0
+   2. The local index for the PARALLEL_GHOST point before point 0 is -1
+   3. The local index for the lowest PARALLEL_OWNED cell is 0
+   4. The local index for the PARALLEL_GHOST cell before cell 0 is -1
+   5. The global index for the first globally owned point (coincident with
+   the low global coordinate in that axis) is 0
+   6. The global index for the ghost before the first owned point is -1
+   7. We don't bother with global cell indices along each axis (not needed so
+   far)
+
  */
 template<int D, class CoordSys=Wonton::DefaultCoordSys>
 class Direct_Product_Mesh {
@@ -126,8 +143,8 @@ class Direct_Product_Mesh {
   bool distributed() const;
   
   /*!
-    @brief Get the number of points (cell boundary coordinates) along
-    a specified axis.
+    @brief Get the number of axis points (cell boundary coordinates)
+    along a specified axis.
     @param[in] dim     The axis to query.
     @param[in] etype   The type of points to count (See Wonton::Entity_type)
     @returns           The number of points along specified axis
@@ -142,7 +159,7 @@ class Direct_Product_Mesh {
                        axis is -1)
     @returns           global index of point along axis
   */
-  int point_global_index(const int dim, const int pointid) const;
+  GID_t point_global_index(const int dim, const int pointid) const;
   
   /*!
     @brief Get the number of cell along a specified axis.  
@@ -169,7 +186,10 @@ class Direct_Product_Mesh {
   double get_axis_point(const int dim, const int pointid) const;
 
   /*!
-    @brief is point on external boundary along given axis
+    @brief is point on external (global) boundary along given axis
+
+    Both the owned points on the global boundary AND their boundary
+    ghost counterparts will return true in this call
   */
   bool point_on_external_boundary(const int dim, const int pointid) const;
 
@@ -200,10 +220,10 @@ class Direct_Product_Mesh {
   std::array<std::array<double,2>,D> global_coord_bounds_;
 
   //! Global index bounds
-  std::array<std::array<int,2>,D> global_index_bounds_;
+  std::array<std::array<GID_t,2>,D> global_point_index_bounds_;
 
   //! Local index bounds
-  std::array<std::array<int,2>,D> local_index_bounds_;
+  std::array<std::array<int,2>,D> local_point_index_bounds_;
 
   //! Owned+Ghost (ALL) Axis points along the D axes
   std::array<std::vector<double>,D> axis_points_;
@@ -234,8 +254,8 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
   for (int d = 0; d < D; d++) {
     global_coord_bounds_[d][0] = axis_points_in[d][0];
     global_coord_bounds_[d][1] = axis_points_in[d][axis_points_in[d].size()-1];
-    global_index_bounds_[d][0] = 0;
-    global_index_bounds_[d][1] = axis_points_in[d].size()-1;
+    global_point_index_bounds_[d][0] = 0;
+    global_point_index_bounds_[d][1] = axis_points_in[d].size()-1;
   }
   
 #ifdef WONTON_ENABLE_MPI
@@ -265,17 +285,17 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
     // stored as ((xlo,xhi),(ylo,yhi),(zlo,zhi))
     
     for (int d = 0; d < D; d++) {
-      local_index_bounds_[d][0] = partition_bounds[rank_][0][d];
-      local_index_bounds_[d][1] = partition_bounds[rank_][1][d];
+      local_point_index_bounds_[d][0] = partition_bounds[rank_][0][d];
+      local_point_index_bounds_[d][1] = partition_bounds[rank_][1][d];
     }
     
     // Build list of axis points including ghost points
     
     double inf  =  std::numeric_limits<double>::infinity();
     for (int d = 0; d < D; d++) {
-      int lo = local_index_bounds_[d][0]-1;  // -1 on lower global boundary
-      int hi = local_index_bounds_[d][1]+1;  // npoints_global_[d] on
-                                             // upper global boundary
+      int lo = local_point_index_bounds_[d][0]-1;  // -1 on lower global bndry
+      int hi = local_point_index_bounds_[d][1]+1;  // npoints_global_[d] on
+                                                   // upper global boundary
       int np = hi-lo+1;
       axis_points_[d].resize(np);
         
@@ -284,20 +304,20 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
       std::copy(axis_points_in[d].begin()+lo+1, axis_points_in[d].begin()+hi,
                 axis_points_[d].begin()+1);
       
-      axis_points_[d][np-1] = ((hi == global_index_bounds_[d][1]+1) ?
+      axis_points_[d][np-1] = ((hi == global_point_index_bounds_[d][1]+1) ?
                           inf : axis_points_in[d][hi]);
     }
   } else {
     for (int d = 0; d < D; ++d)
       axis_points_[d] = axis_points_in[d];
-    local_index_bounds_ = global_index_bounds_;
+    local_point_index_bounds_ = global_point_index_bounds_;
   }
     
 #else
     
   for (int d = 0; d < D; ++d)
     axis_points_[d] = axis_points_in[d];
-  local_index_bounds_ = global_index_bounds_;
+  local_point_index_bounds_ = global_point_index_bounds_;
 #endif
 
 }
@@ -314,7 +334,7 @@ int Direct_Product_Mesh<D,CoordSys>::space_dimension() const {
 }
 
 // ____________________________________________________________________________
-// Get the dimensionality of the mesh.
+// Is the mesh distributed?
 template<int D, class CoordSys>
 bool Direct_Product_Mesh<D,CoordSys>::distributed() const {
   return(distributed_);
@@ -339,13 +359,13 @@ int Direct_Product_Mesh<D,CoordSys>::axis_num_points(const int dim,
         // coordinate of the partition in any direction is ghost (owned
         // by another partition) _unless_ it is on the outer low
         // boundary of global domain
-        if (local_index_bounds_[dim][0] != global_index_bounds_[dim][0])
+        if (local_point_index_bounds_[dim][0] != global_point_index_bounds_[dim][0])
           n--;
         return n;
       }
       case PARALLEL_GHOST: {
         int n = 2;
-        if (local_index_bounds_[dim][0] != global_index_bounds_[dim][0])
+        if (local_point_index_bounds_[dim][0] != global_point_index_bounds_[dim][0])
           n++;
         return n;
       }
@@ -385,17 +405,19 @@ double Direct_Product_Mesh<D,CoordSys>::get_axis_point(
 }
 
 // ____________________________________________________________________________
-// is point external boundary along given axis
+// is point on external (global) boundary along given axis
+// Both the owned points on the global boundary AND their boundary
+// ghost counterparts will return true in this call
 template<int D, class CoordSys>
 bool Direct_Product_Mesh<D,CoordSys>::point_on_external_boundary(
     const int dim, const int pointid) const {
   assert(dim >= 0);
   assert(dim < D);
 
-  int global_point_index = point_global_index(dim, pointid);
-  if (global_point_index <= global_index_bounds_[dim][0])
+  GID_t global_point_index = point_global_index(dim, pointid);
+  if (global_point_index <= global_point_index_bounds_[dim][0])
     return true;               // coord on or outside of lower global bounds
-  else if (global_point_index >= global_index_bounds_[dim][1])
+  else if (global_point_index >= global_point_index_bounds_[dim][1])
     return true;               // coord on or outside of upper global bounds
   else
     return false;
@@ -408,12 +430,12 @@ bool Direct_Product_Mesh<D,CoordSys>::point_on_external_boundary(
 // Note: we expect the number of points along any one axis to be well
 // within the range representable by an int
 template<int D, class CoordSys>
-int Direct_Product_Mesh<D,CoordSys>::point_global_index(
+GID_t Direct_Product_Mesh<D,CoordSys>::point_global_index(
     const int dim, const int pointid) const {
   assert(dim >= 0);
   assert(dim < D);
 
-  return local_index_bounds_[dim][0] + pointid;
+  return local_point_index_bounds_[dim][0] + pointid;
 }
 
 // ____________________________________________________________________________
