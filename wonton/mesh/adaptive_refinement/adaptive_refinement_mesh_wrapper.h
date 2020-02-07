@@ -13,6 +13,7 @@ Please see the license file at the root of this repository, or at:
 #include <algorithm>
 
 #include "wonton/support/wonton.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -32,13 +33,13 @@ namespace Wonton {
   supports expands.
 */
 
-template<int D>
+template<int D, class CoordSys=DefaultCoordSys>
 class Adaptive_Refinement_Mesh_Wrapper {
 
  public:
 
   // ==========================================================================
-  // Constructors and destructors
+  // Constructors
 
   //! Default constructor (disabled)
   Adaptive_Refinement_Mesh_Wrapper() = delete;
@@ -48,18 +49,16 @@ class Adaptive_Refinement_Mesh_Wrapper {
     @param[in] mesh The Adaptive_Refinement_Mesh we wish to wrap.
   */
   explicit Adaptive_Refinement_Mesh_Wrapper(
-      Adaptive_Refinement_Mesh<D> const & mesh);
+      Adaptive_Refinement_Mesh<D,CoordSys> const & mesh);
 
   //! Copy constructor (disabled).
   Adaptive_Refinement_Mesh_Wrapper(
-      Adaptive_Refinement_Mesh_Wrapper<D> const &) = delete;
+      Adaptive_Refinement_Mesh_Wrapper<D,CoordSys> const &) = delete;
 
   //! Assignment operator (disabled).
   Adaptive_Refinement_Mesh_Wrapper & operator=(
-      Adaptive_Refinement_Mesh_Wrapper<D> const &) = delete;
+      Adaptive_Refinement_Mesh_Wrapper<D,CoordSys> const &) = delete;
 
-  //! Destructor
-  ~Adaptive_Refinement_Mesh_Wrapper();
 
   // ==========================================================================
   // Accessors
@@ -76,6 +75,14 @@ class Adaptive_Refinement_Mesh_Wrapper {
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
+  //! Iterators on mesh entity - begin
+  counting_iterator begin(Entity_kind const entity,
+      Entity_type const etype = Entity_type::ALL) const;
+
+  //! Iterator on mesh entity - end
+  counting_iterator end(Entity_kind const entity,
+      Entity_type const etype = Entity_type::ALL) const;
+
 
  private:
 
@@ -83,26 +90,20 @@ class Adaptive_Refinement_Mesh_Wrapper {
   // Class data
 
   //! The mesh to wrap.
-  Adaptive_Refinement_Mesh<D> const & mesh_;
+  Adaptive_Refinement_Mesh<D,CoordSys> const & mesh_;
 
 };  // class Adaptive_Refinement_Mesh_Wrapper
 
 
 // ============================================================================
-// Constructors and destructors
+// Constructors
 
 // ____________________________________________________________________________
 // constructor
-template<int D>
-Adaptive_Refinement_Mesh_Wrapper<D>::Adaptive_Refinement_Mesh_Wrapper(
-    Adaptive_Refinement_Mesh<D> const & mesh) :
+template<int D, class CoordSys>
+Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::Adaptive_Refinement_Mesh_Wrapper(
+    Adaptive_Refinement_Mesh<D,CoordSys> const & mesh) :
     mesh_(mesh) {
-}
-
-// ____________________________________________________________________________
-// destructor
-template<int D>
-Adaptive_Refinement_Mesh_Wrapper<D>::~Adaptive_Refinement_Mesh_Wrapper() {
 }
 
 
@@ -111,35 +112,63 @@ Adaptive_Refinement_Mesh_Wrapper<D>::~Adaptive_Refinement_Mesh_Wrapper() {
 
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
-template<int D>
-int Adaptive_Refinement_Mesh_Wrapper<D>::space_dimension() const {
+template<int D, class CoordSys>
+int Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::space_dimension() const {
   return mesh_.space_dimension();
 }
 
 // ____________________________________________________________________________
 // Get number of cells owned by this processing element.
-template<int D>
-int Adaptive_Refinement_Mesh_Wrapper<D>::num_owned_cells() const {
+template<int D, class CoordSys>
+int Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::num_owned_cells() const {
   return mesh_.num_cells();
 }
 
 // ____________________________________________________________________________
 // Get number of ghost cells on this processing element.
-template<int D>
-int Adaptive_Refinement_Mesh_Wrapper<D>::num_ghost_cells() const {
+template<int D, class CoordSys>
+int Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::num_ghost_cells() const {
   return 0;
 }
 
 // ____________________________________________________________________________
 // Get lower and upper corners of cell bounding box
-template<int D>
-void Adaptive_Refinement_Mesh_Wrapper<D>::cell_get_bounds(
+template<int D, class CoordSys>
+void Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::cell_get_bounds(
     const int id, Point<D> *plo, Point<D> *phi) const {
   auto bounding_box = mesh_.cell_get_bounds(id);
   for (int d = 0; d < D; ++d) {
     (*plo)[d] = bounding_box[d][LO];
     (*phi)[d] = bounding_box[d][HI];
   }
+}
+
+// ____________________________________________________________________________
+// Iterators on mesh entity - begin
+template<int D, class CoordSys>
+counting_iterator Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::begin(
+    Entity_kind const entity, Entity_type const etype) const {
+  // Currently only valid for cells
+  assert(entity == Wonton::Entity_kind::CELL);
+  // Currently only valid for owned cells
+  assert(etype == Wonton::Entity_type::PARALLEL_OWNED);
+  // Return iterator
+  int start_index = 0;
+  return(make_counting_iterator(start_index));
+}
+
+// ____________________________________________________________________________
+// Iterator on mesh entity - end
+template<int D, class CoordSys>
+counting_iterator Adaptive_Refinement_Mesh_Wrapper<D,CoordSys>::end(
+    Entity_kind const entity, Entity_type const etype) const {
+  // Currently only valid for cells
+  assert(entity == Wonton::Entity_kind::CELL);
+  // Currently only valid for owned cells
+  assert(etype == Wonton::Entity_type::PARALLEL_OWNED);
+  // Return iterator
+  int start_index = 0;
+  return(make_counting_iterator(start_index) + num_owned_cells());
 }
 
 }  // namespace Wonton

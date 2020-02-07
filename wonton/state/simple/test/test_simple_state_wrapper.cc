@@ -62,7 +62,7 @@ TEST(Simple_State_Wrapper, WrapperTest) {
       expected_kinds = {Wonton::Entity_kind::CELL,
                         Wonton::Entity_kind::NODE};
   Wonton::Entity_kind kind;
-  for (int i(0); i < names.size(); ++i) {
+  for (unsigned i = 0; i < names.size(); ++i) {
     kind = mystate_wrapper.get_entity(names[i]);
     ASSERT_EQ(expected_kinds[i], kind);
   }
@@ -74,19 +74,20 @@ TEST(Simple_State_Wrapper, WrapperTest) {
   const double *testa = &(nodevar2[0]), *testg;
   mystate_wrapper.mesh_add_data(Wonton::Entity_kind::NODE, "nodevar2", &testa);
   mystate_wrapper.mesh_get_data(Wonton::Entity_kind::NODE, "nodevar2", &testg);
-  for (size_t i = 0; i < numnodes; i++) ASSERT_EQ(testg[i], nodevar2[i]);
+  for (int i = 0; i < numnodes; i++)
+    ASSERT_EQ(testg[i], nodevar2[i]);
 
   // Check names
   size_t index = 0;
-  std::vector<std::string>::iterator iter0 = mystate_wrapper.names_begin();
-  std::vector<std::string>::iterator iter1 = mystate_wrapper.names_end();
+  auto iter0 = mystate_wrapper.names_begin();
+  auto iter1 = mystate_wrapper.names_end();
   std::vector<std::string> names_test = mystate_wrapper.names();
 
-  ASSERT_EQ(names_test.size(), 3);
+  ASSERT_EQ(names_test.size(), unsigned(3));
   ASSERT_EQ(names_test[0], "cellvar1");
   ASSERT_EQ(names_test[1], "nodevar1");
   ASSERT_EQ(names_test[2], "nodevar2");
-  for (std::vector<std::string>::iterator iter=iter0; iter != iter1; ++iter) {
+  for (auto iter=iter0; iter != iter1; ++iter) {
     ASSERT_EQ(names_test[index], *iter);
     index++;
   }

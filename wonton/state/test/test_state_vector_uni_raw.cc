@@ -37,8 +37,6 @@ TEST(StateUni, BasicDouble1) {
   
 }
 
-
-
 TEST(StateUni, DataAccess) {
 
 	std::string name{"field"};
@@ -48,10 +46,9 @@ TEST(StateUni, DataAccess) {
 	
 	const double * sv_data{sv.get_data()};
 
-	for (int i=0; i<data.size(); i++) {
+	for (unsigned i=0; i < data.size(); i++) {
 		ASSERT_EQ(sv_data[i],data[i]);
-	}  
-  
+	}
 }
 
 

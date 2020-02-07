@@ -53,9 +53,9 @@ TEST(StateMulti, DataAccess) {
 	
 	double const * const * const sv_data{sv.get_data()};
 
-	for (int i=0; i<data.size(); i++) {
-		for (int j=0; j<data[i].size(); j++){
-			ASSERT_EQ(sv_data[i][j],data[i][j]);
+	for (unsigned i=0; i < data.size(); i++) {
+		for (unsigned j=0; j < data[i].size(); j++){
+			ASSERT_EQ(sv_data[i][j], data[i][j]);
 		}
 	}  
   

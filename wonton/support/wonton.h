@@ -319,7 +319,7 @@ inline double pow2(double x) { return x*x; }
 
 // Convert from some Portage types to MPI types
 #ifdef WONTON_ENABLE_MPI
-template<typename T> inline MPI_Datatype to_MPI_Datatype() {}
+template<typename T> MPI_Datatype to_MPI_Datatype();
 template<> inline MPI_Datatype to_MPI_Datatype<GID_t>() {
    return (sizeof(GID_t) == 8 ? MPI_LONG_LONG : MPI_INT);
 }

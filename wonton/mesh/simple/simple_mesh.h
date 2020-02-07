@@ -663,7 +663,7 @@ Simple_Mesh(double x0, double y0, double z0,
   int nx_, ny_, nz_;
 
   /// Coordinates of lower left front and upper right back of domain.
-  double x0_, x1_, y0_, y1_, z0_, z1_;
+  double x0_, y0_, z0_, x1_, y1_, z1_;
 
   /// Node positions.
   std::vector<Point<3>> coordinates3d_;

@@ -82,17 +82,20 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (is_singular_ == 2) error = "matrix is singular";
       else                   error = "none";
     }
-    
   }
 #ifdef HAVE_LAPACKE    
   else if (method == "lapack-posv") {  // LAPACK positive-definite matrix
     
     // check symmetric
     bool symm = true;
-    for (size_t i=0; i<Rows_; i++) for (size_t j=i; j<Columns_; j++) {
+    for (int i=0; i < Rows_; i++) {
+      for (int j = i; j < Columns_; j++) {
         symm = symm and ((*this)[i][j] - (*this)[j][i]) < 1.e-13;
       }
-    if (not symm) std::cerr << "solve(dposv): matrix is not symmetric" << std::endl;
+    }
+
+    if (not symm)
+      std::cerr << "solve(dposv): matrix is not symmetric" << std::endl;
     assert(symm);
     
     // setup
@@ -162,9 +165,11 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   } else if (method == "lapack-sysv") {  // LAPACK symmetric matrix
     // check symmetric
     bool symm = true;
-    for (size_t i=0; i<Rows_; i++) for (size_t j=i; j<Columns_; j++) {
+    for (int i=0; i < Rows_; i++) {
+      for (int j = i; j < Columns_; j++) {
         symm = symm and ((*this)[i][j] - (*this)[j][i]) < 1.e-13;
       }
+    }
     if (not symm) std::cerr << "solve(dposv): matrix is not symmetric" << std::endl;
     assert(symm);
     
@@ -308,10 +313,14 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
     
     // check symmetric
     bool symm = true;
-    for (size_t i=0; i<Rows_; i++) for (size_t j=i; j<Columns_; j++) {
+    for (int i=0; i < Rows_; i++) {
+      for (int j=i; j < Columns_; j++) {
         symm = symm and ((*this)[i][j] - (*this)[j][i]) < 1.e-13;
       }
-    if (not symm) std::cerr << "solve(sytr): matrix is not symmetric" << std::endl;
+    }
+
+    if (not symm)
+      std::cerr << "solve(sytr): matrix is not symmetric" << std::endl;
     assert(symm);
     
     // setup
