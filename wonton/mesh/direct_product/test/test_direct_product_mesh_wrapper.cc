@@ -178,45 +178,51 @@ namespace direct_product_mesh_wrapper_test {
     for (int d = 0; d < D; ++d) {
       axis_points_global[d] = axis_points_in;
     }
-
+    
     Wonton::Executor_type *executor;
+    bool distributed = false;
 #ifdef WONTON_ENABLE_MPI
     if (D > 3) return;  // cannot partition in anything grater than 3D
     Wonton::MPIExecutor_type parallel_exec(MPI_COMM_WORLD);
     executor = &parallel_exec;
+    int nprocs;
+    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    if (nprocs > 1) distributed = true;
 #else
     Wonton::SerialExecutor_type serial_exec;
     executor = &serial_exec;
 #endif
     
-    Wonton::Direct_Product_Mesh<D> mesh(axis_points_global, executor);
-    Wonton::Direct_Product_Mesh_Wrapper<D> mesh_wrapper(mesh);
+    int maxNG = distributed ? 2 : 0;
+    for (int NG = 0; NG < maxNG; NG++) {
+      Wonton::Direct_Product_Mesh<D> mesh(axis_points_global, executor, NG);
+      Wonton::Direct_Product_Mesh_Wrapper<D> mesh_wrapper(mesh);
 
-    // collect the points on this partition (all points bounding OWNED
-    // cells, which means all points except the OUTER 2*NGhostLayers
-    // in any direction)
-    std::array<std::vector<double>,D> axis_points;
-    int NG = mesh.num_ghost_layers();
-    for (int d = 0; d < D; d++) {
-      int n = mesh.axis_num_points(d, Wonton::ALL);
-      axis_points[d].resize(n);
-      for (int i = 0; i < n; i++)
-        axis_points[d][i] = mesh.get_axis_point(d, i-NG);
-    }
+      // collect the points on this partition (all points bounding OWNED
+      // cells, which means all points except the OUTER 2*NGhostLayers
+      // in any direction)
+      std::array<std::vector<double>,D> axis_points;
+      for (int d = 0; d < D; d++) {
+        int n = mesh.axis_num_points(d, Wonton::ALL);
+        axis_points[d].resize(n);
+        for (int i = 0; i < n; i++)
+          axis_points[d][i] = mesh.get_axis_point(d, i-NG);
+      }
     
-    // Run basic tests
-    direct_product_mesh_wrapper_test::check_basic_functions(
-        mesh_wrapper, axis_points);
+      // Run basic tests
+      direct_product_mesh_wrapper_test::check_basic_functions(
+      mesh_wrapper, axis_points);
 
-    // Run looping tests
+      // Run looping tests
 
-    int id = 0;
-    std::array<int,D> indices;
-    direct_product_mesh_wrapper_test::loop_over_grid<D>(
-        D-1, indices, id, mesh_wrapper, axis_points);
+      int id = 0;
+      std::array<int,D> indices;
+      direct_product_mesh_wrapper_test::loop_over_grid<D>(
+      D-1, indices, id, mesh_wrapper, axis_points);
 
-    // Verify cell iteration
-    verify_cell_iteration(mesh_wrapper);
+      // Verify cell iteration
+      verify_cell_iteration(mesh_wrapper);
+    }
   }
 
 } // namespace direct_product_mesh_wrapper_test 
