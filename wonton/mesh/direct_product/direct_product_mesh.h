@@ -47,7 +47,8 @@ namespace Wonton {
 
   The scheme for labeling cells as PARALLEL_OWNED or PARALLEL_GHOST is
   simple - each rank has a contiguous set of owned cells bounded by
-  ghost cells on either side in each direction
+  ghost cells on either side in each direction. There may be 0 to N
+  ghost layers on each side (lower and upper) in each direction
 
   LABELING CONVENTIONS:
   The scheme for labeling points as PARALLEL_OWNED or PARALLEL_GHOST
@@ -73,7 +74,7 @@ namespace Wonton {
   global domain in which case it is PARALLEL_OWNED
 
   The labeling scheme for nodes and cells is shown in the figure below
-  (g is ghost and o is owned)
+  (g is ghost and o is owned) for 1 layer of ghosts.
 
             lower       upper       lower       upper       lower       upper
            GLOBAL     partition   partition   partition   partition    GLOBAL
@@ -85,14 +86,24 @@ axis pts  g   o   o   o   o   g   g   g   o   o   o   g   g   g   o   o   o   g
  
 
    Indexing conventions:
+   NG = num_ghost_layers
+   N  = Number of global points in the domain (exclude ghost points we created)
+   Local index = index of points along an axis in the current partition
+
    0. Both points and cells have one index per axis
-   1. The local index for the lowest PARALLEL_OWNED point is 0
-   2. The local index for the PARALLEL_GHOST point before point 0 is -1
-   3. The local index for the lowest PARALLEL_OWNED cell is 0
-   4. The local index for the PARALLEL_GHOST cell before cell 0 is -1
-   5. The global index for the first globally owned point (coincident with
-   the low global coordinate in that axis) is 0
-   6. The global index for the ghost before the first owned point is -1
+   1. The local index for the lowest PARALLEL_OWNED POINT is 0
+   2. The local indices for the PARALLEL_GHOST POINTS before point 0 are -1,
+      -2, ..., -NG
+   3. The local index for the lowest PARALLEL_OWNED CELL is 0
+   4. The local indices for the PARALLEL_GHOST CELLS before cell 0 are -1,
+      -2, ..., -NG
+
+   5. The global index for the first globally owned POINT is 0
+   6. The global index for the last globallly owned POINT is N (where N is
+      the total number of global points in the input)
+   6. The global indices for the ghost points before the first owned point are
+      -1, -2, ..., -NG for the ghost points after the last owned point are
+      N, N+1, ..., N+NG-1
    7. We don't bother with global cell indices along each axis (not needed so
    far)
 
@@ -110,24 +121,22 @@ class Direct_Product_Mesh {
 
   /*!
     @brief Constructor to create a Direct_Product_Mesh.
-    @param[in] axis_points The cell boundary coordinates along each axis.
-    @param[in] executor    Pointer to serial or parallel executor
-    @param[in] dpart       Number of directions to partition in parallel
+    @param[in] axis_points       Global cell boundary coords along each axis.
+    @param[in] executor          Pointer to serial or parallel executor
+    @param[in] num_ghost_layers  Number of ghost layers requested in parallel
+    @param[in] dpart             Number of directions to partition in parallel
 
     Specify the axis point coordinates that delineate the cells of the mesh
     along each axis.
   */
   Direct_Product_Mesh(const std::array<std::vector<double>,D> &axis_points_in,
                       const Wonton::Executor_type *executor = nullptr,
+                      const int num_ghost_layers = 0,
                       const int dpart = D);
 
   //! Assignment operator (disabled).
   Direct_Product_Mesh & operator=(
       const Direct_Product_Mesh<D,CoordSys> &) = delete;
-
-  //! Destructor
-  ~Direct_Product_Mesh();
-
 
   // ==========================================================================
   // Accessors
@@ -152,6 +161,15 @@ class Direct_Product_Mesh {
   int axis_num_points(const int dim,
                       const Entity_type etype = Entity_type::ALL) const;
 
+  /*!
+    @brief Number of ghost layers on any end
+    @returns Number of ghost cell layers
+
+    Note that if this returns a value of 2, it means there are 2 ghost
+    cells on each end of the mesh in that direction for a total of 4. 
+  */
+  int num_ghost_layers() const;
+  
   /*!
     @brief Global index of point along a specified axis
     @param[in] dim     The axis to query.
@@ -199,31 +217,33 @@ class Direct_Product_Mesh {
     @param[out] lo   lower coordinate bound along axis
     @param[out] hi   upper coordinate bound along axis
   */
-  void get_global_coord_bounds(const int dim,
-                               double *lo, double *hi) const;
+  void get_global_coord_bounds(const int dim, double *lo, double *hi) const;
     
   /*!
-    @brief get local coordinate bounds along axis (without the ghost layer)
+    @brief coordinate bounds of OWNED cells in local domain (ghost layers EXCLUDED)
     @param[in]  dim  axis along which to get bounds
     @param[out] lo   lower coordinate bound along axis
     @param[out] hi   upper coordinate bound along axis
   */
-  void get_local_coord_bounds(const int dim,
-                              double *lo, double *hi) const;
+  void get_local_coord_bounds(const int dim, double *lo, double *hi) const;
   
  private:
 
   // ==========================================================================
   // Class data
 
-  //! Global coordinate bounds
-  std::array<std::array<double,2>,D> global_coord_bounds_;
+  //! coordinate bounds
+  std::array<std::array<double,2>,D> coord_bounds_global_;
 
-  //! Global index bounds
-  std::array<std::array<GID_t,2>,D> global_point_index_bounds_;
+  //! Number of input global points in domain along each axis
+  std::array<GID_t,D> num_axis_points_global_;
 
-  //! Local index bounds
-  std::array<std::array<int,2>,D> local_point_index_bounds_;
+  //! Number of ghost layers
+  int num_ghost_layers_;
+
+  //! Global index bounds along each axis for points of __OWNED__ cells
+  //! on LOCAL DOMAIN or PARTITION
+  std::array<std::array<GID_t,2>,D> gid_bounds_local_;
 
   //! Owned+Ghost (ALL) Axis points along the D axes
   std::array<std::vector<double>,D> axis_points_;
@@ -249,13 +269,12 @@ class Direct_Product_Mesh {
 template<int D, class CoordSys>
 Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
     const std::array<std::vector<double>,D> &axis_points_in,
-    Wonton::Executor_type const *executor, int dpart) {
+    Wonton::Executor_type const *executor, int num_ghost_layers, int dpart) {
 
   for (int d = 0; d < D; d++) {
-    global_coord_bounds_[d][0] = axis_points_in[d][0];
-    global_coord_bounds_[d][1] = axis_points_in[d][axis_points_in[d].size()-1];
-    global_point_index_bounds_[d][0] = 0;
-    global_point_index_bounds_[d][1] = axis_points_in[d].size()-1;
+    coord_bounds_global_[d][0] = axis_points_in[d][0];
+    coord_bounds_global_[d][1] = axis_points_in[d][axis_points_in[d].size()-1];
+    num_axis_points_global_[d] = axis_points_in[d].size();
   }
   
 #ifdef WONTON_ENABLE_MPI
@@ -274,50 +293,72 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
     int seed = 42;  // seed for randomization to ensure we get
                     // consistent results on all processors
 
-    std::array<int, D> ncells;
+    std::array<GID_t, D> ncells;
     for (int d = 0; d < D; d++) ncells[d] = axis_points_in[d].size()-1;
     auto partition_bounds =
         structured_partitioner<D>(nprocs_, ncells, dpart, seed);
-
-    // integer bounds of owned cell points in each direction on local
-    // partition partition_bounds are returned as
+    
+    // integer bounds of points of OWNED cells in each direction on
+    // local partition. The 'partition_bounds' are returned as
     // ((xlo,ylo,zlo),(xhi,yhi,zhi)) while bounds in this class are
     // stored as ((xlo,xhi),(ylo,yhi),(zlo,zhi))
     
     for (int d = 0; d < D; d++) {
-      local_point_index_bounds_[d][0] = partition_bounds[rank_][0][d];
-      local_point_index_bounds_[d][1] = partition_bounds[rank_][1][d];
+      gid_bounds_local_[d][0] = partition_bounds[rank_][0][d];
+      gid_bounds_local_[d][1] = partition_bounds[rank_][1][d];
     }
     
     // Build list of axis points including ghost points
     
+    num_ghost_layers_ = num_ghost_layers;
+    int NG = num_ghost_layers_;
+
     double inf  =  std::numeric_limits<double>::infinity();
     for (int d = 0; d < D; d++) {
-      int lo = local_point_index_bounds_[d][0]-1;  // -1 on lower global bndry
-      int hi = local_point_index_bounds_[d][1]+1;  // npoints_global_[d] on
-                                                   // upper global boundary
-      int np = hi-lo+1;
-      axis_points_[d].resize(np);
-        
-      axis_points_[d][0] = (lo == -1) ? -inf : axis_points_in[d][lo];
-        
-      std::copy(axis_points_in[d].begin()+lo+1, axis_points_in[d].begin()+hi,
-                axis_points_[d].begin()+1);
+      GID_t lo = gid_bounds_local_[d][0];
+      GID_t hi = gid_bounds_local_[d][1];
       
-      axis_points_[d][np-1] = ((hi == global_point_index_bounds_[d][1]+1) ?
-                          inf : axis_points_in[d][hi]);
+      // owned + ghost points
+      int npall = static_cast<int>(hi-lo+1+2*NG);
+      axis_points_[d].resize(npall);
+
+      if (lo == 0)
+        for (int k = 0; k < NG; k++)
+          axis_points_[d][k] = -inf;
+      else
+        for (int k = 0; k < NG; k++)
+          axis_points_[d][k] = (lo-NG+k < 0) ? -inf :
+              axis_points_[d][k] = axis_points_in[d][lo-NG+k];
+        
+      std::copy(axis_points_in[d].begin()+lo, axis_points_in[d].begin()+hi+1,
+                axis_points_[d].begin()+NG);
+
+      if (hi == num_axis_points_global_[d]-1)
+        for (int k = 0; k < NG; k++)
+          axis_points_[d][npall-NG+k] = inf;
+      else
+        for (int k = 0; k < NG; k++)
+          axis_points_[d][npall-NG+k] = (hi+1+k >= num_axis_points_global_[d]) ?
+              inf : axis_points_in[d][hi+1+k];
     }
   } else {
+    num_ghost_layers_ = 0;
     for (int d = 0; d < D; ++d)
       axis_points_[d] = axis_points_in[d];
-    local_point_index_bounds_ = global_point_index_bounds_;
+    for (int d = 0; d < D; ++d) {
+      gid_bounds_local_[d][0] = 0;
+      gid_bounds_local_[d][1] = num_axis_points_global_[d];
+    }
   }
     
 #else
-    
+  num_ghost_layers_ = 0;
   for (int d = 0; d < D; ++d)
     axis_points_[d] = axis_points_in[d];
-  local_point_index_bounds_ = global_point_index_bounds_;
+    for (int d = 0; d < D; ++d) {
+      gid_bounds_local_[d][0] = 0;
+      gid_bounds_local_[d][1] = num_axis_points_global_[d];
+    }
 #endif
 
 }
@@ -347,41 +388,49 @@ int Direct_Product_Mesh<D,CoordSys>::axis_num_points(const int dim,
                                                      Entity_type etype) const {
   assert(dim >= 0);
   assert(dim < D);
-  if (distributed_) {
-    switch(etype) {
-      case PARALLEL_OWNED: {
-        // at least two ghosts corresponding corresponding to outer
-        // points of ghost layer
-        int n = axis_points_[dim].size()-2;
-        
-        // the upper coordinate of the partition in any direction is
-        // always owned by the current partition while the lower
-        // coordinate of the partition in any direction is ghost (owned
-        // by another partition) _unless_ it is on the outer low
-        // boundary of global domain
-        if (local_point_index_bounds_[dim][0] != global_point_index_bounds_[dim][0])
-          n--;
-        return n;
-      }
-      case PARALLEL_GHOST: {
-        int n = 2;
-        if (local_point_index_bounds_[dim][0] != global_point_index_bounds_[dim][0])
-          n++;
-        return n;
-      }
-      case ALL:
-        return axis_points_[dim].size();
-      default:
-        return 0;
+  switch(etype) {
+    case PARALLEL_OWNED: {
+      // Eliminate the guaranteed ghost points (i.e. lower points of
+      // ghost cells before the owned cells and the upper points of
+      // ghost cells after the owned cells). For instance, if there
+      // are 2 ghost layers, then 4 points are guaranteed to be
+      // ghosts as shown here (g is ghost, o is owned):
+      //
+      // axis pts  g     g    g/o    o     o     o     g     g
+      //           *-----*-----*-----*-----*-----*-----*-----*
+      // cells        g     g     o     o     o     o     o
+      
+      int n = axis_points_[dim].size()-2*num_ghost_layers_;
+      
+      // the upper coordinate of the partition in any direction is
+      // ALWAYS owned by the current partition while the lower
+      // coordinate of the partition in any direction is ghost (owned
+      // by another partition) _unless_ it is on the outer low
+      // boundary of global domain
+      
+      if (gid_bounds_local_[dim][0] != 0)
+        n--;
+      return n;
     }
-  } else {
-    switch(etype) {
-      case PARALLEL_OWNED: case ALL:
-        return axis_points_[dim].size();
-      default:
-        return 0;
+    case PARALLEL_GHOST: {
+      int n = 2*num_ghost_layers_;
+      if (gid_bounds_local_[dim][0] != 0)  // see figure above
+        n++;
+      return n;
     }
+    case ALL:
+      return axis_points_[dim].size();
+    default:
+      return 0;
   }
+}
+
+
+// ____________________________________________________________________________
+// Get the number of ghost layers on this mesh
+template<int D, class CoordSys>
+int Direct_Product_Mesh<D,CoordSys>::num_ghost_layers() const {
+  return num_ghost_layers_;
 }
 
 // ____________________________________________________________________________
@@ -393,15 +442,11 @@ double Direct_Product_Mesh<D,CoordSys>::get_axis_point(
   assert(dim < D);
 
   int npall = axis_points_[dim].size();
-  if (distributed_) {
-    assert(pointid >= -1);
-    assert(pointid <= npall);
-    return axis_points_[dim][pointid+1];  // starts at -1 for lower ghost point
-  } else {
-    assert(pointid >= 0);
-    assert(pointid < npall);
-    return axis_points_[dim][pointid];    // no ghosts
-  }
+  assert(pointid >= -num_ghost_layers_);
+  assert(pointid <= npall);
+
+  // pointid starts at -num_ghost_layers for lowest ghost point  
+  return axis_points_[dim][pointid+num_ghost_layers_];
 }
 
 // ____________________________________________________________________________
@@ -415,9 +460,9 @@ bool Direct_Product_Mesh<D,CoordSys>::point_on_external_boundary(
   assert(dim < D);
 
   GID_t global_point_index = point_global_index(dim, pointid);
-  if (global_point_index <= global_point_index_bounds_[dim][0])
+  if (global_point_index <= 0)
     return true;               // coord on or outside of lower global bounds
-  else if (global_point_index >= global_point_index_bounds_[dim][1])
+  else if (global_point_index >= num_axis_points_global_[dim]-1)
     return true;               // coord on or outside of upper global bounds
   else
     return false;
@@ -435,7 +480,7 @@ GID_t Direct_Product_Mesh<D,CoordSys>::point_global_index(
   assert(dim >= 0);
   assert(dim < D);
 
-  return local_point_index_bounds_[dim][0] + pointid;
+  return gid_bounds_local_[dim][0] + pointid;
 }
 
 // ____________________________________________________________________________
@@ -449,13 +494,9 @@ int Direct_Product_Mesh<D,CoordSys>::axis_num_cells(
     case ALL: 
       return axis_num_points(dim, ALL) - 1;
     case PARALLEL_OWNED:
-      if (distributed_) {
-        return axis_num_points(dim, ALL) - 3;  // ALL cells minus 2 ghosts
-      } else {
-        return axis_num_points(dim, ALL) - 1;  // same as ALL cells in serial
-      }
+      return axis_num_points(dim, ALL) - 1 - 2*num_ghost_layers_;
     case PARALLEL_GHOST:
-      return distributed_ ? 2 : 0;
+      return 2*num_ghost_layers_;
     default:
       return 0;
   }
@@ -468,19 +509,19 @@ template<int D, class CoordSys>
 void Direct_Product_Mesh<D,CoordSys>::get_global_coord_bounds(const int dim,
                                                               double *plo,
                                                               double *phi) const {
-    *plo = global_coord_bounds_[dim][0];
-    *phi = global_coord_bounds_[dim][1];
+    *plo = coord_bounds_global_[dim][0];
+    *phi = coord_bounds_global_[dim][1];
 }
     
 // ____________________________________________________________________________
-// Coordinate bounds of local domain (without the ghost layer
+// Coordinate bounds of owned cells in local domain (ghost layers EXCLUDED)
 template<int D, class CoordSys>
 void Direct_Product_Mesh<D,CoordSys>::get_local_coord_bounds(const int dim,
                                                              double *plo,
                                                              double *phi) const {
-  int np = axis_points_[dim].size();
-  *plo = axis_points_[dim][0];
-  *phi = axis_points_[dim][np-1];
+  int npall = axis_points_[dim].size();
+  *plo = axis_points_[dim][num_ghost_layers_];
+  *phi = axis_points_[dim][npall-1-num_ghost_layers_];
 }
     
 

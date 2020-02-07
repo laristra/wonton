@@ -80,6 +80,9 @@ class Direct_Product_Mesh_Wrapper {
 
   //! Is mesh distributed?
   bool distributed () const;
+
+  //! Number of ghost layers in each direction at each end
+  int num_ghost_layers () const;
   
   /*!
     @brief Get global mesh bounds.
@@ -214,6 +217,13 @@ bool Direct_Product_Mesh_Wrapper<D,CoordSys>::distributed() const {
 }
 
 // ____________________________________________________________________________
+// Number of ghost layers in each direction on each end
+template<int D, class CoordSys>
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_layers() const {
+  return mesh_.num_ghost_layers();
+}
+
+// ____________________________________________________________________________
 // Get global mesh bounds.
 template<int D, class CoordSys>
 void Direct_Product_Mesh_Wrapper<D,CoordSys>::get_global_bounds(
@@ -239,7 +249,7 @@ counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_point_begin(
     const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
-  int start_index = mesh_.distributed() ? -1 : 0;
+  int start_index = -mesh_.num_ghost_layers();  // could be 0
   return make_counting_iterator(start_index);
 }
 
@@ -427,13 +437,13 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::indices_to_cellid(
   int id = 0;
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
-    int idx = distributed() ? indices[d]+1 : indices[d];
+    int idx = indices[d]+mesh_.num_ghost_layers();
     int mult = axis_num_cells(d-1);
     id += idx;
     id *= mult;
   }
   // Handle the last dimension
-  id += (distributed() ? indices[0]+1 : indices[0]);
+  id += indices[0]+mesh_.num_ghost_layers();
   // Return
   return id;
 }
@@ -460,8 +470,9 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::cellid_to_indices(
   }
   // Handle the last dimension
   indices[0] = (int) residual;
-  if (distributed())
-    for (int d = 0; d < D; ++d) indices[d]--;  // ghost indices must start at -1
+  // ghost indices must start at -1
+  for (int d = 0; d < D; ++d)
+    indices[d] -= mesh_.num_ghost_layers();
   // Return
   return indices;
 }
@@ -478,13 +489,13 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::indices_to_nodeid(
   int id = 0;
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
-    int idx = distributed() ? indices[d]+1 : indices[d];
+    int idx = indices[d]+mesh_.num_ghost_layers();
     int mult = mesh_.axis_num_points(d-1);
     id += idx;
     id *= mult;
   }
   // Handle the last dimension
-  id += (distributed() ? indices[0]+1 : indices[0]);
+  id += indices[0]+mesh_.num_ghost_layers();
   // Return
   return id;
 }
@@ -511,8 +522,9 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::nodeid_to_indices(
   }
   // Handle the last dimension
   indices[0] = (int) residual;
-  if (distributed())
-    for (int d = 0; d < D; ++d) indices[d]--;  // ghost indices must start at -1
+  // Indices start at -NG where NG is number of ghost layers
+  for (int d = 0; d < D; ++d)
+    indices[d] -= mesh_.num_ghost_layers();
   // Return
   return indices;
 }
