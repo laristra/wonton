@@ -331,7 +331,7 @@ class Flat_State_Wrapper {
     if (it != name_map_.end())
       index = get_vector_index(Wonton::Entity_kind::CELL, name);
     else {
-      pair_t name_node_pair(name, Wonton::Entity_kind::NODE, name);
+      pair_t name_node_pair = std::make_pair(name, Wonton::Entity_kind::NODE);
       it = name_map_.find(name_node_pair);
       if (it != name_map_.end())
         index = get_vector_index(Wonton::Entity_kind::NODE, name);

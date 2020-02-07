@@ -14,6 +14,7 @@ Please see the license file at the root of this repository, or at:
 #include <vector>
 
 #include "wonton/support/wonton.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/Point.h"
 
 /*!
@@ -34,8 +35,12 @@ namespace Wonton {
   This class is not meant to be used to be utilized with downstream classes
   that assume an unstructured mesh (e.g. SearchKDTree or IntersectR2D etc.).
 */
-template<int D>
+template<int D, class CoordSys=DefaultCoordSys>
 class Direct_Product_Mesh_Wrapper {
+
+  // TODO: Add a static assert to guarantee that the mesh and mesh wrapper are
+  //       using the same coordinate system?  (Same question for AR mesh and
+  //       wrapper.)
 
  public:
 
@@ -49,14 +54,16 @@ class Direct_Product_Mesh_Wrapper {
     @brief Constructor for the mesh wrapper.
     @param[in] mesh The Direct_Product_Mesh we wish to wrap.
   */
-  explicit Direct_Product_Mesh_Wrapper(Direct_Product_Mesh<D> const & mesh);
+  explicit Direct_Product_Mesh_Wrapper(
+      Direct_Product_Mesh<D,CoordSys> const & mesh);
 
   //! Copy constructor (disabled).
-  Direct_Product_Mesh_Wrapper(Direct_Product_Mesh_Wrapper<D> const &) = delete;
+  Direct_Product_Mesh_Wrapper(
+      Direct_Product_Mesh_Wrapper<D,CoordSys> const &) = delete;
 
   //! Assignment operator (disabled).
   Direct_Product_Mesh_Wrapper & operator=(
-      Direct_Product_Mesh_Wrapper<D> const &) = delete;
+      Direct_Product_Mesh_Wrapper<D,CoordSys> const &) = delete;
 
   //! Destructor
   ~Direct_Product_Mesh_Wrapper();
@@ -99,6 +106,14 @@ class Direct_Product_Mesh_Wrapper {
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
+  //! Iterators on mesh entity - begin
+  counting_iterator begin(Entity_kind const entity,
+      Entity_type const etype = Entity_type::ALL) const;
+
+  //! Iterator on mesh entity - end
+  counting_iterator end(Entity_kind const entity,
+      Entity_type const etype = Entity_type::ALL) const;
+
   // ==========================================================================
   // Index/ID conversions
 
@@ -115,7 +130,7 @@ class Direct_Product_Mesh_Wrapper {
   // Class data
 
   //! The mesh to wrap.
-  Direct_Product_Mesh<D> const & mesh_;
+  Direct_Product_Mesh<D,CoordSys> const & mesh_;
 
 };  // class Direct_Product_Mesh_Wrapper
 
@@ -125,16 +140,16 @@ class Direct_Product_Mesh_Wrapper {
 
 // ____________________________________________________________________________
 // constructor
-template<int D>
-Direct_Product_Mesh_Wrapper<D>::Direct_Product_Mesh_Wrapper(
-    Direct_Product_Mesh<D> const & mesh) :
+template<int D, class CoordSys>
+Direct_Product_Mesh_Wrapper<D,CoordSys>::Direct_Product_Mesh_Wrapper(
+    Direct_Product_Mesh<D,CoordSys> const & mesh) :
     mesh_(mesh) {
 }
 
 // ____________________________________________________________________________
 // destructor
-template<int D>
-Direct_Product_Mesh_Wrapper<D>::~Direct_Product_Mesh_Wrapper() {
+template<int D, class CoordSys>
+Direct_Product_Mesh_Wrapper<D,CoordSys>::~Direct_Product_Mesh_Wrapper() {
 }
 
 
@@ -143,15 +158,15 @@ Direct_Product_Mesh_Wrapper<D>::~Direct_Product_Mesh_Wrapper() {
 
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
-template<int D>
-int Direct_Product_Mesh_Wrapper<D>::space_dimension() const {
+template<int D, class CoordSys>
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::space_dimension() const {
   return mesh_.space_dimension();
 }
 
 // ____________________________________________________________________________
 // Get global mesh bounds.
-template<int D>
-void Direct_Product_Mesh_Wrapper<D>::get_global_bounds(
+template<int D, class CoordSys>
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::get_global_bounds(
     Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension());
   for (int d = 0; d < D; ++d) {
@@ -162,9 +177,9 @@ void Direct_Product_Mesh_Wrapper<D>::get_global_bounds(
 
 // ____________________________________________________________________________
 // Get iterator for axis points (beginning of array).
-template<int D>
-counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
-    const int dim) const {
+template<int D, class CoordSys>
+counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_point_begin(
+    __attribute__((unused)) const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
   int start_index = 0;
@@ -173,8 +188,8 @@ counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_begin(
 
 // ____________________________________________________________________________
 // Get iterator for axis points (end of array).
-template<int D>
-counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_end(
+template<int D, class CoordSys>
+counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_point_end(
     const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
@@ -184,8 +199,8 @@ counting_iterator Direct_Product_Mesh_Wrapper<D>::axis_point_end(
 
 // ____________________________________________________________________________
 // Get axis point value.
-template<int D>
-double Direct_Product_Mesh_Wrapper<D>::get_axis_point(
+template<int D, class CoordSys>
+double Direct_Product_Mesh_Wrapper<D,CoordSys>::get_axis_point(
     const int dim, const int pointid) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
@@ -194,8 +209,9 @@ double Direct_Product_Mesh_Wrapper<D>::get_axis_point(
 
 // ____________________________________________________________________________
 // Get number of cells along axis.
-template<int D>
-int Direct_Product_Mesh_Wrapper<D>::axis_num_cells(const int dim) const {
+template<int D, class CoordSys>
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_num_cells(
+    const int dim) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
   return mesh_.num_axis_points(dim) - 1;
@@ -203,8 +219,8 @@ int Direct_Product_Mesh_Wrapper<D>::axis_num_cells(const int dim) const {
 
 // ____________________________________________________________________________
 // Get number of cells owned by this processing element.
-template<int D>
-int Direct_Product_Mesh_Wrapper<D>::num_owned_cells() const {
+template<int D, class CoordSys>
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_owned_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
     count *= mesh_.num_axis_points(dim) - 1;
@@ -214,15 +230,15 @@ int Direct_Product_Mesh_Wrapper<D>::num_owned_cells() const {
 
 // ____________________________________________________________________________
 // Get number of ghost cells on this processing element.
-template<int D>
-int Direct_Product_Mesh_Wrapper<D>::num_ghost_cells() const {
+template<int D, class CoordSys>
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_cells() const {
   return 0;
 }
 
 // ____________________________________________________________________________
 // Get lower and upper corners of cell bounding box
-template<int D>
-void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
+template<int D, class CoordSys>
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_bounds(
     const int id, Point<D> *plo, Point<D> *phi) const {
   std::array<int,D> indices = cellid_to_indices(id);
   // Cell axis points are zero-indexed, cells are zero-indexed.  Thus cell 0 is
@@ -234,13 +250,41 @@ void Direct_Product_Mesh_Wrapper<D>::cell_get_bounds(
   }
 }
 
+// ____________________________________________________________________________
+// Iterators on mesh entity - begin
+template<int D, class CoordSys>
+counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::begin(
+    Entity_kind const entity, Entity_type const etype) const {
+  // Currently only valid for cells
+  assert(entity == Wonton::Entity_kind::CELL);
+  // Currently only valid for owned cells
+  assert(etype == Wonton::Entity_type::PARALLEL_OWNED);
+  // Return iterator
+  int start_index = 0;
+  return(make_counting_iterator(start_index));
+}
+
+// ____________________________________________________________________________
+// Iterator on mesh entity - end
+template<int D, class CoordSys>
+counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::end(
+    Entity_kind const entity, Entity_type const etype) const {
+  // Currently only valid for cells
+  assert(entity == Wonton::Entity_kind::CELL);
+  // Currently only valid for owned cells
+  assert(etype == Wonton::Entity_type::PARALLEL_OWNED);
+  // Return iterator
+  int start_index = 0;
+  return(make_counting_iterator(start_index) + num_owned_cells());
+}
+
 // ============================================================================
 // Index/ID conversions
 
 // ____________________________________________________________________________
 // Convert from indices to ID
-template<int D>
-int Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
+template<int D, class CoordSys>
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::indices_to_cellid(
     const std::array<int,D>& indices) const {
   assert(D == mesh_.space_dimension());
   int id = 0;
@@ -259,8 +303,8 @@ int Direct_Product_Mesh_Wrapper<D>::indices_to_cellid(
 
 // ____________________________________________________________________________
 // Convert from ID to indices
-template<int D>
-std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
+template<int D, class CoordSys>
+std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::cellid_to_indices(
     const int id) const {
   assert(D == mesh_.space_dimension());
   std::array<int,D> indices;
@@ -280,7 +324,7 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D>::cellid_to_indices(
   // Handle the last dimension
   indices[0] = (int) residual;
   // Return
-  return std::move(indices);
+  return indices;
 }
 
 }  // namespace Wonton

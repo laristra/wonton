@@ -32,7 +32,7 @@ TEST(Simple_State, MultiCell) {
 
   // Add a cell-centered variable, which should initialize to zeros
   auto& cellvar1 = mystate.add("cellvar1", Wonton::Entity_kind::CELL);
-  ASSERT_EQ(numcells, cellvar1.size());
+  ASSERT_EQ(numcells, (int) cellvar1.size());
   for (auto const cv : cellvar1) {
     ASSERT_EQ(0.0, cv);
   }
@@ -43,7 +43,7 @@ TEST(Simple_State, MultiCell) {
     nodevar1[i] = i;
   auto retnodevar1 = mystate.add("nodevar1", Wonton::Entity_kind::NODE,
                                  &(nodevar1[0]));
-  ASSERT_EQ(numnodes, retnodevar1.size());
+  ASSERT_EQ(numnodes, (int) retnodevar1.size());
   for (int i(0); i < numnodes; ++i)
     ASSERT_EQ(nodevar1[i], retnodevar1[i]);
 
