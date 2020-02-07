@@ -107,9 +107,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a323ab6a4298180f1a36d0483c4abd54d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classWonton_1_1Simple__Mesh__Wrapper.html">Simple_Mesh_Wrapper</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh__Wrapper.html#a323ab6a4298180f1a36d0483c4abd54d">operator=</a> (<a class="el" href="classWonton_1_1Simple__Mesh__Wrapper.html">Simple_Mesh_Wrapper</a> const &amp;inmesh)=delete</td></tr>
 <tr class="memdesc:a323ab6a4298180f1a36d0483c4abd54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator (disabled).  <a href="#a323ab6a4298180f1a36d0483c4abd54d">More...</a><br /></td></tr>
 <tr class="separator:a323ab6a4298180f1a36d0483c4abd54d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a85e9a9093bb21caebd82c09a548c0bad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh__Wrapper.html#a85e9a9093bb21caebd82c09a548c0bad">~Simple_Mesh_Wrapper</a> ()</td></tr>
-<tr class="memdesc:a85e9a9093bb21caebd82c09a548c0bad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#a85e9a9093bb21caebd82c09a548c0bad">More...</a><br /></td></tr>
-<tr class="separator:a85e9a9093bb21caebd82c09a548c0bad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2733cdb24b52af8a805caafdc5af144"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh__Wrapper.html#af2733cdb24b52af8a805caafdc5af144">~Simple_Mesh_Wrapper</a> ()=default</td></tr>
+<tr class="memdesc:af2733cdb24b52af8a805caafdc5af144"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#af2733cdb24b52af8a805caafdc5af144">More...</a><br /></td></tr>
+<tr class="separator:af2733cdb24b52af8a805caafdc5af144"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af19651191907d01d050462c6d702b0d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Simple__Mesh__Wrapper.html#af19651191907d01d050462c6d702b0d4">space_dimension</a> () const</td></tr>
 <tr class="memdesc:af19651191907d01d050462c6d702b0d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The spatial dimension of the mesh.  <a href="#af19651191907d01d050462c6d702b0d4">More...</a><br /></td></tr>
 <tr class="separator:af19651191907d01d050462c6d702b0d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,6 +196,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2e66544c26e39e3aeca5c6b6db22196d inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1AuxMeshTopology.html#a2e66544c26e39e3aeca5c6b6db22196d">face_get_cells</a> (int const faceid, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const etype, std::vector&lt; int &gt; *cells) const</td></tr>
 <tr class="memdesc:a2e66544c26e39e3aeca5c6b6db22196d inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get cells of given Entity_type connected to face (in no particular order)  <a href="classWonton_1_1AuxMeshTopology.html#a2e66544c26e39e3aeca5c6b6db22196d">More...</a><br /></td></tr>
 <tr class="separator:a2e66544c26e39e3aeca5c6b6db22196d inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8feb9b7393b75254d13643f02d726efb inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1AuxMeshTopology.html#a8feb9b7393b75254d13643f02d726efb">cell_get_face_adj_cell</a> (int cell, int face) const</td></tr>
+<tr class="memdesc:a8feb9b7393b75254d13643f02d726efb inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the cell incident to a given face of a given cell.  <a href="classWonton_1_1AuxMeshTopology.html#a8feb9b7393b75254d13643f02d726efb">More...</a><br /></td></tr>
+<tr class="separator:a8feb9b7393b75254d13643f02d726efb inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b32960e589774cea2cccfcc6163e3a5 inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1AuxMeshTopology.html#a3b32960e589774cea2cccfcc6163e3a5">cell_get_face_adj_cells</a> (int const cellid, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const ptype, std::vector&lt; int &gt; *adjcells) const</td></tr>
+<tr class="memdesc:a3b32960e589774cea2cccfcc6163e3a5 inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of cell IDs for all cells attached to a specific cell through its faces.  <a href="classWonton_1_1AuxMeshTopology.html#a3b32960e589774cea2cccfcc6163e3a5">More...</a><br /></td></tr>
+<tr class="separator:a3b32960e589774cea2cccfcc6163e3a5 inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab749dbd39a5a47b9d469f2e63647f3e9 inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1AuxMeshTopology.html#ab749dbd39a5a47b9d469f2e63647f3e9">node_get_cell_adj_nodes</a> (int const nodeid, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const ptype, std::vector&lt; int &gt; *adjnodes) const</td></tr>
 <tr class="memdesc:ab749dbd39a5a47b9d469f2e63647f3e9 inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of node IDs for all nodes attached to all cells attached to a specific node.  <a href="classWonton_1_1AuxMeshTopology.html#ab749dbd39a5a47b9d469f2e63647f3e9">More...</a><br /></td></tr>
 <tr class="separator:ab749dbd39a5a47b9d469f2e63647f3e9 inherit pub_methods_classWonton_1_1AuxMeshTopology"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -435,8 +441,8 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a85e9a9093bb21caebd82c09a548c0bad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85e9a9093bb21caebd82c09a548c0bad">&#9670;&nbsp;</a></span>~Simple_Mesh_Wrapper()</h2>
+<a id="af2733cdb24b52af8a805caafdc5af144"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2733cdb24b52af8a805caafdc5af144">&#9670;&nbsp;</a></span>~Simple_Mesh_Wrapper()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -453,7 +459,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

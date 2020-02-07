@@ -84,6 +84,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &lt;stdlib.h&gt;</code><br />
 </div>
 <p><a href="r3d_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -138,15 +139,15 @@ Functions</h2></td></tr>
 <tr class="separator:aad337c9fbabbd571b25490c27f3709d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae591f11a646bffc0b497ba6d440f326a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="r3d_8h.html#ae591f11a646bffc0b497ba6d440f326a">r3d_reduce</a> (<a class="el" href="structr3d__poly.html">r3d_poly</a> *poly, <a class="el" href="deprecated_2r3d_8h.html#aa30ff2c6771668f327e1b0e4bd5cb58f">r3d_real</a> *moments, <a class="el" href="deprecated_2r3d_8h.html#a3aa887a1c16c46e933b08d25625aa024">r3d_int</a> polyorder)</td></tr>
 <tr class="separator:ae591f11a646bffc0b497ba6d440f326a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf2fab4d04dc8b9a7f8c4e9455773aaa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="deprecated_2r3d_8h.html#a3aa887a1c16c46e933b08d25625aa024">r3d_int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="r3d_8h.html#acf2fab4d04dc8b9a7f8c4e9455773aaa">r3d_is_good</a> (<a class="el" href="structr3d__poly.html">r3d_poly</a> *poly)</td></tr>
+<tr class="memdesc:acf2fab4d04dc8b9a7f8c4e9455773aaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks a polyhedron to see if all vertices have three valid edges, that all vertices are pointed to by three other vertices, and that there are no sets of two vertices with more than one edge between them. Overall, checks that the graph is 3-vertex-connected (an <code>O(nverts^2)</code> operation), which is required by Steinitz' theorem to be a valid polyhedral graph.  <a href="#acf2fab4d04dc8b9a7f8c4e9455773aaa">More...</a><br /></td></tr>
+<tr class="separator:acf2fab4d04dc8b9a7f8c4e9455773aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe5fe441cbf5e941728de1aed1c12d9b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structr3d__rvec3.html">r3d_rvec3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="r3d_8h.html#abe5fe441cbf5e941728de1aed1c12d9b">r3d_poly_center</a> (<a class="el" href="structr3d__poly.html">r3d_poly</a> *poly)</td></tr>
-<tr class="memdesc:abe5fe441cbf5e941728de1aed1c12d9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks a polyhedron to see if all vertices have three valid edges, that all vertices are pointed to by three other vertices, and that there are no sets of two vertices with more than one edge between them. Overall, checks that the graph is 3-vertex-connected (an <code>O(nverts^2)</code> operation), which is required by Steinitz' theorem to be a valid polyhedral graph.  <a href="#abe5fe441cbf5e941728de1aed1c12d9b">More...</a><br /></td></tr>
+<tr class="memdesc:abe5fe441cbf5e941728de1aed1c12d9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates a center of a polyhedron.  <a href="#abe5fe441cbf5e941728de1aed1c12d9b">More...</a><br /></td></tr>
 <tr class="separator:abe5fe441cbf5e941728de1aed1c12d9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dd35063297454e40a84d57efb99b3f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="r3d_8h.html#a0dd35063297454e40a84d57efb99b3f2">r3d_shift_moments</a> (<a class="el" href="deprecated_2r3d_8h.html#aa30ff2c6771668f327e1b0e4bd5cb58f">r3d_real</a> *moments, <a class="el" href="deprecated_2r3d_8h.html#a3aa887a1c16c46e933b08d25625aa024">r3d_int</a> polyorder, <a class="el" href="structr3d__rvec3.html">r3d_rvec3</a> vc)</td></tr>
-<tr class="memdesc:a0dd35063297454e40a84d57efb99b3f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates a center of a polyhedron.  <a href="#a0dd35063297454e40a84d57efb99b3f2">More...</a><br /></td></tr>
+<tr class="memdesc:a0dd35063297454e40a84d57efb99b3f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjust moments according to the shift of polyhedron vertices to the origin.  <a href="#a0dd35063297454e40a84d57efb99b3f2">More...</a><br /></td></tr>
 <tr class="separator:a0dd35063297454e40a84d57efb99b3f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf2fab4d04dc8b9a7f8c4e9455773aaa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="deprecated_2r3d_8h.html#a3aa887a1c16c46e933b08d25625aa024">r3d_int</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="r3d_8h.html#acf2fab4d04dc8b9a7f8c4e9455773aaa">r3d_is_good</a> (<a class="el" href="structr3d__poly.html">r3d_poly</a> *poly)</td></tr>
-<tr class="memdesc:acf2fab4d04dc8b9a7f8c4e9455773aaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adjust moments according to the shift of polyhedron vertices to the origin.  <a href="#acf2fab4d04dc8b9a7f8c4e9455773aaa">More...</a><br /></td></tr>
-<tr class="separator:acf2fab4d04dc8b9a7f8c4e9455773aaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa57d26e344325886cc61307b93b00b23"><td class="memItemLeft" align="right" valign="top"><a class="el" href="deprecated_2r3d_8h.html#aa30ff2c6771668f327e1b0e4bd5cb58f">r3d_real</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="r3d_8h.html#aa57d26e344325886cc61307b93b00b23">r3d_orient</a> (<a class="el" href="structr3d__rvec3.html">r3d_rvec3</a> *verts)</td></tr>
 <tr class="memdesc:aa57d26e344325886cc61307b93b00b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the signed volume of the tetrahedron defined by the input vertices.  <a href="#aa57d26e344325886cc61307b93b00b23">More...</a><br /></td></tr>
 <tr class="separator:aa57d26e344325886cc61307b93b00b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -657,15 +658,14 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Adjust moments according to the shift of polyhedron vertices to the origin. </p>
+<p>Checks a polyhedron to see if all vertices have three valid edges, that all vertices are pointed to by three other vertices, and that there are no sets of two vertices with more than one edge between them. Overall, checks that the graph is 3-vertex-connected (an <code>O(nverts^2)</code> operation), which is required by Steinitz' theorem to be a valid polyhedral graph. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in,out]</td><td class="paramname">moments</td><td>The moments of the shifted polygon.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">polyorder</td><td>Order of the polygon.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">vc</td><td>Coordinates of the polygon center, which are used to shift the polygon. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">poly</td><td>The polyhedron to check.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>1 if the polyhedron is good, 0 if not. </dd></dl>
 
 </div>
 </div>
@@ -712,14 +712,14 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Checks a polyhedron to see if all vertices have three valid edges, that all vertices are pointed to by three other vertices, and that there are no sets of two vertices with more than one edge between them. Overall, checks that the graph is 3-vertex-connected (an <code>O(nverts^2)</code> operation), which is required by Steinitz' theorem to be a valid polyhedral graph. </p>
+<p>Calculates a center of a polyhedron. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">poly</td><td>The polyhedron to check.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">poly</td><td>The polygon to check.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>1 if the polyhedron is good, 0 if not. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>coordinates of a polygon center. </dd></dl>
 
 </div>
 </div>
@@ -1049,14 +1049,15 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Calculates a center of a polyhedron. </p>
+<p>Adjust moments according to the shift of polyhedron vertices to the origin. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">poly</td><td>The polygon to check.</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">moments</td><td>The moments of the shifted polygon.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">polyorder</td><td>Order of the polygon.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">vc</td><td>Coordinates of the polygon center, which are used to shift the polygon. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>coordinates of a polygon center. </dd></dl>
 
 </div>
 </div>
