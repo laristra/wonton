@@ -21,8 +21,8 @@ namespace Wonton {
 /// @param  seed   Seed for randomization used in equifactor
 
 template<int D>
-std::vector<std::array<std::array<int,D>,2>>
-structured_partitioner(int N, std::array<int, D> ncells, int d=D, int seed=0) {
+std::vector<std::array<std::array<int64_t,D>,2>>
+structured_partitioner(int N, std::array<int64_t, D> ncells, int d=D, int seed=0) {
 
   // factor the number of processors/partitions into D, nearly equal numbers
   std::vector<int> nbins = equifactor(N, d, seed);
@@ -30,7 +30,7 @@ structured_partitioner(int N, std::array<int, D> ncells, int d=D, int seed=0) {
     nbins.push_back(1);
 
   // compute num cells in each bin along each axis
-  std::array<std::vector<int>, D> bincounts;
+  std::array<std::vector<int64_t>, D> bincounts;
 
   for (int i = 0; i < D; i++) {
     int nperbin = ncells[i]/nbins[i];
@@ -45,7 +45,7 @@ structured_partitioner(int N, std::array<int, D> ncells, int d=D, int seed=0) {
   }
 
   // cell offsets of each bin along each axis
-  std::array<std::vector<int>, D> binoffsets;
+  std::array<std::vector<int64_t>, D> binoffsets;
 
   for (int i = 0; i < D; i++) {
     binoffsets[i].resize(nbins[i]+1);
@@ -55,7 +55,7 @@ structured_partitioner(int N, std::array<int, D> ncells, int d=D, int seed=0) {
       binoffsets[i][j] = binoffsets[i][j-1] + bincounts[i][j-1];
   }
 
-  std::vector<std::array<std::array<int,D>,2>> ilimits(N);
+  std::vector<std::array<std::array<int64_t,D>,2>> ilimits(N);
 
   // One could make this a recursive function but it becomes less readable
   if (D == 1) {

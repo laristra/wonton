@@ -64,7 +64,6 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
     for (int i = prime_facs.size(); i < D; i++)
       prime_facs.push_back(1);
   }
-  int nprimes = prime_facs.size();
 
 
   std::vector<std::vector<int>> sets(D, {1});  // init to 1 for degenerate cases
@@ -104,7 +103,6 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
     srand(randseed);
 
   while (!outer_done) {
-    int nchanges = 0;
 
     // compute the measure (product of elements of set) for each set
     products.assign(D, 1.0);
@@ -124,7 +122,6 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
 
     // collect _all_ sets with min measure and _all_ sets with max measure
     std::vector<int> iminsets, imaxsets;
-    int nminsets, nmaxsets;
     for (int i = 0; i < D; i++) {
       if (products[i] == minprod) iminsets.push_back(i);
       if (products[i] == maxprod) imaxsets.push_back(i);
