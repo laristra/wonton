@@ -39,6 +39,11 @@ if (ENABLE_UNIT_TESTS)
     POLICY MPI
     THREADS 1)
 
+  cinch_add_unit(test_coord_sys
+    SOURCES test/test_coord_sys.cc
+    POLICY SERIAL
+    )
+
   cinch_add_unit(moment_index
     SOURCES test/test_moment_index.cc
     POLICY SERIAL

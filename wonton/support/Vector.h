@@ -50,12 +50,12 @@ template <int D> class Vector {
   }
 
   /*!
-    @brief Specialized constructor for 1d Vectors.
+    @brief Initialize all components to same value (also constructor for 1d vectors)
     @param[in] xm_comp The x coordinate.
   */
   inline Vector(const double& xm_comp) {
-    assert(D == 1);
-    m_comp[0] = xm_comp;
+    for (int i = 0; i < D; i++)
+      m_comp[i] = xm_comp;
   }
   
   /*!
