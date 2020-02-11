@@ -169,6 +169,14 @@ class Direct_Product_Mesh {
     cells on each end of the mesh in that direction for a total of 4. 
   */
   int num_ghost_layers() const;
+
+  /*!
+    @brief Entity type of axis point
+    @param[in] dim     The axis to query
+    @param[in] pointid The point to query
+    @returns   Wonton entity type of point (along this axis)
+  */
+  Entity_type axis_point_type(const int dim, const int pointid) const;
   
   /*!
     @brief Global index of point along a specified axis
@@ -198,8 +206,7 @@ class Direct_Product_Mesh {
 
     @returns coordinate value of point along axis. If the point is a
     ghost but does not exist (e.g pointid=-1 on the left boundary),
-    the returned value will be -Inf or +Inf (can check by comparing to
-    std::numeric_limits<double>::infinity())
+    it will throw an exception
   */
   double get_axis_point(const int dim, const int pointid) const;
 
@@ -469,6 +476,28 @@ bool Direct_Product_Mesh<D,CoordSys>::point_on_external_boundary(
 }
 
 
+// ____________________________________________________________________________
+// Entity type of a point along the axis
+template<int D, class CoordSys>
+Entity_type Direct_Product_Mesh<D,CoordSys>::axis_point_type(
+    const int dim, const int pointid) const {
+  int npall = axis_num_points(dim, ALL);
+  if (point_on_external_boundary(dim, pointid)) {  // global boundary
+    if (pointid < 0 || pointid > npall-2*num_ghost_layers_-1)
+      return BOUNDARY_GHOST;
+    else if (pointid == 0)
+      return PARALLEL_OWNED;  // lo bndry of owned cells in partition
+    else if (pointid == npall-2*num_ghost_layers_-1)
+      return PARALLEL_GHOST;  // hi bndry of owned cells in partition
+  } else {
+    if (pointid < 0 || pointid >= npall-2*num_ghost_layers_-1)
+      return PARALLEL_GHOST;
+    else
+      return PARALLEL_OWNED;
+  }
+  return TYPE_UNKNOWN;
+}
+  
 // ____________________________________________________________________________
 // get global index of point along given axis
 
