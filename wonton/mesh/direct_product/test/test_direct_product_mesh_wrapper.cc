@@ -35,9 +35,10 @@ namespace direct_product_mesh_wrapper_test {
     for (int d = 0; d < D; ++d) {
       cell_count *= mesh_wrapper.axis_num_cells(d);
     }
-    ASSERT_TRUE(mesh_wrapper.num_owned_cells() >= 0);
-    ASSERT_TRUE(mesh_wrapper.num_ghost_cells() >= 0);
-    ASSERT_EQ(cell_count, mesh_wrapper.num_owned_cells()+mesh_wrapper.num_ghost_cells());
+    ASSERT_GE(mesh_wrapper.num_owned_cells(), 0);
+    ASSERT_GE(mesh_wrapper.num_ghost_cells(), 0);
+    ASSERT_EQ(cell_count,
+              mesh_wrapper.num_owned_cells()+mesh_wrapper.num_ghost_cells());
 
     // For each axis check the points
     for (int d = 0; d < D; ++d) {
@@ -48,8 +49,7 @@ namespace direct_product_mesh_wrapper_test {
       for (auto iter = mesh_wrapper.axis_point_begin(d);
            iter != mesh_wrapper.axis_point_end(d);
            ++iter) {
-        ASSERT_EQ(mesh_wrapper.get_axis_point(d,*iter),
-            axis_points[d][n]);
+        ASSERT_EQ(mesh_wrapper.get_axis_point(d,*iter), axis_points[d][n]);
         n++;
       }
     }
@@ -68,10 +68,39 @@ namespace direct_product_mesh_wrapper_test {
     // Get the bounding box
     Wonton::Point<D> plo, phi;
     mesh_wrapper.cell_get_bounds(id, &plo, &phi);
+
     // Verify the bounding box
     for (int d = 0; d < D; ++d) {
       ASSERT_EQ(plo[d], axis_points[d][indices[d]+num_ghost_layers]);
       ASSERT_EQ(phi[d], axis_points[d][indices[d]+num_ghost_layers+1]);
+    }
+
+    // Verify cell coordinate count
+    std::vector<Wonton::Point<D>> ccoord;
+    mesh_wrapper.cell_get_coordinates(id, &ccoord);
+    ASSERT_EQ(pow(2,D), ccoord.size());
+      
+    if (mesh_wrapper.cell_get_type(id) == Wonton::PARALLEL_OWNED) {
+      // Verify the volume
+      double expvolume = 1.0;
+      for (int d = 0; d < D; d++) {
+        double lo = axis_points[d][indices[d]+num_ghost_layers];
+        double hi = axis_points[d][indices[d]+num_ghost_layers+1];
+        expvolume *= (hi-lo);
+      }
+      double volume = mesh_wrapper.cell_volume(id);
+      ASSERT_EQ(expvolume, volume);
+      
+      // Verify the cell centroid
+      Wonton::Point<D> expcen;
+      for (int d = 0; d < D; d++) expcen[d] = 0.0;
+      for (int i = 0; i < ccoord.size(); i++)
+        expcen += ccoord[i];
+      expcen /= ccoord.size();
+      Wonton::Point<D> ccen;
+      mesh_wrapper.cell_centroid(id, &ccen);
+      for (int d = 0; d < D; d++)
+        ASSERT_NEAR(expcen[d], ccen[d], 1.0e-14);
     }
   }
 
@@ -110,10 +139,10 @@ namespace direct_product_mesh_wrapper_test {
     if (d >= 0) {  // Recursive case
       auto num_cells_all = mesh_wrapper.axis_num_cells(d);
       int num_ghost_layers = mesh_wrapper.num_ghost_layers();
-      int start_index = -num_ghost_layers;
-      for (indices[d] = start_index; indices[d] < num_cells_all-1;
-           ++indices[d])
+      for (int i = 0; i < num_cells_all; i++) {
+        indices[d] = i - num_ghost_layers;
         loop_over_grid<D>(d-1, indices, id, mesh_wrapper, axis_points);
+      }
     } else {  // Base case
       // Verify cell bounding boxes
       // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
@@ -194,7 +223,7 @@ namespace direct_product_mesh_wrapper_test {
 #endif
     
     int maxNG = distributed ? 2 : 0;
-    for (int NG = 0; NG < maxNG; NG++) {
+    for (int NG = 0; NG <= maxNG; NG++) {
       Wonton::Direct_Product_Mesh<D> mesh(axis_points_global, executor, NG);
       Wonton::Direct_Product_Mesh_Wrapper<D> mesh_wrapper(mesh);
 
