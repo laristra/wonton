@@ -127,11 +127,20 @@ class Direct_Product_Mesh_Wrapper {
   //! Get number of ghost cells on this processing element.
   int num_ghost_cells() const;
 
+  //! Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
+  Entity_type cell_get_type(const int id) const;
+  
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
   //! Get coordinates of cell points
   void cell_get_coordinates(const int id, std::vector<Point<D>> *ccoords) const;
+
+  //! Get cell volume
+  double cell_volume(const int id) const;
+
+  //! Get cell centroid
+  void cell_centroid(const int id, Point<D> *ccen) const;
 
   //! Iterators on mesh entity - begin
   counting_iterator begin(Entity_kind const entity,
@@ -168,16 +177,23 @@ class Direct_Product_Mesh_Wrapper {
   // ==========================================================================
   // Private methods
   
-  // __________________________________________________________________________
-  /*! @brief Populate the d'th coordinate of cell nodes recursively
-    @param[in] cellid      ID of cell
-    @param[in] lowindices  Indices of lower bounding corner of cell as given
+  /*!  
+    @brief Recursively fill in the low or high coordinates of nodes
+    of a cell or its lower dimensional entities (faces/edges)
+
+    @param[in] d           Dimension at and below which to populate coordinates
+    @param[in] indices     Indices of lower bounding corner of cell as given
                            by cellid_to_indices
-    @param[in] d           Dimension below which to populate coordinates
-    @param[in] coords      Pre-sized list of coordinates (size = pow(2,D))
+    @param[in] lowval      Whether to use low bound (true) or high (false)
+    @param[in] coords      Pre-sized list of coordinates
+
+    Top level call should start with d=0
   */
-  void populate_cell_node_coords(int cellid, std::array<int, D> lowindices,
-                                 int d, std::vector<Point<D>> *coords) const;
+  void fill_dth_coord(
+      int const dim, std::array<int,D> lowindices, bool lowval,
+      typename std::vector<Point<D>>::iterator coords_begin,
+      typename std::vector<Point<D>>::iterator coords_end) const;
+
 };  // class Direct_Product_Mesh_Wrapper
 
 
@@ -355,28 +371,60 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_nodes() const {
     return 0;
 }
 
+// ____________________________________________________________________________
+// Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
+template<int D, class CoordSys>
+Entity_type Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_type(const int id) const {
+  std::array<int, D> indices = cellid_to_indices(id);
+
+  // Order of precedence is BOUNDARY_GHOST, PARALLEL_GHOST,
+  // PARALLEL_OWNED i.e. if point is OWNED on one axis, PARALLEL_GHOST
+  // on another axis and BOUNDARY_GHOST along a third, the point will
+  // be labeled a BOUNDARY_GHOST
+  Entity_type etype = PARALLEL_OWNED;  
+  for (int d = 0; d < D; d++) {
+    int lo = indices[d];
+    int hi = indices[d]+1;
+    Entity_type lotype = mesh_.axis_point_type(d, lo);
+    Entity_type hitype = mesh_.axis_point_type(d, lo);
+    if (lotype == BOUNDARY_GHOST || hitype == BOUNDARY_GHOST) {
+      etype = BOUNDARY_GHOST;
+      break;
+    } else if (lotype == PARALLEL_GHOST || hitype == PARALLEL_GHOST) {
+      etype = PARALLEL_GHOST;
+    }
+  }
+  return etype;
+}
+  
 
 // ____________________________________________________________________________
-// Populate the d'th coordinate of cell nodes and recurse
+// Recursively fill in the low or high coordinates of nodes of a cell
+// or it's lower dimensional entities (faces/edges)
 template<int D, class CoordSys>
-void Direct_Product_Mesh_Wrapper<D, CoordSys>::populate_cell_node_coords(
-    int cellid, std::array<int, D> lowindices, int d,
-    std::vector<Point<D>> *coords) const {
-  int ncoords = coords->size()/2;
-  double plo = mesh_.get_axis_point(d, lowindices[d]);
-  double phi = mesh_.get_axis_point(d, lowindices[d]+1);
-  int fac = pow(2, d);
-  for (int i = 0; i < ncoords; i++) {
-    coords[i][d] = plo;
-    coords[i+fac][d] = phi;
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::fill_dth_coord(
+    int const dim, std::array<int,D> indices, bool lowval,
+    typename std::vector<Point<D>>::iterator coords_begin,
+    typename std::vector<Point<D>>::iterator coords_end) const {
+  int idx = lowval ? indices[dim] : indices[dim]+1;  // low or high value
+  double val = mesh_.get_axis_point(dim, idx);
+  for (auto it = coords_begin; it != coords_end; it++) {
+    Point<D> &coord = *it;
+    coord[dim] = val;
   }
-
-  if (d == 0)
+  if (dim == 0)
     return;
-  else
-    populate_dth_coord_of_cell_nodes(cellid, lowindices, d-1, coords);
+  else {
+    int ncoords = coords_end - coords_begin;
+    // Fill in the low coordinates in the next dimension for a sub-entity
+    fill_dth_coord(dim-1, indices, true,
+                   coords_begin, coords_begin + ncoords/2);
+    // Fill in the high coordinates in the next dimension for a sub-entity
+    fill_dth_coord(dim-1, indices, false,
+                   coords_begin + ncoords/2, coords_end);
+  }
 }
-
+                                                                
 // ____________________________________________________________________________
 // Get coordinates of cell nodes
 template<int D, class CoordSys>
@@ -387,9 +435,50 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_coordinates(
   for (int d = 0; d < D; d++) ncoords *= 2;
 
   ccoords->resize(ncoords);
-  std::array<int,D> indices;
-  cellid_to_indices(cellid, &indices);
-  populate_cell_node_coords(cellid, indices, D, ccoords);
+  std::array<int,D> indices = cellid_to_indices(cellid);
+
+  // Recursively fill in the low and high plane coordinates of cell
+  // (true - low value, false - high value)
+  fill_dth_coord(D-1, indices, true,
+                 ccoords->begin(), ccoords->begin() + ncoords/2);
+  fill_dth_coord(D-1, indices, false,
+                 ccoords->begin() + ncoords/2, ccoords->end());
+}
+
+
+// ____________________________________________________________________________
+// Get centroid of cell accounting for coordinate system
+template<int D, class CoordSys>
+double Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_volume(
+    const int cellid) const {
+  Point<D> lo, hi;
+  cell_get_bounds(cellid, &lo, &hi);
+
+  double moment0 = 1.0;  // cartesian volume
+  for (int d = 0; d < D; d++)
+    moment0 *= (hi[d]-lo[d]);
+  
+  CoordSys::modify_volume(moment0, lo, hi);
+  return moment0;
+}
+
+// ____________________________________________________________________________
+// Get centroid of cell accounting for coordinate system
+template<int D, class CoordSys>
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_centroid(
+    const int cellid, Point<D> *ccen) const {
+  Point<D> lo, hi;
+  cell_get_bounds(cellid, &lo, &hi);
+
+  double moment0 = 1.0;  // cartesian volume
+  for (int d = 0; d < D; d++)
+    moment0 *= (hi[d]-lo[d]);
+
+  Point<D> moment1 = 0.5*(lo+hi)*moment0;
+
+  CoordSys::modify_volume(moment0, lo, hi);
+  CoordSys::modify_first_moments(moment1, lo, hi);
+  *ccen = moment1/moment0;
 }
 
 // ____________________________________________________________________________
@@ -419,7 +508,9 @@ counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::end(
                                   num_owned_cells() + num_ghost_cells()));
   else if (entity == NODE)
     return(make_counting_iterator(start_index +
-                                  num_owned_nodes() + num_ghost_nodes()));    
+                                  num_owned_nodes() + num_ghost_nodes()));
+  else
+    return begin(entity, etype);
 }
 
 // ============================================================================
@@ -470,7 +561,7 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::cellid_to_indices(
   }
   // Handle the last dimension
   indices[0] = (int) residual;
-  // ghost indices must start at -1
+  // indices start at -NG where NG = number of ghost layers
   for (int d = 0; d < D; ++d)
     indices[d] -= mesh_.num_ghost_layers();
   // Return
