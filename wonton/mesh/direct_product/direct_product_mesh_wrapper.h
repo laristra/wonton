@@ -447,7 +447,7 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_coordinates(
 
 
 // ____________________________________________________________________________
-// Get centroid of cell accounting for coordinate system
+// Get volume of cell accounting for coordinate system
 template<int D, class CoordSys>
 double Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_volume(
     const int cellid) const {
