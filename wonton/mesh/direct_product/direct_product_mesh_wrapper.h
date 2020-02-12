@@ -75,6 +75,9 @@ class Direct_Product_Mesh_Wrapper {
   // ==========================================================================
   // Accessors
 
+  // Reference to underlying mesh
+  Direct_Product_Mesh<D, CoordSys> const & mesh() const;
+  
   //! Get dimensionality of the mesh.
   int space_dimension () const;
 
@@ -111,6 +114,9 @@ class Direct_Product_Mesh_Wrapper {
   //! Get number of ghost nodes on this processing element.
   int num_ghost_nodes() const;
 
+  //! Node type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
+  Entity_type node_get_type(const int id) const;  
+  
   //! Get coordinates of node
   Point<D> get_node_coordinates(const int pointid) const;
   
@@ -128,7 +134,7 @@ class Direct_Product_Mesh_Wrapper {
   int num_ghost_cells() const;
 
   //! Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
-  Entity_type cell_get_type(const int id) const;
+  Entity_type cell_get_type(const int id) const;  
   
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
@@ -166,6 +172,35 @@ class Direct_Product_Mesh_Wrapper {
   std::array<int,D> nodeid_to_indices(const int id) const;
 
 
+  // Adjacencies
+
+  /*!
+    @brief Get the list of cell IDs for all cells attached to a specific
+    cell through its faces.
+    @param[in] cellid The ID of the cell.
+    @param[in] ptype The Entity_type (e.g. PARALLEL_OWNED)
+    @param[out] adjcells The list of cell IDs for all cells attached
+    to cell @c cellid through its faces, excluding @c cellid. The
+    order of cells is consistent with the order of respective
+    interfaces returned by cell_get_faces_and_dirs, but all the
+    boundary faces are skipped.
+  */
+  void cell_get_node_adj_cells(const int cellid, const Entity_type ptype,
+                               std::vector<int> *adjcells) const;
+
+  /*!
+    @brief Get the list of node IDs for all nodes attached to all cells
+    attached to a specific node.
+    @param[in] nodeid The ID of the node.
+    @param[in] ptype The Entity_type (e.g. PARALLEL_OWNED)
+    @param[out] adjnodes The list of node IDs for all cells attached to
+    @c nodeid, excluding @c nodeid.
+  */
+  void node_get_cell_adj_nodes(const int nodeid, const Entity_type ptype,
+                               std::vector<int> *adjnodes) const;
+
+  
+
  private:
 
   // ==========================================================================
@@ -181,7 +216,7 @@ class Direct_Product_Mesh_Wrapper {
     @brief Recursively fill in the low or high coordinates of nodes
     of a cell or its lower dimensional entities (faces/edges)
 
-    @param[in] d           Dimension at and below which to populate coordinates
+    @param[in] dim         Dimension at and below which to populate coordinates
     @param[in] indices     Indices of lower bounding corner of cell as given
                            by cellid_to_indices
     @param[in] lowval      Whether to use low bound (true) or high (false)
@@ -194,7 +229,21 @@ class Direct_Product_Mesh_Wrapper {
       typename std::vector<Point<D>>::iterator coords_begin,
       typename std::vector<Point<D>>::iterator coords_end) const;
 
-};  // class Direct_Product_Mesh_Wrapper
+  /*!
+    @brief Recursively build combinations of indices from index ranges
+
+    @param[in] dim          Dimension at or below which to build combinations
+    @param[in] indices      Partially filled array of higher dimensional indices
+    @param[in] index_ranges Ranges of the indices in each dimension
+    @param[in/out] indices_list List of index combinations
+  */
+  
+  void build_index_combinations(int dim,
+                                std::array<int,D> indices,
+                                std::array<std::array<int,2>,D> index_ranges,
+                                std::vector<std::array<int,D>> *indices_list) const;
+  
+  };  // class Direct_Product_Mesh_Wrapper
 
 
 // ============================================================================
@@ -218,6 +267,14 @@ Direct_Product_Mesh_Wrapper<D,CoordSys>::~Direct_Product_Mesh_Wrapper() {
 // ============================================================================
 // Accessors
 
+// ____________________________________________________________________________
+// Reference to underlying mesh
+template<int D, class CoordSys>
+Direct_Product_Mesh<D, CoordSys> const &
+Direct_Product_Mesh_Wrapper<D,CoordSys>::mesh() const {
+  return mesh_;
+}
+  
 // ____________________________________________________________________________
 // Get dimensionality of the mesh.
 template<int D, class CoordSys>
@@ -372,9 +429,34 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_nodes() const {
 }
 
 // ____________________________________________________________________________
+// Node type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
+template<int D, class CoordSys>
+Entity_type
+Direct_Product_Mesh_Wrapper<D,CoordSys>::node_get_type(const int id) const {
+  std::array<int, D> indices = nodeid_to_indices(id);
+
+  // Order of precedence is BOUNDARY_GHOST, PARALLEL_GHOST,
+  // PARALLEL_OWNED i.e. if point is OWNED on one axis, PARALLEL_GHOST
+  // on another axis and BOUNDARY_GHOST along a third, the point will
+  // be labeled a BOUNDARY_GHOST
+  Entity_type etype = PARALLEL_OWNED;  
+  for (int d = 0; d < D; d++) {
+    Entity_type dtype = mesh_.axis_point_type(d, indices[d]);
+    if (dtype == BOUNDARY_GHOST) {
+      etype = BOUNDARY_GHOST;
+      break;                  // game over; this takes highest precedence
+    } else if (dtype == PARALLEL_GHOST) {
+      etype = PARALLEL_GHOST;
+    }
+  }
+  return etype;
+}
+  
+// ____________________________________________________________________________
 // Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
 template<int D, class CoordSys>
-Entity_type Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_type(const int id) const {
+Entity_type
+Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_type(const int id) const {
   std::array<int, D> indices = cellid_to_indices(id);
 
   // Order of precedence is BOUNDARY_GHOST, PARALLEL_GHOST,
@@ -388,7 +470,7 @@ Entity_type Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_type(const int id)
     Entity_type lotype = mesh_.axis_point_type(d, lo);
     Entity_type hitype = mesh_.axis_point_type(d, lo);
     if (lotype == BOUNDARY_GHOST || hitype == BOUNDARY_GHOST) {
-      etype = BOUNDARY_GHOST;
+      etype = BOUNDARY_GHOST;  // game over; this takes highest precedence
       break;
     } else if (lotype == PARALLEL_GHOST || hitype == PARALLEL_GHOST) {
       etype = PARALLEL_GHOST;
@@ -618,6 +700,86 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::nodeid_to_indices(
     indices[d] -= mesh_.num_ghost_layers();
   // Return
   return indices;
+}
+
+// Recursively build combinations of indices from index ranges
+template<int D, class CoordSys>
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::build_index_combinations(
+    int dim,
+    std::array<int,D> indices,
+    std::array<std::array<int,2>,D> index_ranges,
+    std::vector<std::array<int,D>> *indices_list) const {
+  for (int i = index_ranges[dim][0]; i <= index_ranges[dim][1]; i++) {
+    indices[dim] = i;  // The other indices are filled in already
+    if (dim == 0)
+      indices_list->push_back(indices);
+    else  // recurse down to the build add lower dimensional indices
+      build_index_combinations(dim-1, indices, index_ranges, indices_list);
+  }
+}
+
+// Get the list of cell IDs for all cells attached to a specific cell
+// through its faces.
+template<int D, class CoordSys>
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_node_adj_cells(
+    const int cellid, const Entity_type ptype, std::vector<int> *adjcells) const {
+  std::array<int, D> indices = cellid_to_indices(cellid);
+
+  std::array<std::array<int, 2>, D> index_ranges;
+  int num_ghost_layers = mesh_.num_ghost_layers();
+  for (int d = 0; d < D; d++) {
+    int num_points_all = mesh_.axis_num_points(d, Wonton::ALL);
+    index_ranges[d][0] = (indices[d]-1 >= -num_ghost_layers) ?
+        indices[d]-1 : indices[d];
+    index_ranges[d][1] = (indices[d]+1 < num_points_all-num_ghost_layers-1) ?
+        indices[d]+1 : indices[d];
+  }
+
+  int nmax = 1;
+  for (int d = 0; d < D; d++) nmax *= 3;
+  
+  std::vector<std::array<int,D>> cell_indices;
+  cell_indices.reserve(nmax);
+  std::array<int, D> tmpindices;
+  build_index_combinations(D-1, tmpindices, index_ranges, &cell_indices);
+
+  for (auto const& inds : cell_indices) {
+    int id = indices_to_cellid(inds);
+    if (ptype == ALL || ptype == cell_get_type(id))
+      adjcells->push_back(id);
+  }
+}
+
+// Get the list of node IDs for all nodes attached to all cells
+// attached to a specific node.
+template<int D, class CoordSys>
+void Direct_Product_Mesh_Wrapper<D,CoordSys>::node_get_cell_adj_nodes(
+    const int nodeid, const Entity_type ptype, std::vector<int> *adjnodes) const {
+  std::array<int, D> indices = nodeid_to_indices(nodeid);
+
+  std::array<std::array<int, 2>, D> index_ranges;
+  int num_ghost_layers = mesh_.num_ghost_layers();
+  for (int d = 0; d < D; d++) {
+    int num_points_all = mesh_.axis_num_points(d, Wonton::ALL);
+    index_ranges[d][0] = (indices[d]-1 >= -num_ghost_layers) ?
+        indices[d]-1 : indices[d];
+    index_ranges[d][1] = (indices[d]+1 < num_points_all-num_ghost_layers) ?
+        indices[d]+1 : indices[d];
+  }
+
+  int nmax = 1;
+  for (int d = 0; d < D; d++) nmax *= 3;
+  
+  std::vector<std::array<int,D>> node_indices;
+  node_indices.reserve(nmax);
+  std::array<int, D> tmpindices;
+  build_index_combinations(D-1, tmpindices, index_ranges, &node_indices);
+
+  for (auto const& inds : node_indices) {
+    int id = indices_to_nodeid(inds);
+    if (ptype == ALL || ptype == node_get_type(id))
+      adjnodes->push_back(id);
+  }
 }
 
 }  // namespace Wonton
