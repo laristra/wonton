@@ -4,11 +4,11 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
 
+cmake_minimum_required(VERSION 3.13)
+
 project(wonton CXX)
 
 cinch_minimum_required(VERSION 1.0)
-
-cmake_minimum_required(VERSION 3.13)
 
 if (CMAKE_VERSION_MAJOR GREATER_EQUAL 3.13)
   CMAKE_POLICY(SET CMP0079 NEW)  # allow target_link_libraries to reference
@@ -29,25 +29,38 @@ set(WONTON_VERSION_MINOR 1)
 set(WONTON_VERSION_PATCH 3)
 
 # If a C++14 compiler is available, then set the appropriate flags
-include(cxx14)
-check_for_cxx14_compiler(CXX14_COMPILER)
-if(CXX14_COMPILER)
-  enable_cxx14()
+
+# include(cxx14)
+# check_for_cxx14_compiler(CXX14_COMPILER)
+# if(CXX14_COMPILER)
+#   enable_cxx14()
+# else()
+#   message(STATUS "C++14 compatible compiler not found")
+# endif()
+
+# # If we couldn't find a C++14 compiler, try to see if a C++11
+# # compiler is available, then set the appropriate flags
+# if (NOT CXX14_COMPILER)
+#   include(cxx11)
+#   check_for_cxx11_compiler(CXX11_COMPILER)
+#   if(CXX11_COMPILER)
+#     enable_cxx11()
+#   else()
+#     message(FATAL_ERROR "C++11 compatible compiler not found")
+#   endif()
+# endif()
+
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-std=c++14" CXX14_SUPPORTED)
+check_cxx_compiler_flag("-std=c++11" CXX11_SUPPORTED)
+if (CXX14_SUPPORTED)
+  target_compile_features(wonton PUBLIC cxx_std_14)
+elseif (CXX11_SUPPORTED)
+  target_compile_features(wonton PUBLIC cxx_std_11)
 else()
-  message(STATUS "C++14 compatible compiler not found")
+  message(FATAL_ERROR "Please use a recent compiler.")
 endif()
 
-# If we couldn't find a C++14 compiler, try to see if a C++11
-# compiler is available, then set the appropriate flags
-if (NOT CXX14_COMPILER)
-  include(cxx11)
-  check_for_cxx11_compiler(CXX11_COMPILER)
-  if(CXX11_COMPILER)
-    enable_cxx11()
-  else()
-    message(FATAL_ERROR "C++11 compatible compiler not found")
-  endif()
-endif()
 
 
 # cinch extras
@@ -56,7 +69,7 @@ cinch_load_extras()
 
 set(CINCH_HEADER_SUFFIXES "\\.h")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 
 # Top level target
@@ -76,9 +89,8 @@ add_library(wonton::wonton ALIAS wonton)
 set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  set(WONTON_ENABLE_MPI True CACHE BOOL "Whether MPI is enabled")
-  set(CMAKE_C_COMPILER ${MPI_C_COMPILER} CACHE FILEPATH "C compiler to use" FORCE)
-  set(CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER} CACHE FILEPATH "C++ compiler to use" FORCE)
+  target_link_libraries(wonton PUBLIC MPI::MPI_CXX)
+  target_compile_definitions(wonton PRIVATE WONTON_ENABLE_MPI)
 endif (ENABLE_MPI)
 
 #-----------------------------------------------------------------------------
@@ -87,23 +99,17 @@ endif (ENABLE_MPI)
 
 set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
 if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
-
   find_package(FleCSI REQUIRED)
-
-  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
-  target_include_directories(wonton INTERFACE ${FleCSI_INCLUDE_DIR})
-
-  message(STATUS "FleCSI_INCLUDE_DIRS=${FleCSI_INCLUDE_DIR}")
-  target_link_libaries(wonton INTERFACE ${FleCSI_LIBRARIES})
-  
   find_package(FleCSISP REQUIRED)
 
+  message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
+
+  target_include_directories(wonton INTERFACE ${FleCSI_INCLUDE_DIR})
   target_include_directories(wonton INTERFACE ${FleCSISP_INCLUDE_DIR})
 
-  message(STATUS "FleCSISP_INCLUDE_DIRS=${FleCSISP_INCLUDE_DIR}")
+  target_link_libaries(wonton INTERFACE ${FleCSI_LIBRARIES})
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
-
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
 
@@ -260,8 +266,7 @@ if (LAPACKE_DIR)
     #
     # NEEDED FOR STATIC LAPACK LIBS
 
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
       set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lgfortran")
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
       set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lifcore")
