@@ -10,10 +10,6 @@ Please see the license file at the root of this repository, or at:
 if (ENABLE_Jali)
   add_library(jali_state_wrapper INTERFACE)
   
-  set(jali_state_wrapper_HEADERS
-    jali_state_wrapper.h
-    )
-
   target_include_directories(jali_state_wrapper INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>

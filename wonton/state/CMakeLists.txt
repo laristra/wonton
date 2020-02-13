@@ -5,15 +5,6 @@ Please see the license file at the root of this repository, or at:
 ]]
 project(state)
 
-set(state_HEADERS
-  state_vector_base.h
-  state_vector_uni.h
-  state_vector_multi.h
-  state_vector_uni_raw.h
-  state_vector_multi_raw.h
-  state_manager.h
-  )
-
 add_library(wonton_state INTERFACE)
 
 target_include_directories(wonton_state INTERFACE

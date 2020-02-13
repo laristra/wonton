@@ -9,9 +9,6 @@ Please see the license file at the root of this repository, or at:
 #-----------------------------------------------------------------------------~#
 
 if (ENABLE_FleCSI)
-  set(flecsi_mesh_wrapper_HEADERS
-    flecsi_mesh_wrapper.h
-    )
 
   add_library(flecsi_mesh_wrapper INTERFACE)
   

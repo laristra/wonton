@@ -5,11 +5,6 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
-set(adaptive_refinement_mesh_wapper_HEADERS
-  adaptive_refinement_mesh_wrapper.h
-  adaptive_refinement_mesh.h
-  )
-
 add_library(adaptive_refinement_mesh_wrapper INTERFACE)
 
 target_include_directories(adaptive_refinement_mesh_wrapper INTERFACE

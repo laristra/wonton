@@ -6,13 +6,6 @@ Please see the license file at the root of this repository, or at:
 #-----------------------------------------------------------------------------~#
 project(mesh)
 
-
-# Only header files in this directory and it's subdirectories
-set(mesh_HEADERS
-  AuxMeshTopology.h
-  )
-
-
 add_library(wonton_mesh INTERFACE)
 
 target_include_directories(wonton_mesh INTERFACE

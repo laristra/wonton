@@ -8,6 +8,18 @@ project(support)
 
 # Add header files
 set(support_HEADERS
+)
+
+add_library(wonton_support)
+
+target_sources(wonton_support PRIVATE Matrix.cc svd.cc)
+
+target_include_directories(wonton_support PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
+  $<INSTALL_INTERFACE:include/wonton/support>)
+
+set_target_properties(wonton_support PROPERTIES PUBLIC_HEADER
   lsfits.h
   CoordinateSystem.h
   Matrix.h
@@ -16,26 +28,8 @@ set(support_HEADERS
   svd.h
   Vector.h
   Polytope.h
-  prime_factors.h
-  equifactor.h
-  structured_partitioner.h
   wonton.h
-)
-
-# Add source files
-set(support_SOURCES
-  Matrix.cc
-  svd.cc
-)
-
-add_library(wonton_support ${support_SOURCES})
-
-target_include_directories(wonton_support PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
-  $<INSTALL_INTERFACE:include/wonton/support>)
-
-set_target_properties(wonton_support PROPERTIES PUBLIC_HEADER ${support_HEADERS})
+  )
 
 
 #-----------------------------------------------------------------------------

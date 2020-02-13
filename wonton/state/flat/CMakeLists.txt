@@ -4,10 +4,6 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
 
-set(flat_state_wrapper_HEADERS
-  flat_state_mm_wrapper.h
-  )
-
 add_library(flat_state_wrapper INTERFACE)
 
 target_include_directories(flat_state_wrapper INTERFACE

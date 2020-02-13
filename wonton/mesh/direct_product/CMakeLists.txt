@@ -5,11 +5,6 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
-set(direct_product_mesh_wapper_HEADERS
-  direct_product_mesh_wrapper.h
-  direct_mesh.h
-  )
-
 add_library(direct_product_mesh_wrapper INTERFACE)
 
 target_include_directories(direct_product_mesh_wrapper INTERFACE
