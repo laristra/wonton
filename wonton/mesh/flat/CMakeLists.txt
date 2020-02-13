@@ -5,10 +5,6 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
-set(flat_mesh_wapper_HEADERS
-  flat_mesh_wrapper.h
-  )
-
 add_library(flat_mesh_wrapper INTERFACE)
 
 

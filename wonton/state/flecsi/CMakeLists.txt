@@ -10,12 +10,6 @@ Please see the license file at the root of this repository, or at:
 if (FleCSI_DIR)
   add_library(flecsi_state_wrapper INTERFACE)
   
-  set(flecsi_state_wrapper_HEADERS
-    flecsi/flecsi_state_wrapper.h
-    )
-
-  target_sources(flecsi_state_wrapper INTERFACE ${flecsi_state_wrapper_HEADERS})
-
   target_include_directories(flecsi_state_wrapper PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>

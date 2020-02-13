@@ -6,9 +6,6 @@ Please see the license file at the root of this repository, or at:
 #-----------------------------------------------------------------------------~#
 
 if (ENABLE_Jali)
-  set(jali_mesh_wrapper_HEADERS
-    jali_mesh_wrapper.h
-    )
 
   add_library(jali_mesh_wrapper INTERFACE)
 

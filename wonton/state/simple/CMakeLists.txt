@@ -4,12 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
 
-set(simple_state_wrapper_HEADERS
-  simple_state_mm_wrapper.h
-  )
-
 add_library(simple_state_wrapper INTERFACE)
-
 
 target_include_directories(simple_state_wrapper INTERFACE
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>

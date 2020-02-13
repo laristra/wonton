@@ -5,11 +5,6 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
-set(simple_mesh_wapper_HEADERS
-  simple_mesh_wrapper.h
-  simple_mesh.h
-  )
-
 add_library(simple_mesh_wrapper INTERFACE)
 
 target_include_directories(simple_mesh_wrapper INTERFACE
