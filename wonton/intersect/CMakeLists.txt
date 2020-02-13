@@ -7,7 +7,7 @@ Please see the license file at the root of this repository, or at:
 project(intersect)
 
 add_library(wonton_r3d_intersect)
-target_sources(wonton_r3d_intersect PRIVATE r3d/r3d.c r2d/r2d.c)
+target_sources(wonton_r3d_intersect PRIVATE r3d/r3d.c r3d/r2d.c)
 
 target_include_directories(wonton_r3d_intersect PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
@@ -15,8 +15,7 @@ target_include_directories(wonton_r3d_intersect PUBLIC
   $<INSTALL_INTERFACE:include/intersect>)
 
 set_target_properties(wonton_r3d_intersect PROPERTIES PUBLIC_HEADER
-  r3d/r3d.h
-  r2d/r2d.h
+  "r3d/r3d.h r3d/r2d.h"
   )
 
 target_link_libraries(wonton INTERFACE wonton_r3d_intersect)
