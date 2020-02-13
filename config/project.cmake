@@ -8,15 +8,18 @@ cmake_minimum_required(VERSION 3.13)
 
 project(wonton CXX)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 cinch_minimum_required(VERSION 1.0)
 
 if (CMAKE_VERSION_MAJOR GREATER_EQUAL 3.13)
   CMAKE_POLICY(SET CMP0079 NEW)  # allow target_link_libraries to reference
                                  # targets from other directories
 endif()
-if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
-  cmake_policy(SET CMP0074 NEW)  # Don't ignore Pkg_ROOT variables
-endif()
+
+cmake_policy(SET CMP0074 NEW)  # Don't ignore Pkg_ROOT variables
 
 
 
@@ -27,49 +30,6 @@ endif()
 set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 1)
 set(WONTON_VERSION_PATCH 3)
-
-# If a C++14 compiler is available, then set the appropriate flags
-
-# include(cxx14)
-# check_for_cxx14_compiler(CXX14_COMPILER)
-# if(CXX14_COMPILER)
-#   enable_cxx14()
-# else()
-#   message(STATUS "C++14 compatible compiler not found")
-# endif()
-
-# # If we couldn't find a C++14 compiler, try to see if a C++11
-# # compiler is available, then set the appropriate flags
-# if (NOT CXX14_COMPILER)
-#   include(cxx11)
-#   check_for_cxx11_compiler(CXX11_COMPILER)
-#   if(CXX11_COMPILER)
-#     enable_cxx11()
-#   else()
-#     message(FATAL_ERROR "C++11 compatible compiler not found")
-#   endif()
-# endif()
-
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-std=c++14" CXX14_SUPPORTED)
-check_cxx_compiler_flag("-std=c++11" CXX11_SUPPORTED)
-if (CXX14_SUPPORTED)
-  target_compile_features(wonton PUBLIC cxx_std_14)
-elseif (CXX11_SUPPORTED)
-  target_compile_features(wonton PUBLIC cxx_std_11)
-else()
-  message(FATAL_ERROR "Please use a recent compiler.")
-endif()
-
-
-
-# cinch extras
-
-cinch_load_extras()
-
-set(CINCH_HEADER_SUFFIXES "\\.h")
-
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 
 # Top level target
@@ -82,6 +42,14 @@ add_library(wonton INTERFACE)
 add_library(wonton::wonton ALIAS wonton)
 
 
+# cinch extras
+
+cinch_load_extras()
+
+set(CINCH_HEADER_SUFFIXES "\\.h")
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 #------------------------------------------------------------------------------#
 # Set up MPI builds
 # (eventually most of this should be pushed down into cinch)
@@ -89,8 +57,8 @@ add_library(wonton::wonton ALIAS wonton)
 set(ENABLE_MPI OFF CACHE BOOL "")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  target_link_libraries(wonton PUBLIC MPI::MPI_CXX)
-  target_compile_definitions(wonton PRIVATE WONTON_ENABLE_MPI)
+  target_link_libraries(wonton INTERFACE MPI::MPI_CXX)
+  target_compile_definitions(wonton INTERFACE WONTON_ENABLE_MPI)
 endif (ENABLE_MPI)
 
 #-----------------------------------------------------------------------------
