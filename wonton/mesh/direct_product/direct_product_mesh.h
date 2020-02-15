@@ -158,7 +158,7 @@ class Direct_Product_Mesh {
     @param[in] etype   The type of points to count (See Wonton::Entity_type)
     @returns           The number of points along specified axis
   */
-  int axis_num_points(const int dim,
+  int num_axis_points(const int dim,
                       const Entity_type etype = Entity_type::ALL) const;
 
   /*!
@@ -193,7 +193,7 @@ class Direct_Product_Mesh {
     @param[in] etype   The type of cells to count (See Wonton::Entity_type)
     @returns           The number of cells along specified axis
   */
-  int axis_num_cells(const int dim,
+  int num_axis_cells(const int dim,
                      const Entity_type etype = Entity_type::ALL) const;
 
   /*!
@@ -391,7 +391,7 @@ bool Direct_Product_Mesh<D,CoordSys>::distributed() const {
 // ____________________________________________________________________________
 // Get the number of axis points (cell boundary coordinates) of particular type
 template<int D, class CoordSys>
-int Direct_Product_Mesh<D,CoordSys>::axis_num_points(const int dim,
+int Direct_Product_Mesh<D,CoordSys>::num_axis_points(const int dim,
                                                      Entity_type etype) const {
   assert(dim >= 0);
   assert(dim < D);
@@ -481,7 +481,7 @@ bool Direct_Product_Mesh<D,CoordSys>::point_on_external_boundary(
 template<int D, class CoordSys>
 Entity_type Direct_Product_Mesh<D,CoordSys>::axis_point_type(
     const int dim, const int pointid) const {
-  int npall = axis_num_points(dim, ALL);
+  int npall = num_axis_points(dim, ALL);
   if (point_on_external_boundary(dim, pointid)) {  // global boundary
     if (pointid < 0 || pointid > npall-2*num_ghost_layers_-1)
       return BOUNDARY_GHOST;
@@ -515,15 +515,15 @@ GID_t Direct_Product_Mesh<D,CoordSys>::point_global_index(
 // ____________________________________________________________________________
 // number of cells along given axis
 template<int D, class CoordSys>
-int Direct_Product_Mesh<D,CoordSys>::axis_num_cells(
+int Direct_Product_Mesh<D,CoordSys>::num_axis_cells(
     const int dim, const Entity_type etype) const {
   assert(dim >= 0);
   assert(dim < D);
   switch (etype) {
     case ALL: 
-      return axis_num_points(dim, ALL) - 1;
+      return num_axis_points(dim, ALL) - 1;
     case PARALLEL_OWNED:
-      return axis_num_points(dim, ALL) - 1 - 2*num_ghost_layers_;
+      return num_axis_points(dim, ALL) - 1 - 2*num_ghost_layers_;
     case PARALLEL_GHOST:
       return 2*num_ghost_layers_;
     default:

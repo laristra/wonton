@@ -75,11 +75,11 @@ TEST(Direct_Product_Mesh, Parallel1D) {
     
     // Default query - ALL points
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NPOINT_ALL, mesh.axis_num_points(d));
+      ASSERT_EQ(NPOINT_ALL, mesh.num_axis_points(d));
 
     // ALL cells queried explicitly
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NPOINT_ALL, mesh.axis_num_points(d, ALL));
+      ASSERT_EQ(NPOINT_ALL, mesh.num_axis_points(d, ALL));
 
   
     // Cell counts along each axis
@@ -89,26 +89,26 @@ TEST(Direct_Product_Mesh, Parallel1D) {
   
     // Default query - ALL
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELL_ALL, mesh.axis_num_cells(d));
+      ASSERT_EQ(NCELL_ALL, mesh.num_axis_cells(d));
 
     // All cells queried explicitly
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELL_ALL, mesh.axis_num_cells(d, ALL));
+      ASSERT_EQ(NCELL_ALL, mesh.num_axis_cells(d, ALL));
 
     // Owned cell counts
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELL_OWNED, mesh.axis_num_cells(d, PARALLEL_OWNED));
+      ASSERT_EQ(NCELL_OWNED, mesh.num_axis_cells(d, PARALLEL_OWNED));
 
     // Ghost cell counts
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELL_GHOST, mesh.axis_num_cells(d, PARALLEL_GHOST));
+      ASSERT_EQ(NCELL_GHOST, mesh.num_axis_cells(d, PARALLEL_GHOST));
 
     // Verify we are correctly identifying exterior points
     for (int d = 0; d < D; ++d) {
       double lo, hi;
       mesh.get_global_coord_bounds(d, &lo, &hi);
 
-      int npall = mesh.axis_num_points(d, ALL);
+      int npall = mesh.num_axis_points(d, ALL);
       for (int n = 0; n < npall; ++n) {
         int id = distributed ? n-NG : n; // ghost point starts at -NG not 0
         double coord = mesh.get_axis_point(d, id);
@@ -124,7 +124,7 @@ TEST(Direct_Product_Mesh, Parallel1D) {
       double plo, phi;
       mesh.get_local_coord_bounds(d, &plo, &phi);  // excludes ghost layers
 
-      int npall = mesh.axis_num_points(d, ALL);
+      int npall = mesh.num_axis_points(d, ALL);
       for (int n = 0; n < npall; ++n) {
         int id = n-NG;
         double expval1, expval2;
@@ -200,11 +200,11 @@ TEST(Direct_Product_Mesh, Parallel2D_OneGhostLayer) {
   
     // Default query - ALL points
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NPOINTS_ALL, mesh.axis_num_points(d));
+      ASSERT_EQ(NPOINTS_ALL, mesh.num_axis_points(d));
 
     // ALL points queried explicitly
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NPOINTS_ALL, mesh.axis_num_points(d, ALL));
+      ASSERT_EQ(NPOINTS_ALL, mesh.num_axis_points(d, ALL));
 
   
     // Cell counts along each axis
@@ -214,26 +214,26 @@ TEST(Direct_Product_Mesh, Parallel2D_OneGhostLayer) {
   
     // Default query - ALL cells
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELLS_ALL, mesh.axis_num_cells(d));
+      ASSERT_EQ(NCELLS_ALL, mesh.num_axis_cells(d));
 
     // All cells queried explicitly
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELLS_ALL, mesh.axis_num_cells(d, ALL));
+      ASSERT_EQ(NCELLS_ALL, mesh.num_axis_cells(d, ALL));
 
     // Owned cell counts
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELLS_OWNED, mesh.axis_num_cells(d, PARALLEL_OWNED));
+      ASSERT_EQ(NCELLS_OWNED, mesh.num_axis_cells(d, PARALLEL_OWNED));
 
     // Ghost cell counts
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELLS_GHOST, mesh.axis_num_cells(d, PARALLEL_GHOST));
+      ASSERT_EQ(NCELLS_GHOST, mesh.num_axis_cells(d, PARALLEL_GHOST));
 
     // Verify we are correctly identifying exterior points
     for (int d = 0; d < D; ++d) {
       double lo, hi;
       mesh.get_global_coord_bounds(d, &lo, &hi);
 
-      int npall = mesh.axis_num_points(d, ALL);
+      int npall = mesh.num_axis_points(d, ALL);
       for (int n = 0; n < npall; ++n) {
         int id = distributed ? n-NG : n;
         double coord = mesh.get_axis_point(d, id);
@@ -249,7 +249,7 @@ TEST(Direct_Product_Mesh, Parallel2D_OneGhostLayer) {
       double plo, phi;
       mesh.get_local_coord_bounds(d, &plo, &phi);
 
-      int npall = mesh.axis_num_points(d, ALL);
+      int npall = mesh.num_axis_points(d, ALL);
       for (int n = 0; n < npall; ++n) {
         int id = n-NG;
         double expval1, expval2;
@@ -329,7 +329,7 @@ TEST(Direct_Product_Mesh, Parallel3D) {
       if (d == 2 && !distributed)
         NPOINTS_ALL = 3;          // only 3 points and no ghost points
 
-      ASSERT_EQ(NPOINTS_ALL, mesh.axis_num_points(d));
+      ASSERT_EQ(NPOINTS_ALL, mesh.num_axis_points(d));
     }
 
     // ALL points queried explicitly
@@ -338,7 +338,7 @@ TEST(Direct_Product_Mesh, Parallel3D) {
       if (d == 2 && !distributed)
         NPOINTS_ALL = 3;          // only 3 points and no ghost points
     
-      ASSERT_EQ(NPOINTS_ALL, mesh.axis_num_points(d, ALL));
+      ASSERT_EQ(NPOINTS_ALL, mesh.num_axis_points(d, ALL));
     }
 
   
@@ -349,7 +349,7 @@ TEST(Direct_Product_Mesh, Parallel3D) {
       if (d == 2 && !distributed)
         NCELLS_ALL = 2;
     
-      ASSERT_EQ(NCELLS_ALL, mesh.axis_num_cells(d));
+      ASSERT_EQ(NCELLS_ALL, mesh.num_axis_cells(d));
     }
 
     // All cells queried explicitly
@@ -358,7 +358,7 @@ TEST(Direct_Product_Mesh, Parallel3D) {
       if (d == 2 && !distributed)
         NCELLS_ALL = 2;
     
-      ASSERT_EQ(NCELLS_ALL, mesh.axis_num_cells(d, ALL));
+      ASSERT_EQ(NCELLS_ALL, mesh.num_axis_cells(d, ALL));
     }
 
     // Owned cell counts
@@ -366,20 +366,20 @@ TEST(Direct_Product_Mesh, Parallel3D) {
       int NCELLS_OWNED = distributed ? 2 : 4;
       if (d == 2)
         NCELLS_OWNED = 2;
-      ASSERT_EQ(NCELLS_OWNED, mesh.axis_num_cells(d, PARALLEL_OWNED));
+      ASSERT_EQ(NCELLS_OWNED, mesh.num_axis_cells(d, PARALLEL_OWNED));
     }
 
     // Ghost cell counts
     int NCELLS_GHOST = 2*NG;
     for (int d = 0; d < D; ++d)
-      ASSERT_EQ(NCELLS_GHOST, mesh.axis_num_cells(d, PARALLEL_GHOST));
+      ASSERT_EQ(NCELLS_GHOST, mesh.num_axis_cells(d, PARALLEL_GHOST));
 
     // Verify we are correctly identifying exterior points
     for (int d = 0; d < D; ++d) {
       double lo, hi;
       mesh.get_global_coord_bounds(d, &lo, &hi);
 
-      int npall = mesh.axis_num_points(d, ALL);
+      int npall = mesh.num_axis_points(d, ALL);
       for (int n = 0; n < npall; ++n) {
         int id = distributed ? n-NG : n;
         double coord = mesh.get_axis_point(d, id);
@@ -396,7 +396,7 @@ TEST(Direct_Product_Mesh, Parallel3D) {
       double plo, phi;
       mesh.get_local_coord_bounds(d, &plo, &phi);
 
-      int npall = mesh.axis_num_points(d, ALL);
+      int npall = mesh.num_axis_points(d, ALL);
       for (int n = 0; n < npall; ++n) {
         int id = n-NG;
         double expval1, expval2;

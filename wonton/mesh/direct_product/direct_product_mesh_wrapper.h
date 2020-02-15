@@ -99,7 +99,7 @@ class Direct_Product_Mesh_Wrapper {
   void get_global_bounds(Point<D> *plo, Point<D> *phi) const;
 
   //! Get number of points along axis
-  int axis_num_points(const int dim,
+  int num_axis_points(const int dim,
                       const Entity_type ptype = ALL) const;
   
   //! Get iterator for axis point (beginning of array).
@@ -124,7 +124,7 @@ class Direct_Product_Mesh_Wrapper {
   double get_axis_point(const int dim, const int pointid) const;
 
   //! Get number of cells along axis.
-  int axis_num_cells(const int dim,
+  int num_axis_cells(const int dim,
                      const Entity_type ptype = ALL) const;
 
   //! Get number of cells owned by this processing element.
@@ -135,7 +135,10 @@ class Direct_Product_Mesh_Wrapper {
 
   //! Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)
   Entity_type cell_get_type(const int id) const;  
-  
+
+  //! If entity is on exterior (global not partition) boundary
+  bool on_exterior_boundary(const Entity_kind entity, const int id) const;
+
   //! Get lower and upper corners of cell bounding box
   void cell_get_bounds(const int id, Point<D> *plo, Point<D> *phi) const;
 
@@ -308,11 +311,11 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::get_global_bounds(
 // ____________________________________________________________________________
 // Get number of points along axis.
 template<int D, class CoordSys>
-int Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_num_points(
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_axis_points(
     const int dim, const Entity_type ptype) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
-  return mesh_.axis_num_points(dim, ptype);
+  return mesh_.num_axis_points(dim, ptype);
 }
 
 // ____________________________________________________________________________
@@ -334,7 +337,7 @@ counting_iterator Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_point_end(
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
   return make_counting_iterator(*axis_point_begin(dim) +
-                                mesh_.axis_num_points(dim, ALL));
+                                mesh_.num_axis_points(dim, ALL));
 }
 
 // ____________________________________________________________________________
@@ -361,11 +364,11 @@ Point<D> Direct_Product_Mesh_Wrapper<D,CoordSys>::get_node_coordinates(
 // ____________________________________________________________________________
 // Get number of cells along axis.
 template<int D, class CoordSys>
-int Direct_Product_Mesh_Wrapper<D,CoordSys>::axis_num_cells(
+int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_axis_cells(
     const int dim, const Entity_type ptype) const {
   assert(dim >= 0);
   assert(dim < mesh_.space_dimension());
-  return mesh_.axis_num_cells(dim, ptype);
+  return mesh_.num_axis_cells(dim, ptype);
 }
 
 // ____________________________________________________________________________
@@ -374,7 +377,7 @@ template<int D, class CoordSys>
 int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_owned_cells() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim) {
-    count *= mesh_.axis_num_cells(dim, PARALLEL_OWNED);
+    count *= mesh_.num_axis_cells(dim, PARALLEL_OWNED);
   }
   return count;
 }
@@ -386,7 +389,7 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_cells() const {
   if (mesh_.distributed()) {
     int num_all_cells = 1;
     for (int dim = 0; dim < mesh_.space_dimension(); ++dim)
-      num_all_cells *= mesh_.axis_num_cells(dim, ALL);
+      num_all_cells *= mesh_.num_axis_cells(dim, ALL);
     return num_all_cells - num_owned_cells();
   } else
     return 0;
@@ -411,7 +414,7 @@ template<int D, class CoordSys>
 int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_owned_nodes() const {
   int count = 1;
   for (int dim = 0; dim < mesh_.space_dimension(); ++dim)
-    count *= mesh_.axis_num_points(dim, PARALLEL_OWNED);
+    count *= mesh_.num_axis_points(dim, PARALLEL_OWNED);
   return count;
 }
 
@@ -422,7 +425,7 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::num_ghost_nodes() const {
   if (mesh_.distributed()) {
     int num_all_nodes = 1;
     for (int dim = 0; dim < mesh_.space_dimension(); ++dim)
-      num_all_nodes *= mesh_.axis_num_points(dim, ALL);
+      num_all_nodes *= mesh_.num_axis_points(dim, ALL);
     return num_all_nodes - num_owned_nodes();
   } else
     return 0;
@@ -478,7 +481,28 @@ Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_type(const int id) const {
   }
   return etype;
 }
-  
+
+// Is entity on the exterior (global not partition) boundary
+template<int D, class CoordSys>
+bool Direct_Product_Mesh_Wrapper<D,CoordSys>::on_exterior_boundary(
+    const Entity_kind entity, const int id) const {
+  switch (entity) {
+    case CELL:
+      auto indices = cellid_to_indices(id);
+      for (int d = 0; d < D; d++)
+        if (mesh_.point_on_external_boundary(d, indices[d])) return true;
+      for (int d = 0; d < D; d++)
+        if (mesh_.point_on_external_boundary(d, indices[d]+1)) return true;
+      break;
+    case NODE:
+      auto indices = nodeid_to_indices(id);
+      for (int d = 0; d < D; d++)
+        if (mesh_.point_on_external_boundary(d, indices[d])) return true;
+      break;
+    default:
+  }
+  return false;
+}
 
 // ____________________________________________________________________________
 // Recursively fill in the low or high coordinates of nodes of a cell
@@ -611,7 +635,7 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::indices_to_cellid(
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
     int idx = indices[d]+mesh_.num_ghost_layers();
-    int mult = axis_num_cells(d-1);
+    int mult = num_axis_cells(d-1);
     id += idx;
     id *= mult;
   }
@@ -633,7 +657,7 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::cellid_to_indices(
   std::array<int,D> denom;
   denom[0] = 1;
   for (int d = 1; d < D; ++d) {
-    denom[d] = denom[d-1] * axis_num_cells(d-1);
+    denom[d] = denom[d-1] * num_axis_cells(d-1);
   }
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
@@ -663,7 +687,7 @@ int Direct_Product_Mesh_Wrapper<D,CoordSys>::indices_to_nodeid(
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
     int idx = indices[d]+mesh_.num_ghost_layers();
-    int mult = mesh_.axis_num_points(d-1);
+    int mult = mesh_.num_axis_points(d-1);
     id += idx;
     id *= mult;
   }
@@ -685,7 +709,7 @@ std::array<int,D> Direct_Product_Mesh_Wrapper<D,CoordSys>::nodeid_to_indices(
   std::array<int,D> denom;
   denom[0] = 1;
   for (int d = 1; d < D; ++d) {
-    denom[d] = denom[d-1] * mesh_.axis_num_points(d-1);
+    denom[d] = denom[d-1] * mesh_.num_axis_points(d-1);
   }
   // Loop over all but the last dimension
   for (int d = D-1; d > 0; --d) {
@@ -728,7 +752,7 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_node_adj_cells(
   std::array<std::array<int, 2>, D> index_ranges;
   int num_ghost_layers = mesh_.num_ghost_layers();
   for (int d = 0; d < D; d++) {
-    int num_points_all = mesh_.axis_num_points(d, Wonton::ALL);
+    int num_points_all = mesh_.num_axis_points(d, Wonton::ALL);
     index_ranges[d][0] = (indices[d]-1 >= -num_ghost_layers) ?
         indices[d]-1 : indices[d];
     index_ranges[d][1] = (indices[d]+1 < num_points_all-num_ghost_layers-1) ?
@@ -760,7 +784,7 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::node_get_cell_adj_nodes(
   std::array<std::array<int, 2>, D> index_ranges;
   int num_ghost_layers = mesh_.num_ghost_layers();
   for (int d = 0; d < D; d++) {
-    int num_points_all = mesh_.axis_num_points(d, Wonton::ALL);
+    int num_points_all = mesh_.num_axis_points(d, Wonton::ALL);
     index_ranges[d][0] = (indices[d]-1 >= -num_ghost_layers) ?
         indices[d]-1 : indices[d];
     index_ranges[d][1] = (indices[d]+1 < num_points_all-num_ghost_layers) ?

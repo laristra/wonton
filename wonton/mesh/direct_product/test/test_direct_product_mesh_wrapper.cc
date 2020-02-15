@@ -33,7 +33,7 @@ namespace direct_product_mesh_wrapper_test {
     // Count cells in mesh
     int cell_count = 1;
     for (int d = 0; d < D; ++d) {
-      cell_count *= mesh_wrapper.axis_num_cells(d);
+      cell_count *= mesh_wrapper.num_axis_cells(d);
     }
     ASSERT_GE(mesh_wrapper.num_owned_cells(), 0);
     ASSERT_GE(mesh_wrapper.num_ghost_cells(), 0);
@@ -42,7 +42,7 @@ namespace direct_product_mesh_wrapper_test {
 
     // For each axis check the points
     for (int d = 0; d < D; ++d) {
-      ASSERT_EQ(mesh_wrapper.axis_num_cells(d), (int) axis_points[d].size()-1);
+      ASSERT_EQ(mesh_wrapper.num_axis_cells(d), (int) axis_points[d].size()-1);
 
       // We have to ignore the first and last point as they are ghosts
       int n = 0;
@@ -58,7 +58,7 @@ namespace direct_product_mesh_wrapper_test {
   // --------------------------------------------------------------------------
 
   template<int D>
-  void check_cell_bounds(
+  void check_cell_geometry(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
       const std::array<int,D>& indices,
       const std::array<std::vector<double>,D> &axis_points) {
@@ -137,7 +137,7 @@ namespace direct_product_mesh_wrapper_test {
       const Wonton::Direct_Product_Mesh_Wrapper<D> &mesh_wrapper,
       const std::array<std::vector<double>,D> &axis_points) {
     if (d >= 0) {  // Recursive case
-      auto num_cells_all = mesh_wrapper.axis_num_cells(d);
+      auto num_cells_all = mesh_wrapper.num_axis_cells(d);
       int num_ghost_layers = mesh_wrapper.num_ghost_layers();
       for (int i = 0; i < num_cells_all; i++) {
         indices[d] = i - num_ghost_layers;
@@ -147,7 +147,7 @@ namespace direct_product_mesh_wrapper_test {
       // Verify cell bounding boxes
       // -- Since this mesh is just axis-aligned boxes, the bounding boxes will
       //    simply be the cell bounds.
-      direct_product_mesh_wrapper_test::check_cell_bounds<D>(
+      direct_product_mesh_wrapper_test::check_cell_geometry<D>(
           mesh_wrapper, indices, axis_points);
       // Check IDs vs indices
       direct_product_mesh_wrapper_test::check_indices_and_cellids<D>(
@@ -177,7 +177,7 @@ namespace direct_product_mesh_wrapper_test {
       std::size_t n = 0;
       for (int d = D-1; d > 0; --d) {
         n += indices[d]+wrapper.num_ghost_layers();
-        n *= wrapper.axis_num_cells(d-1);
+        n *= wrapper.num_axis_cells(d-1);
       }
       n += indices[0]+wrapper.num_ghost_layers();
       // Ensure that the 1D index is in the valid range
@@ -219,7 +219,7 @@ namespace direct_product_mesh_wrapper_test {
       int num_ghost_layers = wrapper.mesh().num_ghost_layers();
       std::array<int, D> nindices;
       for (int d = 0; d < D; d++) {
-        int num_points_all = wrapper.mesh().axis_num_points(d, Wonton::ALL);
+        int num_points_all = wrapper.mesh().num_axis_points(d, Wonton::ALL);
         int lo = (indices[d]-1 >= -num_ghost_layers) ?
             indices[d]-1 : indices[d];
         int hi = (indices[d]+1 < num_points_all-num_ghost_layers-1) ?
@@ -237,6 +237,15 @@ namespace direct_product_mesh_wrapper_test {
         for (int d = 0; d < D; d++)
           ASSERT_LE(fabs(indices[d]-adjindices[d]), 1);
       }
+
+      bool on_ext_boundary = false;
+      for (int d = 0; d < D; d++)
+        if (mesh_wrapper.mesh().on_exterior_boundary(d, indices[d]) ||
+            mesh_wrapper.mesh().on_exterior_boundary(d, indices[d]+1)) {
+          on_ext_boundary = true;
+          break;
+        }
+      ASSERT_EQ(on_ext_boundary, mesh_wrapper.on_exterior_boundary(id);      
     }
   }
 
@@ -261,7 +270,7 @@ namespace direct_product_mesh_wrapper_test {
       int num_ghost_layers = wrapper.mesh().num_ghost_layers();
       std::array<int, D> nindices;
       for (int d = 0; d < D; d++) {
-        int num_points_all = wrapper.mesh().axis_num_points(d, Wonton::ALL);
+        int num_points_all = wrapper.mesh().num_axis_points(d, Wonton::ALL);
         int lo = (indices[d]-1 >= -num_ghost_layers) ?
             indices[d]-1 : indices[d];
         int hi = (indices[d]+1 < num_points_all-num_ghost_layers) ?
@@ -279,6 +288,14 @@ namespace direct_product_mesh_wrapper_test {
         for (int d = 0; d < D; d++)
           ASSERT_LE(fabs(indices[d]-adjindices[d]), 1);
       }
+
+      bool on_ext_boundary = false;
+      for (int d = 0; d < D; d++)
+        if (mesh_wrapper.mesh().on_exterior_boundary(d, indices[d])) {
+          on_ext_boundary = true;
+          break;
+        }
+      ASSERT_EQ(on_ext_boundary, mesh_wrapper.on_exterior_boundary(id);      
     }
   }
 
@@ -316,7 +333,7 @@ namespace direct_product_mesh_wrapper_test {
       // in any direction)
       std::array<std::vector<double>,D> axis_points;
       for (int d = 0; d < D; d++) {
-        int n = mesh.axis_num_points(d, Wonton::ALL);
+        int n = mesh.num_axis_points(d, Wonton::ALL);
         axis_points[d].resize(n);
         for (int i = 0; i < n; i++)
           axis_points[d][i] = mesh.get_axis_point(d, i-NG);
