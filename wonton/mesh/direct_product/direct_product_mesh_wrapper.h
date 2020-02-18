@@ -488,16 +488,16 @@ bool Direct_Product_Mesh_Wrapper<D,CoordSys>::on_exterior_boundary(
     const Entity_kind entity, const int id) const {
   switch (entity) {
     case CELL:
-      auto indices = cellid_to_indices(id);
+      auto cellindices = cellid_to_indices(id);
       for (int d = 0; d < D; d++)
-        if (mesh_.point_on_external_boundary(d, indices[d])) return true;
+        if (mesh_.point_on_external_boundary(d, cellindices[d])) return true;
       for (int d = 0; d < D; d++)
-        if (mesh_.point_on_external_boundary(d, indices[d]+1)) return true;
+        if (mesh_.point_on_external_boundary(d, cellindices[d]+1)) return true;
       break;
     case NODE:
-      auto indices = nodeid_to_indices(id);
+      auto nodeindices = nodeid_to_indices(id);
       for (int d = 0; d < D; d++)
-        if (mesh_.point_on_external_boundary(d, indices[d])) return true;
+        if (mesh_.point_on_external_boundary(d, nodeindices[d])) return true;
       break;
     default:
   }
