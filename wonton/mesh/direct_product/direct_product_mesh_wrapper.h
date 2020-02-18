@@ -500,6 +500,7 @@ bool Direct_Product_Mesh_Wrapper<D,CoordSys>::on_exterior_boundary(
         if (mesh_.point_on_external_boundary(d, nodeindices[d])) return true;
       break;
     default:
+      {}
   }
   return false;
 }
