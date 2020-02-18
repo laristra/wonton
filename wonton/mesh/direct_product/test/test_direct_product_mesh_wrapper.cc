@@ -240,12 +240,12 @@ namespace direct_product_mesh_wrapper_test {
 
       bool on_ext_boundary = false;
       for (int d = 0; d < D; d++)
-        if (mesh_wrapper.mesh().on_exterior_boundary(d, indices[d]) ||
-            mesh_wrapper.mesh().on_exterior_boundary(d, indices[d]+1)) {
+        if (wrapper.mesh().point_on_external_boundary(d, indices[d]) ||
+            wrapper.mesh().point_on_external_boundary(d, indices[d]+1)) {
           on_ext_boundary = true;
           break;
         }
-      ASSERT_EQ(on_ext_boundary, mesh_wrapper.on_exterior_boundary(id);      
+      ASSERT_EQ(on_ext_boundary, wrapper.on_exterior_boundary(Wonton::CELL, id));
     }
   }
 
@@ -291,11 +291,11 @@ namespace direct_product_mesh_wrapper_test {
 
       bool on_ext_boundary = false;
       for (int d = 0; d < D; d++)
-        if (mesh_wrapper.mesh().on_exterior_boundary(d, indices[d])) {
+        if (wrapper.mesh().point_on_external_boundary(d, indices[d])) {
           on_ext_boundary = true;
           break;
         }
-      ASSERT_EQ(on_ext_boundary, mesh_wrapper.on_exterior_boundary(id);      
+      ASSERT_EQ(on_ext_boundary, wrapper.on_exterior_boundary(Wonton::NODE, id));      
     }
   }
 
