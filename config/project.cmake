@@ -192,65 +192,37 @@ endif (ENABLE_Kokkos)
 # Configure LAPACKE
 #------------------------------------------------------------------------------#
 
-if (LAPACKE_DIR)
-  # Directly look for cmake config file in LAPACKE_DIR and below
-  file(GLOB_RECURSE LAPACKE_CONFIG_FILE ${LAPACKE_DIR}/lapacke-config.cmake)
+if (USE_LAPACKE)
+  # Find lapacke-config.cmake or lapackeconfig.cmake
+  find_package(LAPACKE
+    CONFIG
+    NAMES LAPACKE lapacke)
 
-  if (NOT LAPACKE_CONFIG_FILE)
-    message(FATAL_ERROR " LAPACKE CMAKE config file not found under LAPACKE_DIR (${LAPACKE_DIR})")
-  endif (NOT LAPACKE_CONFIG_FILE)
+  if (NOT LAPACKE_FOUND)
+    # Maybe it's an older version (3.5.0 or older) that only puts out
+    # lapack-config.cmake. When looking for this config file, also add
+    # LAPACKE_ROOT to the list of directories that are searched. This
+    # version sets the transitive dependencies for the target
+    # "lapacke" correctly so we don't have to explicitly tell it to
+    # link in lapack or blas
 
-  message(STATUS "LAPACKE_CONFIG_FILE ${LAPACKE_CONFIG_FILE}")
+    message(STATUS "Try to find lapack-config.cmake...")
+    find_package(LAPACK
+      CONFIG
+      NAMES LAPACK lapack
+      PATHS ${LAPACKE_ROOT})
+    message(STATUS "lapack-config.cmake found? ${LAPACK_FOUND}")
 
-  get_filename_component(LAPACKE_CONFIG_PATH ${LAPACKE_CONFIG_FILE} DIRECTORY)
-  message(status " LAPACKE_CONFIG_PATH ${LAPACKE_CONFIG_PATH}")
-
-  # If successful, the config file will set LAPACKE_LIBRARIES,
-  # LAPACKE_lapack_LIBRARIES and LAPACKE_blas_LIBRARIES
-
-  find_package(LAPACKE NO_MODULE NO_DEFAULT_PATH HINTS ${LAPACKE_CONFIG_PATH})
-
-  if (LAPACKE_LIBRARIES STREQUAL "lapacke")
-
-    # LAPACKE config file does not set the library path but it does set the
-    # LAPACKE_INCLUDE_DIRS path. Try to back out the library path using this
-    # and the top level directory as starting points for a find_library command
-
-    find_library(LAPACKE_LIBRARY NAMES lapacke
-                 NO_CMAKE_SYSTEM_PATH NO_DEFAULT_PATH
-                 HINTS ${LAPACKE_DIR} ${LAPACKE_INCLUDE_DIRS}/..
-	         PATH_SUFFIXES lib lib64)
-
-
-    # Extract path of directory in which library files live to pass as a lib
-    # search directory for the linker to find lapacke, lapack and blas libs
-
-    get_filename_component(LAPACKE_LIBRARY_DIR ${LAPACKE_LIBRARY} DIRECTORY)
-
-    set(LAPACKE_LIBRARIES "-Wl,-rpath,${LAPACKE_LIBRARY_DIR} -L${LAPACKE_LIBRARY_DIR} -l${LAPACKE_LIBRARIES} -l${LAPACK_lapack_LIBRARIES} -l${LAPACK_blas_LIBRARIES}")
-
-    # If we don't want to link with Fortran then we have to tell it to link
-    # with the Fortran libraries because LAPACK is written/compiled in Fortran
-    #
-    # NEEDED FOR STATIC LAPACK LIBS
-
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-      set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lgfortran")
-    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-      set(LAPACKE_LIBRARIES "${LAPACKE_LIBRARIES} -lifcore")
-    endif()
-
-  endif(LAPACKE_LIBRARIES STREQUAL "lapacke")
-
-else (LAPACKE_DIR)
-
-  # Use FindLAPACKE.cmake provided by cinch or cmake to find it
-  # FindLAPACKE.cmake provided by cinch requires PC_LAPACKE_INCLUDE_DIRS and
-  # PC_LAPACKE_LIBRARY to be able to find LAPACKE
-
-  find_package(LAPACKE)
-
-endif (LAPACKE_DIR)
+    if (LAPACK_FOUND)
+      # is there a target named lapacke?
+      if (TARGET lapacke)
+	set(LAPACKE_LIBRARIES lapacke)
+	set(LAPACKE_FOUND true)
+      endif ()
+    endif ()
+    
+  endif ()
+endif (USE_LAPACKE)
 
 if (LAPACKE_FOUND)
   enable_language(Fortran)
@@ -263,8 +235,6 @@ if (LAPACKE_FOUND)
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
-else (LAPACKE_FOUND)
-   unset(LAPACKE_LIBRARIES)  # otherwise it will be LAPACKE-NOTFOUND or something
 endif (LAPACKE_FOUND)
 
 
