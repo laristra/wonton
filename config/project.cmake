@@ -192,7 +192,7 @@ endif (ENABLE_Kokkos)
 # Configure LAPACKE
 #------------------------------------------------------------------------------#
 
-if (USE_LAPACKE)
+if (ENABLE_LAPACKE)
   # Find lapacke-config.cmake or lapackeconfig.cmake
   find_package(LAPACKE
     CONFIG
