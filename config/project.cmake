@@ -86,7 +86,7 @@ endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 # (this includes the TPLs that Jali will need)
 #------------------------------------------------------------------------------#
 
-if (ENABLE_Jali AND NOT Jali_LIBRARIES)
+if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
 
    # Look for the Jali package
 
