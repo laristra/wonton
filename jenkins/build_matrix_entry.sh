@@ -70,7 +70,7 @@ mpi_flags="-D ENABLE_MPI=True"
 extra_flags=
 thrust_flags=
 jali_flags="-D ENABLE_Jali=True -D Jali_ROOT:FILEPATH=$jali_install_dir"
-lapacke_flags="-D LAPACKE_DIR:FILEPATH=$lapacke_dir"
+lapacke_flags="-D USE_LAPACKE=True -D LAPACKE_ROOT:FILEPATH=$lapacke_dir"
 if [[ $build_type == "debug" ]]; then
     cmake_build_type=Debug
 elif [[ $build_type == "serial" ]]; then
