@@ -206,12 +206,10 @@ if (ENABLE_LAPACKE)
     # "lapacke" correctly so we don't have to explicitly tell it to
     # link in lapack or blas
 
-    message(STATUS "Try to find lapack-config.cmake...")
     find_package(LAPACK
       CONFIG
       NAMES LAPACK lapack
       PATHS ${LAPACKE_ROOT})
-    message(STATUS "lapack-config.cmake found? ${LAPACK_FOUND}")
 
     if (LAPACK_FOUND)
       # is there a target named lapacke?
