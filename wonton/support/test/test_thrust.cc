@@ -8,7 +8,7 @@ Please see the license file at the root of this repository, or at:
 #include "gtest/gtest.h"
 
 #include "wonton/support/wonton.h"
-#include "thrust/transform.h"
+#include <iostream>
 
 TEST(THRUST_TEST, TRANSFORM) {
   Wonton::counting_iterator cellids_begin(0);
@@ -18,8 +18,7 @@ TEST(THRUST_TEST, TRANSFORM) {
   ASSERT_EQ(typeid(cellids_end),
             typeid(thrust::counting_iterator<unsigned int>));
 
-  std::vector<double> tmp(4, 0.0);
-  Wonton::vector<double> cellval(tmp);
+  Wonton::vector<double> cellval(4, 0.0);
   ASSERT_EQ(typeid(cellval), typeid(thrust::device_vector<double>));
 
   Wonton::transform(cellids_begin, cellids_end, cellval.begin(),
@@ -29,17 +28,14 @@ TEST(THRUST_TEST, TRANSFORM) {
 }
 
 TEST(THRUST_TEST, FOR_EACH) {
-  struct aFunctor {
-    aFunctor(int size) {vals_.resize(size, 0.0);}
-    double operator()(int c) {vals_[c] = 6.0*c;}
-    Wonton::vector<double> vals_;
-  };
-
-  aFunctor myFunctor(4);
+  Wonton::vector<double> cellvals(4, 0.0);
+  auto multby6 = [&cellvals](int c) {cellvals[c] = 6.0*c;};
 
   Wonton::counting_iterator cellids_begin(0);
   Wonton::counting_iterator cellids_end(4);
-  Wonton::for_each(cellids_begin, cellids_end, myFunctor);
+
+  std::for_each(cellids_begin, cellids_end, multby6);
+
   for (int i = 0; i < 4; i++)
-    ASSERT_EQ(6.0*i, myFunctor.vals_[i]);
+    ASSERT_EQ(6.0*i, cellvals[i]);
 }
