@@ -98,7 +98,7 @@ if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
    message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
    target_link_libraries(wonton INTERFACE ${Jali_LIBRARIES})
   
-endif (ENABLE_Jali AND NOT Jali_LIBRARIES)
+endif ()
 
 
 #-----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ if (ENABLE_LAPACKE)
     endif ()
     
   endif ()
-endif (USE_LAPACKE)
+endif ()
 
 if (LAPACKE_FOUND)
   enable_language(Fortran)
