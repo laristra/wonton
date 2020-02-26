@@ -96,8 +96,7 @@ if (ENABLE_UNIT_TESTS)
   cinch_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
     LIBRARIES wonton_support
-    POLICY MPI
-    THREADS 1)
+    POLICY SERIAL)
 
   cinch_add_unit(test_coord_sys
     SOURCES test/test_coord_sys.cc
