@@ -13,6 +13,20 @@ target_include_directories(adaptive_refinement_mesh_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+set(armesh_HEADERS
+  adaptive_refinement_mesh.h
+  adaptive_refinement_mesh_wrapper.h
+  )
+
+# Not yet allowed for INTERFACE libraries
+#
+#set_target_properties(adaptive_refinement_mesh_wrapper PROPERTIES
+#  PUBLIC_HEADER "${wonton_ar_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${armesh_HEADERS}
+  DESTINATION include/wonton/mesh/adaptive_refinement)
+
 target_link_libraries(adaptive_refinement_mesh_wrapper INTERFACE wonton_support)
 
 target_link_libraries(wonton_mesh INTERFACE adaptive_refinement_mesh_wrapper)

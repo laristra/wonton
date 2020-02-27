@@ -16,6 +16,19 @@ if (ENABLE_FleCSI)
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>)
+
+  set(flecsi_mesh_wrapper_HEADERS
+    flecsi_mesh_wrapper.h
+    )
+
+  # Not yet allowed for INTERFACE libraries
+  #
+  #  set_target_properties(flecsi_mesh_wrapper PROPERTIES
+  #    PUBLIC_HEADER "${flecsi_mesh_wrapper_HEADERS}")
+  #
+  # Directly install files instead
+  install(FILES ${flecsi_mesh_wrapper_HEADERS}
+    DESTINATION include/wonton/mesh/flecsi)
   
   target_link_libraries(flecsi_mesh_wrapper INTERFACE wonton_support)
 

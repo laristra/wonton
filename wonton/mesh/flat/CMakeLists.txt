@@ -13,13 +13,24 @@ target_include_directories(flat_mesh_wrapper INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+set(flat_mesh_HEADERS flat_mesh_wrapper.h)
+
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(flat_mesh_wrapper PROPERTIES
+#  PUBLIC_HEADER "${flat_mesh_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${flat_mesh_HEADERS} DESTINATION include/wonton/mesh/flat)
+
+
 target_link_libraries(flat_mesh_wrapper INTERFACE wonton_support)
 
 # add this header-only library as a dependency of upper level mesh library
 
 target_link_libraries(wonton_mesh INTERFACE flat_mesh_wrapper)
 
-install(TARGETS flat_state_wrapper
+install(TARGETS flat_mesh_wrapper
   EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib

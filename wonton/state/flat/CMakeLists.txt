@@ -12,6 +12,20 @@ target_include_directories(flat_state_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+set(flat_state_HEADERS
+  flat_state_wrapper.h
+  flat_state_mm_wrapper.h
+  )
+
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(flat_state_wrapper PROPERTIES
+#   PUBLIC_HEADER "${flat_state_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${flat_state_HEADERS} DESTINATION include/wonton/state/flat)
+
+
 target_link_libraries(flat_state_wrapper INTERFACE wonton_support)
 
 target_link_libraries(wonton_state INTERFACE flat_state_wrapper)

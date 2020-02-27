@@ -12,6 +12,23 @@ target_include_directories(wonton_state INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include/wonton/state>)
 
+set(wonton_state_HEADERS
+  state_manager.h
+  state_vector_base.h
+  state_vector_multi.h
+  state_vector_multi_raw.h
+  state_vector_uni.h
+  state_vector_uni_raw.h
+  )
+
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(wonton_state PROPERTIES
+#   PUBLIC_HEADER "${wonton_state_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${wonton_state_HEADERS} DESTINATION include/wonton/state)
+
 target_link_libraries(wonton_state INTERFACE wonton_support)
 
 if (ENABLE_Jali)

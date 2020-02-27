@@ -12,6 +12,21 @@ target_include_directories(simple_state_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+set(simple_state_HEADERS
+  simple_state.h
+  simple_state_wrapper.h
+  simple_state_mm_wrapper.h
+  )
+
+# Not yet allowed for INTERFACE targets
+#
+# set_target_properties(simple_state_wrapper PROPERTIES
+#   PUBLIC_HEADER "${simple_state_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${simple_state_HEADERS} DESTINATION include/wonton/state/simple)
+
+
 target_link_libraries(simple_state_wrapper INTERFACE simple_mesh_wrapper)
 
 target_link_libraries(simple_state_wrapper INTERFACE wonton_support)
