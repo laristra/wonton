@@ -17,20 +17,27 @@ target_sources(wonton_support PRIVATE Matrix.cc svd.cc)
 target_include_directories(wonton_support PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
-  $<INSTALL_INTERFACE:include/wonton/support>)
+  $<INSTALL_INTERFACE:include>)
 
-set_target_properties(wonton_support PROPERTIES PUBLIC_HEADER
-  lsfits.h
+set(wonton_support_HEADERS
+  BoundingBox.h
   CoordinateSystem.h
+  lsfits.h
   Matrix.h
   moment_index.h
   Point.h
+  Polytope.h
   svd.h
   Vector.h
-  Polytope.h
   wonton.h
-  )
+)
+set_target_properties(wonton_support PROPERTIES
+  PUBLIC_HEADER "${wonton_support_HEADERS}")
 
+# MPI flag to avoid pulling in MPI_CXX libraries (Moot after 3.0.0)
+if (ENABLE_MPI)
+  target_compile_definitions(wonton_support INTERFACE OMPI_SKIP_MPICXX)
+endif ()
 
 #-----------------------------------------------------------------------------
 # Thrust information
@@ -77,8 +84,8 @@ install(TARGETS wonton_support
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  PUBLIC_HEADER DESTINATION include
-  INCLUDES DESTINATION include
+  PUBLIC_HEADER DESTINATION include/wonton/support
+  INCLUDES DESTINATION include/wonton/support
   )
 
 # Unit tests
@@ -96,7 +103,9 @@ if (ENABLE_UNIT_TESTS)
   cinch_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
     LIBRARIES wonton_support
-    POLICY SERIAL)
+    POLICY MPI
+    THREADS 1)
+#    POLICY SERIAL)
 
   cinch_add_unit(test_coord_sys
     SOURCES test/test_coord_sys.cc

@@ -12,6 +12,19 @@ target_include_directories(simple_mesh_wrapper INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+set(simple_mesh_HEADERS
+  simple_mesh.h
+  simple_mesh_wrapper.h
+  )
+
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(simple_mesh_wrapper PROPERTIES
+#  PUBLIC_HEADER "${simple_mesh_wrapper_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${simple_mesh_HEADERS} DESTINATION include/wonton/mesh/simple)
+
 target_link_libraries(simple_mesh_wrapper INTERFACE wonton_support)
 
 # add this header-only library as a dependency of upper level mesh library

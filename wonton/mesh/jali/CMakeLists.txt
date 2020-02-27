@@ -14,6 +14,19 @@ if (ENABLE_Jali)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>)
 
+  set(jali_mesh_wrapper_HEADERS
+    jali_mesh_wrapper.h
+    )
+
+  # Not yet allowed for INTERFACE libraries
+  #
+  # set_target_properties(jali_mesh_wrapper install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/SI DESTINATION include)PROPERTIES
+  #   PUBLIC_HEADER "${jali_mesh_wrapper_HEADERS}")
+  #
+  # Directly install files instead
+  install(FILES ${jali_mesh_wrapper_HEADERS}
+    DESTINATION include/wonton/mesh/jali)
+  
   target_link_libraries(jali_mesh_wrapper INTERFACE wonton_support)
 
 

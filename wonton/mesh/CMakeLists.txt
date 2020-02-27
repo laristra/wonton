@@ -13,8 +13,19 @@ target_include_directories(wonton_mesh INTERFACE
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
+set(wonton_mesh_HEADERS AuxMeshTopology.h)
+
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(wonton_mesh PROPERTIES
+#   PUBLIC_HEADER "${wonton_mesh_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${wonton_mesh_HEADERS} DESTINATION include/wonton/mesh)
+
 target_link_libraries(wonton_mesh INTERFACE wonton_support)
 
+# Recurse down in subdirectories
 if (ENABLE_Jali)
   add_subdirectory(jali)
 endif (ENABLE_Jali)
@@ -29,6 +40,9 @@ add_subdirectory(adaptive_refinement)
 
 add_subdirectory(direct_product)
 
+add_subdirectory(flat)
+
+# Make this a dependency of the main target
 target_link_libraries(wonton INTERFACE wonton_mesh)
 
 install(TARGETS wonton_mesh

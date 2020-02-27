@@ -15,6 +15,19 @@ if (FleCSI_DIR)
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
     $<INSTALL_INTERFACE:include)
 
+  set(flecsi_state_wrapper_HEADERS
+    flecsi_state_wrapper.h
+    )
+
+  # Not yet allowed for INTERFACE targets
+  #
+  #  set_target_properties(flecsi_state_wrapper PROPERTIES
+  #    PUBLIC_HEADER "${flecsi_state_wrapper_HEADERS}")
+  #
+  # Directly install files instead
+  install(FILES ${flecsi_state_wrapper_HEADERS}
+    DESTINATION include/wonton/state/flecsi)
+    
   target_link_libraries(flecsi_state_wrapper INTERFACE wonton_support)
 
   # Add flecsi dependencies

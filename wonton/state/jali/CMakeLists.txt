@@ -16,6 +16,20 @@ if (ENABLE_Jali)
     $<INSTALL_INTERFACE:include>
     )
 
+  set(jali_state_wrapper_HEADERS
+    jali_state_wrapper.h
+    )
+
+  # Not yet allowed for INTERFACE targets
+  #
+  #  set_target_properties(jali_state_wrapper PROPERTIES
+  #    PUBLIC_HEADER "${jali_state_wrapper_HEADERS}")
+  #
+  # Directly install files instead
+  install(FILES ${jali_state_wrapper_HEADERS}
+    DESTINATION include/wonton/state/jali)
+
+  
   target_link_libraries(jali_state_wrapper INTERFACE jali_mesh_wrapper)
   target_link_libraries(jali_state_wrapper INTERFACE wonton_support)
 

@@ -12,10 +12,11 @@ target_sources(wonton_r3d_intersect PRIVATE r3d/r3d.c r3d/r2d.c)
 target_include_directories(wonton_r3d_intersect PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
   $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
-  $<INSTALL_INTERFACE:include/intersect>)
+  $<INSTALL_INTERFACE:include>)
 
-set_target_properties(wonton_r3d_intersect PROPERTIES PUBLIC_HEADER
-  "r3d/r3d.h r3d/r2d.h"
+set(R3D_HEADERS r3d/r3d.h r3d/r2d.h)
+set_target_properties(wonton_r3d_intersect PROPERTIES
+  PUBLIC_HEADER "${R3D_HEADERS}"
   )
 
 target_link_libraries(wonton INTERFACE wonton_r3d_intersect)
@@ -25,11 +26,8 @@ install(TARGETS wonton_r3d_intersect
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  PUBLIC_HEADER DESTINATION include
-  INCLUDES DESTINATION include
+  PUBLIC_HEADER DESTINATION include/wonton/intersect/r3d
+  INCLUDES DESTINATION include/wonton/intersect/r3d
   )
 
-# Add unit test
-#if(ENABLE_UNIT_TESTS)
-#endif(ENABLE_UNIT_TESTS)
 

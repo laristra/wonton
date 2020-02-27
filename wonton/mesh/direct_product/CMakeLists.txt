@@ -13,6 +13,20 @@ target_include_directories(direct_product_mesh_wrapper INTERFACE
   $<INSTALL_INTERFACE:include>
   )
 
+set(dpmesh_wrapper_HEADERS
+  direct_product_mesh.h
+  direct_product_mesh_wrapper.h
+  )
+
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(direct_product_mesh_wrapper PROPERTIES
+#  PUBLIC_HEADER "${dpmesh_wrapper_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${dpmesh_wrapper_HEADERS}
+  DESTINATION include/wonton/mesh/direct_product)
+
 target_link_libraries(direct_product_mesh_wrapper INTERFACE wonton_support)
 
 target_link_libraries(wonton_mesh INTERFACE direct_product_mesh_wrapper)
