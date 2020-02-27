@@ -59,6 +59,7 @@ if (ENABLE_MPI)
   find_package(MPI REQUIRED)
   target_link_libraries(wonton INTERFACE MPI::MPI_CXX)
   target_compile_definitions(wonton INTERFACE WONTON_ENABLE_MPI)
+  target_compile_definitions(wonton INTERFACE OMPI_SKIP_MPICXX)
 endif (ENABLE_MPI)
 
 #-----------------------------------------------------------------------------
@@ -326,7 +327,8 @@ set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/wontonConfig.cmake.in 
   wontonConfig.cmake @ONLY)
-install(FILES wontonConfig.cmake DESTINATION lib/cmake/wonton)
+install(FILES ${PROJECT_BINARY_DIR}/wontonConfig.cmake
+  DESTINATION lib/cmake/wonton)
 
 
 # write out a version file
@@ -334,7 +336,8 @@ include(CMakePackageConfigHelpers)
 write_basic_package_version_file(wontonConfigVersion.cmake
   VERSION "${WONTON_MAJOR_VERSION}.${WONTON_MINOR_VERSION}.${WONTON_PATCH_VERSION}"
   COMPATIBILITY SameMajorVersion)
-install(FILES wontonConfigVersion.cmake DESTINATION lib/cmake/wonton)
+install(FILES ${PROJECT_BINARY_DIR}/wontonConfigVersion.cmake
+  DESTINATION lib/cmake/wonton)
 
 
 # export targets
