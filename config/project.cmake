@@ -94,8 +94,6 @@ if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
    find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
 
    message(STATUS "Located Jali")
-   message(STATUS "Jali_ROOT=${Jali_ROOT}")
-
    message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
    target_link_libraries(wonton INTERFACE ${Jali_LIBRARIES})
   
@@ -319,8 +317,7 @@ add_subdirectory(app)
 #-----------------------------------------------------------------------------
 
 # set the name of the WONTON library
-
-set(WONTON_LIBRARY "wonton" CACHE STRING "Name of the wonton library")
+set(WONTON_LIBRARIES "wonton::wonton" CACHE STRING "Name of the wonton library")
 
 # Write a configuration file from template replacing only variables enclosed
 # by the @ sign.
@@ -343,10 +340,10 @@ install(FILES ${PROJECT_BINARY_DIR}/wontonConfigVersion.cmake
 # export targets
 
 install(EXPORT wonton_LIBRARIES
-  FILE wontonTargets.cmake
+  FILE wonton-targets.cmake
   NAMESPACE wonton::
   EXPORT_LINK_INTERFACE_LIBRARIES
-  DESTINATION lib/cmake)
+  DESTINATION lib/cmake/wonton)
 
 
 

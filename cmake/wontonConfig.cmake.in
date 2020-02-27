@@ -38,17 +38,18 @@ set(WONTON_DIR @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
 set(WONTON_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
 
 # WONTON library 
-set(WONTON_LIBRARY @WONTON_LIBRARY@ CACHE STRING "Name of the Wonton library")
+set(WONTON_LIBRARIES @WONTON_LIBRARIES@ CACHE STRING "Name of the Wonton library")
 
 # WONTON includes
 set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "WONTON include file locations")
 
 # WONTON options
-set(WONTON_ENABLE_MPI @WONTON_ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
+set(WONTON_ENABLE_MPI @ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
 
 # Thrust options
-set(ENABLE_THRUST @ENABLE_THRUST@ CACHE BOOL "Enable MPI Parallelism for Wonton")
+set(WONTON_ENABLE_THRUST @ENABLE_THRUST@ CACHE BOOL "Enable MPI Parallelism for Wonton")
 set(THRUST_DIR @THRUST_DIR@ CACHE BOOL "Thrust directory")
+set(THRUST_ROOT @THRUST_DIR@ CACHE BOOL "Thrust directory")
 set(THRUST_BACKEND @THRUST_BACKEND@ "Thrust backend")
 
 set(ENABLE_FleCSI @ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
