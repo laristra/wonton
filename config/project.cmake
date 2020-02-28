@@ -41,6 +41,8 @@ add_library(wonton INTERFACE)
 
 add_library(wonton::wonton ALIAS wonton)
 
+set(WONTON_LIBRARIES "wonton::wonton" CACHE STRING "Name of the wonton library")
+
 
 # cinch extras
 
@@ -315,9 +317,6 @@ add_subdirectory(app)
 #-----------------------------------------------------------------------------
 # Prepare output for configuration files to be used by projects importing Wonton
 #-----------------------------------------------------------------------------
-
-# set the name of the WONTON library
-set(WONTON_LIBRARIES "wonton::wonton" CACHE STRING "Name of the wonton library")
 
 # Write a configuration file from template replacing only variables enclosed
 # by the @ sign.
