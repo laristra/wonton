@@ -44,6 +44,9 @@ add_subdirectory(simple)
 add_subdirectory(flat)
 
 
+target_link_libraries(wonton INTERFACE wonton_state)
+
+
 install(TARGETS wonton_state
   EXPORT wonton_LIBRARIES
   ARCHIVE DESTINATION lib
