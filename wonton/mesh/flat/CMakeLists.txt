@@ -50,8 +50,8 @@ if (ENABLE_UNIT_TESTS)
       SOURCES test/test_flat_mesh_wrapper.cc
       LIBRARIES flat_mesh_wrapper jali_mesh_wrapper
       # this is relative to the wrapper directory
-      INPUTS ${CMAKE_SOURCE_DIR}/test_data/shotshell.exo
-      ${CMAKE_SOURCE_DIR}/test_data/shotshell-v.exo
+      INPUTS ${wonton_SOURCE_DIR}/test_data/shotshell.exo
+      ${wonton_SOURCE_DIR}/test_data/shotshell-v.exo
       POLICY MPI
       THREADS 1)
     
