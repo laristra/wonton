@@ -45,6 +45,13 @@ endif ()
 set(ENABLE_THRUST FALSE CACHE BOOL "Use Thrust")  # create a cache var with default
 if (ENABLE_THRUST)   # if it is overridden by the command line
 
+  # Make sure Thrust in installed where it is claimed to be (we really
+  # should write/steal a FindThrust module)
+  find_path(THRUST_INCFILE device_vector.h PATHS ${THRUST_ROOT}/thrust)
+  if (NOT THRUST_INCFILE)
+    message(FATAL_ERROR "Directory THRUST_ROOT=${THRUST_ROOT} does not contain file thrust/device_vector.h")
+  endif ()
+  
   message(STATUS "Enabling compilation with Thrust")
   message(STATUS "Using THRUST_ROOT=${THRUST_ROOT}")
 
