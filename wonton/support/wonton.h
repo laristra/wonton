@@ -241,8 +241,8 @@ template<typename T>
 template<typename T>
     using pointer = thrust::device_ptr<T>;
 
-typedef thrust::counting_iterator<unsigned int> counting_iterator;
-inline counting_iterator make_counting_iterator(unsigned int const i) {
+typedef thrust::counting_iterator<int> counting_iterator;
+inline counting_iterator make_counting_iterator(int const i) {
   return thrust::make_counting_iterator(i);
 }
 
@@ -275,9 +275,9 @@ template<typename T>
 template<typename T>
     using pointer = T*;
 
-typedef boost::counting_iterator<unsigned int> counting_iterator;
-inline counting_iterator make_counting_iterator(unsigned int const i) {
-  return boost::make_counting_iterator<unsigned int>(i);
+typedef boost::counting_iterator<int> counting_iterator;
+inline counting_iterator make_counting_iterator(int const i) {
+  return boost::make_counting_iterator<int>(i);
 }
 
 template<typename InputIterator, typename OutputIterator,

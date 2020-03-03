@@ -49,16 +49,44 @@ if (ENABLE_UNIT_TESTS)
     )
 
   # Direct Product Mesh
-  cinch_add_unit(test_direct_product_mesh
-    SOURCES direct_product/test/test_direct_product_mesh.cc
-    POLICY SERIAL
+  if (WONTON_ENABLE_MPI)
+    cinch_add_unit(test_direct_product_mesh_serial
+      SOURCES direct_product/test/test_direct_product_mesh.cc
+      POLICY MPI
+      THREADS 1
+      )
+    
+    cinch_add_unit(test_direct_product_mesh_parallel
+      SOURCES direct_product/test/test_direct_product_mesh.cc
+      POLICY MPI
+      THREADS 4
+      )
+  else ()
+    cinch_add_unit(test_direct_product_mesh_serial
+      SOURCES direct_product/test/test_direct_product_mesh.cc
+      POLICY SERIAL
     )
+  endif ()
 
-# Direct Product Mesh Wrapper
-  cinch_add_unit(test_direct_product_mesh_wrapper
-    SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
-    POLICY SERIAL
-    )
+  # Direct Product Mesh Wrapper
+  if (WONTON_ENABLE_MPI)
+    cinch_add_unit(test_direct_product_mesh_wrapper_serial
+      SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
+      POLICY MPI
+      THREADS 1
+      )
+
+    cinch_add_unit(test_direct_product_mesh_wrapper_parallel
+      SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
+      POLICY MPI
+      THREADS 4
+      )
+  else ()
+    cinch_add_unit(test_direct_product_mesh_wrapper_serial
+      SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
+      POLICY SERIAL
+      )
+  endif ()
 
   # Simple Mesh
   cinch_add_unit(test_simple_mesh
