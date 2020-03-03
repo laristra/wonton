@@ -50,7 +50,12 @@ cinch_load_extras()
 
 set(CINCH_HEADER_SUFFIXES "\\.h")
 
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+# Find our modules first
+if (CMAKE_VERSION GREATER_EQUAL 3.15)
+  list(PREPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+else ()
+  set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+endif ()
 
 #------------------------------------------------------------------------------#
 # Set up MPI builds
@@ -98,6 +103,13 @@ if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
    message(STATUS "Located Jali")
    message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
    target_link_libraries(wonton INTERFACE ${Jali_LIBRARIES})
+
+   if (NOT Jali_ROOT)
+     # Jali_CONFIG should be the full path to where the config file was found
+     # which is typically SOMEDIR/lib/cmake - back out Jali_ROOT from that
+     # until we fix JaliConfig
+     set(Jali_ROOT ${Jali_CONFIG}/../.. CACHE FILEPATH "Where Jali lives")
+   endif ()
   
 endif ()
 
@@ -194,12 +206,19 @@ endif (ENABLE_Kokkos)
 #------------------------------------------------------------------------------#
 
 if (ENABLE_LAPACKE)
+  # Depending on the version we may find LAPACK config file (3.5.0 or older)
+  # or LAPACKE config file (new)
+  set(LAPACKE_CONFIG_FOUND False CACHE STRING "Was a LAPACKE config file found?")
+  set(LAPACK_CONFIG_FOUND False CACHE STRING "Was a LAPACK config file found?")
+  
   # Find lapacke-config.cmake or lapackeconfig.cmake
   find_package(LAPACKE
     CONFIG
     NAMES LAPACKE lapacke)
 
-  if (NOT LAPACKE_FOUND)
+  if (LAPACKE_FOUND)
+    set(LAPACKE_CONFIG_FOUND True)
+  else ()
     # Maybe it's an older version (3.5.0 or older) that only puts out
     # lapack-config.cmake. When looking for this config file, also add
     # LAPACKE_ROOT to the list of directories that are searched. This
@@ -216,7 +235,8 @@ if (ENABLE_LAPACKE)
       # is there a target named lapacke?
       if (TARGET lapacke)
 	set(LAPACKE_LIBRARIES lapacke)
-	set(LAPACKE_FOUND true)
+	set(LAPACKE_FOUND True)
+	set(LAPACK_CONFIG_FOUND True)
       endif ()
     endif ()
     
@@ -234,6 +254,8 @@ if (LAPACKE_FOUND)
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
+else ()
+  message(FATAL_ERROR "LAPACKE enabled but not found.")
 endif (LAPACKE_FOUND)
 
 
@@ -352,4 +374,10 @@ install(EXPORT wonton_LIBRARIES
 configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
   ${PROJECT_BINARY_DIR}/wonton-config.h @ONLY)
 install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+  DESTINATION include)
+
+
+# Install the FindTHRUST module needed by downstream packages when
+# processing wontonConfig.cmake
+install(FILES ${PROJECT_SOURCE_DIR}/cmake/FindTHRUST.cmake
+  DESTINATION lib/cmake/wonton/modules)

@@ -16,23 +16,6 @@ set(WONTON_VERSION_MINOR @WONTON_VERSION_PATCH@ CACHE STRING "Patch version of W
 set(CMAKE_C_COMPILER @CMAKE_C_COMPILER@ CACHE FILEPATH "C Compiler used for compiling WONTON")
 set(CMAKE_CXX_COMPILER @CMAKE_CXX_COMPILER@ CACHE FILEPATH "CXX Compiler used for compiling WONTON")
 
-
-# Compiler Flags
-set(CMAKE_C_FLAGS "@CMAKE_C_FLAGS@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_C_FLAGS_DEBUG "@CMAKE_C_FLAGS_DEBUG@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_C_FLAGS_RELEASE "@CMAKE_C_FLAGS_RELEASE@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_C_FLAGS_MINSIZEREL "@CMAKE_C_FLAGS_MINSIZEREL@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_C_FLAGS_RELWITHDEBINFO "@CMAKE_C_FLAGS_RELWITHDEBINFO@" CACHE STRING "WONTON C compiler flags")
-
-set(CMAKE_CXX_FLAGS "@CMAKE_CXX_FLAGS@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_CXX_FLAGS_DEBUG "@CMAKE_CXX_FLAGS_DEBUG@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_CXX_FLAGS_RELEASE "@CMAKE_CXX_FLAGS_RELEASE@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_CXX_FLAGS_MINSIZEREL "@CMAKE_CXX_FLAGS_MINSIZEREL@" CACHE STRING "WONTON C compiler flags")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "@CMAKE_CXX_FLAGS_RELWITHDEBINFO@" CACHE STRING "WONTON C compiler flags")
-
-# WONTON Build info
-set(WONTON_BUILD_TYPE @CMAKE_BUILD_TYPE@ CACHE STRING "DEPRECATE? WONTON build type")
-
 # Wonton installation path
 set(WONTON_DIR @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
 set(WONTON_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
@@ -46,30 +29,33 @@ set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "WONTON include
 # WONTON options
 set(WONTON_ENABLE_MPI @ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
 
+
 # Thrust options
 set(WONTON_ENABLE_THRUST @ENABLE_THRUST@ CACHE BOOL "Enable MPI Parallelism for Wonton")
-set(THRUST_DIR @THRUST_DIR@ CACHE BOOL "Thrust directory")
-set(THRUST_ROOT @THRUST_DIR@ CACHE BOOL "Thrust directory")
-set(THRUST_BACKEND @THRUST_BACKEND@ "Thrust backend")
+set(THRUST_ROOT @THRUST_ROOT@ CACHE BOOL "Thrust directory")
+set(THRUST_COMPONENTS @THRUST_COMPONENTS@ CACHE STRING "Thrust components/backends found")
+set(THRUST_HOST_BACKEND @THRUST_HOST_BACKEND@ CACHE STRING "Thrust host backend")
+set(THRUST_HOST_BACKEND @THRUST_DEVICE_BACKEND@ CACHE STRING "Thrust device backend")
 
 set(ENABLE_FleCSI @ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
-set(FleCSI_DIR @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
 set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
 
-
 set(ENABLE_Jali @ENABLE_Jali@ CACHE STRING "Use Jali")
-set(Jali_DIR @Jali_DIR@ CACHE PATH "Jali installation root")
 set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root")
 
-set(LAPACKE_DIR @LAPACKE_DIR@ CACHE PATH "LAPACKE installation dir")
-set(LAPACKE_ROOT @LAPACKE_DIR@ CACHE PATH "LAPACKE installation dir")
-
+set(ENABLE_LAPACKE @ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE")
+set(LAPACKE_ROOT @LAPACKE_ROOT@ CACHE PATH "LAPACKE installation dir")
 set(LAPACKE_LIBRARIES @LAPACKE_LIBRARIES@ CACHE STRING "LAPACKE libraries")
-set(LAPACK_INCLUDE_DIRS @LAPACKE_INCLUDE_DIRS@ CACHE STRING "LAPACKE include dirs")
+set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config file found?")
+set(LAPACK_CONFIG_FOUND @LAPACK_CONFIG_FOUND@ CACHE BOOL "Was a LAPACK config file found?")
 
-set(Boost_FOUND @Boost_FOUND@ CACHE BOOL "Boost status")
-set(Boost_DIR @Boost_DIR@ CACHE PATH "Boost installation directories")
+
+# CMake's Boost find package claims to use BOOST_ROOT as a hint for
+# finding Boost but sets output variables like Boost_LIBRARIES and
+# Boost_INCLUDE_DIRS - which is the proper capitalization?
+
 set(Boost_ROOT @Boost_ROOT@ CACHE PATH "Boost installation directories")
+set(BOOST_ROOT @BOOST_ROOT@ CACHE PATH "Boost installation directories")
 
 
 
@@ -108,8 +94,16 @@ if (TARGET ${Boost_LIBRARIES})
   set_property(TARGET ${Boost_LIBRARIES} PROPERTY IMPORTED_GLOBAL TRUE)
 endif ()
 
-if (LAPACKE_FOUND)
-  find_dependency(LAPACKE)   # WILL THIS WORK???
+if (ENABLE_LAPACKE)
+  if (LAPACKE_CONFIG_FOUND)
+    find_dependency(LAPACKE)
+  elseif (LAPACK_CONFIG_FOUND)
+    find_dependency(LAPACK HINTS ${LAPACKE_ROOT})
+  endif ()
+endif ()
+
+if (ENABLE_THRUST)
+  find_dependency(THRUST COMPONENTS ${THRUST_COMPONENTS})
 endif ()
 
 # Restore original CMAKE_MODULE_PATH
