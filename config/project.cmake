@@ -41,8 +41,6 @@ add_library(wonton INTERFACE)
 
 add_library(wonton::wonton ALIAS wonton)
 
-set(WONTON_LIBRARIES "wonton::wonton" CACHE STRING "Name of the wonton library")
-
 
 # cinch extras
 
@@ -361,7 +359,7 @@ install(FILES ${PROJECT_BINARY_DIR}/wontonConfigVersion.cmake
 # export targets
 
 install(EXPORT wonton_LIBRARIES
-  FILE wonton-targets.cmake
+  FILE wontonTargets.cmake
   NAMESPACE wonton::
   EXPORT_LINK_INTERFACE_LIBRARIES
   DESTINATION lib/cmake/wonton)
