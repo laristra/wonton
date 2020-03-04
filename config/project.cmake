@@ -40,6 +40,7 @@ add_library(wonton INTERFACE)
 # which does nothing because Pkg is already part of the project
 
 add_library(wonton::wonton ALIAS wonton)
+set(WONTON_LIBRARIES wonton::wonton)
 
 
 # cinch extras
