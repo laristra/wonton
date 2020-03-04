@@ -112,4 +112,4 @@ set(CMAKE_MODULE_PATH ${SAVED_CMAKE_MODULE_PATH})
 # Import wonton targets
 #
 
-include("@CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/wonton-targets.cmake")
+include("@CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/wontonTargets.cmake")
