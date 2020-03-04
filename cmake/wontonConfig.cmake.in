@@ -17,14 +17,13 @@ set(CMAKE_C_COMPILER @CMAKE_C_COMPILER@ CACHE FILEPATH "C Compiler used for comp
 set(CMAKE_CXX_COMPILER @CMAKE_CXX_COMPILER@ CACHE FILEPATH "CXX Compiler used for compiling WONTON")
 
 # Wonton installation path
-set(WONTON_DIR @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
-set(WONTON_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to WONTON INSTALLATION")
+set(WONTON_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to Wonton installation")
 
-# WONTON library 
+# Wonton library 
 set(WONTON_LIBRARIES @WONTON_LIBRARIES@ CACHE STRING "Name of the Wonton library")
 
-# WONTON includes
-set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "WONTON include file locations")
+# Wonton includes
+set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "Wonton include file locations")
 
 # WONTON options
 set(WONTON_ENABLE_MPI @ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
