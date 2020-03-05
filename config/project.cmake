@@ -319,7 +319,7 @@ add_subdirectory(wonton)
 
 target_include_directories(wonton INTERFACE
   $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
