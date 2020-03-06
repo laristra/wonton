@@ -60,12 +60,13 @@ endif ()
 # Set up MPI builds
 # (eventually most of this should be pushed down into cinch)
 #------------------------------------------------------------------------------#
-set(ENABLE_MPI OFF CACHE BOOL "")
+set(WONTON_ENABLE_MPI False CACHE BOOL "Is MPI enabled in Wonton?")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
   target_link_libraries(wonton INTERFACE MPI::MPI_CXX)
   target_compile_definitions(wonton INTERFACE WONTON_ENABLE_MPI)
   target_compile_definitions(wonton INTERFACE OMPI_SKIP_MPICXX)
+  set(WONTON_ENABLE_MPI True)
 endif (ENABLE_MPI)
 
 #-----------------------------------------------------------------------------
