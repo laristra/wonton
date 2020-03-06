@@ -8,7 +8,10 @@ Please see the license file at the root of this repository, or at:
 #define WONTON_CONFIG_H_
 
 // This file contains a set of defines generated automatically by
-// CMake during installation
+// CMake during installation. If all downstream projects used CMake
+// this would not be necessary as these definitions would come along
+// in the config file. You may see "WONTON_ENABLE_MPI redefined" or
+// "WONTON_ENABLE_THRUST redefined" messages due to the redundancy
 
 
 // WONTON version number
