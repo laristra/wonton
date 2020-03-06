@@ -6,10 +6,6 @@ Please see the license file at the root of this repository, or at:
 #-----------------------------------------------------------------------------~#
 project(support)
 
-# Add header files
-set(support_HEADERS
-)
-
 add_library(wonton_support)
 
 target_sources(wonton_support PRIVATE Matrix.cc svd.cc)
