@@ -81,6 +81,10 @@ else ()
 endif ()
 
 include(CMakeFindDependencyMacro)
+if (ENABLE_MPI)
+  find_dependency(MPI)
+endif ()
+
 if (ENABLE_Jali)
   find_dependency(Jali)
   if (TARGET ${Jali_LIBRARIES})
