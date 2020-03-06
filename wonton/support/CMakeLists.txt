@@ -36,7 +36,9 @@ set_target_properties(wonton_support PROPERTIES
 
 # MPI flag to avoid pulling in MPI_CXX libraries (Moot after 3.0.0)
 if (ENABLE_MPI)
-  target_compile_definitions(wonton_support INTERFACE OMPI_SKIP_MPICXX)
+  target_link_libraries(wonton_support PUBLIC MPI::MPI_CXX)
+  target_compile_definitions(wonton_support PUBLIC WONTON_ENABLE_MPI)
+  target_compile_definitions(wonton_support PUBLIC OMPI_SKIP_MPICXX)
 endif ()
 
 #-----------------------------------------------------------------------------
