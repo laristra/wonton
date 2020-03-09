@@ -29,7 +29,7 @@ else ()
   endif ()
 endif ()
 
-target_include_directories(${THRUST_LIBRARIES} INTERFACE ${THRUST_INCLUDE_DIR})
+target_include_directories(${THRUST_LIBRARIES} INTERFACE ${THRUST_INCLUDE_DIRS})
 
 #------------------------------------------------------------------------------#
 # Find the backend components
