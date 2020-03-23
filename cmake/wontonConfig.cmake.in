@@ -105,7 +105,7 @@ if (ENABLE_LAPACKE)
   endif ()
 endif ()
 
-if (ENABLE_THRUST)
+if (WONTON_ENABLE_THRUST)
   find_dependency(THRUST COMPONENTS ${THRUST_COMPONENTS})
 endif ()
 
