@@ -9,6 +9,8 @@ Please see the license file at the root of this repository, or at:
 
 #include <cassert>
 #include <cmath>
+#include <sstream>
+#include <string>
 #include <tuple>
 
 #include "moment_index.h"
@@ -78,6 +80,13 @@ namespace CoordinateSystem {
 /// Cartesian Coordinates
 struct CartesianCoordinates {
  public:
+
+  /// Name as a string
+  static std::string str() {
+    std::stringstream ss;
+    ss << D << "D Cartesian coordinates";
+    return ss.str();
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
@@ -163,6 +172,11 @@ struct CartesianCoordinates {
 struct CylindricalRadialCoordinates {
  public:
 
+  /// Name as a string
+  static std::string str() {
+    return std::string{"1D cylindrical radial coordinates"};
+  }
+
   /// Geometry factor
   /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
   /// uses 1: a full cylinder.
@@ -246,6 +260,11 @@ struct CylindricalRadialCoordinates {
 /// height.
 struct CylindricalAxisymmetricCoordinates {
  public:
+
+  /// Name as a string
+  static std::string str() {
+    return std::string{"2D cylindrical axisymmetric coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
@@ -334,6 +353,11 @@ struct CylindricalAxisymmetricCoordinates {
 struct CylindricalPolarCoordinates {
  public:
 
+  /// Name as a string
+  static std::string str() {
+    return std::string{"2D cylindrical polar coordinates"};
+  }
+
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
@@ -418,6 +442,11 @@ struct CylindricalPolarCoordinates {
 struct Cylindrical3DCoordinates {
  public:
 
+  /// Name as a string
+  static std::string str() {
+    return std::string{"3D cylindrical coordinates"};
+  }
+
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
@@ -501,6 +530,11 @@ struct Cylindrical3DCoordinates {
 /// Only valid in 1D.  The coordinate is the distance from the origin.
 struct SphericalRadialCoordinates {
  public:
+
+  /// Name as a string
+  static std::string str() {
+    return std::string{"1D spherical radial coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 4 pi: a one-steradian wedge of a sphere.  Portage
@@ -587,6 +621,11 @@ struct SphericalRadialCoordinates {
 /// angle of inclination, and the azimuthal angle.
 struct Spherical3DCoordinates {
  public:
+
+  /// Name as a string
+  static std::string str() {
+    return std::string{"3D spherical coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
