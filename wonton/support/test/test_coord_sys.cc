@@ -4,6 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/portage/blob/master/LICENSE
 */
 
+#include <iostream>
 #include <numeric>
 
 #include "gtest/gtest.h"
@@ -811,6 +812,8 @@ void run_coord_sys_test() {
   for (int d = 0; d < D; ++d) {
     ASSERT_NEAR(mod_first_moments[d], first_moments[d], TOLERANCE);
   }
+
+  std::cout << CoordSys::to_string() << std::endl;
 }
 
 // ============================================================================
