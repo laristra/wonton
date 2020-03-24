@@ -813,7 +813,7 @@ void run_coord_sys_test() {
     ASSERT_NEAR(mod_first_moments[d], first_moments[d], TOLERANCE);
   }
 
-  std::cout << CoordSys::str() << std::endl;
+  std::cout << CoordSys::to_string() << std::endl;
 }
 
 // ============================================================================

@@ -9,7 +9,6 @@ Please see the license file at the root of this repository, or at:
 
 #include <cassert>
 #include <cmath>
-#include <sstream>
 #include <string>
 #include <tuple>
 
@@ -82,10 +81,8 @@ struct CartesianCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    std::stringstream ss;
-    ss << D << "D Cartesian coordinates";
-    return ss.str();
+  static std::string to_string() {
+    return std::string{"Cartesian coordinates"};
   }
 
   /// Geometry factor
@@ -173,8 +170,8 @@ struct CylindricalRadialCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    return std::string{"1D cylindrical radial coordinates"};
+  static std::string to_string() {
+    return std::string{"cylindrical radial coordinates"};
   }
 
   /// Geometry factor
@@ -262,8 +259,8 @@ struct CylindricalAxisymmetricCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    return std::string{"2D cylindrical axisymmetric coordinates"};
+  static std::string to_string() {
+    return std::string{"cylindrical axisymmetric coordinates"};
   }
 
   /// Geometry factor
@@ -354,8 +351,8 @@ struct CylindricalPolarCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    return std::string{"2D cylindrical polar coordinates"};
+  static std::string to_string() {
+    return std::string{"cylindrical polar coordinates"};
   }
 
   /// Geometry factor
@@ -443,8 +440,8 @@ struct Cylindrical3DCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    return std::string{"3D cylindrical coordinates"};
+  static std::string to_string() {
+    return std::string{"cylindrical 3D coordinates"};
   }
 
   /// Geometry factor
@@ -532,8 +529,8 @@ struct SphericalRadialCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    return std::string{"1D spherical radial coordinates"};
+  static std::string to_string() {
+    return std::string{"spherical radial coordinates"};
   }
 
   /// Geometry factor
@@ -623,8 +620,8 @@ struct Spherical3DCoordinates {
  public:
 
   /// Name as a string
-  static std::string str() {
-    return std::string{"3D spherical coordinates"};
+  static std::string to_string() {
+    return std::string{"spherical 3D coordinates"};
   }
 
   /// Geometry factor
