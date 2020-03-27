@@ -160,7 +160,7 @@ if (ENABLE_Kokkos)
     # allow '__host__',' __device__' annotations in lambdas.
     # allow host code to invoke '__device__ constexpr' functions,
     # and device code to invoke '__host__ constexpr' functions.
-    # disable warning on defaulted functions.
+    # disable warning on __global__ defaulted functions.
     string(APPEND CUDA_NVCC_FLAGS " --expt-extended-lambda")
     string(APPEND CUDA_NVCC_FLAGS " --expt-relaxed-constexpr")
     string(APPEND CUDA_NVCC_FLAGS " -Xcudafe --diag_suppress=esa_on_defaulted_function_ignored")
