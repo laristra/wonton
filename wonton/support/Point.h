@@ -51,10 +51,10 @@ const int Z = 2;
 */
 template <int D>
 class Point {
-private:
+ private:
   double m_loc[D] {};
 
-public:
+ public:
 
   /// Default constructor - Point at origin in D-space.
 #ifdef HAVE_KOKKOS

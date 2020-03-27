@@ -41,10 +41,10 @@ namespace Wonton {
   of [1, 2, 3]).
 */
 template <int D> class Vector {
-private:
+ private:
   double m_comp[D] {};
 
-public:
+ public:
 
   /// Default constructor - zero Vector in D-space.
 #ifdef HAVE_KOKKOS
@@ -58,7 +58,7 @@ public:
   }
 
   /*!
-    @brief Specialized constructor for 1d Vectors.
+    @brief Initialize all components to same value (also constructor for 1d vectors)
     @param[in] xm_comp The x coordinate.
   */
 #ifdef HAVE_KOKKOS
@@ -67,8 +67,8 @@ public:
   inline
 #endif
   explicit Vector(const double& xm_comp) {
-    assert(D == 1);
-    m_comp[0] = xm_comp;
+    for (int i = 0; i < D; i++)
+      m_comp[i] = xm_comp;
   }
 
   /*!
