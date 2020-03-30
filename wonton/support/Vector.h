@@ -27,10 +27,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
-
-#ifdef HAVE_KOKKOS
-  #include <Kokkos_Macros.hpp>
-#endif
+#include "wonton/support/wonton.h"
 
 namespace Wonton {
 
@@ -47,11 +44,7 @@ template <int D> class Vector {
  public:
 
   /// Default constructor - zero Vector in D-space.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector() {
     for (int i = 0; i < D; i++)
       m_comp[i] = 0.0;
@@ -61,11 +54,7 @@ template <int D> class Vector {
     @brief Initialize all components to same value (also constructor for 1d vectors)
     @param[in] xm_comp The x coordinate.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   explicit Vector(const double& xm_comp) {
     for (int i = 0; i < D; i++)
       m_comp[i] = xm_comp;
@@ -75,11 +64,7 @@ template <int D> class Vector {
     @brief Specialized constructor for 2d Vectors.
     @param[in] xm_comp,ym_comp The (x,y) coordinate pair.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector(const double& xm_comp, const double& ym_comp) {
     assert(D == 2);
     m_comp[0] = xm_comp;
@@ -90,11 +75,7 @@ template <int D> class Vector {
     @brief Specialized constructor for 3d Vectors.
     @param[in] xm_comp,ym_comp,zm_comp The (x,y,z) coordinate triple.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector(const double& xm_comp, const double& ym_comp, const double& zm_comp) {
     assert(D == 3);
     m_comp[0] = xm_comp;
@@ -112,31 +93,19 @@ template <int D> class Vector {
   }
 
   /// Return component @c i of the Vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   const double& operator[](const int& i) const {
     return m_comp[i];
   }
 
   /// Return component @c i of the Vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   double& operator[](const int& i) {
     return m_comp[i];
   }
 
   /// Negative of this vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector operator-() const {
     Vector v;
     for (int i = 0; i < D; i++) v.m_comp[i] = -m_comp[i];
@@ -144,44 +113,28 @@ template <int D> class Vector {
   }
 
   /// Add the Vector @c rhs to this Vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector& operator+=(const Vector<D>& rhs) {
     for (int i = 0; i < D; i++) m_comp[i] += rhs.m_comp[i];
     return *this;
   }
 
   /// Subtract the Vector @c rhs from this vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector& operator-=(const Vector<D>& rhs) {
     for (int i = 0; i < D; i++) m_comp[i] -= rhs.m_comp[i];
     return *this;
   }
 
   /// Scalar multiplication of this Vector by @c s.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector& operator*=(const double& s) {
     for (int i = 0; i < D; i++) m_comp[i] *= s;
     return *this;
   }
 
   /// Scalar division of this Vector by @c s.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector& operator/=(const double& s) {
     for (int i = 0; i < D; i++) m_comp[i] /= s;
     return *this;
@@ -192,11 +145,7 @@ template <int D> class Vector {
     @param[in] doSqrt OPTIONAL: Return the square root of the norm, i.e. the
     magnitude of the Vector.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   double norm(bool doSqrt = true) const {
     double result = 0.0;
     for (int i = 0; i < D; i++) result += (m_comp[i] * m_comp[i]);
@@ -207,11 +156,7 @@ template <int D> class Vector {
   /*!
     @brief Calculate the 1-norm of a Vector.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   double one_norm() const {
     double result = 0.0;
     for (int i = 0; i < D; i++) result += std::fabs(m_comp[i]);
@@ -221,11 +166,7 @@ template <int D> class Vector {
   /*!
     @brief Calculate the max norm of a Vector.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   double max_norm() const {
     double result = std::fabs(m_comp[0]);
     for (int i = 0; i < D - 1; i++) {
@@ -237,22 +178,14 @@ template <int D> class Vector {
   }
 
   /// Convert this Vector into a unit Vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   void normalize() {
     double s = norm();
     *this /= s;
   }
 
   /// Convert this Vector into a zero Vector.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   void zero() {
     for (int i = 0; i < D; i++) m_comp[i] = 0;
   }
@@ -262,11 +195,7 @@ template <int D> class Vector {
     @param[in] dst_tol Distance tolerance:
     Vector is zero if its length is below this tolerance.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   bool is_zero(double dst_tol) const {
     return (norm() < dst_tol);
   }
@@ -276,11 +205,7 @@ template <int D> class Vector {
     with all components equal to a given value
     @param[in] value Value to assign to all the components
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   void fill(double val) {
     for (int i = 0; i < D; i++) m_comp[i] = val;
   }
@@ -290,11 +215,7 @@ template <int D> class Vector {
     axis
     @param[in] nonZero The coordinate axis along which the Vector should point.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   void axis(int nonZero) {
     zero();
     m_comp[nonZero] = 1;
@@ -325,11 +246,7 @@ typedef Vector<2> Vector2;
 
 /// Dot product of two vectors, @f$\vec{a} \cdot \vec{b}@f$.
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 double dot(const Vector<D>& a, const Vector<D>& b) {
   double r = 0.0;
   for (int i = 0; i < D; i++) r += a[i] * b[i];
@@ -338,55 +255,35 @@ double dot(const Vector<D>& a, const Vector<D>& b) {
 
 /// Add two vectors.
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<D> operator+(const Vector<D>& a, const Vector<D>& b) {
   return Vector<D>(a) += b;
 }
 
 /// Subtract two vectors.
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<D> operator-(const Vector<D>& a, const Vector<D>& b) {
   return Vector<D>(a) -= b;
 }
 
 /// Multiply a vector by a scalar, @f$ s \vec{a}@f$.
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<D> operator*(const Vector<D>& a, const double& s) {
   return Vector<D>(a) *= s;
 }
 
 /// Multiply a vector by a scalar, @f$ s \vec{a}@f$.
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<D> operator*(const double& s, const Vector<D>& a) {
   return Vector<D>(a) *= s;
 }
 
 /// Divide a vector by a scalar, @f$ \frac{1}{s} \vec{a}@f$.
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<D> operator/(const Vector<D>& a, const double& s) {
   return Vector<D>(a) /= s;
 }
@@ -405,21 +302,13 @@ operator>>(std::istream& is, Vector<D>& v) {
 }
 
 /// Cross product operator for two 2d vectors,  @f$\vec{a} \times \vec{b}@f$.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 double cross(const Vector<2>& a, const Vector<2>& b) {
   return (a[0] * b[1] - a[1] * b[0]);
 }
 
 /// Cross product operator for two 3d vectors, @f$\vec{a} \times \vec{b}@f$.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<3> cross(const Vector<3>& a, const Vector<3>& b) {
   Vector<3> r;
   r[0] = a[1] * b[2] - a[2] * b[1];
@@ -435,11 +324,7 @@ Vector<3> cross(const Vector<3>& a, const Vector<3>& b) {
   @return The maximum component of @c v.
 */
 template<int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 double MaxComponent(const Vector<D>& v, int& icomp) {
   double max = v[0];
   icomp = 0;

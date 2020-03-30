@@ -32,10 +32,7 @@
 #include <iostream>
 #include <vector>
 #include "wonton/support/Vector.h"
-
-#ifdef HAVE_KOKKOS
-  #include <Kokkos_Macros.hpp>
-#endif
+#include "wonton/support/wonton.h"
 
 namespace Wonton {
 
@@ -57,11 +54,7 @@ class Point {
  public:
 
   /// Default constructor - Point at origin in D-space.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point() {
     for (int i = 0; i < D; i++)
       m_loc[i] = 0.0;
@@ -71,11 +64,7 @@ class Point {
     @brief Specialized constructor from a std::vector of arbitary size.
     @param[in] v std::vector of coordinates.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   explicit Point(const std::vector<double> &v) {
     assert(v.size() == D);
     for (int i = 0; i < D; i++)
@@ -86,11 +75,7 @@ class Point {
     @brief Specialized constructor for Points in 3d.
     @param[in] x,y,z The (x,y,z) coordinates of this Point.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point(const double& x, const double& y, const double& z) {
     assert(D == 3);
     m_loc[0] = x;
@@ -102,11 +87,7 @@ class Point {
     @brief Specialized constructor for Points in 2d.
     @param[in] x,y The (x,y) coordinates of this Point.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point(const double& x, const double& y) {
     assert(D == 2);
     m_loc[0] = x;
@@ -117,64 +98,40 @@ class Point {
     @brief Specialized constructor for Points in 1d.
     @param[in] x The x coordinates of this Point.
   */
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   explicit Point(const double& x) {
     assert(D == 1);
     m_loc[0] = x;
   }
 
   /// Convert a Vector to a Point.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   explicit Point(const Vector<D>& v) {
     for (int i = 0; i < D; i++)
       m_loc[i] = v[i];
   }
 
   /// Copy constructor.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point(const Point<D>& rhs) {
     for (int i = 0; i < D; i++)
       m_loc[i] = rhs[i];
   }
 
   /// Return component @c i of the Point.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   const double& operator[](const int& i) const {
     return m_loc[i];
   }
 
   /// Return component @c i of the Point.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   double& operator[](const int& i) {
     return m_loc[i];
   }
 
   /// Negative of this Point.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point<D> operator-() const {
     Point<D> p;
     for (int i = 0; i < D; i++) p.m_loc[i] = -m_loc[i];
@@ -182,44 +139,28 @@ class Point {
   }
 
   /// Translate this Point along the Vector @c v.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point<D>& operator+=(const Vector<D>& v) {
     for (int i = 0; i < D; i++) m_loc[i] += v[i];
     return *this;
   }
 
   /// Add two Point vectors to get a third point vector
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point<D>& operator+=(const Point<D>& p) {
     for (int i = 0; i < D; i++) m_loc[i] += p[i];
     return *this;
   }
 
   /// Scale this Point (*)
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point<D>& operator*=(double s) {
     for (int i = 0; i < D; i++) m_loc[i] *= s;
     return *this;
   }
 
   /// Scale this Point (/)
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Point<D>& operator/=(double s) {
     for (int i = 0; i < D; i++) m_loc[i] /= s;
     return *this;
@@ -242,11 +183,7 @@ class Point {
   }
 
   /// Convert Point to Vector from the origin to the coordinates of the Point.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector<D> asV() {
     Vector<D> v;
     for (int i = 0; i < D; i++)
@@ -255,11 +192,7 @@ class Point {
   }
 
   /// Convert Point to Vector from the origin to the coordinates of the Point.
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+  WONTON_INLINE
   Vector<D> asV() const {
     Vector<D> v;
     for (int i = 0; i < D; i++)
@@ -282,31 +215,19 @@ std::ostream& operator<<(std::ostream& os, const Point<D>& p) {
 
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point<D> operator+(const Point<D>& p, const Vector<D>& v) {
   return Point<D>(p) += v;
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point<D> operator+(const Point<D>& p1, const Point<D>& p2) {
   return Point<D>(p1) += p2;
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Vector<D> operator-(const Point<D>& p1, const Point<D>& p2) {
   Vector<D> v;
   for (int i = 0; i < D; i++) v[i] = p1[i] - p2[i];
@@ -314,41 +235,25 @@ Vector<D> operator-(const Point<D>& p1, const Point<D>& p2) {
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point<D> operator*(const Point<D>& p, double s) {
   return Point<D>(p) *= s;
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point<D> operator*(double s, const Point<D>& p) {
   return Point<D>(p) *= s;
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point<D> operator/(const Point<D>& p, double s) {
   return Point<D>(p) /= s;
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 bool operator==(const Point<D>& p1, const Point<D>& p2) {
   for (int i = 0; i < D; i++)
     if (p1[i] != p2[i])
@@ -357,11 +262,7 @@ bool operator==(const Point<D>& p1, const Point<D>& p2) {
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 bool approxEq(const Point<D>& p1, const Point<D>& p2, double tol = 1.0e-8) {
   // This uses the L_infty norm to avoid nearby subtractions
   for (int i = 0; i < D; i++)
@@ -371,11 +272,7 @@ bool approxEq(const Point<D>& p1, const Point<D>& p2, double tol = 1.0e-8) {
 }
 
 template <int D>
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 bool operator<(const Point<D>& p1, const Point<D>& p2) {
   if (approxEq(p1, p2))
     return false;
@@ -390,11 +287,7 @@ bool operator<(const Point<D>& p1, const Point<D>& p2) {
 }
 
 
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point2 ToCylindrical(const Point3& p) {
   Point2 result;
 
@@ -403,11 +296,7 @@ Point2 ToCylindrical(const Point3& p) {
   return result;
 }
 
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point3 createP3(double x, double y, double z) {
   Point3 p;
 
@@ -418,11 +307,7 @@ Point3 createP3(double x, double y, double z) {
   return p;
 }
 
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point2 createP2(double x, double y) {
   Point2 p;
 
@@ -432,11 +317,7 @@ Point2 createP2(double x, double y) {
   return p;
 }
 
-#ifdef HAVE_KOKKOS
-  KOKKOS_INLINE_FUNCTION
-#else
-  inline
-#endif
+WONTON_INLINE
 Point1 createP1(double x) {
   Point1 p;
 
