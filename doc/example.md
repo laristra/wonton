@@ -80,9 +80,10 @@ the tools they need.
 An extremely simplified mesh that mimics the structure of an adaptive mesh
 refinement (AMR) grid.  This mesh should not be used in production, as it is
 intended simply as a guide for the kinds of data structures and interfaces that
-one might see in an AMR grid.  The Adaptive Refinement Mesh is set up to work
-with non-Cartesian coordinate systems, and can provide an example for usage of
-various coordinate systems within Wonton and Portage.
+one might see in an AMR grid.  In addition, it only works in serial and not
+across multiple processing elements.  The Adaptive Refinement Mesh is set up to
+work with non-Cartesian coordinate systems, and can provide an example for
+usage of various coordinate systems within Wonton and Portage.
 
 An Adaptive Refinement Mesh requires three inputs:
 
