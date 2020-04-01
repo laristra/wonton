@@ -151,7 +151,7 @@ if (ENABLE_Kokkos)
   #find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
 
   message(STATUS "Enabling Kokkos")
-  add_definitions("-DWONTON_HAS_KOKKOS")
+  set(WONTON_ENABLE_KOKKOS True CACHE BOOL "Whether Kokkos is enabled")
   include_directories("${KOKKOS_INCLUDE_DIR}")
   list(APPEND WONTON_EXTRA_LIBRARIES "${KOKKOS_LIBRARIES}")
 

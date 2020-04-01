@@ -32,7 +32,7 @@ Please see the license file at the root of this repository, or at:
 #include "mpi.h"
 #endif
 
-#ifdef WONTON_HAS_KOKKOS
+#ifdef WONTON_ENABLE_KOKKOS
 #include <Kokkos_Macros.hpp>
 #endif
 
@@ -229,7 +229,7 @@ struct Executor_type {
 struct SerialExecutor_type : Executor_type {};  // for RTTI
 
 #if !defined(WONTON_INLINE)
-  #ifdef WONTON_HAS_KOKKOS
+  #ifdef WONTON_ENABLE_KOKKOS
     #define WONTON_INLINE KOKKOS_INLINE_FUNCTION
   #else
     #define WONTON_INLINE inline
