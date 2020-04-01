@@ -56,4 +56,4 @@ if (WONTON_ENABLE_Jali)
       THREADS 1)
   endif ()
 
-endif (ENABLE_Jali)
+endif()

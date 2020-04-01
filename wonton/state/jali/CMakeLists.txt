@@ -53,4 +53,4 @@ if (WONTON_ENABLE_Jali)
       POLICY MPI
       THREADS 1)
   endif (ENABLE_UNIT_TESTS)
-endif (ENABLE_Jali)
+endif ()
