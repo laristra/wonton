@@ -32,6 +32,10 @@ Please see the license file at the root of this repository, or at:
 #include "mpi.h"
 #endif
 
+#ifdef WONTON_HAS_KOKKOS
+#include <Kokkos_Macros.hpp>
+#endif
+
 /*
   @file wonton.h
   @brief Several utility types and functions within the Wonton namespace.
@@ -223,6 +227,14 @@ struct Executor_type {
 };
 
 struct SerialExecutor_type : Executor_type {};  // for RTTI
+
+#if !defined(WONTON_INLINE)
+  #ifdef WONTON_HAS_KOKKOS
+    #define WONTON_INLINE KOKKOS_INLINE_FUNCTION
+  #else
+    #define WONTON_INLINE inline
+  #endif
+#endif
 
 #ifdef WONTON_ENABLE_MPI
 struct MPIExecutor_type : Executor_type {

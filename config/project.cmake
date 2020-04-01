@@ -133,6 +133,81 @@ if ( NOT Jali_DIR)
 
 endif( NOT Jali_DIR)
 
+
+#-----------------------------------------------------------------------------
+# Use Kokkos
+#-----------------------------------------------------------------------------
+set(ENABLE_Kokkos FALSE CACHE BOOL "Use Kokkos")
+if (ENABLE_Kokkos)
+  # find package and link against it.
+  # conflict with the one packed in Trilinos.
+  # ugly hack: override headers and library locations
+  find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS "${Kokkos_DIR}/include")
+  find_library(KOKKOS_CORE_LIBRARY NAMES kokkoscore
+      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
+  find_library(KOKKOS_CONTAINERS_LIBRARY NAMES kokkoscontainers
+      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
+  set(KOKKOS_LIBRARIES ${KOKKOS_CORE_LIBRARY} ${KOKKOS_CONTAINERS_LIBRARY})
+  #find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
+
+  message(STATUS "Enabling Kokkos")
+  add_definitions("-DWONTON_HAS_KOKKOS")
+  include_directories("${KOKKOS_INCLUDE_DIR}")
+  list(APPEND WONTON_EXTRA_LIBRARIES "${KOKKOS_LIBRARIES}")
+
+  if (USE_GPU)
+    # additional options for nvcc:
+    # allow '__host__',' __device__' annotations in lambdas.
+    # allow host code to invoke '__device__ constexpr' functions,
+    # and device code to invoke '__host__ constexpr' functions.
+    # disable warning on __global__ defaulted functions.
+    string(APPEND CUDA_NVCC_FLAGS " --expt-extended-lambda")
+    string(APPEND CUDA_NVCC_FLAGS " --expt-relaxed-constexpr")
+    string(APPEND CUDA_NVCC_FLAGS " -Xcudafe --diag_suppress=esa_on_defaulted_function_ignored")
+
+    # nvidia graphic cards architectures:
+    # _30 kepler: tesla k40|80, geforce 700, gt-730, support for unified memory.
+    # _35 kepler: add support for dynamic parallelism for tesla k40.
+    # _37 kepler: add a few more registers for tesla k80.
+    # _50 maxwell: tesla/quadro M series.
+    # _52 maxwell: quadro m6000, geforce 900, gtx-970|80, gtx titan x.
+    # _60 pascal: gp100, tesla p100.
+    # _61 pascal: gtx 1030|50|60|70|80, titan xp, tesla P4|40.
+    # _70 volta: tesla v100, gtx 1180 (gv104).
+    string(APPEND CUDA_NVCC_FLAGS " -arch=sm_30")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_30,code=sm_30")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_35,code=sm_35")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_37,code=sm_37")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_50,code=sm_50")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_52,code=sm_52")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_60,code=sm_60")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_61,code=sm_61")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_70,code=sm_70")
+    string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_70,code=compute_70")
+    string(APPEND CUDA_NVCC_FLAGS " ")
+
+    # add to nvcc flags
+    string(APPEND CMAKE_CXX_FLAGS "${CUDA_NVCC_FLAGS}")
+    message(STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}")
+  endif (USE_GPU)
+
+  # use OpenMP backend on CPU
+  find_package(OpenMP)
+  if (OPENMP_FOUND)
+    string(APPEND CMAKE_C_FLAGS " ${OpenMP_C_FLAGS}")
+    string(APPEND CMAKE_CXX_FLAGS " ${OpenMP_CXX_FLAGS}")
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " ${OpenMP_EXE_LINKER_FLAGS}")
+  endif (OPENMP_FOUND)
+
+  # use topology.
+  find_package(Hwloc)
+  if (HWLOC_FOUND)
+    include_directories("${HWLOC_INCLUDE_DIR}")
+    list(APPEND WONTON_EXTRA_LIBRARIES "${HWLOC_LIBRARY}")
+  endif (HWLOC_FOUND)
+endif (ENABLE_Kokkos)
+
+
 #------------------------------------------------------------------------------#
 # Configure LAPACKE
 #------------------------------------------------------------------------------#
