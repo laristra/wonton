@@ -305,7 +305,11 @@ template<int D, class CoordSys>
 void Direct_Product_Mesh_Wrapper<D,CoordSys>::get_global_bounds(
     Point<D> *plo, Point<D> *phi) const {
   assert(D == mesh_.space_dimension());
-  mesh_.get_global_bounds(plo, phi);
+  Point<D> & lo = *plo;
+  Point<D> & hi = *phi;
+  for (int d = 0; d < D; ++d) {
+    mesh_.get_global_coord_bounds(d, &(lo[d]), &(hi[d]));
+  }
 }
 
 // ____________________________________________________________________________
