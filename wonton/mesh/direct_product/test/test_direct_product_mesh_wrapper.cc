@@ -30,6 +30,23 @@ namespace direct_product_mesh_wrapper_test {
     // Check basic dimensionality
     ASSERT_EQ(mesh_wrapper.space_dimension(), D);
 
+    // Is the mesh distributed?
+    bool is_distributed;
+#ifdef WONTON_ENABLE_MPI
+    is_distributed = true;
+#else
+    is_distributed = false;
+#endif
+    ASSERT_EQ(mesh_wrapper.distributed(), is_distributed);
+
+    // Check mesh bounds
+    Point<D> plo, phi;
+    mesh_wrapper.get_global_bound(&plo, &phi);
+    for (int d = 0; d < D; ++d) {
+      ASSERT_EQ(plo[d], axis_points[d].front());
+      ASSERT_EQ(phi[d], axis_points[d].back());
+    }
+
     // Count cells in mesh
     int cell_count = 1;
     for (int d = 0; d < D; ++d) {
