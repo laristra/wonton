@@ -55,7 +55,7 @@ template <int D> class Vector {
     @param[in] xm_comp The x coordinate.
   */
   WONTON_INLINE
-  explicit Vector(const double& xm_comp) {
+  Vector(const double& xm_comp) {
     for (int i = 0; i < D; i++)
       m_comp[i] = xm_comp;
   }

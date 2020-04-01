@@ -99,7 +99,7 @@ class Point {
     @param[in] x The x coordinates of this Point.
   */
   WONTON_INLINE
-  explicit Point(const double& x) {
+  Point(const double& x) {
     assert(D == 1);
     m_loc[0] = x;
   }
