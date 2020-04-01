@@ -25,23 +25,18 @@ namespace direct_product_mesh_wrapper_test {
   template<int D>
   void check_basic_functions(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const std::array<std::vector<double>,(std::size_t)D> &axis_points) {
+      const std::array<std::vector<double>,(std::size_t)D> &axis_points,
+      const bool is_distributed) {
 
     // Check basic dimensionality
     ASSERT_EQ(mesh_wrapper.space_dimension(), D);
 
     // Is the mesh distributed?
-    bool is_distributed;
-#ifdef WONTON_ENABLE_MPI
-    is_distributed = true;
-#else
-    is_distributed = false;
-#endif
     ASSERT_EQ(mesh_wrapper.distributed(), is_distributed);
 
     // Check mesh bounds
-    Point<D> plo, phi;
-    mesh_wrapper.get_global_bound(&plo, &phi);
+    Wonton::Point<D> plo, phi;
+    mesh_wrapper.get_global_bounds(&plo, &phi);
     for (int d = 0; d < D; ++d) {
       ASSERT_EQ(plo[d], axis_points[d].front());
       ASSERT_EQ(phi[d], axis_points[d].back());
@@ -358,7 +353,7 @@ namespace direct_product_mesh_wrapper_test {
     
       // Run basic tests
       direct_product_mesh_wrapper_test::check_basic_functions(
-      mesh_wrapper, axis_points);
+          mesh_wrapper, axis_points, distributed);
 
       // Run looping tests
 
