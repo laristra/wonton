@@ -440,7 +440,7 @@ install(EXPORT wonton_LIBRARIES
 # WONTON_ENABLE_MPI etc. if enabled.
 
 configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
-  ${PROJECT_BINARY_DIR}/wonton-config.h.gen @ONLY)
+  ${PROJECT_BINARY_DIR}/wonton-config.h @ONLY)
 install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h
   DESTINATION include)
 
