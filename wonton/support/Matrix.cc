@@ -14,7 +14,7 @@ Please see the license file at the root of this repository, or at:
 #include <string>
 #include <sstream>
 
-#ifdef HAVE_LAPACKE
+#ifdef WONTON_HAS_LAPACKE
 #define HAVE_LAPACK_CONFIG_H
 #define LAPACK_COMPLEX_CPP
 #include "lapacke.h"
@@ -59,7 +59,7 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   
   Matrix X(B.rows(), B.columns(), 0.);
 
-#ifdef HAVE_LAPACKE
+#ifdef WONTON_HAS_LAPACKE
   // stuff for lapack which is useful for solves where matrix is already
   // factored
   std::vector<double> AFactored_;
@@ -83,7 +83,7 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       else                   error = "none";
     }
   }
-#ifdef HAVE_LAPACKE    
+#ifdef WONTON_HAS_LAPACKE    
   else if (method == "lapack-posv") {  // LAPACK positive-definite matrix
     
     // check symmetric
@@ -390,7 +390,7 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   else {
     throw std::runtime_error("Invalid solver type or LAPACK solve requested but code not built with LAPACK support");
   }
-#endif  // HAVE_LAPACKE
+#endif  // WONTON_HAS_LAPACKE
 
   return X;
 }

@@ -60,6 +60,16 @@ else ()
   set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 endif ()
 
+
+#------------------------------------------------------------------------------#
+# Discover packages here but set them as dependencies of
+# wonton_support target in the wonton/support subdirectory. Since
+# wonton_support is a dependency of the top level target
+# wonton::wonton, projects using wonton will get the transitive
+# dependencies
+# ------------------------------------------------------------------------------
+
+
 #------------------------------------------------------------------------------#
 # Set up MPI builds
 # (eventually most of this should be pushed down into cinch)
@@ -67,11 +77,9 @@ endif ()
 set(WONTON_ENABLE_MPI False CACHE BOOL "Is MPI enabled in Wonton?")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  target_link_libraries(wonton INTERFACE MPI::MPI_CXX)
-  target_compile_definitions(wonton INTERFACE WONTON_ENABLE_MPI)
-  target_compile_definitions(wonton INTERFACE OMPI_SKIP_MPICXX)
   set(WONTON_ENABLE_MPI True)
 endif (ENABLE_MPI)
+
 
 #-----------------------------------------------------------------------------
 # FleCSI and FleCSI-SP location
@@ -82,6 +90,8 @@ if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   find_package(FleCSI REQUIRED)
   find_package(FleCSISP REQUIRED)
 
+  set(WONTON_ENABLE_FleCSI True CACHE BOOL "FleCSI interface enabled?")
+
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
 
@@ -90,6 +100,8 @@ if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
   target_link_libaries(wonton INTERFACE ${FleCSI_LIBRARIES})
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
+
+  target_compile_definitions(wonton INTERFACE WONTON_ENABLE_FleCSI)
 endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 
 
@@ -99,36 +111,75 @@ endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 #------------------------------------------------------------------------------#
 
 if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
-
-   # Look for the Jali package
-
-   find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
-
-   message(STATUS "Located Jali")
-   message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
-   target_link_libraries(wonton INTERFACE ${Jali_LIBRARIES})
-
-   if (NOT Jali_ROOT)
-     # Jali_CONFIG should be the full path to where the config file was found
-     # which is typically SOMEDIR/lib/cmake - back out Jali_ROOT from that
-     # until we fix JaliConfig
-     set(Jali_ROOT ${Jali_CONFIG}/../.. CACHE FILEPATH "Where Jali lives")
-   endif ()
+  # Look for the Jali package
   
+  find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
+
+  set(WONTON_ENABLE_Jali True CACHE BOOL "Jali interface enabled?")
+
+  message(STATUS "Located Jali")
+  message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
+
+  target_link_libraries(wonton INTERFACE ${Jali_LIBRARIES})
+  
+  if (NOT Jali_ROOT)
+    # Jali_CONFIG should be the full path to where the config file was found
+    # which is typically SOMEDIR/lib/cmake - back out Jali_ROOT from that
+    # until we fix JaliConfig
+    set(Jali_ROOT ${Jali_CONFIG}/../.. CACHE FILEPATH "Where Jali lives")
+  endif ()
+  
+  target_compile_definitions(wonton INTERFACE WONTON_ENABLE_Jali)
 endif ()
 
 
 #-----------------------------------------------------------------------------
-# Include Boost libraries for builds without Jali
+# Thrust information
 #-----------------------------------------------------------------------------
+if (ENABLE_THRUST)   # if it is overridden by the command line
 
-if (NOT ENABLE_Jali)
+  # Allow for swapping backends
+  set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_CPP"  CACHE STRING "Thrust host backend")
+  set(THRUST_DEVICE_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust device backend")
+
+  if ((${THRUST_HOST_BACKEND} STREQUAL "THRUST_HOST_SYSTEM_OMP") OR
+      (${THRUST_DEVICE_BACKEND} STREQUAL "THRUST_DEVICE_SYSTEM_OMP"))
+    list(APPEND _components OpenMP)
+  endif ()
+  if (${THRUST_DEVICE_BACKEND} STREQUAL "THRUST_DEVICE_SYSTEM_CUDA")
+    list(APPEND _components CUDA)
+  endif ()
+
+  find_package(THRUST COMPONENTS ${_components} REQUIRED MODULE)
+
+  message(STATUS "Enabling compilation with Thrust")
+  message(STATUS "Using THRUST_ROOT=${THRUST_ROOT}")
+
+  message(STATUS "Using ${THRUST_HOST_BACKEND} as Thrust host backend")
+  message(STATUS "Using ${THRUST_DEVICE_BACKEND} as Thrust device backend")
+
+
+  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?" FORCE)
+
+else ()
+
+  #-----------------------------------------------------------------------------
+  # Include Boost libraries (for counting_iterator etc)
+  #-----------------------------------------------------------------------------
+
   find_package(Boost REQUIRED)
   target_include_directories(wonton SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
   message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
 
-  target_link_libraries(wonton INTERFACE ${Boost_LIBRARIES})
-endif (NOT ENABLE_Jali)
+endif()
+
+if (ENABLE_TCMALLOC)
+  find_library(TCMALLOC_LIBRARIES NAMES tcmalloc PATHS ${TCMALLOC_ROOT})
+  if (TCMALLOC_LIBRARIES)
+    set(WONTON_ENABLE_TCMALLOC True CACHE BOOL "Link in tcmalloc?")
+  endif ()
+endif ()
+
 
 
 #-----------------------------------------------------------------------------
@@ -251,8 +302,10 @@ if (LAPACKE_FOUND)
   enable_language(Fortran)
   include(FortranCInterface)  # will ensure the fortran library is linked in
   
+  set(WONTON_ENABLE_LAPACKE True CACHE BOOL "LAPACKE libraries linked in?")
+
   target_include_directories(wonton INTERFACE ${LAPACKE_INCLUDE_DIRS})
-  target_compile_definitions(wonton INTERFACE HAVE_LAPACKE)
+  target_compile_definitions(wonton INTERFACE WONTON_HAS_LAPACKE)
 
   target_link_libraries(wonton INTERFACE ${LAPACKE_LIBRARIES})
 
@@ -379,12 +432,14 @@ install(EXPORT wonton_LIBRARIES
 
 
 # Dynamically configured header files that contains defines like
-# WONTON_ENABLE_MPI etc. if enabled
+# WONTON_ENABLE_MPI etc. if enabled. We write to a temporary name
+# (with a .gen suffix) so that it is not seen during the build process
+# and then rename it properly during the install step
 
 configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
-  ${PROJECT_BINARY_DIR}/wonton-config.h @ONLY)
-install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h
-  DESTINATION include)
+  ${PROJECT_BINARY_DIR}/wonton-config.h.gen @ONLY)
+install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h.gen
+  DESTINATION include RENAME wonton-config.h)
 
 
 # Install the FindTHRUST module needed by downstream packages when

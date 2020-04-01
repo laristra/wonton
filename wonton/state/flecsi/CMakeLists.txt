@@ -7,7 +7,7 @@ Please see the license file at the root of this repository, or at:
 
 # Add header files
 
-if (FleCSI_DIR)
+if (WONTON_ENABLE_FleCSI)
   add_library(flecsi_state_wrapper INTERFACE)
   
   target_include_directories(flecsi_state_wrapper PUBLIC
@@ -43,4 +43,4 @@ if (FleCSI_DIR)
     )
   
   # Have to add FleCSI state wrapper tests
-endif (FleCSI_DIR)
+endif ()

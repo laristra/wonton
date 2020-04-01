@@ -8,7 +8,7 @@ Please see the license file at the root of this repository, or at:
 
 #-----------------------------------------------------------------------------~#
 
-if (ENABLE_FleCSI)
+if (WONTON_ENABLE_FleCSI)
 
   add_library(flecsi_mesh_wrapper INTERFACE)
   

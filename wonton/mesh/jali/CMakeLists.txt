@@ -5,7 +5,7 @@ Please see the license file at the root of this repository, or at:
 ]]
 #-----------------------------------------------------------------------------~#
 
-if (ENABLE_Jali)
+if (WONTON_ENABLE_Jali)
 
   add_library(jali_mesh_wrapper INTERFACE)
 

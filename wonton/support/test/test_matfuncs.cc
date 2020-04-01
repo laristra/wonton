@@ -254,7 +254,7 @@ TEST(Matrix, SolveWithJunk) {
 
 }
 
-#ifdef HAVE_LAPACKE
+#ifdef WONTON_HAS_LAPACKE
 
 /*!
   @brief Test the matrix solve functionality
@@ -420,4 +420,4 @@ TEST(Matrix, SolveWithErrorMsg) {
 
   ASSERT_TRUE(errormsg=="none");
 }
-#endif  // HAVE_LAPACKE
+#endif  // WONTON_HAS_LAPACKE
