@@ -101,7 +101,7 @@ refined by bisecting it along each axis.
 
 The construction of a 2D Adaptive Refinement Mesh would look something like:
 
-```
+```c++
 // coordinates extents
 Point<2> lo = { 0.0, 0.0 };
 Point<2> hi = { 1.0, 1.5 };
@@ -145,7 +145,7 @@ A Direct Product Mesh requires three inputs:
 
 The construction of a 2D Direct Product Mesh would look something like:
 
-```
+```c++
 // instantiate an executor
 Wonton::MPIExecutor_type executor(MPI_COMM_WORLD);
 // create the axis points
@@ -156,7 +156,7 @@ std::array<std::vector<double>,2> axis_points = {
 // define how many ghost layers
 int num_ghost_layers = 1;
 // create the mesh
-Wonton::Direct_Product_Mesh<1> mesh(axis_points, &executor, num_ghost_layers);
+Wonton::Direct_Product_Mesh<2> mesh(axis_points, &executor, num_ghost_layers);
 ```
 
 This creates a 2D Direct Product Mesh that is 3 cells by 2 cells, with MPI
