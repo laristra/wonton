@@ -85,8 +85,8 @@ endif (ENABLE_MPI)
 # FleCSI and FleCSI-SP location
 #-----------------------------------------------------------------------------
 
-set(ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
-if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
+set(WONTON_ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
+if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   find_package(FleCSI REQUIRED)
   find_package(FleCSISP REQUIRED)
 
@@ -102,7 +102,7 @@ if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
 
   target_compile_definitions(wonton INTERFACE WONTON_ENABLE_FleCSI)
-endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
+endif()
 
 
 #------------------------------------------------------------------------------#
@@ -110,12 +110,13 @@ endif(ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
 # (this includes the TPLs that Jali will need)
 #------------------------------------------------------------------------------#
 
+set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
 if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
   # Look for the Jali package
   
   find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
 
-  set(WONTON_ENABLE_Jali True CACHE BOOL "Jali interface enabled?")
+  set(WONTON_ENABLE_Jali True)
 
   message(STATUS "Located Jali")
   message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
@@ -136,6 +137,8 @@ endif ()
 #-----------------------------------------------------------------------------
 # Thrust information
 #-----------------------------------------------------------------------------
+
+set(WONTON_ENABLE_THRUST False CACHE BOOL "Is the Thrust library being used?")
 if (ENABLE_THRUST)   # if it is overridden by the command line
 
   # Allow for swapping backends
@@ -159,7 +162,7 @@ if (ENABLE_THRUST)   # if it is overridden by the command line
   message(STATUS "Using ${THRUST_DEVICE_BACKEND} as Thrust device backend")
 
 
-  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?" FORCE)
+  set(WONTON_ENABLE_THRUST True)
 
 else ()
 
@@ -298,11 +301,11 @@ if (ENABLE_LAPACKE)
   endif ()
 endif ()
 
+set(WONTON_ENABLE_LAPACKE False CACHE BOOL "LAPACKE libraries linked in?")
 if (LAPACKE_FOUND)
   enable_language(Fortran)
   include(FortranCInterface)  # will ensure the fortran library is linked in
   
-  set(WONTON_ENABLE_LAPACKE True CACHE BOOL "LAPACKE libraries linked in?")
 
   target_include_directories(wonton INTERFACE ${LAPACKE_INCLUDE_DIRS})
   target_compile_definitions(wonton INTERFACE WONTON_HAS_LAPACKE)
@@ -311,9 +314,11 @@ if (LAPACKE_FOUND)
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
+
+  set(WONTON_ENABLE_LAPACKE True)
 else ()
   message(FATAL_ERROR "LAPACKE enabled but not found.")
-endif (LAPACKE_FOUND)
+endif ()
 
 
 #-----------------------------------------------------------------------------
@@ -432,14 +437,12 @@ install(EXPORT wonton_LIBRARIES
 
 
 # Dynamically configured header files that contains defines like
-# WONTON_ENABLE_MPI etc. if enabled. We write to a temporary name
-# (with a .gen suffix) so that it is not seen during the build process
-# and then rename it properly during the install step
+# WONTON_ENABLE_MPI etc. if enabled.
 
 configure_file(${PROJECT_SOURCE_DIR}/config/wonton-config.h.in
   ${PROJECT_BINARY_DIR}/wonton-config.h.gen @ONLY)
-install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h.gen
-  DESTINATION include RENAME wonton-config.h)
+install(FILES ${PROJECT_BINARY_DIR}/wonton-config.h
+  DESTINATION include)
 
 
 # Install the FindTHRUST module needed by downstream packages when
