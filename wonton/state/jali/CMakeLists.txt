@@ -7,7 +7,7 @@ Please see the license file at the root of this repository, or at:
 
 # Add header files
 
-if (ENABLE_Jali)
+if (WONTON_ENABLE_Jali)
   add_library(jali_state_wrapper INTERFACE)
   
   target_include_directories(jali_state_wrapper INTERFACE
