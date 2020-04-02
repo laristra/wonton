@@ -152,6 +152,14 @@ class Point {
     return *this;
   }
 
+  WONTON_INLINE
+  Point<D>& operator+=(std::vector<double> const& v) {
+    assert(v.size() == D);
+    for (int i = 0; i < D; i++)
+      m_loc[i] += v[i];
+    return *this;
+  }
+
   /// Scale this Point (*)
   WONTON_INLINE
   Point<D>& operator*=(double s) {
