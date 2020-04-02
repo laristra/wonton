@@ -77,7 +77,7 @@ endif ()
 set(WONTON_ENABLE_MPI False CACHE BOOL "Is MPI enabled in Wonton?")
 if (ENABLE_MPI)
   find_package(MPI REQUIRED)
-  set(WONTON_ENABLE_MPI True)
+  set(WONTON_ENABLE_MPI True CACHE BOOL "Is MPI enabled in Wonton?" FORCE)
 endif (ENABLE_MPI)
 
 
@@ -85,12 +85,12 @@ endif (ENABLE_MPI)
 # FleCSI and FleCSI-SP location
 #-----------------------------------------------------------------------------
 
-set(WONTON_ENABLE_FleCSI FALSE CACHE BOOL "Use FleCSI")
+set(WONTON_ENABLE_FleCSI FALSE CACHE BOOL "FleCSI interface enabled?")
 if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   find_package(FleCSI REQUIRED)
   find_package(FleCSISP REQUIRED)
 
-  set(WONTON_ENABLE_FleCSI True CACHE BOOL "FleCSI interface enabled?")
+  set(WONTON_ENABLE_FleCSI True CACHE BOOL "FleCSI interface enabled?" FORCE)
 
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
@@ -116,7 +116,7 @@ if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
   
   find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
 
-  set(WONTON_ENABLE_Jali True)
+  set(WONTON_ENABLE_Jali True CACHE BOOL "Jali interface enabled?" FORCE)
 
   message(STATUS "Located Jali")
   message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
@@ -162,7 +162,7 @@ if (ENABLE_THRUST)   # if it is overridden by the command line
   message(STATUS "Using ${THRUST_DEVICE_BACKEND} as Thrust device backend")
 
 
-  set(WONTON_ENABLE_THRUST True)
+  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
 
 else ()
 
@@ -315,7 +315,7 @@ if (LAPACKE_FOUND)
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
 
-  set(WONTON_ENABLE_LAPACKE True)
+  set(WONTON_ENABLE_LAPACKE True CACHE BOOL "LAPACKE libraries linked in?" FORCE)
 else ()
   message(FATAL_ERROR "LAPACKE enabled but not found.")
 endif ()
