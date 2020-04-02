@@ -65,7 +65,7 @@ class Point {
     @param[in] v std::vector of coordinates.
   */
   WONTON_INLINE
-  explicit Point(const std::vector<double> &v) {
+  Point(const std::vector<double> &v) {
     assert(v.size() == D);
     for (int i = 0; i < D; i++)
       m_loc[i] = v[i];

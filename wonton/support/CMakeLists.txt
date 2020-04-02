@@ -36,6 +36,14 @@ set(support_SOURCES
 
 if (ENABLE_UNIT_TESTS)
 
+  cinch_add_unit(test_point
+    SOURCES test/test_point.cc
+    POLICY SERIAL)
+
+  cinch_add_unit(test_vector
+      SOURCES test/test_vector.cc
+      POLICY SERIAL)
+
   cinch_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
     LIBRARIES wonton
