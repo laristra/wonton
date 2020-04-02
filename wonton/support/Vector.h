@@ -86,8 +86,7 @@ template <int D> class Vector {
   /*!
     @brief Constructor from a std:vector
   */
-  inline
-  explicit Vector(std::vector<double> const& invec) {
+  inline Vector(std::vector<double> const& invec) {
     assert(D == invec.size());
     for (int i = 0; i < D; i++) m_comp[i] = invec[i];
   }
@@ -149,8 +148,7 @@ template <int D> class Vector {
   double norm(bool doSqrt = true) const {
     double result = 0.0;
     for (int i = 0; i < D; i++) result += (m_comp[i] * m_comp[i]);
-    if (doSqrt) return sqrt(result);
-    return result;
+    return doSqrt ? sqrt(result) : result;
   }
 
   /*!
