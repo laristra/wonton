@@ -52,7 +52,7 @@ TEST(Vector, ImplicitConstruct) {
 
   // copy-list-initialization
   Wonton::Vector<1> v1 = {0.5};
-  Wonton::Vector<1> v2 = {0.5, 1.3};
+  Wonton::Vector<2> v2 = {0.5, 1.3};
   ASSERT_DOUBLE_EQ(v1[0], 0.5);
   ASSERT_DOUBLE_EQ(v2[0], v1[0]);
   ASSERT_DOUBLE_EQ(v2[1], 1.3);
