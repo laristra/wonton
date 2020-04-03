@@ -25,10 +25,23 @@ namespace direct_product_mesh_wrapper_test {
   template<int D>
   void check_basic_functions(
       const Wonton::Direct_Product_Mesh_Wrapper<D>& mesh_wrapper,
-      const std::array<std::vector<double>,(std::size_t)D> &axis_points) {
+      const std::array<std::vector<double>,(std::size_t)D> &axis_points,
+      const Wonton::Point<D> & plo, const Wonton::Point<D> & phi,
+      const bool is_distributed) {
 
     // Check basic dimensionality
     ASSERT_EQ(mesh_wrapper.space_dimension(), D);
+
+    // Is the mesh distributed?
+    ASSERT_EQ(mesh_wrapper.distributed(), is_distributed);
+
+    // Check mesh bounds
+    Wonton::Point<D> lo, hi;
+    mesh_wrapper.get_global_bounds(&lo, &hi);
+    for (int d = 0; d < D; ++d) {
+      ASSERT_EQ(plo[d], lo[d]);
+      ASSERT_EQ(phi[d], hi[d]);
+    }
 
     // Count cells in mesh
     int cell_count = 1;
@@ -308,6 +321,12 @@ namespace direct_product_mesh_wrapper_test {
     for (int d = 0; d < D; ++d) {
       axis_points_global[d] = axis_points_in;
     }
+    // mesh bounds
+    Wonton::Point<D> plo, phi;
+    for (int d = 0; d < D; ++d) {
+        plo[d] = axis_points_in.front();
+        phi[d] = axis_points_in.back();
+    }
     
     Wonton::Executor_type *executor;
     bool distributed = false;
@@ -341,7 +360,7 @@ namespace direct_product_mesh_wrapper_test {
     
       // Run basic tests
       direct_product_mesh_wrapper_test::check_basic_functions(
-      mesh_wrapper, axis_points);
+          mesh_wrapper, axis_points, plo, phi, distributed);
 
       // Run looping tests
 
