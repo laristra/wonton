@@ -55,7 +55,7 @@ if (WONTON_ENABLE_FleCSI)
 
   cinch_add_unit(test_flecsi_mesh_wrapper
     SOURCES flecsi/test/test_flecsi_mesh_wrapper.cc
-    LIBRARIES ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES}
+    LIBRARIES flecsi_mesh_wrapper
     POLICY MPI
     THREADS 1)
 
