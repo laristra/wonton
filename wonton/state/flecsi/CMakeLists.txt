@@ -10,10 +10,11 @@ Please see the license file at the root of this repository, or at:
 if (WONTON_ENABLE_FleCSI)
   add_library(flecsi_state_wrapper INTERFACE)
   
-  target_include_directories(flecsi_state_wrapper PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
-    $<INSTALL_INTERFACE:include)
+  target_include_directories(flecsi_state_wrapper INTERFACE
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<INSTALL_INTERFACE:include>
+  )
 
   set(flecsi_state_wrapper_HEADERS
     flecsi_state_wrapper.h
