@@ -86,7 +86,7 @@ endif (ENABLE_MPI)
 #-----------------------------------------------------------------------------
 
 set(WONTON_ENABLE_FleCSI FALSE CACHE BOOL "FleCSI interface enabled?")
-if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
+if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   find_package(FleCSI REQUIRED)
   find_package(FleCSISP REQUIRED)
 
@@ -98,7 +98,7 @@ if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   target_include_directories(wonton INTERFACE ${FleCSI_INCLUDE_DIR})
   target_include_directories(wonton INTERFACE ${FleCSISP_INCLUDE_DIR})
 
-  target_link_libaries(wonton INTERFACE ${FleCSI_LIBRARIES})
+  target_link_libraries(wonton INTERFACE ${FleCSI_LIBRARIES})
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
 
   target_compile_definitions(wonton INTERFACE WONTON_ENABLE_FleCSI)
