@@ -26,13 +26,13 @@ install(FILES ${wonton_mesh_HEADERS} DESTINATION include/wonton/mesh)
 target_link_libraries(wonton_mesh INTERFACE wonton_support)
 
 # Recurse down in subdirectories
-if (ENABLE_Jali)
+if (WONTON_ENABLE_Jali)
   add_subdirectory(jali)
-endif (ENABLE_Jali)
+endif ()
 
-if (FleCSI_DIR)
+if (WONTON_ENABLE_Jali)
   add_subdirectory(flecsi)
-endif (FleCSI_DIR)
+endif ()
 
 add_subdirectory(simple)
 
@@ -53,13 +53,3 @@ install(TARGETS wonton_mesh
   PUBLIC_HEADER DESTINATION include/wonton/mesh
   INCLUDES DESTINATION include/wonton/mesh
   )
-
-if (ENABLE_UNIT_TESTS)
-  if (ENABLE_FleCSI)
-    cinch_add_unit(test_flecsi_mesh_wrapper
-      SOURCES flecsi/test/test_flecsi_mesh_wrapper.cc
-      LIBRARIES wonton_mesh
-      POLICY MPI
-      THREADS 1)
-  endif (ENABLE_FleCSI)
-endif(ENABLE_UNIT_TESTS)
