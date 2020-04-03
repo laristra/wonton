@@ -34,7 +34,7 @@ if (WONTON_ENABLE_FleCSI)
 
   # FleCSI dependencies
   target_include_directories(flecsi_mesh_wrapper INTERFACE
-    ${FleCSI_INCLUDE_DIRS} ${FleCSISP_INCLUDE_DIRS})
+    ${FleCSI_INCLUDE_DIR} ${FleCSISP_INCLUDE_DIR})
 
   target_link_libraries(flecsi_mesh_wrapper INTERFACE
     ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES})
@@ -44,7 +44,7 @@ if (WONTON_ENABLE_FleCSI)
   target_link_libraries(wonton_mesh INTERFACE flecsi_mesh_wrapper)
   
   install(TARGETS flecsi_mesh_wrapper
-    EXPORT wonton-targets
+    EXPORT wonton_LIBRARIES
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
@@ -54,13 +54,9 @@ if (WONTON_ENABLE_FleCSI)
 
 
   cinch_add_unit(test_flecsi_mesh_wrapper
-    SOURCES flecsi/test/test_flecsi_mesh_wrapper.cc
+    SOURCES test/test_flecsi_mesh_wrapper.cc
     LIBRARIES flecsi_mesh_wrapper
     POLICY MPI
     THREADS 1)
 
-  # unit test needs FleCSI includes
-  target_include_directories(test_flecsi_mesh_wrapper
-    PRIVATE ${FleCSI_INCLUDE_DIRS} ${FleCSISP_INCLUDE_DIRS})
-  
 endif ()
