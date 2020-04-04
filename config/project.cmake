@@ -162,7 +162,7 @@ if (ENABLE_THRUST)   # if it is overridden by the command line
   message(STATUS "Using ${THRUST_DEVICE_BACKEND} as Thrust device backend")
 
 
-  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
+  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?" FORCE)
 
 else ()
 
