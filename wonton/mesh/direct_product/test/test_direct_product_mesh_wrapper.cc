@@ -91,7 +91,7 @@ namespace direct_product_mesh_wrapper_test {
     // Verify cell coordinate count
     std::vector<Wonton::Point<D>> ccoord;
     mesh_wrapper.cell_get_coordinates(id, &ccoord);
-    ASSERT_EQ(pow(2,D), ccoord.size());
+    ASSERT_EQ(unsigned(std::pow(2,D)), ccoord.size());
       
     if (mesh_wrapper.cell_get_type(id) == Wonton::PARALLEL_OWNED) {
       // Verify the volume
@@ -107,8 +107,8 @@ namespace direct_product_mesh_wrapper_test {
       // Verify the cell centroid
       Wonton::Point<D> expcen;
       for (int d = 0; d < D; d++) expcen[d] = 0.0;
-      for (int i = 0; i < ccoord.size(); i++)
-        expcen += ccoord[i];
+      for (auto const& c : ccoord)
+        expcen += c;
       expcen /= ccoord.size();
       Wonton::Point<D> ccen;
       mesh_wrapper.cell_centroid(id, &ccen);
@@ -194,8 +194,8 @@ namespace direct_product_mesh_wrapper_test {
       }
       n += indices[0]+wrapper.num_ghost_layers();
       // Ensure that the 1D index is in the valid range
-      ASSERT_GE(n, 0);
-      ASSERT_LT(n, num_cells_all);
+      ASSERT_GE(n, unsigned(0));
+      ASSERT_LT(n, unsigned(num_cells_all));
       // Mark that value as having been found
       found[n] += 1;
     }
@@ -230,7 +230,7 @@ namespace direct_product_mesh_wrapper_test {
 
       // Make sure we got the right number?
       int num_ghost_layers = wrapper.mesh().num_ghost_layers();
-      std::array<int, D> nindices;
+      std::array<int, D> nindices {};
       for (int d = 0; d < D; d++) {
         int num_points_all = wrapper.mesh().num_axis_points(d, Wonton::ALL);
         int lo = (indices[d]-1 >= -num_ghost_layers) ?
@@ -242,13 +242,13 @@ namespace direct_product_mesh_wrapper_test {
       int expnum = 1;
       for (int d = 0; d < D; d++)
         expnum *= nindices[d];
-      ASSERT_EQ(expnum, adjcells.size());
+      ASSERT_EQ(unsigned(expnum), adjcells.size());
       
       // Make sure the indices of the cells are no more than one off
       for (auto adjid : adjcells) {
         auto adjindices = wrapper.cellid_to_indices(adjid);
         for (int d = 0; d < D; d++)
-          ASSERT_LE(fabs(indices[d]-adjindices[d]), 1);
+          ASSERT_LE(std::abs(indices[d]-adjindices[d]), 1);
       }
 
       bool on_ext_boundary = false;
@@ -293,13 +293,13 @@ namespace direct_product_mesh_wrapper_test {
       int expnum = 1;
       for (int d = 0; d < D; d++)
         expnum *= nindices[d];
-      ASSERT_EQ(expnum, adjnodes.size());
+      ASSERT_EQ(unsigned(expnum), adjnodes.size());
       
       // Make sure the indices of the cells are no more than one off
       for (auto adjid : adjnodes) {
         auto adjindices = wrapper.nodeid_to_indices(adjid);
         for (int d = 0; d < D; d++)
-          ASSERT_LE(fabs(indices[d]-adjindices[d]), 1);
+          ASSERT_LE(std::abs(indices[d]-adjindices[d]), 1);
       }
 
       bool on_ext_boundary = false;
