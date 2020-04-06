@@ -139,7 +139,7 @@ StateManager(const MeshWrapper& mesh,
   }
 
 
-  virtual /*!
+  /*!
     @brief Return the material cells.
     @return map from material id to vector of cell ids
 
@@ -477,7 +477,7 @@ StateManager(const MeshWrapper& mesh,
     Return a read only reference to the cell ids for this material id. If no
     materials have been defined, return a reference to an empty vector.
   */
-  virtual std::vector<int> const& get_material_cells(int m) const {
+  std::vector<int> const& get_material_cells(int m) const {
     return material_cells_.at(m);
   }
 
