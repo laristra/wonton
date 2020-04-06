@@ -42,10 +42,9 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     two optional map arguments: the map from material name to id, and
     the map from material id to the cells containing that material
   */
-  Flat_State_Wrapper(const MeshWrapper& mesh,
-                     std::unordered_map<std::string, int> names = {},
-                     std::unordered_map<int, std::vector<int>> material_cells =
-                       {})
+  explicit Flat_State_Wrapper(const MeshWrapper& mesh,
+                     std::unordered_map<std::string, int> const& names = {},
+                     std::unordered_map<int, std::vector<int>> const& material_cells = {})
     : StateManager<MeshWrapper>(mesh, names, material_cells) { }
 
 
@@ -54,7 +53,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
 
   /// Destructor.
-  ~Flat_State_Wrapper() { }
+  ~Flat_State_Wrapper() = default;
 
 
  /*!
@@ -76,7 +75,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
   */
   template <class State_Wrapper>
   void initialize(State_Wrapper const & input,
-                  const std::vector<std::string> var_names) {
+                   std::vector<std::string> const& var_names) {
                   
     // clear any existing state data                
     StateManager<MeshWrapper>::clear();  
@@ -136,7 +135,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
       if (type==Wonton::Field_type::MULTIMATERIAL_FIELD){
     
         // We need a non-const state wrapper for the get_data_type function
-        State_Wrapper& input_nonconst = const_cast<State_Wrapper&>(input); 
+        auto& input_nonconst = const_cast<State_Wrapper&>(input);
 
         // We need to create a state vector but the type is variable
         const std::type_info& data_type = input_nonconst.get_data_type(varname);
@@ -211,8 +210,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<Wonton::Point<3>>>(pv1);
           }
         } else {
-      
-          throw("found an unknown field type!");
+          throw std::runtime_error("found an unknown field type!");
         }
                
       } else {
@@ -348,6 +346,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         return result;
       }
     }
+    else
+      throw std::runtime_error("invalid field type");
   }
 
 
@@ -449,7 +449,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             int m = kv.first;
             
             // existing material data
-            std::vector<Wonton::Point<2>> & material_data=kv.second;
+            std::vector<Wonton::Point<2>> & current_material_data=kv.second;
             
             // vector to merge material data
             std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
@@ -460,7 +460,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             // merge the data
             int c=0;
             for (auto id: distributedMaterialCellIds)
-              merged_material_data[c++]=material_data[id];
+              merged_material_data[c++]=current_material_data[id];
               
             // add this cell data to the state manager 
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
@@ -522,7 +522,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             int m = kv.first;
             
             // existing material data
-            std::vector<Wonton::Point<3>> & material_data=kv.second;
+            std::vector<Wonton::Point<3>> & current_material_data=kv.second;
             
             // vector to merge material data
             std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
@@ -533,7 +533,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             // merge the data
             int c=0;
             for (auto id: distributedMaterialCellIds)
-              merged_material_data[c++]=material_data[id];
+              merged_material_data[c++]=current_material_data[id];
               
             // add this cell data to the state manager 
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
@@ -585,7 +585,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             int m = kv.first;
             
             // existing material data
-            std::vector<double> & material_data=kv.second;
+            std::vector<double> & current_material_data=kv.second;
             
             // vector to merge material data
             std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
@@ -596,13 +596,15 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             // merge the data
             int c=0;
             for (auto id: distributedMaterialCellIds)
-              merged_material_data[c++]=material_data[id];
+              merged_material_data[c++]=current_material_data[id];
               
             // add this cell data to the state manager 
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
         }      
       }
     }
+    else
+      throw std::runtime_error("invalid field type");
   }
 
   /*!
@@ -654,7 +656,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
     Return the sorted vector of material ids actually used in the cell mat data.
   */
-  std::vector<int> const get_material_ids() const {
+  std::vector<int> get_material_ids() const {
 
     std::vector<int> material_ids;
     for (auto& kv : StateManager<MeshWrapper>::material_cells_) material_ids.emplace_back(kv.first);
@@ -670,7 +672,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
     Return the sorted vector of material shapes actually used in the cell mat data.
   */
-  std::vector<int> const get_material_shapes() const {
+  std::vector<int> get_material_shapes() const {
 
     std::vector<int> material_ids=get_material_ids();
     std::vector<int> material_shapes;
@@ -688,7 +690,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
     Return the sorted vector of material shapes actually used in the cell mat data.
   */
-  std::vector<int> const get_material_cells() const {
+  std::vector<int> get_material_cells() const override {
 
     std::vector<int> material_ids=get_material_ids();
     std::vector<int> material_cells;
