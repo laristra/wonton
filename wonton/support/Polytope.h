@@ -126,14 +126,14 @@ public:
     @return  Vector of moments; moments[0] is the size, moments[i+1]/moments[0] is i-th
     coordinate of the centroid
   */
-  std::vector<double> face_moments(int const face_id) const;
+  std::vector<double> face_moments(int face_id) const;
 
   /*!
     @brief Effective normal to a face of the polytope
     @param face_id  ID of the face of the polytope
     @return  Normal vector
   */
-  Vector<D> face_normal(int const face_id) const;
+  Vector<D> face_normal(int face_id) const;
 
   /*!
    @brief Moments for the polytope
@@ -178,8 +178,8 @@ std::vector<double> Polytope<2>::face_moments(int const face_id) const {
 template<>
 inline
 std::vector<double> Polytope<3>::face_moments(int const face_id) const {
-  int nfaces = num_faces();
-  assert((face_id >= 0) && (face_id < nfaces));
+
+  assert((face_id >= 0) && (face_id < num_faces()));
 
   std::vector<double> face_moments(4, 0.0);
   const std::vector<int>& fvertices = face_vertices(face_id);
@@ -224,14 +224,15 @@ std::vector<double> Polytope<3>::face_moments(int const face_id) const {
 */
 template<>
 inline
-Vector<2> Polytope<2>::face_normal(int const face_id) const {
-  int nfaces = num_faces();
+Vector<2> Polytope<2>::face_normal(int face_id) const {
+
+  int const nfaces = num_faces();
   assert((face_id >= 0) && (face_id < nfaces));
 
   int ifv = face_id, isv = (face_id + 1)%nfaces;
   double flen = (vertex_points_[isv] - vertex_points_[ifv]).norm();
   if (flen == 0.0)
-    return Vector<2>(0.0, 0.0);
+    return {0.0, 0.0};
 
   Vector<2> fnormal(
     (vertex_points_[isv][1] - vertex_points_[ifv][1])/flen,
@@ -249,9 +250,9 @@ Vector<2> Polytope<2>::face_normal(int const face_id) const {
 */
 template<>
 inline
-Vector<3> Polytope<3>::face_normal(int const face_id) const {
-  int nfaces = num_faces();
-  assert((face_id >= 0) && (face_id < nfaces));
+Vector<3> Polytope<3>::face_normal(int face_id) const {
+
+  assert((face_id >= 0) && (face_id < num_faces()));
 
   Vector<3> fnormal(0.0, 0.0, 0.0);
   const std::vector<int>& fvertices = face_vertices(face_id);
