@@ -622,6 +622,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     else if ( data_type == typeid(Wonton::Point<2>)) return 2;
     else if ( data_type == typeid(Wonton::Point<3>)) return 3;
 
+    throw std::runtime_error("invalid data type");
   }
 
   /*!
