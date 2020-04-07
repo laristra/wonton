@@ -346,8 +346,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         return result;
       }
     }
-    else
-      throw std::runtime_error("invalid field type");
+    
+    throw std::runtime_error("invalid field type");
   }
 
 
