@@ -244,7 +244,7 @@ std::pair<
     const Adaptive_Refinement_Mesh<D,CoordSys>::mesh_data_t &cells,
     const std::vector<int> &level, const int n) {
   assert(n >= 0);
-  assert(n < cells.size());
+  assert(unsigned(n) < cells.size());
   // Create new storage
   // -- New storage replaces 1 cell with 2^D cells
   const int num_new_cells = (1<<D) - 1;

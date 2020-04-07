@@ -68,7 +68,7 @@ public:
     @return  Vector of indices of the face's vertices
   */
   const std::vector<int>& face_vertices(int const face_id) const {
-    assert((face_id >= 0) && (face_id < face_vertices_.size()));
+    assert((face_id >= 0) && (unsigned(face_id) < face_vertices_.size()));
     return face_vertices_[face_id];
   }
   
@@ -80,7 +80,7 @@ public:
     @return  Vector of coordinates of face's vertices
   */
   std::vector< Point<D> > face_points(int const face_id) const {
-    assert((face_id >= 0) && (face_id < face_vertices_.size()));
+    assert((face_id >= 0) && (unsigned(face_id) < face_vertices_.size()));
 
     int nvrts = static_cast<int>(face_vertices_[face_id].size());
     std::vector< Point<D> > fpoints;
@@ -105,7 +105,7 @@ public:
     @return  Coordinates of that vertex
   */
   Point<D> vertex_point(int const vertex_id) const {
-    assert((vertex_id >= 0) && (vertex_id < vertex_points_.size()));
+    assert((vertex_id >= 0) && (unsigned(vertex_id) < vertex_points_.size()));
     return vertex_points_[vertex_id];
   }
   
