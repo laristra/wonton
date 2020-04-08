@@ -118,12 +118,10 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 */
 
 template<int D>
-  // int N = D*(D+3)/2;  
-  Vector<D*(D+3)/2> ls_quadfit(std::vector<Point<D>> const & coords,
-			       std::vector<double> const & vals, 
-			       bool const boundary_element) {
-
-  Point<D> coord0 = coords[0];
+// int N = D*(D+3)/2;
+Vector<D*(D+3)/2> ls_quadfit(std::vector<Point<D>> const & coords,
+                             std::vector<double> const & vals,
+                             bool const boundary_element) {
 
   double val0 = vals[0];
 
@@ -135,7 +133,7 @@ template<int D>
 
   if (boundary_element) {
     // Not enough values to do a quadratic fit - drop down to linear fit
-    
+
     Vector<D> grad = ls_gradient(coords, vals);
     Vector<D*(D+3)/2> result;
     for (int i = 0; i < D*(D+3)/2; i++) result[i] = 0.0;
@@ -151,7 +149,7 @@ template<int D>
   // labels the columns up to D (e.g., gradient). Index j1
   // labels the D(D+1)/2 extra columns for the quadratic terms.
   // Index i labels rows for data points away from the center of
-  // the point cloud (i.e., array[0]) with nvals points, contained 
+  // the point cloud (i.e., array[0]) with nvals points, contained
   // in the array coords(nvals,D).
 
   Matrix A(nvals-1, D*(D+3)/2); // don't include 0th point
@@ -162,23 +160,21 @@ template<int D>
       // Add columns with the remaining quadratic delta terms
       // for each i, starting at D+j, reusing linear delta terms
       for (int k=0; k <= j0; k++) {
-  	A[i][j1] = A[i][k]*A[i][j0];
-  	j1 += 1;
+        A[i][j1] = A[i][k]*A[i][j0];
+        j1 += 1;
       }
     }
   }
 
-  size_t ma = D*(D+3)/2;
+  int const ma = D*(D+3)/2;
   std::vector<std::vector<double> > u(nvals-1, std::vector<double>(ma));
   std::vector<std::vector<double> > v(ma, std::vector<double>(ma));
   std::vector<double> w(ma);
-  for (int i=0; i < nvals-1; i++) {
-    for (int j=0; j < D*(D+3)/2; j++) {
+  for (int i = 0; i < nvals-1; i++) {
+    for (int j = 0; j < ma; j++) {
       u[i][j] = A[i][j];
     }
   }
-  
-  int err = svd(u,w,v);
 
   // "edit" the singular values (eigenvalues):
   // (1) find wmax = largest value of w
@@ -186,14 +182,14 @@ template<int D>
   // -->Any other w's contribute 0 to the solution
   double scale = 1e-5;
   double wmax = 0.0;
-  for (int j=0; j<ma; j++) {
+  for (int j = 0; j < ma; j++) {
     if (w[j] > wmax) wmax=w[j];
   }
   double thresh = scale*wmax;
-  for (int j=0; j<ma; j++) {
-   if (w[j] < thresh) w[j]=0.0;
+  for (int j = 0; j < ma; j++) {
+    if (w[j] < thresh) w[j]=0.0;
   }
-  
+
   // Each entry/row of F contains the difference between the
   // function value at the candidate point and the function value
   // at the point where we are computing (f-f_0)
