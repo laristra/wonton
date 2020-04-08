@@ -402,7 +402,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         std::vector<Wonton::Point<2>> correctly_typed_data(flat_data.size()/2);
 
         // convert to the correct type
-        for (int i=0; i<flat_data.size(); i+=2){
+        int const num_flat_data = flat_data.size();
+        for (int i = 0; i < num_flat_data; i += 2) {
           correctly_typed_data[i/2] = Wonton::Point<2>(flat_data[i], flat_data[i+1]);
         }
 
@@ -422,7 +423,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         int running_counter=0;
 
         // loop over material ids on different nodes
-        for (int i=0; i<all_material_ids.size(); ++i){
+        int const num_all_material_ids = all_material_ids.size();
+        for (int i = 0; i < num_all_material_ids; ++i) {
 
           // get the current working material
           int mat_id = all_material_ids[i];
@@ -474,7 +476,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         std::vector<Wonton::Point<3>> correctly_typed_data(flat_data.size()/3);
 
         // convert to the correct type
-        for (int i=0; i<flat_data.size(); i+=3){
+        int const num_flat_data = flat_data.size();
+        for (int i = 0; i < num_flat_data; i += 3) {
           correctly_typed_data[i/3] = Wonton::Point<3>(flat_data[i], flat_data[i+1], flat_data[i+2]);
         }
 
@@ -494,7 +497,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         int running_counter=0;
 
         // loop over material ids on different nodes
-        for (int i=0; i<all_material_ids.size(); ++i){
+        int const num_all_material_ids = all_material_ids.size();
+        for (int i = 0; i < num_all_material_ids; ++i) {
 
           // get the current working material
           int mat_id = all_material_ids[i];
@@ -559,7 +563,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         int running_counter=0;
 
         // loop over material ids on different nodes
-        for (int i=0; i<all_material_ids.size(); ++i){
+        int const num_all_material_ids = all_material_ids.size();
+        for (int i = 0; i < num_all_material_ids; ++i) {
 
           // get the current working material
           int mat_id = all_material_ids[i];
@@ -678,8 +683,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     std::vector<int> material_ids=get_material_ids();
     std::vector<int> material_shapes;
 
-    for (auto m : material_ids) material_shapes.emplace_back(
-      StateManager<MeshWrapper>::material_cells_.at(m).size());
+    for (auto m : material_ids)
+      material_shapes.emplace_back(StateManager<MeshWrapper>::material_cells_.at(m).size());
 
     return material_shapes;
   }
