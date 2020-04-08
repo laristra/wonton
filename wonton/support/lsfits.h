@@ -176,6 +176,8 @@ Vector<D*(D+3)/2> ls_quadfit(std::vector<Point<D>> const & coords,
     }
   }
 
+  svd(u,w,v);
+
   // "edit" the singular values (eigenvalues):
   // (1) find wmax = largest value of w
   // (2) select only w's between TOL*wmax <= w <= wmax
