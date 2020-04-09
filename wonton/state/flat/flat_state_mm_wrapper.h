@@ -42,10 +42,9 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     two optional map arguments: the map from material name to id, and
     the map from material id to the cells containing that material
   */
-  Flat_State_Wrapper(const MeshWrapper& mesh,
-                     std::unordered_map<std::string, int> names = {},
-                     std::unordered_map<int, std::vector<int>> material_cells =
-                       {})
+  explicit Flat_State_Wrapper(const MeshWrapper& mesh,
+                     std::unordered_map<std::string, int> const& names = {},
+                     std::unordered_map<int, std::vector<int>> const& material_cells = {})
     : StateManager<MeshWrapper>(mesh, names, material_cells) { }
 
 
@@ -54,7 +53,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
 
   /// Destructor.
-  ~Flat_State_Wrapper() { }
+  ~Flat_State_Wrapper() = default;
 
 
  /*!
@@ -76,29 +75,29 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
   */
   template <class State_Wrapper>
   void initialize(State_Wrapper const & input,
-                  const std::vector<std::string> var_names) {
-                  
-    // clear any existing state data                
-    StateManager<MeshWrapper>::clear();  
+                   std::vector<std::string> const& var_names) {
+
+    // clear any existing state data
+    StateManager<MeshWrapper>::clear();
 
      // get the number of materials
     int nmats = input.num_materials();
 
-    // we may need to add volume fraction an centroid data to the list of 
+    // we may need to add volume fraction an centroid data to the list of
     // distributed fields, so define a temp variable for these fields
     std::vector<std::string> distribute_var_names(var_names.begin(), var_names.end());
-    
+
     // is this a multimaterial problem, if so, add material names and cell indices
     // to the flat state. Do this only once regardless of the number of fields.
-    if (nmats>0){      
-      
-      // create the name to id map            
+    if (nmats>0){
+
+      // create the name to id map
       std::unordered_map<std::string, int> name_map;
       for (int i=0; i<nmats; ++i){
-      
+
         // get the material name
         std::string material_name = input.material_name(i);
-        
+
         // add to the temp name map
         name_map[material_name]=i;
       }
@@ -107,114 +106,113 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
       StateManager<MeshWrapper>::add_material_names(name_map);
 
       // copy cell indices
-      for (int m=0; m<nmats; ++m){        
+      for (int m=0; m<nmats; ++m){
 
         // get the cells for this material from the input state wrapper
         std::vector<int> mat_cells;
         input.mat_get_cells(m, &mat_cells);
-        
+
         // add the cells to the flat state
         StateManager<MeshWrapper>::mat_add_cells(m, mat_cells);
-      }      
-      
-      // if this is a multimaterial problem we will also need to distriube 
+      }
+
+      // if this is a multimaterial problem we will also need to distriube
       // volume fraction and centroid
       distribute_var_names.emplace_back("mat_volfracs");
       distribute_var_names.emplace_back("mat_centroids");
 
     }
-     
+
     // add material fields to the flat state
     for (std::string varname : distribute_var_names) {
-   
+
       // get the entity kind
-      Entity_kind entity = input.get_entity(varname);   
-       
+      Entity_kind entity = input.get_entity(varname);
+
       // get the field type
       Field_type type = input.field_type(entity, varname);
-    
+
       if (type==Wonton::Field_type::MULTIMATERIAL_FIELD){
-    
+
         // We need a non-const state wrapper for the get_data_type function
-        State_Wrapper& input_nonconst = const_cast<State_Wrapper&>(input); 
+        auto& input_nonconst = const_cast<State_Wrapper&>(input);
 
         // We need to create a state vector but the type is variable
         const std::type_info& data_type = input_nonconst.get_data_type(varname);
-      
+
         // construct the state vector type by if statement
         // Is there a better/more idiomatic way to do this???
         if (data_type == typeid(double)){
-      
+
           // create a uni state vector
           std::shared_ptr<StateVectorMulti<double>> pv =
             std::make_shared<StateVectorMulti<double>> (varname);
-      
-          // add to database (inside loop, since pv is typed diffently below and 
+
+          // add to database (inside loop, since pv is typed diffently below and
           // pv has local scope
           StateManager<MeshWrapper>::add(pv);
-        
+
           // loop over materials
           for (int m=0; m<nmats; ++m){
-                   
+
             // get the data from the input state wrapper
             double const* data;
             input.mat_get_celldata(varname, m, &data);
-        
+
             // add the data to the flat state
-            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);            
+            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);
             auto pv1 = StateManager<MeshWrapper>::get(varname);
             auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<double>>(pv1);
           }
-          
+
         } else if (data_type == typeid(Wonton::Point<2>)){
-      
+
           // create a uni state vector
           std::shared_ptr<StateVectorMulti<Wonton::Point<2>>> pv =
             std::make_shared<StateVectorMulti<Wonton::Point<2>>> (varname);
-                  
-          // add to database (inside loop, since pv is typed diffently below and 
+
+          // add to database (inside loop, since pv is typed diffently below and
           // pv has local scope
           StateManager<MeshWrapper>::add(pv);
-        
+
           // loop over materials
           for (int m=0; m<nmats; ++m){
-                     
+
             // get the data from the input state wrapper
             Wonton::Point<2> const* data;
             input.mat_get_celldata(varname, m, &data);
-        
+
             // add the data to the flat state
-            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);            
+            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);
             auto pv1 = StateManager<MeshWrapper>::get(varname);
             auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<Wonton::Point<2>>>(pv1);
           }
         } else if (data_type == typeid(Wonton::Point<3>)){
-      
+
           // create a uni state vector
           std::shared_ptr<StateVectorMulti<Wonton::Point<3>>> pv =
             std::make_shared<StateVectorMulti<Wonton::Point<3>>> (varname);
-                  
-          // add to database (inside loop, since pv is typed diffently below and 
+
+          // add to database (inside loop, since pv is typed diffently below and
           // pv has local scope
           StateManager<MeshWrapper>::add(pv);
-        
+
           // loop over materials
           for (int m=0; m<nmats; ++m){
-                     
+
             // get the data from the input state wrapper
             Wonton::Point<3> const* data;
             input.mat_get_celldata(varname, m, &data);
-        
+
             // add the data to the flat state
-            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);            
+            StateManager<MeshWrapper>::mat_add_celldata(varname, m, data);
             auto pv1 = StateManager<MeshWrapper>::get(varname);
             auto pv2 = std::dynamic_pointer_cast<StateVectorMulti<Wonton::Point<3>>>(pv1);
           }
         } else {
-      
-          throw("found an unknown field type!");
+          throw std::runtime_error("found an unknown field type!");
         }
-               
+
       } else {
 
         // AT THE MOMENT WE ARE ASSUMING SINGLE MATERIAL FIELDS ARE ALWAYS DOUBLES
@@ -232,7 +230,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
                                                     data+dataSize, entity);
         // add to database
         StateManager<MeshWrapper>::add(pv);
-      }       
+      }
     }
   }
 
@@ -248,21 +246,21 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
   /*!
    @brief Turn the field into a vector of doubles
    @param[in] field_name    The field name
-   @return The serialized vector of doubles 
-  
+   @return The serialized vector of doubles
+
   */
   std::vector<double> pack(std::string field_name) {
-  
+
     // get the state vector base class shared pointer
     std::shared_ptr<StateVectorBase> pv =
         StateManager<MeshWrapper>::get(field_name);
-    
-    // get the data type    
-    const std::type_info& data_type = pv->data_type(); 
-    
+
+    // get the data type
+    const std::type_info& data_type = pv->data_type();
+
     // get the field type
     const Wonton:: Field_type field_type = pv->get_type();
-    
+
     if (field_type == Wonton::Field_type::MESH_FIELD){
 
       // this is a mesh field
@@ -270,27 +268,27 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
       if ( data_type == typeid(double)){
 
           // field data is doubles
-        return std::static_pointer_cast<StateVectorUni<double>>(pv)->get_data();           
+        return std::static_pointer_cast<StateVectorUni<double>>(pv)->get_data();
       }
-        
+
     } else if (field_type == Wonton::Field_type::MULTIMATERIAL_FIELD){
 
       // this is a multimaterial field
-  
+
       if ( data_type == typeid(Wonton::Point<2>)){
-      
+
         // field data is wonton 2d points
-          
+
         // get the ordered keys
         std::vector<int> const ids = get_material_ids();
-          
+
         // get the raw mm data
-        std::unordered_map<int, std::vector<Wonton::Point<2>>> mm_data =  
+        std::unordered_map<int, std::vector<Wonton::Point<2>>> mm_data =
             std::static_pointer_cast<StateVectorMulti<Wonton::Point<2>>>(pv)->get_data();
-        
+
         // define the result
         std::vector<double> result;
-        
+
         // loop over material ids in the mm state in sort order
         for (int id : ids){
           for (auto& d : mm_data.at(id)){
@@ -298,22 +296,22 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             result.emplace_back(d[1]);
           }
         }
-          
+
         return result;
       } else if ( data_type == typeid(Wonton::Point<3>)){
-      
+
         // field data is wonton 3d points
-          
+
         // get the ordered keys
         std::vector<int> const ids = get_material_ids();
-          
+
         // get the raw mm data
-        std::unordered_map<int, std::vector<Wonton::Point<3>>> mm_data =  
+        std::unordered_map<int, std::vector<Wonton::Point<3>>> mm_data =
             std::static_pointer_cast<StateVectorMulti<Wonton::Point<3>>>(pv)->get_data();
-        
+
         // define the result
         std::vector<double> result;
-        
+
         // loop over material ids in the mm state in sort order
         for (int id : ids){
           for (auto& d : mm_data.at(id)){
@@ -322,32 +320,34 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
             result.emplace_back(d[2]);
           }
         }
-          
+
         return result;
       } else if (data_type == typeid(double)){
-        
+
         // field data is doubles
-          
+
         // get the ordered keys
         std::vector<int> const ids = get_material_ids();
-          
+
         // get the raw mm data
-        std::unordered_map<int, std::vector<double>> mm_data =  
+        std::unordered_map<int, std::vector<double>> mm_data =
           std::static_pointer_cast<StateVectorMulti<double>>(pv)->get_data();
-        
+
         // define the result
         std::vector<double> result;
-        
+
         // loop over material ids in the mm state in sort order
         for (int id : ids){
           for (auto& d : mm_data.at(id)){
             result.emplace_back(d);
           }
         }
-                 
+
         return result;
       }
     }
+    
+    throw std::runtime_error("invalid field type");
   }
 
 
@@ -357,269 +357,277 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
    @param[in] flat_data        The serialized striped vector of doubles to be unpacked
    @param[in] all_material_ids The striped material ids from all nodes
    @param[in] all_material_shapes The striped material shapes from all nodes
-  
+
   */
   void unpack(std::string field_name, const std::vector<double> & flat_data,
-    const std::vector<int> & all_material_ids={}, 
+    const std::vector<int> & all_material_ids={},
     const std::vector<int> & all_material_shapes={},
     const std::map<int, std::vector<int>>& distributedMaterialCellIds_={} ) {
-  
+
     // get the state vector base class shared pointer
     std::shared_ptr<StateVectorBase> pv =
       StateManager<MeshWrapper>::get(field_name);
-    
-    // get the data type    
-    const std::type_info& data_type = pv->data_type(); 
-    
+
+    // get the data type
+    const std::type_info& data_type = pv->data_type();
+
     // get the field type
     const Wonton:: Field_type field_type = pv->get_type();
-    
+
     if (field_type == Wonton::Field_type::MESH_FIELD){
-    
+
       // this is a mesh field
-  
+
       if ( data_type == typeid(double)){
-        
+
         // copy the mesh data into the state vector
         std::static_pointer_cast<StateVectorUni<double>>(pv)->get_data()=flat_data;
       }
-      
+
     } else if (field_type == Wonton::Field_type::MULTIMATERIAL_FIELD){
-    
+
       // THIS SHOULD BE MADE PRETTIER DURING A CLEANUP SPRINT. THE FOLLOWING
       // THREE CODE BLOCKS POINT<2>, POINT<3>, AND DOUBLE ARE NEARLY IDENTICAL
       // POINT<2> AND POINT<3> COULD OBVIOUSLY BE TEMPLATED, THE DOUBLE CASE
       // MAY NEED IT'S OWN FUNCTION. BUT, THE CASE SHOULD BE WRITTEN AS FUNCTIONS
       // RATHER THAN INLINE
-      
+
       // this is a multimaterial field
-  
+
       if ( data_type == typeid(Wonton::Point<2>)){
-      
+
         // field data is 2d wonton points
-          
+
         // allocate the vector data
         std::vector<Wonton::Point<2>> correctly_typed_data(flat_data.size()/2);
-          
+
         // convert to the correct type
-        for (int i=0; i<flat_data.size(); i+=2){
+        int const num_flat_data = flat_data.size();
+        for (int i = 0; i < num_flat_data; i += 2) {
           correctly_typed_data[i/2] = Wonton::Point<2>(flat_data[i], flat_data[i+1]);
         }
-          
+
         // allocate the data for unpacking
         std::unordered_map<int,std::vector<Wonton::Point<2>>> material_data;
-      
-    
+
+
         /////////////////////////////////////////////////////////
         // We need to turn the flattened material cells into a correctly shaped
         // ragged right structure for use as the material cells in the flat
         // state wrapper. Just as in the flat state mesh field (and associated
         // cell ids), we aren't removing duplicates, just concatnating by material
         /////////////////////////////////////////////////////////
-        
-        
+
+
         // reset the running counter
         int running_counter=0;
-        
+
         // loop over material ids on different nodes
-        for (int i=0; i<all_material_ids.size(); ++i){
-        
+        int const num_all_material_ids = all_material_ids.size();
+        for (int i = 0; i < num_all_material_ids; ++i) {
+
           // get the current working material
           int mat_id = all_material_ids[i];
-          
+
           // get the current number of material cells for this material
           int nmat_cells = all_material_shapes[i];
-          
+
           // get or create a reference to the correct material cell vector
           auto& these_material_data = material_data[mat_id];
-          
+
           // loop over the correct number of material cells
           for (int j=0; j<nmat_cells; ++j){
               these_material_data.push_back(correctly_typed_data[running_counter++]);
           }
-            
+
         }
-              
+
         // the underlying api mat_add_celldata clears the existing data
         for ( auto& kv: material_data){
-            
-            // the data needs to be merged within each material 
-            
+
+            // the data needs to be merged within each material
+
             // material id
             int m = kv.first;
-            
+
             // existing material data
-            std::vector<Wonton::Point<2>> & material_data=kv.second;
-            
+            std::vector<Wonton::Point<2>> & current_material_data=kv.second;
+
             // vector to merge material data
             std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
-            
+
             // merged material data
             std::vector<Wonton::Point<2>> merged_material_data(distributedMaterialCellIds.size());
-            
+
             // merge the data
             int c=0;
             for (auto id: distributedMaterialCellIds)
-              merged_material_data[c++]=material_data[id];
-              
-            // add this cell data to the state manager 
+              merged_material_data[c++]=current_material_data[id];
+
+            // add this cell data to the state manager
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
         }
-      
+
       } else if ( data_type == typeid(Wonton::Point<3>)){
-      
+
         // field data is 2d wonton points
-          
+
         // allocate the vector data
         std::vector<Wonton::Point<3>> correctly_typed_data(flat_data.size()/3);
-          
+
         // convert to the correct type
-        for (int i=0; i<flat_data.size(); i+=3){
+        int const num_flat_data = flat_data.size();
+        for (int i = 0; i < num_flat_data; i += 3) {
           correctly_typed_data[i/3] = Wonton::Point<3>(flat_data[i], flat_data[i+1], flat_data[i+2]);
         }
-          
+
         // allocate the data for unpacking
         std::unordered_map<int,std::vector<Wonton::Point<3>>> material_data;
-      
-    
+
+
         /////////////////////////////////////////////////////////
         // We need to turn the flattened material cells into a correctly shaped
         // ragged right structure for use as the material cells in the flat
         // state wrapper. Just as in the flat state mesh field (and associated
         // cell ids), we aren't removing duplicates, just concatenating by material
         /////////////////////////////////////////////////////////
-        
-        
+
+
         // reset the running counter
         int running_counter=0;
-        
+
         // loop over material ids on different nodes
-        for (int i=0; i<all_material_ids.size(); ++i){
-        
+        int const num_all_material_ids = all_material_ids.size();
+        for (int i = 0; i < num_all_material_ids; ++i) {
+
           // get the current working material
           int mat_id = all_material_ids[i];
-          
+
           // get the current number of material cells for this material
           int nmat_cells = all_material_shapes[i];
-          
+
           // get or create a reference to the correct material cell vector
           auto& these_material_data = material_data[mat_id];
-          
+
           // loop over the correct number of material cells
           for (int j=0; j<nmat_cells; ++j){
               these_material_data.push_back(correctly_typed_data[running_counter++]);
           }
-            
+
         }
-              
+
         // add the material indices by keys
         // the underlying api mat_add_celldata clears the existing data
         for ( auto& kv: material_data){
-            
-            // the data needs to be merged within each material 
-            
+
+            // the data needs to be merged within each material
+
             // material id
             int m = kv.first;
-            
+
             // existing material data
-            std::vector<Wonton::Point<3>> & material_data=kv.second;
-            
+            std::vector<Wonton::Point<3>> & current_material_data=kv.second;
+
             // vector to merge material data
             std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
-            
+
             // merged material data
             std::vector<Wonton::Point<3>> merged_material_data(distributedMaterialCellIds.size());
-            
+
             // merge the data
             int c=0;
             for (auto id: distributedMaterialCellIds)
-              merged_material_data[c++]=material_data[id];
-              
-            // add this cell data to the state manager 
+              merged_material_data[c++]=current_material_data[id];
+
+            // add this cell data to the state manager
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
         }
-      
+
       } else if ( data_type == typeid(double)){
-        
+
         // field data is doubles
-            
+
         // allocate the data for unpacking
         std::unordered_map<int,std::vector<double>> material_data;
-        
-      
+
+
         /////////////////////////////////////////////////////////
         // We need to turn the flattened material cells into a correctly shaped
         // ragged right structure for use as the material cells in the flat
         // state wrapper. Just as in the flat state mesh field (and associated
         // cell ids), we aren't removing duplicates, just concatnating by material
         /////////////////////////////////////////////////////////
-        
-        
+
+
         // reset the running counter
         int running_counter=0;
-        
+
         // loop over material ids on different nodes
-        for (int i=0; i<all_material_ids.size(); ++i){
-        
+        int const num_all_material_ids = all_material_ids.size();
+        for (int i = 0; i < num_all_material_ids; ++i) {
+
           // get the current working material
           int mat_id = all_material_ids[i];
-          
+
           // get the current number of material cells for this material
           int nmat_cells = all_material_shapes[i];
-          
+
           // get or create a reference to the correct material cell vector
           auto& these_material_data = material_data[mat_id];
-          
+
           // loop over the correct number of material cells
           for (int j=0; j<nmat_cells; ++j){
               these_material_data.push_back(flat_data[running_counter++]);
           }
-            
+
         }
-                
+
         // add the material indices by keys
         // the underlying api mat_add_celldata clears the existing data
         for ( auto& kv: material_data){
-        
+
             // material id
             int m = kv.first;
-            
+
             // existing material data
-            std::vector<double> & material_data=kv.second;
-            
+            std::vector<double> & current_material_data=kv.second;
+
             // vector to merge material data
             std::vector<int> distributedMaterialCellIds =distributedMaterialCellIds_.at(m);
-            
+
             // merged material data
             std::vector<double> merged_material_data(distributedMaterialCellIds.size());
-            
+
             // merge the data
             int c=0;
             for (auto id: distributedMaterialCellIds)
-              merged_material_data[c++]=material_data[id];
-              
-            // add this cell data to the state manager 
+              merged_material_data[c++]=current_material_data[id];
+
+            // add this cell data to the state manager
             StateManager<MeshWrapper>::mat_add_celldata(field_name, m, merged_material_data.data());
-        }      
+        }
       }
     }
+    else
+      throw std::runtime_error("invalid field type");
   }
 
   /*!
     @brief Get field stride
   */
   size_t get_field_stride(std::string field_name) {
-  
+
       // get the state vector base class shared pointer
     std::shared_ptr<StateVectorBase> pv =
         StateManager<MeshWrapper>::get(field_name);
-         
-    const std::type_info& data_type = pv->data_type(); 
-    
+
+    const std::type_info& data_type = pv->data_type();
+
     if ( data_type == typeid(double)) return 1;
     else if ( data_type == typeid(Wonton::Point<2>)) return 2;
     else if ( data_type == typeid(Wonton::Point<3>)) return 3;
-    
+
+    throw std::runtime_error("invalid data type");
   }
 
   /*!
@@ -631,7 +639,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
   Entity_kind get_entity(std::string field_name) const {
     return StateManager<MeshWrapper>::get(field_name)->get_kind();
   }
-  
+
    /*!
     @brief Return the number of material cells for this node
     @return                    number of material cells for this node
@@ -639,7 +647,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     Return the number of material cells for this node. This number is the sum of
     the lengths of the material cell indices vectors. It is the number need to
     pass a flattened state vector.
-  */ 
+  */
     int num_material_cells() const {
         int n=0;
         for (auto& kv : StateManager<MeshWrapper>::material_cells_){
@@ -647,18 +655,18 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         }
         return n;
     }
-    
+
     /*!
     @brief Return the sorted vector of material ids actually used in the cell mat data.
     @return vector<int> of material id's (ordered)
 
     Return the sorted vector of material ids actually used in the cell mat data.
   */
-  std::vector<int> const get_material_ids() const {
+  std::vector<int> get_material_ids() const {
 
     std::vector<int> material_ids;
     for (auto& kv : StateManager<MeshWrapper>::material_cells_) material_ids.emplace_back(kv.first);
-    
+
     std::sort(material_ids.begin(), material_ids.end());
 
     return material_ids;
@@ -670,37 +678,37 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
 
     Return the sorted vector of material shapes actually used in the cell mat data.
   */
-  std::vector<int> const get_material_shapes() const {
+  std::vector<int> get_material_shapes() const {
 
     std::vector<int> material_ids=get_material_ids();
     std::vector<int> material_shapes;
-    
-    for (auto m : material_ids) material_shapes.emplace_back(
-      StateManager<MeshWrapper>::material_cells_.at(m).size());
-    
+
+    for (auto m : material_ids)
+      material_shapes.emplace_back(StateManager<MeshWrapper>::material_cells_.at(m).size());
+
     return material_shapes;
   }
-  
-  
+
+
   /*!
     @brief Return the sorted vector of material shapes actually used in the cell mat data.
     @return vector<int> of material shapes (ordered)
 
     Return the sorted vector of material shapes actually used in the cell mat data.
   */
-  std::vector<int> const get_material_cells() const {
+  std::vector<int> get_material_cells() const {
 
     std::vector<int> material_ids=get_material_ids();
     std::vector<int> material_cells;
-    
+
     for (auto m : material_ids){
       std::vector<int> this_material_cells = StateManager<MeshWrapper>::get_material_cells(m);
       material_cells.insert(material_cells.end(), this_material_cells.begin(), this_material_cells.end());
     }
-    
+
     return material_cells;
   }
-    
+
 };  // class Flat_State_Wrapper
 
 }  // namespace Wonton

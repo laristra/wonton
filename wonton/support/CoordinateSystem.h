@@ -56,7 +56,9 @@ namespace CoordinateSystem {
     auto num_new_moments = count_moments<D>(max_order);
     std::vector<double> new_moments(num_new_moments);
     // Shift moments
-    for (int new_index = 0; new_index < new_moments.size(); new_index++) {
+    int const nb_new_moments = new_moments.size();
+
+    for (int new_index = 0; new_index < nb_new_moments; new_index++) {
       auto moment_spec = index_to_moment<D>(new_index);
       auto order = std::get<0>(moment_spec);
       auto exponents = std::get<1>(moment_spec);
@@ -66,8 +68,8 @@ namespace CoordinateSystem {
       new_moments[new_index] = moments[old_index];
     }
     // Rescale moments
-    for (int d = 0; d < new_moments.size(); ++d) {
-      new_moments[d] *= scaling_factor;
+    for (double & new_moment : new_moments) {
+      new_moment *= scaling_factor;
     }
     // Swap vectors
     new_moments.swap(moments);
@@ -155,8 +157,8 @@ struct CartesianCoordinates {
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= inv_geo_fac;
+    for (double & moment : moments) {
+      moment *= inv_geo_fac;
     }
   }
 

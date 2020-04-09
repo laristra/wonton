@@ -946,9 +946,12 @@ class AuxMeshTopology {
     assert(cellid < num_entities(CELL, ALL));
 #endif
     assert(corners_requested_);
-    for (auto const& cn : cell_corner_ids_[cellid])
+    for (auto const& cn : cell_corner_ids_[cellid]) {
       if (corner_get_node(cn) == nodeid)
         return cn;
+    }
+
+    throw std::runtime_error("no corner found");
   }
 
   //! Volume of a corner
@@ -2588,11 +2591,12 @@ void cell_radius(MeshWrapper &wrapper,
   wrapper.cell_get_nodes(cellid, &nodes);
   Point<D> arm, node;
   *radius = 0.;
-  for (int i=0; i<nodes.size(); i++) {
-    wrapper.node_get_coordinates(nodes[i], &node);
-    for (int j=0; j<D; j++) arm[j] = node[j]-centroid[j];
+  int const dim = D;
+  for (int & i : nodes) {
+    wrapper.node_get_coordinates(i, &node);
+    for (int j = 0; j < dim; j++) arm[j] = node[j]-centroid[j];
     double distance = 0.0;
-    for (int j=0; j<D; j++) distance += arm[j]*arm[j];
+    for (int j = 0; j < dim; j++) distance += arm[j]*arm[j];
     distance = sqrt(distance);
     if (distance > *radius) *radius = distance;
   }
@@ -2610,11 +2614,13 @@ void node_radius(MeshWrapper &wrapper,
   wrapper.node_get_coordinates(nodeid, &center);
   *radius = 0.;
   Point<D> arm, node;
-  for (int i=0; i<nodes.size(); i++) {
-    wrapper.node_get_coordinates(nodes[i], &node);
-    for (int j=0; j<D; j++) arm[j] = node[j]-center[j];
+  int const dim = D;
+
+  for (int & i : nodes) {
+    wrapper.node_get_coordinates(i, &node);
+    for (int j = 0; j < dim; j++) arm[j] = node[j]-center[j];
     double distance = 0.0;
-    for (int j=0; j<D; j++) distance += arm[j]*arm[j];
+    for (int j = 0; j < dim; j++) distance += arm[j]*arm[j];
     distance = sqrt(distance);
     if (distance > *radius) *radius = distance;
   }

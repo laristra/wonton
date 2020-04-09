@@ -1028,7 +1028,8 @@ constexpr void run_shift_test() {
   auto new_moments = get_sample_moments<D,CoordSys::moment_shift>();
   // Verify
   ASSERT_EQ(new_moments.size(), moments.size());
-  for (int d = 0; d < new_moments.size(); ++d) {
+  int const nb_new_moments = new_moments.size();
+  for (int d = 0; d < nb_new_moments; ++d) {
     ASSERT_NEAR(new_moments[d],
             moments[d] / CoordSys::moment_coefficient, TOLERANCE);
   }

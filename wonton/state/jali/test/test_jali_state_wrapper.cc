@@ -45,7 +45,7 @@ TEST(Jali_State_Wrapper, DataTypes) {
   double dtest[] = {62., 78., 43., 22.};
   int itest[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
   Vec2d vtest[n_cells];
-  for (unsigned int i = 0; i < n_cells; i++) vtest[i].set(1.0*i, 2.0*i);
+  for (int i = 0; i < n_cells; i++) vtest[i].set(1.0*i, 2.0*i);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
 
@@ -64,17 +64,17 @@ TEST(Jali_State_Wrapper, DataTypes) {
   // Get raw float data using wrapper
   float* fdata;
   wrapper.mesh_get_data(Wonton::CELL, "f1", &fdata);
-  for (unsigned int i = 0; i < n_cells; i++) ASSERT_EQ(fdata[i], ftest[i]);
+  for (int i = 0; i < n_cells; i++) ASSERT_EQ(fdata[i], ftest[i]);
 
   // Get raw int data using wrapper
   int* idata;
   wrapper.mesh_get_data(Wonton::NODE, "i1", &idata);
-  for (unsigned int i = 0; i < n_nodes; i++) ASSERT_EQ(idata[i], itest[i]);
+  for (int i = 0; i < n_nodes; i++) ASSERT_EQ(idata[i], itest[i]);
 
   // Get raw Vec2d data using wrapper
   Vec2d* vdata;
   wrapper.mesh_get_data(Wonton::CELL, "v1", &vdata);
-  for (unsigned int i = 0; i < n_cells; i++) 
+  for (int i = 0; i < n_cells; i++) 
   {
     ASSERT_EQ(vdata[i].x, vtest[i].x);
     ASSERT_EQ(vdata[i].y, vtest[i].y);
@@ -87,13 +87,13 @@ TEST(Jali_State_Wrapper, DataTypes) {
 
   double *ddata;
   wrapper.mesh_get_data(Wonton::CELL, "d1", &ddata);
-  for (unsigned int i = 0; i < n_cells; i++) ASSERT_EQ(ddata[i], dtest[i]);
+  for (int i = 0; i < n_cells; i++) ASSERT_EQ(ddata[i], dtest[i]);
   wrapper.mesh_get_data(Wonton::CELL, "d2", &ddata);
-  for (unsigned int i = 0; i < n_cells; i++) ASSERT_EQ(ddata[i], dval);
+  for (int i = 0; i < n_cells; i++) ASSERT_EQ(ddata[i], dval);
 
   // check names
   std::vector<std::string> names = wrapper.names();
-  ASSERT_EQ(names.size(), 5);
+  ASSERT_EQ(names.size(), unsigned(5));
   ASSERT_EQ(names[0], "f1");
   ASSERT_EQ(names[1], "i1");
   ASSERT_EQ(names[2], "v1");
@@ -101,32 +101,32 @@ TEST(Jali_State_Wrapper, DataTypes) {
   ASSERT_EQ(names[4], "d2");
 
   // Iterate through a vector of names
-  std::vector<std::string> fields;
-  fields.push_back("v1");  fields.push_back("f1");  fields.push_back("i1");
-  for (auto it = fields.begin(); it != fields.end(); it++)
+  std::vector<std::string> fields = {"v1", "f1", "i1"};
+
+  for (auto & field : fields)
   {
-    Wonton::Entity_kind on_what = wrapper.get_entity(*it);
+    Wonton::Entity_kind on_what = wrapper.get_entity(field);
     int nent = inputMeshWrapper.num_entities(on_what);
-    if (typeid(float) == wrapper.get_data_type(*it))
+    if (typeid(float) == wrapper.get_data_type(field))
     {
-      float* fdata;
-      wrapper.mesh_get_data(on_what, *it, &fdata);
-      for (unsigned int i = 0; i < nent; i++) ASSERT_EQ(fdata[i], ftest[i]);
+      float* loc_fdata;
+      wrapper.mesh_get_data(on_what, field, &loc_fdata);
+      for (int i = 0; i < nent; i++) ASSERT_EQ(loc_fdata[i], ftest[i]);
     }
-    else if (typeid(int) == wrapper.get_data_type(*it))
+    else if (typeid(int) == wrapper.get_data_type(field))
     {
-      int* idata;
-      wrapper.mesh_get_data(on_what, *it, &idata);
-      for (unsigned int i = 0; i < nent; i++) ASSERT_EQ(idata[i], itest[i]);
+      int* loc_idata;
+      wrapper.mesh_get_data(on_what, field, &loc_idata);
+      for (int i = 0; i < nent; i++) ASSERT_EQ(loc_idata[i], itest[i]);
     }
-    else if (typeid(Vec2d) == wrapper.get_data_type(*it))
+    else if (typeid(Vec2d) == wrapper.get_data_type(field))
     {
-      Vec2d* vdata;
-      wrapper.mesh_get_data(on_what, *it, &vdata);
-      for (unsigned int i = 0; i < nent; i++)
+      Vec2d* loc_vdata;
+      wrapper.mesh_get_data(on_what, field, &loc_vdata);
+      for (int i = 0; i < nent; i++)
       {
-        ASSERT_EQ(vdata[i].x, vtest[i].x);
-        ASSERT_EQ(vdata[i].y, vtest[i].y);
+        ASSERT_EQ(loc_vdata[i].x, vtest[i].x);
+        ASSERT_EQ(loc_vdata[i].y, vtest[i].y);
       }
     }
     else
@@ -144,28 +144,28 @@ TEST(Jali_State_Wrapper, DataTypes) {
     {
       float* fdata;
       wrapper.mesh_get_data(on_what, *it, &fdata);
-      for (unsigned int i = 0; i < nent; i++) ASSERT_EQ(fdata[i], ftest[i]);
+      for (int i = 0; i < nent; i++) ASSERT_EQ(fdata[i], ftest[i]);
     }
     else if (typeid(double) == wrapper.get_data_type(*it))
     {
       double* ddata;
       wrapper.mesh_get_data(on_what, *it, &ddata);
       if (*it == "d1")
-        for (unsigned int i = 0; i < nent; i++) ASSERT_EQ(ddata[i], dtest[i]);
+        for (int i = 0; i < nent; i++) ASSERT_EQ(ddata[i], dtest[i]);
       else
-        for (unsigned int i = 0; i < nent; i++) ASSERT_EQ(ddata[i], dval);
+        for (int i = 0; i < nent; i++) ASSERT_EQ(ddata[i], dval);
     }
     else if (typeid(int) == wrapper.get_data_type(*it))
     {
       int* idata;
       wrapper.mesh_get_data(on_what, *it, &idata);
-      for (unsigned int i = 0; i < nent; i++) ASSERT_EQ(idata[i], itest[i]);
+      for (int i = 0; i < nent; i++) ASSERT_EQ(idata[i], itest[i]);
     }
     else if (typeid(Vec2d) == wrapper.get_data_type(*it))
     {
       Vec2d* vdata;
       wrapper.mesh_get_data(on_what, *it, &vdata);
-      for (unsigned int i = 0; i < nent; i++)
+      for (int i = 0; i < nent; i++)
       {
         ASSERT_EQ(vdata[i].x, vtest[i].x);
         ASSERT_EQ(vdata[i].y, vtest[i].y);
@@ -217,9 +217,8 @@ TEST(Jali_State_Wrapper, MMState) {
 
   double const *constrho;
   statewrapper2.mesh_get_data(Wonton::Entity_kind::CELL, "cell_density", &constrho);
-  double const constdummyrho = constrho[0];
 
-  
+
 
   // Define a multi-material state vector on cells to store volume fractions
   // Create 3 material sets in the state corresponding to a T-junction
@@ -260,10 +259,11 @@ TEST(Jali_State_Wrapper, MMState) {
   ASSERT_EQ(nmats, statewrapper.num_materials());  // should have incremented
 
   for (int i = 0; i < 9; i++) {
-    ASSERT_EQ(cellmats[i].size(), statewrapper.cell_get_num_mats(i));
+    ASSERT_EQ(cellmats[i].size(), unsigned(statewrapper.cell_get_num_mats(i)));
     std::vector<int> cellmats2;
     statewrapper.cell_get_mats(i, &cellmats2);
-    for (int j = 0; j < cellmats[i].size(); j++)
+    int const nb_cell_mats = cellmats[i].size();
+    for (int j = 0; j < nb_cell_mats; j++)
       ASSERT_EQ(cellmats[i][j], cellmats2[j]);
   }
 
@@ -276,7 +276,7 @@ TEST(Jali_State_Wrapper, MMState) {
   // of materials as shown in fig above. Because we will add another material
   // later in the test, we will make space for 4 materials
 
-  double **vf_in = new double*[4];
+  auto **vf_in = new double*[4];
   for (int i = 0; i < 4; i++)
     vf_in[i] = new double[9];
 
@@ -322,12 +322,12 @@ TEST(Jali_State_Wrapper, MMState) {
     statewrapper.mat_get_celldata("mat_density", m, &rhomatptr);
     double const *vfmatptr;
     statewrapper.mat_get_celldata("volfrac", m, &vfmatptr);
-    std::vector<int> matcells;
-    statewrapper.mat_get_cells(m, &matcells);
+    std::vector<int> cur_matcells;
+    statewrapper.mat_get_cells(m, &cur_matcells);
 
-    int nmatcells = matcells.size();
+    int nmatcells = cur_matcells.size();
     for (int i = 0; i < nmatcells; i++) {
-      int c = matcells[i];
+      int c = cur_matcells[i];
       rhocell[c] += rhomatptr[i]*vfmatptr[i];
     }
   }
@@ -365,10 +365,11 @@ TEST(Jali_State_Wrapper, MMState) {
   cellmats[7].push_back(3);
 
   for (int i = 0; i < 9; i++) {
-    ASSERT_EQ(cellmats[i].size(), statewrapper.cell_get_num_mats(i));
+    ASSERT_EQ(cellmats[i].size(), unsigned(statewrapper.cell_get_num_mats(i)));
     std::vector<int> cellmats2;
     statewrapper.cell_get_mats(i, &cellmats2);
-    for (int j = 0; j < cellmats[i].size(); j++)
+    int const nb_cell_mats = cellmats[i].size();
+    for (int j = 0; j < nb_cell_mats; j++)
       ASSERT_EQ(cellmats[i][j], cellmats2[j]);
   }
 
@@ -410,18 +411,17 @@ TEST(Jali_State_Wrapper, MMState) {
 
   for (int c = 0; c < ncells; c++) rhocell[c] = 0.0;
   for (int m = 0; m < nmats; m++) {
-    double const *rhomatptr;
-    statewrapper.mat_get_celldata("mat_density", m, &rhomatptr);
-    double const *vfmatptr;
-    statewrapper.mat_get_celldata("volfrac", m, &vfmatptr);
-    std::vector<int> matcells;
-    statewrapper.mat_get_cells(m, &matcells);
+    double const *loc_rhomatptr;
+    statewrapper.mat_get_celldata("mat_density", m, &loc_rhomatptr);
+    double const *loc_vfmatptr;
+    statewrapper.mat_get_celldata("volfrac", m, &loc_vfmatptr);
+    std::vector<int> loc_matcells;
+    statewrapper.mat_get_cells(m, &loc_matcells);
 
-
-    int nmatcells = matcells.size();
+    int nmatcells = loc_matcells.size();
     for (int i = 0; i < nmatcells; i++) {
-      int c = matcells[i];
-      rhocell[c] += rhomatptr[i]*vfmatptr[i];
+      int c = loc_matcells[i];
+      rhocell[c] += loc_rhomatptr[i] * loc_vfmatptr[i];
     }
   }
       

@@ -55,17 +55,17 @@ if (ENABLE_UNIT_TESTS)
     POLICY SERIAL
     )
 
-  cinch_add_unit(moment_index
+  cinch_add_unit(test_moment_index
     SOURCES test/test_moment_index.cc
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_Polytope2
-    SOURCES test/test_Polytope2.cc
+  cinch_add_unit(test_polytope_2
+    SOURCES test/test_polytope_2.cc
     POLICY SERIAL)
 
-  cinch_add_unit(test_Polytope3
-    SOURCES test/test_Polytope3.cc
+  cinch_add_unit(test_polytope_3
+    SOURCES test/test_polytope_3.cc
     POLICY SERIAL) 
 
   cinch_add_unit(test_prime_factors

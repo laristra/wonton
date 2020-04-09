@@ -475,7 +475,7 @@ Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_type(const int id) const {
     int lo = indices[d];
     int hi = indices[d]+1;
     Entity_type lotype = mesh_.axis_point_type(d, lo);
-    Entity_type hitype = mesh_.axis_point_type(d, lo);
+    Entity_type hitype = mesh_.axis_point_type(d, hi);
     if (lotype == BOUNDARY_GHOST || hitype == BOUNDARY_GHOST) {
       etype = BOUNDARY_GHOST;  // game over; this takes highest precedence
       break;
@@ -770,7 +770,7 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::cell_get_node_adj_cells(
   
   std::vector<std::array<int,D>> cell_indices;
   cell_indices.reserve(nmax);
-  std::array<int, D> tmpindices;
+  std::array<int, D> tmpindices {};
   build_index_combinations(D-1, tmpindices, index_ranges, &cell_indices);
 
   for (auto const& inds : cell_indices) {
@@ -802,7 +802,7 @@ void Direct_Product_Mesh_Wrapper<D,CoordSys>::node_get_cell_adj_nodes(
   
   std::vector<std::array<int,D>> node_indices;
   node_indices.reserve(nmax);
-  std::array<int, D> tmpindices;
+  std::array<int, D> tmpindices {};
   build_index_combinations(D-1, tmpindices, index_ranges, &node_indices);
 
   for (auto const& inds : node_indices) {
