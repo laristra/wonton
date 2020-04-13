@@ -74,11 +74,10 @@ endif ()
 # Set up MPI builds
 # (eventually most of this should be pushed down into cinch)
 #------------------------------------------------------------------------------#
-set(WONTON_ENABLE_MPI False CACHE BOOL "Is MPI enabled in Wonton?")
-if (ENABLE_MPI)
+set(WONTON_ENABLE_MPI False CACHE BOOL "Is MPI enabled in Wonton?") # create cache entry
+if (WONTON_ENABLE_MPI)  # if overwritten by user input or environment var
   find_package(MPI REQUIRED)
-  set(WONTON_ENABLE_MPI True CACHE BOOL "Is MPI enabled in Wonton?" FORCE)
-endif (ENABLE_MPI)
+endif ()
 
 
 #-----------------------------------------------------------------------------
@@ -86,11 +85,9 @@ endif (ENABLE_MPI)
 #-----------------------------------------------------------------------------
 
 set(WONTON_ENABLE_FleCSI FALSE CACHE BOOL "FleCSI interface enabled?")
-if (ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
+if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   find_package(FleCSI REQUIRED)
   find_package(FleCSISP REQUIRED)
-
-  set(WONTON_ENABLE_FleCSI True CACHE BOOL "FleCSI interface enabled?" FORCE)
 
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
@@ -111,12 +108,10 @@ endif()
 #------------------------------------------------------------------------------#
 
 set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
-if (ENABLE_Jali AND ENABLE_MPI AND NOT Jali_LIBRARIES)
+if (WONTON_ENABLE_Jali AND WONTON_ENABLE_MPI AND NOT Jali_LIBRARIES)
   # Look for the Jali package
   
   find_package(Jali REQUIRED)  # specify in Jali_ROOT or CMAKE_PREFIX_PATH
-
-  set(WONTON_ENABLE_Jali True CACHE BOOL "Jali interface enabled?" FORCE)
 
   message(STATUS "Located Jali")
   message(STATUS "Jali_LIBRARIES ${Jali_LIBRARIES}")
@@ -139,7 +134,7 @@ endif ()
 #-----------------------------------------------------------------------------
 
 set(WONTON_ENABLE_THRUST False CACHE BOOL "Is the Thrust library being used?")
-if (ENABLE_THRUST)   # if it is overridden by the command line
+if (WONTON_ENABLE_THRUST)
 
   # Allow for swapping backends
   set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_CPP"  CACHE STRING "Thrust host backend")
@@ -157,12 +152,10 @@ if (ENABLE_THRUST)   # if it is overridden by the command line
 
   message(STATUS "Enabling compilation with Thrust")
   message(STATUS "Using THRUST_ROOT=${THRUST_ROOT}")
+  message(STATUS "THRUST_INCLUDE_DIRS ${THRUST_INCLUDE_DIRS}")
 
   message(STATUS "Using ${THRUST_HOST_BACKEND} as Thrust host backend")
   message(STATUS "Using ${THRUST_DEVICE_BACKEND} as Thrust device backend")
-
-
-  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?" FORCE)
 
 else ()
 
@@ -176,10 +169,11 @@ else ()
 
 endif()
 
-if (ENABLE_TCMALLOC)
+set(WONTON_ENABLE_TCMALLOC False CACHE BOOL "Link in tcmalloc?")
+if (WONTON_ENABLE_TCMALLOC)  # if overridden by command line
   find_library(TCMALLOC_LIBRARIES NAMES tcmalloc PATHS ${TCMALLOC_ROOT})
-  if (TCMALLOC_LIBRARIES)
-    set(WONTON_ENABLE_TCMALLOC True CACHE BOOL "Link in tcmalloc?")
+  if (NOT TCMALLOC_LIBRARIES)
+    message(FATAL_ERROR "TCMALLOC not found")
   endif ()
 endif ()
 
@@ -188,23 +182,32 @@ endif ()
 #-----------------------------------------------------------------------------
 # Use Kokkos
 #-----------------------------------------------------------------------------
-set(ENABLE_Kokkos FALSE CACHE BOOL "Use Kokkos")
-if (ENABLE_Kokkos)
+set(WONTON_ENABLE_Kokkos FALSE CACHE BOOL "Use Kokkos")
+if (WONTON_ENABLE_Kokkos)
   # find package and link against it.
   # conflict with the one packed in Trilinos.
   # ugly hack: override headers and library locations
-  find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS "${Kokkos_DIR}/include")
-  find_library(KOKKOS_CORE_LIBRARY NAMES kokkoscore
-      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
-  find_library(KOKKOS_CONTAINERS_LIBRARY NAMES kokkoscontainers
-      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
-  set(KOKKOS_LIBRARIES ${KOKKOS_CORE_LIBRARY} ${KOKKOS_CONTAINERS_LIBRARY})
-  #find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
+
+  find_package(Kokkos REQUIRED)
+
+  # Sadly Kokkos CMake config does not set Kokkos_LIBRARIES so we will set it
+  set(Kokkos_LIBRARIES "Kokkos::kokkos" CACHE STRING "Kokkos top level target")
 
   message(STATUS "Enabling Kokkos")
-  set(WONTON_ENABLE_KOKKOS True CACHE BOOL "Whether Kokkos is enabled")
-  include_directories("${KOKKOS_INCLUDE_DIR}")
-  list(APPEND WONTON_EXTRA_LIBRARIES "${KOKKOS_LIBRARIES}")
+  message(STATUS "Kokkos_LIBRARIES = ${Kokkos_LIBRARIES}")
+
+  
+#  find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS "${Kokkos_DIR}/include")
+#  find_library(KOKKOS_CORE_LIBRARY NAMES kokkoscore
+#      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
+#  find_library(KOKKOS_CONTAINERS_LIBRARY NAMES kokkoscontainers
+#      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
+#  set(KOKKOS_LIBRARIES ${KOKKOS_CORE_LIBRARY} ${KOKKOS_CONTAINERS_LIBRARY})
+  #find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
+
+#  set(WONTON_ENABLE_KOKKOS True CACHE BOOL "Whether Kokkos is enabled")
+#  include_directories("${KOKKOS_INCLUDE_DIR}")
+#  list(APPEND WONTON_EXTRA_LIBRARIES "${KOKKOS_LIBRARIES}")
 
   if (USE_GPU)
     # additional options for nvcc:
@@ -238,39 +241,39 @@ if (ENABLE_Kokkos)
     string(APPEND CUDA_NVCC_FLAGS " ")
 
     # add to nvcc flags
-    string(APPEND CMAKE_CXX_FLAGS "${CUDA_NVCC_FLAGS}")
-    message(STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}")
+#    string(APPEND CMAKE_CXX_FLAGS "${CUDA_NVCC_FLAGS}")
+#    message(STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}")
   endif (USE_GPU)
 
   # use OpenMP backend on CPU
-  find_package(OpenMP)
-  if (OPENMP_FOUND)
-    string(APPEND CMAKE_C_FLAGS " ${OpenMP_C_FLAGS}")
-    string(APPEND CMAKE_CXX_FLAGS " ${OpenMP_CXX_FLAGS}")
-    string(APPEND CMAKE_EXE_LINKER_FLAGS " ${OpenMP_EXE_LINKER_FLAGS}")
-  endif (OPENMP_FOUND)
+#  find_package(OpenMP)  # Does this comes along with Kokkos CMake Config?
+#  if (OPENMP_FOUND)
+#    string(APPEND CMAKE_C_FLAGS " ${OpenMP_C_FLAGS}")
+#    string(APPEND CMAKE_CXX_FLAGS " ${OpenMP_CXX_FLAGS}")
+#    string(APPEND CMAKE_EXE_LINKER_FLAGS " ${OpenMP_EXE_LINKER_FLAGS}")
+#  endif (OPENMP_FOUND)
 
   # use topology.
   find_package(Hwloc)
-  if (HWLOC_FOUND)
-    include_directories("${HWLOC_INCLUDE_DIR}")
-    list(APPEND WONTON_EXTRA_LIBRARIES "${HWLOC_LIBRARY}")
-  endif (HWLOC_FOUND)
-endif (ENABLE_Kokkos)
+#  if (HWLOC_FOUND)
+#    include_directories("${HWLOC_INCLUDE_DIR}")
+#    list(APPEND WONTON_EXTRA_LIBRARIES "${HWLOC_LIBRARY}")
+#  endif (HWLOC_FOUND)
+endif ()
 
 
 #------------------------------------------------------------------------------#
 # Configure LAPACKE
 #------------------------------------------------------------------------------#
-
-if (ENABLE_LAPACKE)
+set(WONTON_ENABLE_LAPACKE False CACHE BOOL "Use LAPACKE Solvers")
+if (WONTON_ENABLE_LAPACKE)  # if overridden by command line or environment
   # Depending on the version we may find LAPACK config file (3.5.0 or older)
   # or LAPACKE config file (new)
   set(LAPACKE_CONFIG_FOUND False CACHE STRING "Was a LAPACKE config file found?")
   set(LAPACK_CONFIG_FOUND False CACHE STRING "Was a LAPACK config file found?")
   
   # Find lapacke-config.cmake or lapackeconfig.cmake
-  find_package(LAPACKE
+  find_package(LAPACKE QUIET
     CONFIG
     NAMES LAPACKE lapacke)
 
@@ -301,7 +304,6 @@ if (ENABLE_LAPACKE)
   endif ()
 endif ()
 
-set(WONTON_ENABLE_LAPACKE False CACHE BOOL "LAPACKE libraries linked in?")
 if (LAPACKE_FOUND)
   enable_language(Fortran)
   include(FortranCInterface)  # will ensure the fortran library is linked in
@@ -314,57 +316,10 @@ if (LAPACKE_FOUND)
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
-
-  set(WONTON_ENABLE_LAPACKE True CACHE BOOL "LAPACKE libraries linked in?" FORCE)
 else ()
   message(FATAL_ERROR "LAPACKE enabled but not found.")
 endif ()
 
-
-#-----------------------------------------------------------------------------
-# Thrust information
-#-----------------------------------------------------------------------------
-set(ENABLE_THRUST FALSE CACHE BOOL "Use Thrust")
-if(ENABLE_THRUST)
-  message(STATUS "Enabling compilation with Thrust")
-  # allow the user to specify a THRUST_DIR, otherwise use ${NGC_INCLUDE_DIR}
-  # NOTE: thrust internally uses include paths from the 'root' directory, e.g.
-  #
-  #       #include "thrust/device_vector.h"
-  #
-  #       so the path here should point to the directory that has thrust as
-  #       a subdirectory.
-  # Use THRUST_DIR directly if specified, otherwise try to build from NGC
-  set(THRUST_DIR "${NGC_INCLUDE_DIR}" CACHE PATH "Thrust directory")
-  message(STATUS "Using THRUST_DIR=${THRUST_DIR}")
-
-  # Allow for swapping backends
-  set(THRUST_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust backend")
-  message(STATUS "Using ${THRUST_BACKEND} as Thrust backend.")
-  target_include_directories(wonton SYSTEM INTERFACE ${THRUST_DIR})
-  target_compile_definitions(wonton INTERFACE THRUST_DEVICE_SYSTEM=${THRUST_BACKEND})
-
-  set(WONTON_ENABLE_THRUST True CACHE BOOL "Is the Thrust library being used?")
-
-  if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_OMP")
-    FIND_PACKAGE( OpenMP REQUIRED)
-    if(OPENMP_FOUND)
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    endif(OPENMP_FOUND)
-  endif ()
-
-  if("${THRUST_BACKEND}" STREQUAL "THRUST_DEVICE_SYSTEM_TBB")
-    FIND_PACKAGE(TBB REQUIRED)
-    if(TBB_FOUND)
-      target_include_directories(wonton SYSTEM INTERFACE ${TBB_INCLUDE_DIRS})
-      target_link_libraries(wonton SYSTEM INTERFACE ${TBB_LIBRARIES})
-      target_compile_definitions(wonton INTERFACE ${TBB_DEFINITIONS})
-    endif(TBB_FOUND)
-  endif()
-
-endif(ENABLE_THRUST)
 
 #-----------------------------------------------------------------------------
 # Recurse down the source directories building up dependencies
