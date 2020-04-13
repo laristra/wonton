@@ -36,10 +36,10 @@ set(THRUST_COMPONENTS @THRUST_COMPONENTS@ CACHE STRING "Thrust components/backen
 set(THRUST_HOST_BACKEND @THRUST_HOST_BACKEND@ CACHE STRING "Thrust host backend")
 set(THRUST_DEVICE_BACKEND @THRUST_DEVICE_BACKEND@ CACHE STRING "Thrust device backend")
 
-set(ENABLE_FleCSI @ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
+set(WONTON_ENABLE_FleCSI @WONTON_ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
 set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
 
-set(ENABLE_Jali @ENABLE_Jali@ CACHE STRING "Use Jali")
+set(WONTON_ENABLE_Jali @WONTON_ENABLE_Jali@ CACHE STRING "Use Jali")
 set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root")
 
 set(WONTON_ENABLE_LAPACKE @ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE")
@@ -81,11 +81,11 @@ else ()
 endif ()
 
 include(CMakeFindDependencyMacro)
-if (ENABLE_MPI)
+if (WONTON_ENABLE_MPI)
   find_dependency(MPI)
 endif ()
 
-if (ENABLE_Jali)
+if (WONTON_ENABLE_Jali)
   find_dependency(Jali)
   if (TARGET ${Jali_LIBRARIES})
     set_property(TARGET ${Jali_LIBRARIES} PROPERTY IMPORTED_GLOBAL TRUE)
