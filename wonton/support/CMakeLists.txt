@@ -65,7 +65,17 @@ if (WONTON_ENABLE_TCMALLOC)
   target_link_libraries(wonton_support PUBLIC ${TCMALLOC_LIBRARIES})
 endif ()
 
+#----------------------------------------------------------------------------
+# Kokkos dependencies
+#----------------------------------------------------------------------------
 
+if (WONTON_ENABLE_Kokkos)
+  target_link_libraries(wonton_support PUBLIC ${Kokkos_LIBRARIES})
+
+  if (USE_GPU)
+    target_compile_definitions(wonton_support PUBLIC ${CUDA_NVCC_FLAGS})
+  endif ()
+endif ()
 
 
 target_link_libraries(wonton INTERFACE wonton_support)
@@ -85,11 +95,13 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_point
     SOURCES test/test_point.cc
+    LIBRARIES wonton_support
     POLICY SERIAL)
 
   cinch_add_unit(test_vector
-      SOURCES test/test_vector.cc
-      POLICY SERIAL)
+    SOURCES test/test_vector.cc
+    LIBRARIES wonton_support
+    POLICY SERIAL)
 
   cinch_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
@@ -108,13 +120,13 @@ if (ENABLE_UNIT_TESTS)
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_Polytope2
-    SOURCES test/test_Polytope2.cc
+  cinch_add_unit(test_polytope_2
+    SOURCES test/test_polytope_2.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_Polytope3
-    SOURCES test/test_Polytope3.cc
+  cinch_add_unit(test_polytope_3
+    SOURCES test/test_polytope_3.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
@@ -139,6 +151,7 @@ if (ENABLE_UNIT_TESTS)
 
   cinch_add_unit(test_structured_partitioner_par
     SOURCES test/test_structured_partitioner_par.cc
+    LIBRARIES wonton_support
     POLICY MPI
     THREADS 4)
   
