@@ -22,15 +22,21 @@ Please see the license file at the root of this repository, or at:
 
 // Is WONTON compiled with MPI
 
+#ifndef WONTON_ENABLE_MPI
 #cmakedefine WONTON_ENABLE_MPI
+#endif
 
 // Is WONTON compiled with Thrust
 
+#ifndef WONTON_ENABLE_THRUST
 #cmakedefine WONTON_ENABLE_THRUST
+#endif
 
 // Is WONTON compiled with KOKKOS
 
+#ifndef WONTON_ENABLE_KOKKOS
 #cmakedefine WONTON_ENABLE_KOKKOS
+#endif
 
 #endif  // WONTON_CONFIG_H_
 
