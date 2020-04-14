@@ -72,7 +72,8 @@ endif ()
 if (WONTON_ENABLE_Kokkos)
   target_link_libraries(wonton_support PUBLIC ${Kokkos_LIBRARIES})
 
-  if (USE_GPU)
+  # Do we need this? Shouldn't Kokkos take care of this?
+  if (WONTON_ENABLE_CUDA)
     target_compile_definitions(wonton_support PUBLIC ${CUDA_NVCC_FLAGS})
   endif ()
 endif ()
