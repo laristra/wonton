@@ -26,15 +26,23 @@ set(WONTON_LIBRARIES @WONTON_LIBRARIES@ CACHE STRING "Name of the Wonton library
 set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "Wonton include file locations")
 
 # WONTON options
-set(WONTON_ENABLE_MPI @ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
+set(WONTON_ENABLE_MPI @WONTON_ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
 
 
 # Thrust options
-set(WONTON_ENABLE_THRUST @ENABLE_THRUST@ CACHE BOOL "Enable MPI Parallelism for Wonton")
-set(THRUST_ROOT @THRUST_ROOT@ CACHE BOOL "Thrust directory")
+set(WONTON_ENABLE_THRUST @WONTON_ENABLE_THRUST@ CACHE BOOL "Enable Thrust Parallelism for Wonton")
+set(THRUST_ROOT @THRUST_ROOT@ CACHE PATH "Thrust directory")
 set(THRUST_COMPONENTS @THRUST_COMPONENTS@ CACHE STRING "Thrust components/backends found")
 set(THRUST_HOST_BACKEND @THRUST_HOST_BACKEND@ CACHE STRING "Thrust host backend")
 set(THRUST_DEVICE_BACKEND @THRUST_DEVICE_BACKEND@ CACHE STRING "Thrust device backend")
+
+
+# Kokkos options
+set(WONTON_ENABLE_Kokkos @WONTON_ENABLE_Kokkos@ CACHE BOOL "Enable Kokkos Parallelism for Wonton")
+set(Kokkos_ROOT @Kokkos_ROOT@ CACHE PATH "Kokkos directory")
+set(WONTON_ENABLE_Kokkos_OPENMP @WONTON_ENABLE_Kokkos_OPENMP@ CACHE BOOL "Use OpenMP device in Kokkos")
+set(WONTON_ENABLE_Kokkos_CUDA @WONTON_ENABLE_Kokkos_CUDA@ CACHE BOOL "Use CUDA device in Kokkos")
+
 
 set(WONTON_ENABLE_FleCSI @WONTON_ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
 set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
@@ -42,7 +50,7 @@ set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
 set(WONTON_ENABLE_Jali @WONTON_ENABLE_Jali@ CACHE STRING "Use Jali")
 set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root")
 
-set(WONTON_ENABLE_LAPACKE @ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE")
+set(WONTON_ENABLE_LAPACKE @WONTON_ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE")
 set(LAPACKE_ROOT @LAPACKE_ROOT@ CACHE PATH "LAPACKE installation dir")
 set(LAPACKE_LIBRARIES @LAPACKE_LIBRARIES@ CACHE STRING "LAPACKE libraries")
 set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config file found?")
@@ -107,6 +115,16 @@ endif ()
 
 if (WONTON_ENABLE_THRUST)
   find_dependency(THRUST COMPONENTS ${THRUST_COMPONENTS})
+endif ()
+
+if (WONTON_ENABLE_Kokkos)
+  if (WONTON_ENABLE_Kokkos_OPENMP)
+    find_dependency(OpenMP)
+  endif ()
+  if (WONTON_ENABLE_Kokkos_CUDA)
+    enable_language(CUDA)
+  endif ()
+  find_dependency(Kokkos)
 endif ()
 
 # Restore original CMAKE_MODULE_PATH
