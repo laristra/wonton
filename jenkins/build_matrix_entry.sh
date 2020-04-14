@@ -66,18 +66,18 @@ fi
 
 # build-type-specific settings
 cmake_build_type=Release
-mpi_flags="-D ENABLE_MPI=True"
+mpi_flags="-D WONTON_ENABLE_MPI=True"
 extra_flags=
 thrust_flags=
-jali_flags="-D ENABLE_Jali=True -D Jali_ROOT:FILEPATH=$jali_install_dir"
-lapacke_flags="-D ENABLE_LAPACKE=True -D LAPACKE_ROOT:FILEPATH=$lapacke_dir"
+jali_flags="-D WONTON_ENABLE_Jali=True -D Jali_ROOT:FILEPATH=$jali_install_dir"
+lapacke_flags="-D WONTON_ENABLE_LAPACKE=True -D LAPACKE_ROOT:FILEPATH=$lapacke_dir"
 if [[ $build_type == "debug" ]]; then
     cmake_build_type=Debug
 elif [[ $build_type == "serial" ]]; then
     mpi_flags=
     jali_flags=         # jali is not available in serial
 elif [[ $build_type == "thrust" ]]; then
-    thrust_flags="-D ENABLE_THRUST=True -DTHRUST_ROOT:FILEPATH=${thrust_dir}"
+    thrust_flags="-D WONTON_ENABLE_THRUST=True -DTHRUST_ROOT:FILEPATH=${thrust_dir}"
 fi
 
 export SHELL=/bin/sh
