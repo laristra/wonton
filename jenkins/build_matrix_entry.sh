@@ -24,7 +24,7 @@ fi
 
 # set modules and install paths
 
-jali_version=1.1.1
+jali_version=1.1.4
 lapack_version=3.8.0
 
 export NGC=/usr/local/codes/ngc
