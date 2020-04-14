@@ -164,7 +164,7 @@ else ()
   #-----------------------------------------------------------------------------
 
   find_package(Boost REQUIRED)
-  target_include_directories(wonton SYSTEM PUBLIC ${Boost_INCLUDE_DIR})
+  target_include_directories(wonton SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
   message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
 
 endif()
