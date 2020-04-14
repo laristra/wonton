@@ -14,9 +14,9 @@ TEST(THRUST_TEST, TRANSFORM) {
   Wonton::counting_iterator cellids_begin(0);
   Wonton::counting_iterator cellids_end(4);
   ASSERT_EQ(typeid(cellids_begin),
-            typeid(thrust::counting_iterator<unsigned int>));
+            typeid(thrust::counting_iterator<int>));
   ASSERT_EQ(typeid(cellids_end),
-            typeid(thrust::counting_iterator<unsigned int>));
+            typeid(thrust::counting_iterator<int>));
 
   Wonton::vector<double> cellval(4, 0.0);
   ASSERT_EQ(typeid(cellval), typeid(thrust::device_vector<double>));
