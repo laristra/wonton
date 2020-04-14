@@ -193,23 +193,34 @@ if (WONTON_ENABLE_Kokkos)
   # Sadly Kokkos CMake config does not set Kokkos_LIBRARIES so we will set it
   set(Kokkos_LIBRARIES "Kokkos::kokkos" CACHE STRING "Kokkos top level target")
 
+  list(FIND Kokkos_DEVICES OPENMP INDEX)
+  set(Kokkos_HAS_OPENMP False)
+  if (INDEX GREATER -1)
+    set(Kokkos_HAS_OPENMP True)
+  endif ()
+
+  list(FIND Kokkos_DEVICES CUDA INDEX)
+  set(Kokkos_HAS_CUDA False)
+  if (INDEX GREATER -1)
+    set(Kokkos_HAS_CUDA True)
+  endif ()
+  
   message(STATUS "Enabling Kokkos")
   message(STATUS "Kokkos_LIBRARIES = ${Kokkos_LIBRARIES}")
 
-  
-#  find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS "${Kokkos_DIR}/include")
-#  find_library(KOKKOS_CORE_LIBRARY NAMES kokkoscore
-#      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
-#  find_library(KOKKOS_CONTAINERS_LIBRARY NAMES kokkoscontainers
-#      HINTS "${Kokkos_DIR}/lib" "${Kokkos_DIR}/lib64")
-#  set(KOKKOS_LIBRARIES ${KOKKOS_CORE_LIBRARY} ${KOKKOS_CONTAINERS_LIBRARY})
-  #find_package(Kokkos REQUIRED HINTS "${Kokkos_DIR}")
+  if (WONTON_ENABLE_Kokkos_CUDA)
+    if (NOT Kokkos_HAS_CUDA)
+      message(FATAL_ERROR "CUDA enabled for Wonton but Kokkos not compiled with CUDA support")
+    endif ()
+    
+    enable_language(CUDA)
 
-#  set(WONTON_ENABLE_KOKKOS True CACHE BOOL "Whether Kokkos is enabled")
-#  include_directories("${KOKKOS_INCLUDE_DIR}")
-#  list(APPEND WONTON_EXTRA_LIBRARIES "${KOKKOS_LIBRARIES}")
-
-  if (USE_GPU)
+    # Do we need to do this? Should Kokkos take care of this?
+    # Also, is there a CMake option to do this? - RVG
+    
+    # Looks like CUDAFLAGS environment variables or CMAKE_CUDA_FLAGS
+    # cmake variable can be used instead of CUDA_NVCC_FLAGS?
+    
     # additional options for nvcc:
     # allow '__host__',' __device__' annotations in lambdas.
     # allow host code to invoke '__device__ constexpr' functions,
@@ -239,26 +250,16 @@ if (WONTON_ENABLE_Kokkos)
     string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_70,code=sm_70")
     string(APPEND CUDA_NVCC_FLAGS " -gencode=arch=compute_70,code=compute_70")
     string(APPEND CUDA_NVCC_FLAGS " ")
-
-    # add to nvcc flags
-#    string(APPEND CMAKE_CXX_FLAGS "${CUDA_NVCC_FLAGS}")
-#    message(STATUS "Compiler flags: ${CMAKE_CXX_FLAGS}")
-  endif (USE_GPU)
+  endif ()
 
   # use OpenMP backend on CPU
-#  find_package(OpenMP)  # Does this comes along with Kokkos CMake Config?
-#  if (OPENMP_FOUND)
-#    string(APPEND CMAKE_C_FLAGS " ${OpenMP_C_FLAGS}")
-#    string(APPEND CMAKE_CXX_FLAGS " ${OpenMP_CXX_FLAGS}")
-#    string(APPEND CMAKE_EXE_LINKER_FLAGS " ${OpenMP_EXE_LINKER_FLAGS}")
-#  endif (OPENMP_FOUND)
-
-  # use topology.
-  find_package(Hwloc)
-#  if (HWLOC_FOUND)
-#    include_directories("${HWLOC_INCLUDE_DIR}")
-#    list(APPEND WONTON_EXTRA_LIBRARIES "${HWLOC_LIBRARY}")
-#  endif (HWLOC_FOUND)
+  if (WONTON_ENABLE_Kokkos_OpenMP)
+    if (NOT Kokkos_HAS_OPENMP)
+      message(FATAL_ERROR "OPENMP enabled for Wonton but Kokkos not compiled with OPENMP support")
+    endif ()
+    
+    find_package(OpenMP)
+  endif ()
 endif ()
 
 
