@@ -50,7 +50,7 @@ support for these is _optional_:
 - [Jali](http://github.com/lanl/jali):
 
   We regularly test with verison 1.1,1.  You will need to set the
-  `ENABLE_Jali` and `Jali_ROOT` CMake variable if you wish to build
+  `WONTON_ENABLE_Jali` and `Jali_ROOT` CMake variable if you wish to build
   support for Jali and its tests (see examples below).
 
 - [FleCSI Burton Specialization](http://github.com/laristra/flecsi-sp):
@@ -58,7 +58,7 @@ support for these is _optional_:
   The Burton specialization in the `flecsi-sp` repository is built on
   top of [FleCSI](http://github.com/laristra/flecsi).  You will need
   _both_ projects to build support for the Burton mesh specialization
-  and its tests.  You will need to set `ENABLE_FleCSI=True` and add
+  and its tests.  You will need to set `WONTON_ENABLE_FleCSI=True` and add
   the FleCSI and FleCSI-sp install paths to the `CMAKE_PREFIX_PATH`;
   see examples below.  Both FleCSI packages are under constant
   development.  This version of wonton is known to work with hash
@@ -136,11 +136,11 @@ cmake \
   -D CMAKE_CXX_COMPILER=`which icpc` \
   -D CMAKE_BUILD_TYPE=Release \
   -D ENABLE_UNIT_TESTS=True \
-  -D ENABLE_MPI=True \
+  -D WONTON_ENABLE_MPI=True \
   -D ENABLE_JENKINS_OUTPUT=True \
-  -D ENABLE_Jali=True \
+  -D WONTON_ENABLE_Jali=True \
   -D Jali_ROOT:FILEPATH=$JALI_INSTALL_PREFIX \
-  -D ENABLE_LAPACKE=True \
+  -D WONTON_ENABLE_LAPACKE=True \
   -D LAPACKE_ROOT:FILEPATH=$LAPACKE_INSTALL_PREFIX \
   ..
 make -j2
