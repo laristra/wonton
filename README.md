@@ -49,7 +49,7 @@ support for these is _optional_:
 
 - [Jali](http://github.com/lanl/jali):
 
-  We regularly test with verison 1.1,1.  You will need to set the
+  We regularly test with version 1.1,4.  You will need to set the
   `WONTON_ENABLE_Jali` and `Jali_ROOT` CMake variable if you wish to build
   support for Jali and its tests (see examples below).
 
@@ -126,7 +126,7 @@ export MODULEPATH=""
 . /opt/local/packages/Modules/default/init/sh
 module load intel/18.0.1 openmpi/2.1.2 cmake/3.14.0
 NGC_INCLUDE_DIR=/usr/local/codes/ngc/private/include
-JALI_INSTALL_PREFIX=/usr/local/codes/ngc/private/jali/1.1.1-intel-18.0.1-openmpi-2.1.2
+JALI_INSTALL_PREFIX=/usr/local/codes/ngc/private/jali/1.1.4-intel-18.0.1-openmpi-2.1.2
 LAPACKE_INSTALL_PREFIX=/usr/local/codes/ngc/private/lapack/3.8.0-patched-intel-18.0.1
 mkdir build
 cd build
