@@ -132,8 +132,6 @@ mkdir build
 cd build
 cmake \
   -D CMAKE_PREFIX_PATH=$NGC_INCLUDE_DIR \
-  -D CMAKE_C_COMPILER=`which icc` \
-  -D CMAKE_CXX_COMPILER=`which icpc` \
   -D CMAKE_BUILD_TYPE=Release \
   -D ENABLE_UNIT_TESTS=True \
   -D WONTON_ENABLE_MPI=True \
