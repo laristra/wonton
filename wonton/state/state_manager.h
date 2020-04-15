@@ -203,7 +203,12 @@ StateManager(const MeshWrapper& mesh,
     of the state vector, and the return type is a Wonton::Entity_kind
   */
   Entity_kind get_entity(std::string const& name) const {
+  auto v=state_vectors_.find(name);
+ 
+  if (v != state_vectors_.end())
     return state_vectors_.at(name)->get_kind();
+  else
+    return Entity_kind::UNKNOWN_KIND;  
   }
 
 

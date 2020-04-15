@@ -117,10 +117,11 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
         StateManager<MeshWrapper>::mat_add_cells(m, mat_cells);
       }      
       
-      // if this is a multimaterial problem we will also need to distriube 
-      // volume fraction and centroid
+      // if this is a multimaterial problem we will also need to distribute
+      // volume fraction and potentially centroids if they are defined
       distribute_var_names.emplace_back("mat_volfracs");
-      distribute_var_names.emplace_back("mat_centroids");
+      if (input.get_entity("mat_centroids")!=Entity_kind::UNKNOWN_KIND)
+        distribute_var_names.emplace_back("mat_centroids");
 
     }
      
@@ -623,16 +624,6 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
   }
 
   /*!
-    @brief Get the entity type on which the given field is defined
-    @param[in] index The index of the data field
-    @return The Entity_kind enum for the entity type on which the field is
-    defined
-  */
-  Entity_kind get_entity(std::string field_name) const {
-    return StateManager<MeshWrapper>::get(field_name)->get_kind();
-  }
-  
-   /*!
     @brief Return the number of material cells for this node
     @return                    number of material cells for this node
 
@@ -640,13 +631,13 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     the lengths of the material cell indices vectors. It is the number need to
     pass a flattened state vector.
   */ 
-    int num_material_cells() const {
-        int n=0;
-        for (auto& kv : StateManager<MeshWrapper>::material_cells_){
-            n += kv.second.size();
-        }
-        return n;
+  int num_material_cells() const {
+    int n=0;
+    for (auto& kv : StateManager<MeshWrapper>::material_cells_){
+        n += kv.second.size();
     }
+    return n;
+  }
     
     /*!
     @brief Return the sorted vector of material ids actually used in the cell mat data.
