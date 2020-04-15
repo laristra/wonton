@@ -60,8 +60,9 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
 
   std::vector<int> prime_facs = prime_factors(N);
   std::sort(prime_facs.begin(), prime_facs.end());
-  if (prime_facs.size() < D) {
-    for (int i = prime_facs.size(); i < D; i++)
+  int const prime_facs_size = prime_facs.size();
+  if (prime_facs_size < D) {
+    for (int i = prime_facs_size; i < D; i++)
       prime_facs.push_back(1);
   }
 
@@ -220,7 +221,7 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
       }
 
       inner_iter++;
-      if (inner_iter > 2*set1.size()) inner_done = true;
+      if (unsigned(inner_iter) > 2*set1.size()) inner_done = true;
     }  // while (!inner_done)
 
     outer_iter++;

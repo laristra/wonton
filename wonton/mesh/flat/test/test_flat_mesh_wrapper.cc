@@ -62,7 +62,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_3d) {
   for (int c=0; c<8; ++c) {
     std::vector<Wonton::Point<3>> pplist;
     mesh_flat.cell_get_coordinates(c, &pplist);
-    ASSERT_EQ(8, pplist.size());
+    ASSERT_EQ(unsigned(8), pplist.size());
     std::sort(pplist.begin(), pplist.end());
     double dx = (c & 4 ? 0.5 : 0.0);
     double dy = (c & 2 ? 0.5 : 0.0);
@@ -82,7 +82,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_3d) {
   // Test decompose_cell_into_tets()
   std::vector<std::array<Wonton::Point<3>, 4>> tcoords;
   mesh_flat.decompose_cell_into_tets(0, &tcoords, true);
-  ASSERT_EQ(tcoords.size(), 24);
+  ASSERT_EQ(tcoords.size(), unsigned(24));
 
   // Test centroids
   Wonton::Point<3> centroid;
@@ -106,7 +106,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_3d) {
     std::vector<int> adjcells;
     mesh_flat.cell_get_node_adj_cells(c, Wonton::Entity_type::ALL,
                                       &adjcells);
-    ASSERT_EQ(7, adjcells.size());
+    ASSERT_EQ(unsigned(7), adjcells.size());
     std::sort(adjcells.begin(), adjcells.end());
     for (int n=0; n<7; ++n)
       ASSERT_EQ(n + (n >= c ? 1 : 0), adjcells[n]);
@@ -133,7 +133,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_3d) {
     }
 
     int expsize = expnodes.size();
-    ASSERT_EQ(expsize - 1, adjnodes.size());
+    ASSERT_EQ(unsigned(expsize - 1), adjnodes.size());
 
     adjnodes.push_back(n);
     std::sort(adjnodes.begin(), adjnodes.end());
@@ -175,7 +175,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_2d) {
   for (int c=0; c<16; ++c) {
     std::vector<Wonton::Point<2>> pplist;
     mesh_flat.cell_get_coordinates(c, &pplist);
-    ASSERT_EQ(4, pplist.size());
+    ASSERT_EQ(unsigned(4), pplist.size());
     double dx = (c / 4) * 0.25;
     double dy = (c % 4) * 0.25;
     for (int n=0; n<4; ++n) {
@@ -220,7 +220,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_2d) {
       }
     }
     int count = adjcells.size();
-    ASSERT_EQ(expNeighbors.size(), count);
+    ASSERT_EQ(expNeighbors.size(), unsigned(count));
     std::sort(adjcells.begin(), adjcells.end());
     for (int n=0; n<count; ++n)
       ASSERT_EQ(expNeighbors[n], adjcells[n]);
@@ -243,7 +243,7 @@ TEST(Flat_Mesh_Wrapper, basic_routines_2d) {
     }
 
     int expsize = expnodes.size();
-    ASSERT_EQ(expsize - 1, adjnodes.size());
+    ASSERT_EQ(unsigned(expsize - 1), adjnodes.size());
 
     adjnodes.push_back(n);
     std::sort(adjnodes.begin(), adjnodes.end());
