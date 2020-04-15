@@ -119,7 +119,7 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
       // if this is a multimaterial problem we will also need to distribute
       // volume fraction and potentially centroids if they are defined
       distribute_var_names.emplace_back("mat_volfracs");
-      if (input.get_entity("mat_centroids")!=Entity_kind::UNKNOWN_KIND)
+      if (input.get_entity("mat_centroids") != Entity_kind::UNKNOWN_KIND)
         distribute_var_names.emplace_back("mat_centroids");
 
     }
