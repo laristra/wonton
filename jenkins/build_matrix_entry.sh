@@ -24,7 +24,7 @@ fi
 
 # set modules and install paths
 
-jali_version=1.0.4
+jali_version=1.1.4
 lapack_version=3.8.0
 
 export NGC=/usr/local/codes/ngc
@@ -66,18 +66,18 @@ fi
 
 # build-type-specific settings
 cmake_build_type=Release
-mpi_flags="-D ENABLE_MPI=True"
+mpi_flags="-D WONTON_ENABLE_MPI=True"
 extra_flags=
 thrust_flags=
-jali_flags="-D Jali_DIR:FILEPATH=$jali_install_dir/lib"
-lapacke_flags="-D LAPACKE_DIR:FILEPATH=$lapacke_dir"
+jali_flags="-D WONTON_ENABLE_Jali=True -D Jali_ROOT:FILEPATH=$jali_install_dir"
+lapacke_flags="-D WONTON_ENABLE_LAPACKE=True -D LAPACKE_ROOT:FILEPATH=$lapacke_dir"
 if [[ $build_type == "debug" ]]; then
     cmake_build_type=Debug
 elif [[ $build_type == "serial" ]]; then
     mpi_flags=
     jali_flags=         # jali is not available in serial
 elif [[ $build_type == "thrust" ]]; then
-    thrust_flags="-D ENABLE_THRUST=True -DTHRUST_DIR:FILEPATH=${thrust_dir}"
+    thrust_flags="-D WONTON_ENABLE_THRUST=True -DTHRUST_ROOT:FILEPATH=${thrust_dir}"
 fi
 
 export SHELL=/bin/sh
@@ -88,7 +88,7 @@ module load $cxxmodule
 if [[ -n "$mpi_flags" ]]; then
     module load ${mpi_module}
 fi
-module load cmake # 3.0 or higher is required
+module load cmake/3.14.0 # 3.13 or higher is required
 
 echo $WORKSPACE
 cd $WORKSPACE
@@ -98,10 +98,10 @@ cd build
 
 cmake \
     -D CMAKE_BUILD_TYPE=$cmake_build_type \
+    -D CMAKE_PREFIX_PATH=$ngc_include_dir \
     -D ENABLE_UNIT_TESTS=True \
     -D ENABLE_APP_TESTS=True \
     -D ENABLE_JENKINS_OUTPUT=True \
-    -D NGC_INCLUDE_DIR:FILEPATH=$ngc_include_dir \
     $mpi_flags \
     $jali_flags \
     $lapacke_flags \

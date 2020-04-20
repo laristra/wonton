@@ -1,0 +1,137 @@
+#-----------------------------------------------------------------------------
+# This file is part of the Ristra Wonton project.
+# Please see the license file at the root of this repository, or at:
+#    https://github.com/laristra/wonton/blob/master/LICENSE
+#
+# Wonton configuration file template
+#
+#-----------------------------------------------------------------------------
+
+set(WONTON_VERSION_MAJOR @WONTON_VERSION_MAJOR@ CACHE STRING "Major version of WONTON")
+set(WONTON_VERSION_MINOR @WONTON_VERSION_MINOR@ CACHE STRING "Minor version of WONTON")
+set(WONTON_VERSION_MINOR @WONTON_VERSION_PATCH@ CACHE STRING "Patch version of WONTON")
+
+
+# Compiler Definitions
+set(CMAKE_C_COMPILER @CMAKE_C_COMPILER@ CACHE FILEPATH "C Compiler used for compiling WONTON")
+set(CMAKE_CXX_COMPILER @CMAKE_CXX_COMPILER@ CACHE FILEPATH "CXX Compiler used for compiling WONTON")
+
+# Wonton installation path
+set(WONTON_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to Wonton installation")
+
+# Wonton library 
+set(WONTON_LIBRARIES @WONTON_LIBRARIES@ CACHE STRING "Name of the Wonton library")
+
+# Wonton includes
+set(WONTON_INCLUDE_DIR @CMAKE_INSTALL_PREFIX@/include CACHE PATH "Wonton include file locations")
+
+# WONTON options
+set(WONTON_ENABLE_MPI @WONTON_ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for Wonton")
+
+
+# Thrust options
+set(WONTON_ENABLE_THRUST @WONTON_ENABLE_THRUST@ CACHE BOOL "Enable Thrust Parallelism for Wonton")
+set(THRUST_ROOT @THRUST_ROOT@ CACHE PATH "Thrust directory")
+set(THRUST_COMPONENTS @THRUST_COMPONENTS@ CACHE STRING "Thrust components/backends found")
+set(THRUST_HOST_BACKEND @THRUST_HOST_BACKEND@ CACHE STRING "Thrust host backend")
+set(THRUST_DEVICE_BACKEND @THRUST_DEVICE_BACKEND@ CACHE STRING "Thrust device backend")
+
+
+# Kokkos options
+set(WONTON_ENABLE_Kokkos @WONTON_ENABLE_Kokkos@ CACHE BOOL "Enable Kokkos Parallelism for Wonton")
+set(Kokkos_ROOT @Kokkos_ROOT@ CACHE PATH "Kokkos directory")
+set(WONTON_ENABLE_Kokkos_OPENMP @WONTON_ENABLE_Kokkos_OPENMP@ CACHE BOOL "Use OpenMP device in Kokkos")
+set(WONTON_ENABLE_Kokkos_CUDA @WONTON_ENABLE_Kokkos_CUDA@ CACHE BOOL "Use CUDA device in Kokkos")
+
+
+set(WONTON_ENABLE_FleCSI @WONTON_ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
+set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
+
+set(WONTON_ENABLE_Jali @WONTON_ENABLE_Jali@ CACHE STRING "Use Jali")
+set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root")
+
+set(WONTON_ENABLE_LAPACKE @WONTON_ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE")
+set(LAPACKE_ROOT @LAPACKE_ROOT@ CACHE PATH "LAPACKE installation dir")
+set(LAPACKE_LIBRARIES @LAPACKE_LIBRARIES@ CACHE STRING "LAPACKE libraries")
+set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config file found?")
+set(LAPACK_CONFIG_FOUND @LAPACK_CONFIG_FOUND@ CACHE BOOL "Was a LAPACK config file found?")
+
+
+# CMake's Boost find package claims to use BOOST_ROOT as a hint for
+# finding Boost but sets output variables like Boost_LIBRARIES and
+# Boost_INCLUDE_DIRS - which is the proper capitalization?
+
+set(Boost_ROOT @Boost_ROOT@ CACHE PATH "Boost installation directories")
+set(BOOST_ROOT @BOOST_ROOT@ CACHE PATH "Boost installation directories")
+
+
+
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
+  cmake_policy(SET CMP0074 NEW)  # find_package honors Pkg_ROOT variables 
+endif ()
+
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+  set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)  # search for PkgConfig.cmake files first
+endif ()
+
+
+# Find target dependencies
+
+# Temporarily modify CMAKE module path so we can find our custom
+# modules for packages that don't have config files
+
+set(SAVED_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH})
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+  list(PREPEND CMAKE_MODULE_PATH @CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/modules)
+else ()
+  set(CMAKE_MODULE_PATH "@CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/modules;${CMAKE_MODULE_PATH}")
+endif ()
+
+include(CMakeFindDependencyMacro)
+if (WONTON_ENABLE_MPI)
+  find_dependency(MPI)
+endif ()
+
+if (WONTON_ENABLE_Jali)
+  find_dependency(Jali)
+  if (TARGET ${Jali_LIBRARIES})
+    set_property(TARGET ${Jali_LIBRARIES} PROPERTY IMPORTED_GLOBAL TRUE)
+  endif ()
+endif ()
+
+find_dependency(Boost)
+if (TARGET ${Boost_LIBRARIES})
+  set_property(TARGET ${Boost_LIBRARIES} PROPERTY IMPORTED_GLOBAL TRUE)
+endif ()
+
+if (WONTON_ENABLE_LAPACKE)
+  if (LAPACKE_CONFIG_FOUND)
+    find_dependency(LAPACKE)
+  elseif (LAPACK_CONFIG_FOUND)
+    find_dependency(LAPACK HINTS ${LAPACKE_ROOT})
+  endif ()
+endif ()
+
+if (WONTON_ENABLE_THRUST)
+  find_dependency(THRUST COMPONENTS ${THRUST_COMPONENTS})
+endif ()
+
+if (WONTON_ENABLE_Kokkos)
+  if (WONTON_ENABLE_Kokkos_OPENMP)
+    find_dependency(OpenMP)
+  endif ()
+  if (WONTON_ENABLE_Kokkos_CUDA)
+    enable_language(CUDA)
+  endif ()
+  find_dependency(Kokkos)
+endif ()
+
+# Restore original CMAKE_MODULE_PATH
+set(CMAKE_MODULE_PATH ${SAVED_CMAKE_MODULE_PATH})
+
+#
+# Import wonton targets
+#
+
+include("@CMAKE_INSTALL_PREFIX@/lib/cmake/wonton/wontonTargets.cmake")

@@ -4,128 +4,52 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
 #-----------------------------------------------------------------------------~#
+project(mesh)
 
+add_library(wonton_mesh INTERFACE)
 
-#-----------------------------------------------------------------------------~#
+target_include_directories(wonton_mesh INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:include>)
 
-if (Jali_DIR)
-  set(jali_mesh_wrapper_headers
-    jali/jali_mesh_wrapper.h
-    )
-endif (Jali_DIR)
+set(wonton_mesh_HEADERS AuxMeshTopology.h)
 
-if (ENABLE_FleCSI)
-  set(flecsi_mesh_wrapper_headers
-    flecsi/flecsi_mesh_wrapper.h
-    )
+# Not yet allowed for INTERFACE libraries
+#
+# set_target_properties(wonton_mesh PROPERTIES
+#   PUBLIC_HEADER "${wonton_mesh_HEADERS}")
+#
+# Directly install files instead
+install(FILES ${wonton_mesh_HEADERS} DESTINATION include/wonton/mesh)
+
+target_link_libraries(wonton_mesh INTERFACE wonton_support)
+
+# Recurse down in subdirectories
+if (WONTON_ENABLE_Jali)
+  add_subdirectory(jali)
 endif ()
 
-set(mesh_HEADERS
-  AuxMeshTopology.h
-  adaptive_refinement/adaptive_refinement_mesh.h
-  adaptive_refinement/adaptive_refinement_mesh_wrapper.h
-  direct_product/direct_product_mesh.h
-  direct_product/direct_product_mesh_wrapper.h
-  simple/simple_mesh.h
-  simple/simple_mesh_wrapper.h
-  flat/flat_mesh_wrapper.h
-  ${jali_mesh_wrapper_headers}
-  ${flecsi_mesh_wrapper_headers}
-  PARENT_SCOPE
+if (WONTON_ENABLE_Jali)
+  add_subdirectory(flecsi)
+endif ()
+
+add_subdirectory(simple)
+
+add_subdirectory(adaptive_refinement)
+
+add_subdirectory(direct_product)
+
+add_subdirectory(flat)
+
+# Make this a dependency of the main target
+target_link_libraries(wonton INTERFACE wonton_mesh)
+
+install(TARGETS wonton_mesh
+  EXPORT wonton_LIBRARIES
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include/wonton/mesh
+  INCLUDES DESTINATION include/wonton/mesh
   )
-
-if (ENABLE_UNIT_TESTS)
-
-  # Adaptive Refinement Mesh
-  cinch_add_unit(test_adaptive_refinement_mesh
-    SOURCES adaptive_refinement/test/test_adaptive_refinement_mesh.cc
-    POLICY SERIAL
-    )
-
-  # Adaptive Refinement Mesh Wrapper
-  cinch_add_unit(test_adaptive_refinement_mesh_wrapper
-    SOURCES adaptive_refinement/test/test_adaptive_refinement_mesh_wrapper.cc
-    POLICY SERIAL
-    )
-
-  # Direct Product Mesh
-  if (WONTON_ENABLE_MPI)
-    cinch_add_unit(test_direct_product_mesh_serial
-      SOURCES direct_product/test/test_direct_product_mesh.cc
-      POLICY MPI
-      THREADS 1
-      )
-    
-    cinch_add_unit(test_direct_product_mesh_parallel
-      SOURCES direct_product/test/test_direct_product_mesh.cc
-      POLICY MPI
-      THREADS 4
-      )
-  else ()
-    cinch_add_unit(test_direct_product_mesh_serial
-      SOURCES direct_product/test/test_direct_product_mesh.cc
-      POLICY SERIAL
-    )
-  endif ()
-
-  # Direct Product Mesh Wrapper
-  if (WONTON_ENABLE_MPI)
-    cinch_add_unit(test_direct_product_mesh_wrapper_serial
-      SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
-      POLICY MPI
-      THREADS 1
-      )
-
-    cinch_add_unit(test_direct_product_mesh_wrapper_parallel
-      SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
-      POLICY MPI
-      THREADS 4
-      )
-  else ()
-    cinch_add_unit(test_direct_product_mesh_wrapper_serial
-      SOURCES direct_product/test/test_direct_product_mesh_wrapper.cc
-      POLICY SERIAL
-      )
-  endif ()
-
-  # Simple Mesh
-  cinch_add_unit(test_simple_mesh
-    SOURCES simple/test/test_simple_mesh.cc
-    POLICY SERIAL
-    )
-
-  # Simple Mesh wrapper
-  cinch_add_unit(test_simple_mesh_wrapper
-    SOURCES simple/test/test_simple_mesh_wrapper.cc
-    POLICY SERIAL)
-
-  if (Jali_DIR)
-    cinch_add_unit(test_jali_mesh_wrapper
-      SOURCES jali/test/test_jali_mesh_wrapper.cc
-      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-      # this is relative to the wrapper directory
-      INPUTS ../../test_data/shotshell.exo
-      ../../test_data/shotshell-v.exo
-      POLICY MPI
-      THREADS 1)
-
-    # Flat mesh wrapper (has to be paired with a real MPI capable mesh
-    # wrapper)
-    cinch_add_unit(test_flat_mesh_wrapper
-      SOURCES flat/test/test_flat_mesh_wrapper.cc
-      LIBRARIES ${Jali_LIBRARIES} ${Jali_TPL_LIBRARIES}
-      # this is relative to the wrapper directory
-      INPUTS ../../test_data/shotshell.exo
-      ../../test_data/shotshell-v.exo
-      POLICY MPI
-      THREADS 1)
-  endif (Jali_DIR)
-
-  if (ENABLE_FleCSI)
-    cinch_add_unit(test_flecsi_mesh_wrapper
-      SOURCES flecsi/test/test_flecsi_mesh_wrapper.cc
-      LIBRARIES ${FleCSI_LIBRARIES} ${FleCSISP_LIBRARIES}
-      POLICY MPI
-      THREADS 1)
-  endif (ENABLE_FleCSI)
-endif(ENABLE_UNIT_TESTS)
