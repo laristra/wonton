@@ -21,6 +21,12 @@ endif()
 
 cmake_policy(SET CMP0074 NEW)  # Don't ignore Pkg_ROOT variables
 
+#
+# Also when CMake 3.15 is the minimum version we can find_package to
+# prefer config files and fall back to module files
+if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+  set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+endif ()
 
 
 # SEMANTIC VERSION NUMBERS - UPDATE DILIGENTLY
