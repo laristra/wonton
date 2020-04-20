@@ -36,13 +36,16 @@ Wonton uses standard C++11 features, so a fairly modern compiler
 is needed. We regularly test with Intel 18.0.1, GCC 6.4.0, and GCC 7.3.0. 
 The build system _requires_ CMake version 3.13+. 
 
-The following libraries are also _required_:
+The following libraries are _required_:
+
+- **__Either__** Boost (1.58.0+) **__or__** Thrust (1.8.3):
+  We wrap some features of either one of these packages.  If you would
+  like to run with OpenMP or TBB threads, then you _must_ use Thrust.
+
+The following libraries are _highly recommended_:
 
 - LAPACKE (3.8.0+)
 
-- **__Either__** Boost (1.58.0+) **__or__** Thrust (1.6.0+):
-  We wrap some features of either one of these packages.  If you would
-  like to run with OpenMP or TBB threads, then you _must_ use Thrust.
 
 Wonton provides wrappers for a few third-party mesh types.  Building
 support for these is _optional_:
