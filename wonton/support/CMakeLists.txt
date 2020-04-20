@@ -55,8 +55,12 @@ if (WONTON_ENABLE_THRUST)   # if it is overridden by the command line
   target_compile_definitions(wonton_support PUBLIC THRUST_DEVICE_SYSTEM=${THRUST_DEVICE_BACKEND})
 
 else ()
-  
-  target_link_libraries(wonton_support PUBLIC ${Boost_LIBRARIES})
+
+  if (Boost_LIBRARIES)
+    target_link_libraries(wonton_support PUBLIC ${Boost_LIBRARIES})
+  else ()
+    target_include_directories(wonton_support PUBLIC ${Boost_INCLUDE_DIR})
+  endif ()
 
 endif()
 

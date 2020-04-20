@@ -172,6 +172,7 @@ else ()
   find_package(Boost REQUIRED)
   target_include_directories(wonton SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
   message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
+  message(STATUS "Boost_LIBRARIES?=${Boost_LIBRARIES}")
 
 endif()
 
