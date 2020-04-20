@@ -18,11 +18,14 @@ target_include_directories(wonton_support PUBLIC
 set(wonton_support_HEADERS
   BoundingBox.h
   CoordinateSystem.h
+  equifactor.h
   lsfits.h
   Matrix.h
   moment_index.h
   Point.h
   Polytope.h
+  prime_factors.h
+  structured_partitioner.h
   svd.h
   Vector.h
   wonton.h
