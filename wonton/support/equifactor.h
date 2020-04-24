@@ -17,8 +17,6 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/support/prime_factors.h"
 
-namespace Wonton {
-
 /*!
   @brief Factorize a number N into D equal (or nearly equal) factors
   @param N Number to be factorized
@@ -41,12 +39,13 @@ namespace Wonton {
   return vector int64_t
 */
 
-namespace {  // for ODR
+namespace Wonton {
 
 #ifdef ENABLE_DEBUG
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
 
+static
 std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
   clock_t startclock, curclock;
   startclock = clock();
@@ -300,8 +299,6 @@ void print_sets(std::vector<std::vector<int>> sets) {
   std::cerr << "Max diff: " << maxdiff << "\n";
 }
 #endif
-
-}
 
 }  // namespace Wonton
 
