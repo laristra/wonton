@@ -136,6 +136,7 @@ cd build
 cmake \
   -D CMAKE_PREFIX_PATH=$NGC_INCLUDE_DIR \
   -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_CXX_FLAGS="-Wall -Werror" \
   -D ENABLE_UNIT_TESTS=True \
   -D WONTON_ENABLE_MPI=True \
   -D ENABLE_JENKINS_OUTPUT=True \
