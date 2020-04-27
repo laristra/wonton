@@ -112,7 +112,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A basic, axis-aligned, logically-rectangular mesh.  <a href="classWonton_1_1Direct__Product__Mesh.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Direct_Product_Mesh_Wrapper</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A thin wrapper that implements mesh methods for <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a>.  <a href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A wrapper that implements the prescribed interface for direct product meshes in Portage using the <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a> (<a class="el" href="direct__product__mesh_8h.html" title="Definition of the Direct_Product_Mesh class. ">direct_product_mesh.h</a>)  <a href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structWonton_1_1Executor__type.html">Executor_type</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -206,8 +206,8 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a5915c22b014b629f8e20663abee0814b"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a5915c22b014b629f8e20663abee0814b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a5915c22b014b629f8e20663abee0814b">pointer</a> = T *</td></tr>
 <tr class="separator:a5915c22b014b629f8e20663abee0814b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7b1da26cc6b7643835406411ddfc3e0"><td class="memItemLeft" align="right" valign="top">typedef boost::counting_iterator&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a></td></tr>
-<tr class="separator:ac7b1da26cc6b7643835406411ddfc3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6d363bbbc4b3f38c0f8b528839b3890"><td class="memItemLeft" align="right" valign="top">typedef boost::counting_iterator&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a></td></tr>
+<tr class="separator:ad6d363bbbc4b3f38c0f8b528839b3890"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -348,69 +348,73 @@ Functions</h2></td></tr>
 <tr class="memitem:a449c51ba2c9f8b6c19812be487b9a292"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
 <tr class="memitem:a449c51ba2c9f8b6c19812be487b9a292"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a449c51ba2c9f8b6c19812be487b9a292">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p)</td></tr>
 <tr class="separator:a449c51ba2c9f8b6c19812be487b9a292"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7dedf37a92e7bf1008dc7ca5de74ca2"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:af7dedf37a92e7bf1008dc7ca5de74ca2"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#af7dedf37a92e7bf1008dc7ca5de74ca2">operator+</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;v)</td></tr>
-<tr class="separator:af7dedf37a92e7bf1008dc7ca5de74ca2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad50a1f70a3188b1dd4c221fd5c3b5a94"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:ad50a1f70a3188b1dd4c221fd5c3b5a94"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ad50a1f70a3188b1dd4c221fd5c3b5a94">operator+</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
-<tr class="separator:ad50a1f70a3188b1dd4c221fd5c3b5a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1b463d3889877d66e20a3af093473f6f"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a1b463d3889877d66e20a3af093473f6f"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a1b463d3889877d66e20a3af093473f6f">operator-</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
-<tr class="separator:a1b463d3889877d66e20a3af093473f6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a375c0448113be93114b96a0058db74a2"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a375c0448113be93114b96a0058db74a2"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a375c0448113be93114b96a0058db74a2">operator*</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p, double s)</td></tr>
-<tr class="separator:a375c0448113be93114b96a0058db74a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac77151d06c6191ae0b7c4dfc7ab17f0e"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:ac77151d06c6191ae0b7c4dfc7ab17f0e"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ac77151d06c6191ae0b7c4dfc7ab17f0e">operator*</a> (double s, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p)</td></tr>
-<tr class="separator:ac77151d06c6191ae0b7c4dfc7ab17f0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a97f80cd847cef3bef6f8ed91a90958"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a3a97f80cd847cef3bef6f8ed91a90958"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a3a97f80cd847cef3bef6f8ed91a90958">operator/</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p, double s)</td></tr>
-<tr class="separator:a3a97f80cd847cef3bef6f8ed91a90958"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add7f6b7398e5206d1b9774c0d97d54de"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:add7f6b7398e5206d1b9774c0d97d54de"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#add7f6b7398e5206d1b9774c0d97d54de">operator==</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
-<tr class="separator:add7f6b7398e5206d1b9774c0d97d54de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae242260e2531057729047eac70d124fd"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:ae242260e2531057729047eac70d124fd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ae242260e2531057729047eac70d124fd">approxEq</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2, double tol=1.0e-8)</td></tr>
-<tr class="separator:ae242260e2531057729047eac70d124fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45b0ea77b47ee1c9d0d46fa4c40074b6"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a45b0ea77b47ee1c9d0d46fa4c40074b6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a45b0ea77b47ee1c9d0d46fa4c40074b6">operator&lt;</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
-<tr class="separator:a45b0ea77b47ee1c9d0d46fa4c40074b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad2366e7e9d39fdf5824b96d51b13727"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aad2366e7e9d39fdf5824b96d51b13727">ToCylindrical</a> (const <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a> &amp;p)</td></tr>
-<tr class="separator:aad2366e7e9d39fdf5824b96d51b13727"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84fc20eb0c91469aee91a64309a2078e"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a84fc20eb0c91469aee91a64309a2078e">createP3</a> (double x, double y, double z)</td></tr>
-<tr class="separator:a84fc20eb0c91469aee91a64309a2078e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca61e6a93d047ba07ad135840b7d02cb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aca61e6a93d047ba07ad135840b7d02cb">createP2</a> (double x, double y)</td></tr>
-<tr class="separator:aca61e6a93d047ba07ad135840b7d02cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4e0fe2a0ba0166f5cb0aca58baac173"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceWonton.html#adfb57e279ba85bea5cfb26112affa389">Point1</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aa4e0fe2a0ba0166f5cb0aca58baac173">createP1</a> (double x)</td></tr>
-<tr class="separator:aa4e0fe2a0ba0166f5cb0aca58baac173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1497c9b2b7f795ca611772fe2ceb136d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a1497c9b2b7f795ca611772fe2ceb136d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a1497c9b2b7f795ca611772fe2ceb136d">operator+</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;v)</td></tr>
+<tr class="separator:a1497c9b2b7f795ca611772fe2ceb136d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b865227fdc6236c24f48cdd9a15e1bb"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a2b865227fdc6236c24f48cdd9a15e1bb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a2b865227fdc6236c24f48cdd9a15e1bb">operator+</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
+<tr class="separator:a2b865227fdc6236c24f48cdd9a15e1bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3e1ac8757a71b6c487908f0803701e3"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:ae3e1ac8757a71b6c487908f0803701e3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ae3e1ac8757a71b6c487908f0803701e3">operator-</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
+<tr class="separator:ae3e1ac8757a71b6c487908f0803701e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac59a907aa945fd4d7f849b5cdb2ba369"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:ac59a907aa945fd4d7f849b5cdb2ba369"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ac59a907aa945fd4d7f849b5cdb2ba369">operator*</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p, double s)</td></tr>
+<tr class="separator:ac59a907aa945fd4d7f849b5cdb2ba369"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaec01acf034f7d6ccb4f99901f4b5c73"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:aaec01acf034f7d6ccb4f99901f4b5c73"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aaec01acf034f7d6ccb4f99901f4b5c73">operator*</a> (double s, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p)</td></tr>
+<tr class="separator:aaec01acf034f7d6ccb4f99901f4b5c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03420a00440792976591cb04eef6c860"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a03420a00440792976591cb04eef6c860"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a03420a00440792976591cb04eef6c860">operator/</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p, double s)</td></tr>
+<tr class="separator:a03420a00440792976591cb04eef6c860"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61eb5bd7d4354459e4bf3992fa59fd75"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a61eb5bd7d4354459e4bf3992fa59fd75"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a61eb5bd7d4354459e4bf3992fa59fd75">operator==</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
+<tr class="separator:a61eb5bd7d4354459e4bf3992fa59fd75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b276c0d78d2f616a8ae1028d582c483"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a1b276c0d78d2f616a8ae1028d582c483"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a1b276c0d78d2f616a8ae1028d582c483">approxEq</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2, double tol=1.0e-8)</td></tr>
+<tr class="separator:a1b276c0d78d2f616a8ae1028d582c483"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ddd45971f1120d7c2243b8be25a327c"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a9ddd45971f1120d7c2243b8be25a327c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a9ddd45971f1120d7c2243b8be25a327c">operator&lt;</a> (const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p1, const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;p2)</td></tr>
+<tr class="separator:a9ddd45971f1120d7c2243b8be25a327c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4224bc460023e4737c2d62249bba579"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ac4224bc460023e4737c2d62249bba579">ToCylindrical</a> (const <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a> &amp;p)</td></tr>
+<tr class="separator:ac4224bc460023e4737c2d62249bba579"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a149df7020cc3047c7093a174d0876e7a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a149df7020cc3047c7093a174d0876e7a">createP3</a> (double x, double y, double z)</td></tr>
+<tr class="separator:a149df7020cc3047c7093a174d0876e7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49729c45aa3345e60316563bca56a0ca"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a49729c45aa3345e60316563bca56a0ca">createP2</a> (double x, double y)</td></tr>
+<tr class="separator:a49729c45aa3345e60316563bca56a0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebd3dea39b7355e609ceed086c1dfc9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#adfb57e279ba85bea5cfb26112affa389">Point1</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aebd3dea39b7355e609ceed086c1dfc9e">createP1</a> (double x)</td></tr>
+<tr class="separator:aebd3dea39b7355e609ceed086c1dfc9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acae96f2ea07d4561ecc78a4d53a40970"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:acae96f2ea07d4561ecc78a4d53a40970"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; std::array&lt; std::array&lt; int64_t, D &gt;, 2 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#acae96f2ea07d4561ecc78a4d53a40970">structured_partitioner</a> (int N, std::array&lt; int64_t, D &gt; ncells, int d=D, int seed=0)</td></tr>
+<tr class="memdesc:acae96f2ea07d4561ecc78a4d53a40970"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition a D-dimensional structured grid along d axes into N subdomains.  <a href="#acae96f2ea07d4561ecc78a4d53a40970">More...</a><br /></td></tr>
+<tr class="separator:acae96f2ea07d4561ecc78a4d53a40970"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5be923c8415c090877c2c7ddaf109e30"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a5be923c8415c090877c2c7ddaf109e30">svd</a> (std::vector&lt; std::vector&lt; double &gt; &gt; &amp;a, std::vector&lt; double &gt; &amp;w, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;v)</td></tr>
 <tr class="separator:a5be923c8415c090877c2c7ddaf109e30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b63b2dd18d65ba23456d07227946930"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a7b63b2dd18d65ba23456d07227946930">svd_solve</a> (const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;u, const std::vector&lt; double &gt; &amp;w, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;v, std::vector&lt; double &gt; &amp;b, std::vector&lt; double &gt; &amp;x)</td></tr>
 <tr class="separator:a7b63b2dd18d65ba23456d07227946930"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8a1ecbaa860bf5e09ac7dd90c608624d">dot</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;b)</td></tr>
-<tr class="memdesc:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dot product of two vectors, \(\vec{a} \cdot \vec{b}\).  <a href="#a8a1ecbaa860bf5e09ac7dd90c608624d">More...</a><br /></td></tr>
-<tr class="separator:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a247eb3e60b8d0b5bdb6e911a332d582d">operator+</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;b)</td></tr>
-<tr class="memdesc:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two vectors.  <a href="#a247eb3e60b8d0b5bdb6e911a332d582d">More...</a><br /></td></tr>
-<tr class="separator:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a008ed801cbebbb45fe8df8573820dd06"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a008ed801cbebbb45fe8df8573820dd06"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a008ed801cbebbb45fe8df8573820dd06">operator-</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;b)</td></tr>
-<tr class="memdesc:a008ed801cbebbb45fe8df8573820dd06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract two vectors.  <a href="#a008ed801cbebbb45fe8df8573820dd06">More...</a><br /></td></tr>
-<tr class="separator:a008ed801cbebbb45fe8df8573820dd06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8158d7bc40748788bdb2e3fc27b1e71"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:af8158d7bc40748788bdb2e3fc27b1e71"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#af8158d7bc40748788bdb2e3fc27b1e71">operator*</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
-<tr class="memdesc:af8158d7bc40748788bdb2e3fc27b1e71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="#af8158d7bc40748788bdb2e3fc27b1e71">More...</a><br /></td></tr>
-<tr class="separator:af8158d7bc40748788bdb2e3fc27b1e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ff12c21a91713d814786978dd379f56"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a0ff12c21a91713d814786978dd379f56"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a0ff12c21a91713d814786978dd379f56">operator*</a> (const double &amp;s, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a)</td></tr>
-<tr class="memdesc:a0ff12c21a91713d814786978dd379f56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="#a0ff12c21a91713d814786978dd379f56">More...</a><br /></td></tr>
-<tr class="separator:a0ff12c21a91713d814786978dd379f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60f2210f00eef26d4ee101745edad37f"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a60f2210f00eef26d4ee101745edad37f"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a60f2210f00eef26d4ee101745edad37f">operator/</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
-<tr class="memdesc:a60f2210f00eef26d4ee101745edad37f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide a vector by a scalar, \( \frac{1}{s} \vec{a}\).  <a href="#a60f2210f00eef26d4ee101745edad37f">More...</a><br /></td></tr>
-<tr class="separator:a60f2210f00eef26d4ee101745edad37f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90db3637d6da5f5b277eb4afad68e597"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a90db3637d6da5f5b277eb4afad68e597"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a90db3637d6da5f5b277eb4afad68e597">dot</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;b)</td></tr>
+<tr class="memdesc:a90db3637d6da5f5b277eb4afad68e597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dot product of two vectors, \(\vec{a} \cdot \vec{b}\).  <a href="#a90db3637d6da5f5b277eb4afad68e597">More...</a><br /></td></tr>
+<tr class="separator:a90db3637d6da5f5b277eb4afad68e597"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aacd7de1ad6467b0aba7cfb737fa006ec">operator+</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;b)</td></tr>
+<tr class="memdesc:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two vectors.  <a href="#aacd7de1ad6467b0aba7cfb737fa006ec">More...</a><br /></td></tr>
+<tr class="separator:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ab98e0e3cc54f47048cb873bd9a51aee4">operator-</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;b)</td></tr>
+<tr class="memdesc:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract two vectors.  <a href="#ab98e0e3cc54f47048cb873bd9a51aee4">More...</a><br /></td></tr>
+<tr class="separator:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8f6573af23d7cee4f4ffb48ad951cb4f">operator*</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
+<tr class="memdesc:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="#a8f6573af23d7cee4f4ffb48ad951cb4f">More...</a><br /></td></tr>
+<tr class="separator:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7bab077ba359491088c7f8be0e3a8d7"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:aa7bab077ba359491088c7f8be0e3a8d7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aa7bab077ba359491088c7f8be0e3a8d7">operator*</a> (const double &amp;s, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a)</td></tr>
+<tr class="memdesc:aa7bab077ba359491088c7f8be0e3a8d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="#aa7bab077ba359491088c7f8be0e3a8d7">More...</a><br /></td></tr>
+<tr class="separator:aa7bab077ba359491088c7f8be0e3a8d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ad11f946e5da806d1c20a6579d4ff8b2d">operator/</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
+<tr class="memdesc:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide a vector by a scalar, \( \frac{1}{s} \vec{a}\).  <a href="#ad11f946e5da806d1c20a6579d4ff8b2d">More...</a><br /></td></tr>
+<tr class="separator:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fccf9610bbe5afd92ee1b86040cbbe6"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
 <tr class="memitem:a6fccf9610bbe5afd92ee1b86040cbbe6"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a6fccf9610bbe5afd92ee1b86040cbbe6">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;v)</td></tr>
 <tr class="memdesc:a6fccf9610bbe5afd92ee1b86040cbbe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pretty printing of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> to an output stream.  <a href="#a6fccf9610bbe5afd92ee1b86040cbbe6">More...</a><br /></td></tr>
@@ -419,16 +423,16 @@ Functions</h2></td></tr>
 <tr class="memitem:a661bdf812144ea3b63b1999306fde54d"><td class="memTemplItemLeft" align="right" valign="top">std::istream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a661bdf812144ea3b63b1999306fde54d">operator&gt;&gt;</a> (std::istream &amp;is, <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;v)</td></tr>
 <tr class="memdesc:a661bdf812144ea3b63b1999306fde54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read in a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> from an input stream.  <a href="#a661bdf812144ea3b63b1999306fde54d">More...</a><br /></td></tr>
 <tr class="separator:a661bdf812144ea3b63b1999306fde54d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a486758f00a0411668cfa4e83badbc57e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a486758f00a0411668cfa4e83badbc57e">cross</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 2 &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 2 &gt; &amp;b)</td></tr>
-<tr class="memdesc:a486758f00a0411668cfa4e83badbc57e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 2d vectors, \(\vec{a} \times \vec{b}\).  <a href="#a486758f00a0411668cfa4e83badbc57e">More...</a><br /></td></tr>
-<tr class="separator:a486758f00a0411668cfa4e83badbc57e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20bb6ccd088df20d04ede4e66033e3e6"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a20bb6ccd088df20d04ede4e66033e3e6">cross</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt; &amp;b)</td></tr>
-<tr class="memdesc:a20bb6ccd088df20d04ede4e66033e3e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 3d vectors, \(\vec{a} \times \vec{b}\).  <a href="#a20bb6ccd088df20d04ede4e66033e3e6">More...</a><br /></td></tr>
-<tr class="separator:a20bb6ccd088df20d04ede4e66033e3e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c8a24760d86549a9e5c2c86594ef6be"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a8c8a24760d86549a9e5c2c86594ef6be"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8c8a24760d86549a9e5c2c86594ef6be">MaxComponent</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;v, int &amp;icomp)</td></tr>
-<tr class="memdesc:a8c8a24760d86549a9e5c2c86594ef6be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain the value and index of the maximum component of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="#a8c8a24760d86549a9e5c2c86594ef6be">More...</a><br /></td></tr>
-<tr class="separator:a8c8a24760d86549a9e5c2c86594ef6be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af896cc9d438113eaa248460dc03353cb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#af896cc9d438113eaa248460dc03353cb">cross</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 2 &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 2 &gt; &amp;b)</td></tr>
+<tr class="memdesc:af896cc9d438113eaa248460dc03353cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 2d vectors, \(\vec{a} \times \vec{b}\).  <a href="#af896cc9d438113eaa248460dc03353cb">More...</a><br /></td></tr>
+<tr class="separator:af896cc9d438113eaa248460dc03353cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accf61c82c51d46f522059f2fa25d0c37"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#accf61c82c51d46f522059f2fa25d0c37">cross</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt; &amp;a, const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt; &amp;b)</td></tr>
+<tr class="memdesc:accf61c82c51d46f522059f2fa25d0c37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 3d vectors, \(\vec{a} \times \vec{b}\).  <a href="#accf61c82c51d46f522059f2fa25d0c37">More...</a><br /></td></tr>
+<tr class="separator:accf61c82c51d46f522059f2fa25d0c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dec3e771550b82308d16fbd2227db63"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a6dec3e771550b82308d16fbd2227db63"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a6dec3e771550b82308d16fbd2227db63">MaxComponent</a> (const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;v, int &amp;icomp)</td></tr>
+<tr class="memdesc:a6dec3e771550b82308d16fbd2227db63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain the value and index of the maximum component of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="#a6dec3e771550b82308d16fbd2227db63">More...</a><br /></td></tr>
+<tr class="separator:a6dec3e771550b82308d16fbd2227db63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37caf0a638fc162b6c19c49b97ea4751"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a37caf0a638fc162b6c19c49b97ea4751">to_string</a> (<a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> entkind)</td></tr>
 <tr class="separator:a37caf0a638fc162b6c19c49b97ea4751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabecbe5c6fd52b3d09ff1aad556346c9"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aabecbe5c6fd52b3d09ff1aad556346c9">to_string</a> (<a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> enttype)</td></tr>
@@ -439,8 +443,8 @@ Functions</h2></td></tr>
 <tr class="separator:a6e7b0e7cd6013337057816943bf2685c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4a29e94bb85bcdd82f7d8588842a37"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aeb4a29e94bb85bcdd82f7d8588842a37">to_string</a> (<a class="el" href="namespaceWonton.html#a2cb9cdaefdacc0c2036c0666c3a1f1d5">Data_layout</a> layout)</td></tr>
 <tr class="separator:aeb4a29e94bb85bcdd82f7d8588842a37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae584713407ff294b45cdff4dcd568093"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ae584713407ff294b45cdff4dcd568093">make_counting_iterator</a> (unsigned int const i)</td></tr>
-<tr class="separator:ae584713407ff294b45cdff4dcd568093"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad90e1dc228ca18217685a9531ee0235b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ad90e1dc228ca18217685a9531ee0235b">make_counting_iterator</a> (int const i)</td></tr>
+<tr class="separator:ad90e1dc228ca18217685a9531ee0235b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8330b2d8e5684cd05257f37e3fe8d20f"><td class="memTemplParams" colspan="2">template&lt;typename InputIterator , typename OutputIterator , typename UnaryFunction &gt; </td></tr>
 <tr class="memitem:a8330b2d8e5684cd05257f37e3fe8d20f"><td class="memTemplItemLeft" align="right" valign="top">OutputIterator&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8330b2d8e5684cd05257f37e3fe8d20f">transform</a> (InputIterator first, InputIterator last, OutputIterator result, UnaryFunction op)</td></tr>
 <tr class="separator:a8330b2d8e5684cd05257f37e3fe8d20f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -518,14 +522,14 @@ template&lt;int D&gt; </div>
 
 </div>
 </div>
-<a id="ac7b1da26cc6b7643835406411ddfc3e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7b1da26cc6b7643835406411ddfc3e0">&#9670;&nbsp;</a></span>counting_iterator</h2>
+<a id="ad6d363bbbc4b3f38c0f8b528839b3890"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6d363bbbc4b3f38c0f8b528839b3890">&#9670;&nbsp;</a></span>counting_iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef boost::counting_iterator&lt;unsigned int&gt; <a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">Wonton::counting_iterator</a></td>
+          <td class="memname">typedef boost::counting_iterator&lt;int&gt; <a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">Wonton::counting_iterator</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -820,19 +824,16 @@ template&lt;typename T &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ae242260e2531057729047eac70d124fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae242260e2531057729047eac70d124fd">&#9670;&nbsp;</a></span>approxEq()</h2>
+<a id="a1b276c0d78d2f616a8ae1028d582c483"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b276c0d78d2f616a8ae1028d582c483">&#9670;&nbsp;</a></span>approxEq()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Wonton::approxEq </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> bool Wonton::approxEq </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p1</em>, </td>
@@ -855,11 +856,6 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -1131,43 +1127,32 @@ template&lt;&gt; </div>
 
 </div>
 </div>
-<a id="aa4e0fe2a0ba0166f5cb0aca58baac173"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4e0fe2a0ba0166f5cb0aca58baac173">&#9670;&nbsp;</a></span>createP1()</h2>
+<a id="aebd3dea39b7355e609ceed086c1dfc9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebd3dea39b7355e609ceed086c1dfc9e">&#9670;&nbsp;</a></span>createP1()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="namespaceWonton.html#adfb57e279ba85bea5cfb26112affa389">Point1</a> Wonton::createP1 </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#adfb57e279ba85bea5cfb26112affa389">Point1</a> Wonton::createP1 </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>x</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aca61e6a93d047ba07ad135840b7d02cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca61e6a93d047ba07ad135840b7d02cb">&#9670;&nbsp;</a></span>createP2()</h2>
+<a id="a49729c45aa3345e60316563bca56a0ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49729c45aa3345e60316563bca56a0ca">&#9670;&nbsp;</a></span>createP2()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a> Wonton::createP2 </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a> Wonton::createP2 </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>x</em>, </td>
@@ -1184,26 +1169,18 @@ template&lt;&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a84fc20eb0c91469aee91a64309a2078e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a84fc20eb0c91469aee91a64309a2078e">&#9670;&nbsp;</a></span>createP3()</h2>
+<a id="a149df7020cc3047c7093a174d0876e7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a149df7020cc3047c7093a174d0876e7a">&#9670;&nbsp;</a></span>createP3()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a> Wonton::createP3 </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a> Wonton::createP3 </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>x</em>, </td>
@@ -1226,26 +1203,18 @@ template&lt;&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a486758f00a0411668cfa4e83badbc57e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a486758f00a0411668cfa4e83badbc57e">&#9670;&nbsp;</a></span>cross() <span class="overload">[1/2]</span></h2>
+<a id="af896cc9d438113eaa248460dc03353cb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af896cc9d438113eaa248460dc03353cb">&#9670;&nbsp;</a></span>cross() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double Wonton::cross </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double Wonton::cross </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 2 &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -1262,28 +1231,20 @@ template&lt;&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Cross product operator for two 2d vectors, \(\vec{a} \times \vec{b}\). </p>
 
 </div>
 </div>
-<a id="a20bb6ccd088df20d04ede4e66033e3e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20bb6ccd088df20d04ede4e66033e3e6">&#9670;&nbsp;</a></span>cross() <span class="overload">[2/2]</span></h2>
+<a id="accf61c82c51d46f522059f2fa25d0c37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accf61c82c51d46f522059f2fa25d0c37">&#9670;&nbsp;</a></span>cross() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;3&gt; Wonton::cross </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;3&gt; Wonton::cross </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; 3 &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -1300,30 +1261,22 @@ template&lt;&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Cross product operator for two 3d vectors, \(\vec{a} \times \vec{b}\). </p>
 
 </div>
 </div>
-<a id="a8a1ecbaa860bf5e09ac7dd90c608624d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a1ecbaa860bf5e09ac7dd90c608624d">&#9670;&nbsp;</a></span>dot()</h2>
+<a id="a90db3637d6da5f5b277eb4afad68e597"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90db3637d6da5f5b277eb4afad68e597">&#9670;&nbsp;</a></span>dot()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double Wonton::dot </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double Wonton::dot </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -1340,11 +1293,6 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Dot product of two vectors, \(\vec{a} \cdot \vec{b}\). </p>
@@ -1661,8 +1609,8 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
-<a id="ae584713407ff294b45cdff4dcd568093"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae584713407ff294b45cdff4dcd568093">&#9670;&nbsp;</a></span>make_counting_iterator()</h2>
+<a id="ad90e1dc228ca18217685a9531ee0235b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad90e1dc228ca18217685a9531ee0235b">&#9670;&nbsp;</a></span>make_counting_iterator()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1671,9 +1619,9 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a> Wonton::make_counting_iterator </td>
+          <td class="memname"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a> Wonton::make_counting_iterator </td>
           <td>(</td>
-          <td class="paramtype">unsigned int const&#160;</td>
+          <td class="paramtype">int const&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
           <td></td>
         </tr>
@@ -1729,19 +1677,16 @@ template&lt;typename T , template&lt; typename, std::size_t &gt; class A&gt; </d
 
 </div>
 </div>
-<a id="a8c8a24760d86549a9e5c2c86594ef6be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8c8a24760d86549a9e5c2c86594ef6be">&#9670;&nbsp;</a></span>MaxComponent()</h2>
+<a id="a6dec3e771550b82308d16fbd2227db63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6dec3e771550b82308d16fbd2227db63">&#9670;&nbsp;</a></span>MaxComponent()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double Wonton::MaxComponent </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double Wonton::MaxComponent </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>v</em>, </td>
@@ -1758,11 +1703,6 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Obtain the value and index of the maximum component of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>. </p>
@@ -1941,19 +1881,16 @@ template&lt;size_t D, class MeshWrapper &gt; </div>
 
 </div>
 </div>
-<a id="a375c0448113be93114b96a0058db74a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a375c0448113be93114b96a0058db74a2">&#9670;&nbsp;</a></span>operator*() <span class="overload">[1/4]</span></h2>
+<a id="ac59a907aa945fd4d7f849b5cdb2ba369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac59a907aa945fd4d7f849b5cdb2ba369">&#9670;&nbsp;</a></span>operator*() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator* </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator* </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p</em>, </td>
@@ -1970,28 +1907,20 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ac77151d06c6191ae0b7c4dfc7ab17f0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac77151d06c6191ae0b7c4dfc7ab17f0e">&#9670;&nbsp;</a></span>operator*() <span class="overload">[2/4]</span></h2>
+<a id="aaec01acf034f7d6ccb4f99901f4b5c73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaec01acf034f7d6ccb4f99901f4b5c73">&#9670;&nbsp;</a></span>operator*() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator* </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator* </td>
           <td>(</td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>s</em>, </td>
@@ -2008,28 +1937,20 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="af8158d7bc40748788bdb2e3fc27b1e71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8158d7bc40748788bdb2e3fc27b1e71">&#9670;&nbsp;</a></span>operator*() <span class="overload">[3/4]</span></h2>
+<a id="a8f6573af23d7cee4f4ffb48ad951cb4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f6573af23d7cee4f4ffb48ad951cb4f">&#9670;&nbsp;</a></span>operator*() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator* </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator* </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -2046,30 +1967,22 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Multiply a vector by a scalar, \( s \vec{a}\). </p>
 
 </div>
 </div>
-<a id="a0ff12c21a91713d814786978dd379f56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ff12c21a91713d814786978dd379f56">&#9670;&nbsp;</a></span>operator*() <span class="overload">[4/4]</span></h2>
+<a id="aa7bab077ba359491088c7f8be0e3a8d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa7bab077ba359491088c7f8be0e3a8d7">&#9670;&nbsp;</a></span>operator*() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator* </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator* </td>
           <td>(</td>
           <td class="paramtype">const double &amp;&#160;</td>
           <td class="paramname"><em>s</em>, </td>
@@ -2086,30 +1999,22 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Multiply a vector by a scalar, \( s \vec{a}\). </p>
 
 </div>
 </div>
-<a id="af7dedf37a92e7bf1008dc7ca5de74ca2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7dedf37a92e7bf1008dc7ca5de74ca2">&#9670;&nbsp;</a></span>operator+() <span class="overload">[1/3]</span></h2>
+<a id="a1497c9b2b7f795ca611772fe2ceb136d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1497c9b2b7f795ca611772fe2ceb136d">&#9670;&nbsp;</a></span>operator+() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator+ </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator+ </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p</em>, </td>
@@ -2126,28 +2031,20 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad50a1f70a3188b1dd4c221fd5c3b5a94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad50a1f70a3188b1dd4c221fd5c3b5a94">&#9670;&nbsp;</a></span>operator+() <span class="overload">[2/3]</span></h2>
+<a id="a2b865227fdc6236c24f48cdd9a15e1bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b865227fdc6236c24f48cdd9a15e1bb">&#9670;&nbsp;</a></span>operator+() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator+ </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator+ </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p1</em>, </td>
@@ -2164,28 +2061,20 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a247eb3e60b8d0b5bdb6e911a332d582d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a247eb3e60b8d0b5bdb6e911a332d582d">&#9670;&nbsp;</a></span>operator+() <span class="overload">[3/3]</span></h2>
+<a id="aacd7de1ad6467b0aba7cfb737fa006ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacd7de1ad6467b0aba7cfb737fa006ec">&#9670;&nbsp;</a></span>operator+() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator+ </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator+ </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -2202,30 +2091,22 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Add two vectors. </p>
 
 </div>
 </div>
-<a id="a1b463d3889877d66e20a3af093473f6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1b463d3889877d66e20a3af093473f6f">&#9670;&nbsp;</a></span>operator-() <span class="overload">[1/2]</span></h2>
+<a id="ae3e1ac8757a71b6c487908f0803701e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3e1ac8757a71b6c487908f0803701e3">&#9670;&nbsp;</a></span>operator-() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator- </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator- </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p1</em>, </td>
@@ -2242,28 +2123,20 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a008ed801cbebbb45fe8df8573820dd06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a008ed801cbebbb45fe8df8573820dd06">&#9670;&nbsp;</a></span>operator-() <span class="overload">[2/2]</span></h2>
+<a id="ab98e0e3cc54f47048cb873bd9a51aee4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab98e0e3cc54f47048cb873bd9a51aee4">&#9670;&nbsp;</a></span>operator-() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator- </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator- </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -2280,30 +2153,22 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Subtract two vectors. </p>
 
 </div>
 </div>
-<a id="a3a97f80cd847cef3bef6f8ed91a90958"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a97f80cd847cef3bef6f8ed91a90958">&#9670;&nbsp;</a></span>operator/() <span class="overload">[1/2]</span></h2>
+<a id="a03420a00440792976591cb04eef6c860"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03420a00440792976591cb04eef6c860">&#9670;&nbsp;</a></span>operator/() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator/ </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Point.html">Point</a>&lt;D&gt; Wonton::operator/ </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p</em>, </td>
@@ -2320,28 +2185,20 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a60f2210f00eef26d4ee101745edad37f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60f2210f00eef26d4ee101745edad37f">&#9670;&nbsp;</a></span>operator/() <span class="overload">[2/2]</span></h2>
+<a id="ad11f946e5da806d1c20a6579d4ff8b2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad11f946e5da806d1c20a6579d4ff8b2d">&#9670;&nbsp;</a></span>operator/() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator/ </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt;D&gt; Wonton::operator/ </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Vector.html">Vector</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>a</em>, </td>
@@ -2358,19 +2215,14 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Divide a vector by a scalar, \( \frac{1}{s} \vec{a}\). </p>
 
 </div>
 </div>
-<a id="a45b0ea77b47ee1c9d0d46fa4c40074b6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45b0ea77b47ee1c9d0d46fa4c40074b6">&#9670;&nbsp;</a></span>operator<()</h2>
+<a id="a9ddd45971f1120d7c2243b8be25a327c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ddd45971f1120d7c2243b8be25a327c">&#9670;&nbsp;</a></span>operator<()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2378,7 +2230,7 @@ template&lt;int D&gt; </div>
 template&lt;int D&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool Wonton::operator&lt; </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> bool Wonton::operator&lt; </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p1</em>, </td>
@@ -2406,9 +2258,6 @@ template&lt;int D&gt; </div>
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">std::ostream&amp; Wonton::operator&lt;&lt; </td>
@@ -2428,11 +2277,6 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -2477,19 +2321,16 @@ template&lt;int D&gt; </div>
 
 </div>
 </div>
-<a id="add7f6b7398e5206d1b9774c0d97d54de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add7f6b7398e5206d1b9774c0d97d54de">&#9670;&nbsp;</a></span>operator==()</h2>
+<a id="a61eb5bd7d4354459e4bf3992fa59fd75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61eb5bd7d4354459e4bf3992fa59fd75">&#9670;&nbsp;</a></span>operator==()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;int D&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Wonton::operator== </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> bool Wonton::operator== </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; &amp;&#160;</td>
           <td class="paramname"><em>p1</em>, </td>
@@ -2506,11 +2347,6 @@ template&lt;int D&gt; </div>
           <td></td><td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -2578,6 +2414,65 @@ template&lt;int D&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<a id="acae96f2ea07d4561ecc78a4d53a40970"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acae96f2ea07d4561ecc78a4d53a40970">&#9670;&nbsp;</a></span>structured_partitioner()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::array&lt;std::array&lt;int64_t,D&gt;,2&gt; &gt; Wonton::structured_partitioner </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>N</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::array&lt; int64_t, D &gt;&#160;</td>
+          <td class="paramname"><em>ncells</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>d</em> = <code>D</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>seed</em> = <code>0</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Partition a D-dimensional structured grid along d axes into N subdomains. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">D</td><td>Mesh/Grid dimensionality </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">N</td><td>Number of partitions </td></tr>
+    <tr><td class="paramname">ncells</td><td>Number of cells in each axis direction </td></tr>
+    <tr><td class="paramname">d</td><td>Number of directions in which to partition (d &lt;= D) </td></tr>
+    <tr><td class="paramname">seed</td><td>Seed for randomization used in equifactor </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -2791,28 +2686,20 @@ template&lt;int D&gt; </div>
 
 </div>
 </div>
-<a id="aad2366e7e9d39fdf5824b96d51b13727"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aad2366e7e9d39fdf5824b96d51b13727">&#9670;&nbsp;</a></span>ToCylindrical()</h2>
+<a id="ac4224bc460023e4737c2d62249bba579"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4224bc460023e4737c2d62249bba579">&#9670;&nbsp;</a></span>ToCylindrical()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a> Wonton::ToCylindrical </td>
+          <td class="memname"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> <a class="el" href="namespaceWonton.html#a4591529af28814f030cc60efc14cefb5">Point2</a> Wonton::ToCylindrical </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="namespaceWonton.html#acd9de62c5dae614ad13fc38793c0fe7a">Point3</a> &amp;&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>

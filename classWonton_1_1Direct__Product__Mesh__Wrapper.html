@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>A thin wrapper that implements mesh methods for <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a>.  
+<p>A wrapper that implements the prescribed interface for direct product meshes in Portage using the <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a> (<a class="el" href="direct__product__mesh_8h.html" title="Definition of the Direct_Product_Mesh class. ">direct_product_mesh.h</a>)  
  <a href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="direct__product__mesh__wrapper_8h_source.html">direct_product_mesh_wrapper.h</a>&gt;</code></p>
@@ -92,7 +92,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7cc643ac9d65bda43bcec03c2e593479"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a7cc643ac9d65bda43bcec03c2e593479">Direct_Product_Mesh_Wrapper</a> ()=delete</td></tr>
 <tr class="memdesc:a7cc643ac9d65bda43bcec03c2e593479"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor (disabled)  <a href="#a7cc643ac9d65bda43bcec03c2e593479">More...</a><br /></td></tr>
 <tr class="separator:a7cc643ac9d65bda43bcec03c2e593479"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f6f70ebfb3ce462a841eb0284630f5d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a8f6f70ebfb3ce462a841eb0284630f5d">Direct_Product_Mesh_Wrapper</a> (<a class="el" href="classWonton_1_1Direct__Product__Mesh.html">Direct_Product_Mesh</a>&lt; D, CoordSys &gt; const &amp;mesh)</td></tr>
+<tr class="memitem:a8f6f70ebfb3ce462a841eb0284630f5d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a8f6f70ebfb3ce462a841eb0284630f5d">Direct_Product_Mesh_Wrapper</a> (<a class="el" href="classWonton_1_1Direct__Product__Mesh.html">Direct_Product_Mesh</a>&lt; D, CoordSys &gt; const &amp;<a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a4a28fdc64be8dabbac8feb2d59eb59d4">mesh</a>)</td></tr>
 <tr class="memdesc:a8f6f70ebfb3ce462a841eb0284630f5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for the mesh wrapper.  <a href="#a8f6f70ebfb3ce462a841eb0284630f5d">More...</a><br /></td></tr>
 <tr class="separator:a8f6f70ebfb3ce462a841eb0284630f5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b1282ea46586c489fa7b5ad7ef6bf5a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a2b1282ea46586c489fa7b5ad7ef6bf5a">Direct_Product_Mesh_Wrapper</a> (<a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt; const &amp;)=delete</td></tr>
@@ -104,53 +104,103 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a947ad2d6d80030dc4db3568570714231"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a947ad2d6d80030dc4db3568570714231">~Direct_Product_Mesh_Wrapper</a> ()</td></tr>
 <tr class="memdesc:a947ad2d6d80030dc4db3568570714231"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#a947ad2d6d80030dc4db3568570714231">More...</a><br /></td></tr>
 <tr class="separator:a947ad2d6d80030dc4db3568570714231"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a28fdc64be8dabbac8feb2d59eb59d4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classWonton_1_1Direct__Product__Mesh.html">Direct_Product_Mesh</a>&lt; D, CoordSys &gt; const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a4a28fdc64be8dabbac8feb2d59eb59d4">mesh</a> () const</td></tr>
+<tr class="separator:a4a28fdc64be8dabbac8feb2d59eb59d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af39f1eb510178b3639562d83cd014743"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#af39f1eb510178b3639562d83cd014743">space_dimension</a> () const</td></tr>
 <tr class="memdesc:af39f1eb510178b3639562d83cd014743"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get dimensionality of the mesh.  <a href="#af39f1eb510178b3639562d83cd014743">More...</a><br /></td></tr>
 <tr class="separator:af39f1eb510178b3639562d83cd014743"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c29331d0d604c3dcfa4c6e84cffd141"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a8c29331d0d604c3dcfa4c6e84cffd141">distributed</a> () const</td></tr>
+<tr class="memdesc:a8c29331d0d604c3dcfa4c6e84cffd141"><td class="mdescLeft">&#160;</td><td class="mdescRight">Is mesh distributed?  <a href="#a8c29331d0d604c3dcfa4c6e84cffd141">More...</a><br /></td></tr>
+<tr class="separator:a8c29331d0d604c3dcfa4c6e84cffd141"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4df61ea9de0f2b37c4a853d9264b7be2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a4df61ea9de0f2b37c4a853d9264b7be2">num_ghost_layers</a> () const</td></tr>
+<tr class="memdesc:a4df61ea9de0f2b37c4a853d9264b7be2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of ghost layers in each direction at each end.  <a href="#a4df61ea9de0f2b37c4a853d9264b7be2">More...</a><br /></td></tr>
+<tr class="separator:a4df61ea9de0f2b37c4a853d9264b7be2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add86536927ea4fbe430ecd15f6918c2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#add86536927ea4fbe430ecd15f6918c2a">get_global_bounds</a> (<a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *plo, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *phi) const</td></tr>
 <tr class="memdesc:add86536927ea4fbe430ecd15f6918c2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get global mesh bounds.  <a href="#add86536927ea4fbe430ecd15f6918c2a">More...</a><br /></td></tr>
 <tr class="separator:add86536927ea4fbe430ecd15f6918c2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9c4e622e77507a4be0ab9562bb441a24"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a9c4e622e77507a4be0ab9562bb441a24">axis_point_begin</a> (const int dim) const</td></tr>
+<tr class="memitem:a52b3b8c27dc7ebae8bed8803b3dacc62"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a52b3b8c27dc7ebae8bed8803b3dacc62">num_axis_points</a> (const int dim, const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> ptype=<a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a>) const</td></tr>
+<tr class="memdesc:a52b3b8c27dc7ebae8bed8803b3dacc62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of points along axis.  <a href="#a52b3b8c27dc7ebae8bed8803b3dacc62">More...</a><br /></td></tr>
+<tr class="separator:a52b3b8c27dc7ebae8bed8803b3dacc62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c4e622e77507a4be0ab9562bb441a24"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a9c4e622e77507a4be0ab9562bb441a24">axis_point_begin</a> (const int dim) const</td></tr>
 <tr class="memdesc:a9c4e622e77507a4be0ab9562bb441a24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get iterator for axis point (beginning of array).  <a href="#a9c4e622e77507a4be0ab9562bb441a24">More...</a><br /></td></tr>
 <tr class="separator:a9c4e622e77507a4be0ab9562bb441a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03c99ce48622542734545a6d601b86fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a03c99ce48622542734545a6d601b86fb">axis_point_end</a> (const int dim) const</td></tr>
+<tr class="memitem:a03c99ce48622542734545a6d601b86fb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a03c99ce48622542734545a6d601b86fb">axis_point_end</a> (const int dim) const</td></tr>
 <tr class="memdesc:a03c99ce48622542734545a6d601b86fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get iterator for axis point (end of array).  <a href="#a03c99ce48622542734545a6d601b86fb">More...</a><br /></td></tr>
 <tr class="separator:a03c99ce48622542734545a6d601b86fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fbfd5dca0346c0b5b398fcf96e26dc9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a6fbfd5dca0346c0b5b398fcf96e26dc9">num_owned_nodes</a> () const</td></tr>
+<tr class="memdesc:a6fbfd5dca0346c0b5b398fcf96e26dc9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of nodes owned by this processing element.  <a href="#a6fbfd5dca0346c0b5b398fcf96e26dc9">More...</a><br /></td></tr>
+<tr class="separator:a6fbfd5dca0346c0b5b398fcf96e26dc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6c94a2d57bcea138dee20f1aa4fe38f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#ae6c94a2d57bcea138dee20f1aa4fe38f">num_ghost_nodes</a> () const</td></tr>
+<tr class="memdesc:ae6c94a2d57bcea138dee20f1aa4fe38f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of ghost nodes on this processing element.  <a href="#ae6c94a2d57bcea138dee20f1aa4fe38f">More...</a><br /></td></tr>
+<tr class="separator:ae6c94a2d57bcea138dee20f1aa4fe38f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04293d91e0706453ee26544f0821a451"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a04293d91e0706453ee26544f0821a451">node_get_type</a> (const int id) const</td></tr>
+<tr class="memdesc:a04293d91e0706453ee26544f0821a451"><td class="mdescLeft">&#160;</td><td class="mdescRight">Node type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)  <a href="#a04293d91e0706453ee26544f0821a451">More...</a><br /></td></tr>
+<tr class="separator:a04293d91e0706453ee26544f0821a451"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc0d7cfd4eece44a05478572646db410"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#abc0d7cfd4eece44a05478572646db410">get_node_coordinates</a> (const int pointid) const</td></tr>
+<tr class="memdesc:abc0d7cfd4eece44a05478572646db410"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get coordinates of node.  <a href="#abc0d7cfd4eece44a05478572646db410">More...</a><br /></td></tr>
+<tr class="separator:abc0d7cfd4eece44a05478572646db410"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b745c9e188c279295f45ebe317f83d6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a3b745c9e188c279295f45ebe317f83d6">get_axis_point</a> (const int dim, const int pointid) const</td></tr>
 <tr class="memdesc:a3b745c9e188c279295f45ebe317f83d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get axis point value.  <a href="#a3b745c9e188c279295f45ebe317f83d6">More...</a><br /></td></tr>
 <tr class="separator:a3b745c9e188c279295f45ebe317f83d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae479efba57e03e69aeb4d0aacf1b05e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#ae479efba57e03e69aeb4d0aacf1b05e7">axis_num_cells</a> (const int dim) const</td></tr>
-<tr class="memdesc:ae479efba57e03e69aeb4d0aacf1b05e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of cells along axis.  <a href="#ae479efba57e03e69aeb4d0aacf1b05e7">More...</a><br /></td></tr>
-<tr class="separator:ae479efba57e03e69aeb4d0aacf1b05e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12ec93315417ea2346437e60872336e6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a12ec93315417ea2346437e60872336e6">num_axis_cells</a> (const int dim, const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> ptype=<a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a>) const</td></tr>
+<tr class="memdesc:a12ec93315417ea2346437e60872336e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of cells along axis.  <a href="#a12ec93315417ea2346437e60872336e6">More...</a><br /></td></tr>
+<tr class="separator:a12ec93315417ea2346437e60872336e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18133f146d5e0c6ce43f45a0c70aedd2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a18133f146d5e0c6ce43f45a0c70aedd2">num_owned_cells</a> () const</td></tr>
 <tr class="memdesc:a18133f146d5e0c6ce43f45a0c70aedd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of cells owned by this processing element.  <a href="#a18133f146d5e0c6ce43f45a0c70aedd2">More...</a><br /></td></tr>
 <tr class="separator:a18133f146d5e0c6ce43f45a0c70aedd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab0a98eb4812126f628f23419075bff1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#aab0a98eb4812126f628f23419075bff1">num_ghost_cells</a> () const</td></tr>
 <tr class="memdesc:aab0a98eb4812126f628f23419075bff1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of ghost cells on this processing element.  <a href="#aab0a98eb4812126f628f23419075bff1">More...</a><br /></td></tr>
 <tr class="separator:aab0a98eb4812126f628f23419075bff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a136f968476ffaf5a60e1d2a515f96dc5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a136f968476ffaf5a60e1d2a515f96dc5">cell_get_type</a> (const int id) const</td></tr>
+<tr class="memdesc:a136f968476ffaf5a60e1d2a515f96dc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST)  <a href="#a136f968476ffaf5a60e1d2a515f96dc5">More...</a><br /></td></tr>
+<tr class="separator:a136f968476ffaf5a60e1d2a515f96dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60658812d44351a152a36cefbc1320dd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a60658812d44351a152a36cefbc1320dd">on_exterior_boundary</a> (const <a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> entity, const int id) const</td></tr>
+<tr class="memdesc:a60658812d44351a152a36cefbc1320dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">If entity is on exterior (global not partition) boundary.  <a href="#a60658812d44351a152a36cefbc1320dd">More...</a><br /></td></tr>
+<tr class="separator:a60658812d44351a152a36cefbc1320dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac63a55de74632ff97694d5ede53f899c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#ac63a55de74632ff97694d5ede53f899c">cell_get_bounds</a> (const int id, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *plo, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *phi) const</td></tr>
 <tr class="memdesc:ac63a55de74632ff97694d5ede53f899c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get lower and upper corners of cell bounding box.  <a href="#ac63a55de74632ff97694d5ede53f899c">More...</a><br /></td></tr>
 <tr class="separator:ac63a55de74632ff97694d5ede53f899c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a097f7d69e9132c35009c6f271ba86ca1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a097f7d69e9132c35009c6f271ba86ca1">begin</a> (<a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> const entity, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const etype=Entity_type::ALL) const</td></tr>
-<tr class="memdesc:a097f7d69e9132c35009c6f271ba86ca1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterators on mesh entity - begin.  <a href="#a097f7d69e9132c35009c6f271ba86ca1">More...</a><br /></td></tr>
-<tr class="separator:a097f7d69e9132c35009c6f271ba86ca1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa2798815b8cbcf75f04a3f379a896de4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#aa2798815b8cbcf75f04a3f379a896de4">end</a> (<a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> const entity, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const etype=Entity_type::ALL) const</td></tr>
-<tr class="memdesc:aa2798815b8cbcf75f04a3f379a896de4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterator on mesh entity - end.  <a href="#aa2798815b8cbcf75f04a3f379a896de4">More...</a><br /></td></tr>
-<tr class="separator:aa2798815b8cbcf75f04a3f379a896de4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32a52aca1e9b58f8d5aeec71883c0cee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a32a52aca1e9b58f8d5aeec71883c0cee">cell_get_coordinates</a> (const int id, std::vector&lt; <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&gt; *ccoords) const</td></tr>
+<tr class="memdesc:a32a52aca1e9b58f8d5aeec71883c0cee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get coordinates of cell points.  <a href="#a32a52aca1e9b58f8d5aeec71883c0cee">More...</a><br /></td></tr>
+<tr class="separator:a32a52aca1e9b58f8d5aeec71883c0cee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6caf5bf3ac4bad96d1045d5c51cbc453"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a6caf5bf3ac4bad96d1045d5c51cbc453">cell_volume</a> (const int id) const</td></tr>
+<tr class="memdesc:a6caf5bf3ac4bad96d1045d5c51cbc453"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get cell volume.  <a href="#a6caf5bf3ac4bad96d1045d5c51cbc453">More...</a><br /></td></tr>
+<tr class="separator:a6caf5bf3ac4bad96d1045d5c51cbc453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b1dcc37a5bfc50e2a47d455353ed563"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a5b1dcc37a5bfc50e2a47d455353ed563">cell_centroid</a> (const int id, <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *ccen) const</td></tr>
+<tr class="memdesc:a5b1dcc37a5bfc50e2a47d455353ed563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get cell centroid.  <a href="#a5b1dcc37a5bfc50e2a47d455353ed563">More...</a><br /></td></tr>
+<tr class="separator:a5b1dcc37a5bfc50e2a47d455353ed563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed18abc26be603d120e708b38deb70a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#aed18abc26be603d120e708b38deb70a8">begin</a> (<a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> const entity, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const etype=<a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a>) const</td></tr>
+<tr class="memdesc:aed18abc26be603d120e708b38deb70a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterators on mesh entity - begin.  <a href="#aed18abc26be603d120e708b38deb70a8">More...</a><br /></td></tr>
+<tr class="separator:aed18abc26be603d120e708b38deb70a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a877f6c7653643ca26fccda2616a97bc2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a877f6c7653643ca26fccda2616a97bc2">end</a> (<a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> const entity, <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const etype=<a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a>) const</td></tr>
+<tr class="memdesc:a877f6c7653643ca26fccda2616a97bc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Iterator on mesh entity - end.  <a href="#a877f6c7653643ca26fccda2616a97bc2">More...</a><br /></td></tr>
+<tr class="separator:a877f6c7653643ca26fccda2616a97bc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4f72e20a67f68882dc60fae086cf089"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#aa4f72e20a67f68882dc60fae086cf089">indices_to_cellid</a> (const std::array&lt; int, D &gt; &amp;indices) const</td></tr>
-<tr class="memdesc:aa4f72e20a67f68882dc60fae086cf089"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert from indices to cell ID.  <a href="#aa4f72e20a67f68882dc60fae086cf089">More...</a><br /></td></tr>
+<tr class="memdesc:aa4f72e20a67f68882dc60fae086cf089"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert from indices of lo corner of cell to cell ID.  <a href="#aa4f72e20a67f68882dc60fae086cf089">More...</a><br /></td></tr>
 <tr class="separator:aa4f72e20a67f68882dc60fae086cf089"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1be25ce70dde929091d898779c07dab"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, D &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#ac1be25ce70dde929091d898779c07dab">cellid_to_indices</a> (const int id) const</td></tr>
-<tr class="memdesc:ac1be25ce70dde929091d898779c07dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert from ID to indices.  <a href="#ac1be25ce70dde929091d898779c07dab">More...</a><br /></td></tr>
+<tr class="memdesc:ac1be25ce70dde929091d898779c07dab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert from ID to indices of lo corner of cell.  <a href="#ac1be25ce70dde929091d898779c07dab">More...</a><br /></td></tr>
 <tr class="separator:ac1be25ce70dde929091d898779c07dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ce658325cebc19591d31f2376b3bc95"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a7ce658325cebc19591d31f2376b3bc95">indices_to_nodeid</a> (const std::array&lt; int, D &gt; &amp;indices) const</td></tr>
+<tr class="memdesc:a7ce658325cebc19591d31f2376b3bc95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert from indices of node to node ID.  <a href="#a7ce658325cebc19591d31f2376b3bc95">More...</a><br /></td></tr>
+<tr class="separator:a7ce658325cebc19591d31f2376b3bc95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fee05ede6269c1f35dd54e9057b87d1"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, D &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a8fee05ede6269c1f35dd54e9057b87d1">nodeid_to_indices</a> (const int id) const</td></tr>
+<tr class="memdesc:a8fee05ede6269c1f35dd54e9057b87d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert from node ID to indices of node.  <a href="#a8fee05ede6269c1f35dd54e9057b87d1">More...</a><br /></td></tr>
+<tr class="separator:a8fee05ede6269c1f35dd54e9057b87d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29de277b6cba32b11054923f70028d97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a29de277b6cba32b11054923f70028d97">cell_get_node_adj_cells</a> (const int cellid, const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> ptype, std::vector&lt; int &gt; *adjcells) const</td></tr>
+<tr class="memdesc:a29de277b6cba32b11054923f70028d97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of cell IDs for all cells attached to a specific cell through its faces.  <a href="#a29de277b6cba32b11054923f70028d97">More...</a><br /></td></tr>
+<tr class="separator:a29de277b6cba32b11054923f70028d97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e05b9ab7d6f7e7c4bacaada68232bbd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html#a2e05b9ab7d6f7e7c4bacaada68232bbd">node_get_cell_adj_nodes</a> (const int nodeid, const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> ptype, std::vector&lt; int &gt; *adjnodes) const</td></tr>
+<tr class="memdesc:a2e05b9ab7d6f7e7c4bacaada68232bbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the list of node IDs for all nodes attached to all cells attached to a specific node.  <a href="#a2e05b9ab7d6f7e7c4bacaada68232bbd">More...</a><br /></td></tr>
+<tr class="separator:a2e05b9ab7d6f7e7c4bacaada68232bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;int D, class CoordSys = DefaultCoordSys&gt;<br />
 class Wonton::Direct_Product_Mesh_Wrapper&lt; D, CoordSys &gt;</h3>
 
-<p>A thin wrapper that implements mesh methods for <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a>. </p>
-<p>The methods implemented are those required by select parts of the <a class="el" href="namespaceWonton.html">Wonton</a> and Portage code. This will expand as the list of components that this wrapper supports expands.</p>
-<p>This class is not meant to be used to be utilized with downstream classes that assume an unstructured mesh (e.g. SearchKDTree or IntersectR2D etc.). </p>
+<p>A wrapper that implements the prescribed interface for direct product meshes in Portage using the <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a> (<a class="el" href="direct__product__mesh_8h.html" title="Definition of the Direct_Product_Mesh class. ">direct_product_mesh.h</a>) </p>
+<p>Unlike the <a class="el" href="classWonton_1_1Direct__Product__Mesh.html" title="A basic, axis-aligned, logically-rectangular mesh. ">Direct_Product_Mesh</a> class that supports queries only per axis, this class supports some aggregate queries (e.g. number of cells in the mesh, cell bounds as D-dimensional points).</p>
+<p>This class is meant to be used with Search and Intersect classes operating on direct product meshes and not classes that assume an unstructured mesh (e.g. SearchKDTree or IntersectR2D etc.). </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7cc643ac9d65bda43bcec03c2e593479"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7cc643ac9d65bda43bcec03c2e593479">&#9670;&nbsp;</a></span>Direct_Product_Mesh_Wrapper() <span class="overload">[1/3]</span></h2>
@@ -269,8 +319,8 @@ template&lt;int D, class CoordSys &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae479efba57e03e69aeb4d0aacf1b05e7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae479efba57e03e69aeb4d0aacf1b05e7">&#9670;&nbsp;</a></span>axis_num_cells()</h2>
+<a id="a9c4e622e77507a4be0ab9562bb441a24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c4e622e77507a4be0ab9562bb441a24">&#9670;&nbsp;</a></span>axis_point_begin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -278,29 +328,7 @@ template&lt;int D, class CoordSys &gt; </div>
 template&lt;int D, class CoordSys &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::axis_num_cells </td>
-          <td>(</td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname"><em>dim</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Get number of cells along axis. </p>
-
-</div>
-</div>
-<a id="a9c4e622e77507a4be0ab9562bb441a24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9c4e622e77507a4be0ab9562bb441a24">&#9670;&nbsp;</a></span>axis_point_begin()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int D, class CoordSys  = DefaultCoordSys&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::axis_point_begin </td>
+          <td class="memname"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::axis_point_begin </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>dim</em></td><td>)</td>
@@ -322,7 +350,7 @@ template&lt;int D, class CoordSys  = DefaultCoordSys&gt; </div>
 template&lt;int D, class CoordSys &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::axis_point_end </td>
+          <td class="memname"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::axis_point_end </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>dim</em></td><td>)</td>
@@ -335,8 +363,8 @@ template&lt;int D, class CoordSys &gt; </div>
 
 </div>
 </div>
-<a id="a097f7d69e9132c35009c6f271ba86ca1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a097f7d69e9132c35009c6f271ba86ca1">&#9670;&nbsp;</a></span>begin()</h2>
+<a id="aed18abc26be603d120e708b38deb70a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed18abc26be603d120e708b38deb70a8">&#9670;&nbsp;</a></span>begin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -344,7 +372,7 @@ template&lt;int D, class CoordSys &gt; </div>
 template&lt;int D, class CoordSys &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::begin </td>
+          <td class="memname"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::begin </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> const&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
@@ -353,7 +381,7 @@ template&lt;int D, class CoordSys &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const&#160;</td>
-          <td class="paramname"><em>etype</em> = <code>Entity_type::ALL</code>&#160;</td>
+          <td class="paramname"><em>etype</em> = <code><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -364,6 +392,38 @@ template&lt;int D, class CoordSys &gt; </div>
 </div><div class="memdoc">
 
 <p>Iterators on mesh entity - begin. </p>
+
+</div>
+</div>
+<a id="a5b1dcc37a5bfc50e2a47d455353ed563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b1dcc37a5bfc50e2a47d455353ed563">&#9670;&nbsp;</a></span>cell_centroid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::cell_centroid </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; *&#160;</td>
+          <td class="paramname"><em>ccen</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get cell centroid. </p>
 
 </div>
 </div>
@@ -405,6 +465,128 @@ template&lt;int D, class CoordSys &gt; </div>
 
 </div>
 </div>
+<a id="a32a52aca1e9b58f8d5aeec71883c0cee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32a52aca1e9b58f8d5aeec71883c0cee">&#9670;&nbsp;</a></span>cell_get_coordinates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::cell_get_coordinates </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt;&gt; *&#160;</td>
+          <td class="paramname"><em>ccoords</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get coordinates of cell points. </p>
+
+</div>
+</div>
+<a id="a29de277b6cba32b11054923f70028d97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29de277b6cba32b11054923f70028d97">&#9670;&nbsp;</a></span>cell_get_node_adj_cells()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::cell_get_node_adj_cells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>cellid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a>&#160;</td>
+          <td class="paramname"><em>ptype</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; int &gt; *&#160;</td>
+          <td class="paramname"><em>adjcells</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the list of cell IDs for all cells attached to a specific cell through its faces. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cellid</td><td>The ID of the cell. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptype</td><td>The Entity_type (e.g. PARALLEL_OWNED) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">adjcells</td><td>The list of cell IDs for all cells attached to cell <code>cellid</code> through its faces, excluding <code>cellid</code>. The order of cells is consistent with the order of respective interfaces returned by cell_get_faces_and_dirs, but all the boundary faces are skipped. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a136f968476ffaf5a60e1d2a515f96dc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a136f968476ffaf5a60e1d2a515f96dc5">&#9670;&nbsp;</a></span>cell_get_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::cell_get_type </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Cell type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST) </p>
+
+</div>
+</div>
+<a id="a6caf5bf3ac4bad96d1045d5c51cbc453"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6caf5bf3ac4bad96d1045d5c51cbc453">&#9670;&nbsp;</a></span>cell_volume()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::cell_volume </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get cell volume. </p>
+
+</div>
+</div>
 <a id="ac1be25ce70dde929091d898779c07dab"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac1be25ce70dde929091d898779c07dab">&#9670;&nbsp;</a></span>cellid_to_indices()</h2>
 
@@ -423,12 +605,12 @@ template&lt;int D, class CoordSys &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Convert from ID to indices. </p>
+<p>Convert from ID to indices of lo corner of cell. </p>
 
 </div>
 </div>
-<a id="aa2798815b8cbcf75f04a3f379a896de4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa2798815b8cbcf75f04a3f379a896de4">&#9670;&nbsp;</a></span>end()</h2>
+<a id="a8c29331d0d604c3dcfa4c6e84cffd141"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c29331d0d604c3dcfa4c6e84cffd141">&#9670;&nbsp;</a></span>distributed()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -436,7 +618,28 @@ template&lt;int D, class CoordSys &gt; </div>
 template&lt;int D, class CoordSys &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespaceWonton.html#ac7b1da26cc6b7643835406411ddfc3e0">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::end </td>
+          <td class="memname">bool <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::distributed </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Is mesh distributed? </p>
+
+</div>
+</div>
+<a id="a877f6c7653643ca26fccda2616a97bc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a877f6c7653643ca26fccda2616a97bc2">&#9670;&nbsp;</a></span>end()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceWonton.html#ad6d363bbbc4b3f38c0f8b528839b3890">counting_iterator</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::end </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a> const&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
@@ -445,7 +648,7 @@ template&lt;int D, class CoordSys &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> const&#160;</td>
-          <td class="paramname"><em>etype</em> = <code>Entity_type::ALL</code>&#160;</td>
+          <td class="paramname"><em>etype</em> = <code><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -525,6 +728,28 @@ template&lt;int D, class CoordSys &gt; </div>
 
 </div>
 </div>
+<a id="abc0d7cfd4eece44a05478572646db410"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc0d7cfd4eece44a05478572646db410">&#9670;&nbsp;</a></span>get_node_coordinates()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classWonton_1_1Point.html">Point</a>&lt; D &gt; <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::get_node_coordinates </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>pointid</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get coordinates of node. </p>
+
+</div>
+</div>
 <a id="aa4f72e20a67f68882dc60fae086cf089"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa4f72e20a67f68882dc60fae086cf089">&#9670;&nbsp;</a></span>indices_to_cellid()</h2>
 
@@ -543,7 +768,202 @@ template&lt;int D, class CoordSys &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Convert from indices to cell ID. </p>
+<p>Convert from indices of lo corner of cell to cell ID. </p>
+
+</div>
+</div>
+<a id="a7ce658325cebc19591d31f2376b3bc95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ce658325cebc19591d31f2376b3bc95">&#9670;&nbsp;</a></span>indices_to_nodeid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::indices_to_nodeid </td>
+          <td>(</td>
+          <td class="paramtype">const std::array&lt; int, D &gt; &amp;&#160;</td>
+          <td class="paramname"><em>indices</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert from indices of node to node ID. </p>
+
+</div>
+</div>
+<a id="a4a28fdc64be8dabbac8feb2d59eb59d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a28fdc64be8dabbac8feb2d59eb59d4">&#9670;&nbsp;</a></span>mesh()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classWonton_1_1Direct__Product__Mesh.html">Direct_Product_Mesh</a>&lt; D, CoordSys &gt; const  &amp; <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::mesh </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2e05b9ab7d6f7e7c4bacaada68232bbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e05b9ab7d6f7e7c4bacaada68232bbd">&#9670;&nbsp;</a></span>node_get_cell_adj_nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::node_get_cell_adj_nodes </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>nodeid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a>&#160;</td>
+          <td class="paramname"><em>ptype</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; int &gt; *&#160;</td>
+          <td class="paramname"><em>adjnodes</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the list of node IDs for all nodes attached to all cells attached to a specific node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">nodeid</td><td>The ID of the node. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptype</td><td>The Entity_type (e.g. PARALLEL_OWNED) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">adjnodes</td><td>The list of node IDs for all cells attached to <code>nodeid</code>, excluding <code>nodeid</code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a04293d91e0706453ee26544f0821a451"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04293d91e0706453ee26544f0821a451">&#9670;&nbsp;</a></span>node_get_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a> <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::node_get_type </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Node type (PARALLEL_OWNED, PARALLEL_GHOST or BOUNDARY_GHOST) </p>
+
+</div>
+</div>
+<a id="a8fee05ede6269c1f35dd54e9057b87d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fee05ede6269c1f35dd54e9057b87d1">&#9670;&nbsp;</a></span>nodeid_to_indices()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::array&lt; int, D &gt; <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::nodeid_to_indices </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert from node ID to indices of node. </p>
+
+</div>
+</div>
+<a id="a12ec93315417ea2346437e60872336e6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12ec93315417ea2346437e60872336e6">&#9670;&nbsp;</a></span>num_axis_cells()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::num_axis_cells </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a>&#160;</td>
+          <td class="paramname"><em>ptype</em> = <code><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of cells along axis. </p>
+
+</div>
+</div>
+<a id="a52b3b8c27dc7ebae8bed8803b3dacc62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52b3b8c27dc7ebae8bed8803b3dacc62">&#9670;&nbsp;</a></span>num_axis_points()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::num_axis_points </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb">Entity_type</a>&#160;</td>
+          <td class="paramname"><em>ptype</em> = <code><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebbaec24a68460e5fd6d3625deafe594ed7c">ALL</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of points along axis. </p>
 
 </div>
 </div>
@@ -568,6 +988,48 @@ template&lt;int D, class CoordSys &gt; </div>
 
 </div>
 </div>
+<a id="a4df61ea9de0f2b37c4a853d9264b7be2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4df61ea9de0f2b37c4a853d9264b7be2">&#9670;&nbsp;</a></span>num_ghost_layers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::num_ghost_layers </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of ghost layers in each direction at each end. </p>
+
+</div>
+</div>
+<a id="ae6c94a2d57bcea138dee20f1aa4fe38f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6c94a2d57bcea138dee20f1aa4fe38f">&#9670;&nbsp;</a></span>num_ghost_nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::num_ghost_nodes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of ghost nodes on this processing element. </p>
+
+</div>
+</div>
 <a id="a18133f146d5e0c6ce43f45a0c70aedd2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a18133f146d5e0c6ce43f45a0c70aedd2">&#9670;&nbsp;</a></span>num_owned_cells()</h2>
 
@@ -586,6 +1048,59 @@ template&lt;int D, class CoordSys &gt; </div>
 </div><div class="memdoc">
 
 <p>Get number of cells owned by this processing element. </p>
+
+</div>
+</div>
+<a id="a6fbfd5dca0346c0b5b398fcf96e26dc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fbfd5dca0346c0b5b398fcf96e26dc9">&#9670;&nbsp;</a></span>num_owned_nodes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::num_owned_nodes </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of nodes owned by this processing element. </p>
+
+</div>
+</div>
+<a id="a60658812d44351a152a36cefbc1320dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60658812d44351a152a36cefbc1320dd">&#9670;&nbsp;</a></span>on_exterior_boundary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int D, class CoordSys &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classWonton_1_1Direct__Product__Mesh__Wrapper.html">Wonton::Direct_Product_Mesh_Wrapper</a>&lt; D, CoordSys &gt;::on_exterior_boundary </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396">Entity_kind</a>&#160;</td>
+          <td class="paramname"><em>entity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If entity is on exterior (global not partition) boundary. </p>
 
 </div>
 </div>

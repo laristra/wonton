@@ -84,11 +84,11 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;cmath&gt;</code><br />
-<code>#include &lt;math.h&gt;</code><br />
-<code>#include &lt;assert.h&gt;</code><br />
+<code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;limits&gt;</code><br />
+<code>#include &quot;<a class="el" href="wonton_8h_source.html">wonton/support/wonton.h</a>&quot;</code><br />
 </div>
 <p><a href="Vector_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -114,30 +114,30 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8a1ecbaa860bf5e09ac7dd90c608624d">Wonton::dot</a> (const Vector&lt; D &gt; &amp;a, const Vector&lt; D &gt; &amp;b)</td></tr>
-<tr class="memdesc:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dot product of two vectors, \(\vec{a} \cdot \vec{b}\).  <a href="namespaceWonton.html#a8a1ecbaa860bf5e09ac7dd90c608624d">More...</a><br /></td></tr>
-<tr class="separator:a8a1ecbaa860bf5e09ac7dd90c608624d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="memTemplItemLeft" align="right" valign="top">const Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a247eb3e60b8d0b5bdb6e911a332d582d">Wonton::operator+</a> (const Vector&lt; D &gt; &amp;a, const Vector&lt; D &gt; &amp;b)</td></tr>
-<tr class="memdesc:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two vectors.  <a href="namespaceWonton.html#a247eb3e60b8d0b5bdb6e911a332d582d">More...</a><br /></td></tr>
-<tr class="separator:a247eb3e60b8d0b5bdb6e911a332d582d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a008ed801cbebbb45fe8df8573820dd06"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a008ed801cbebbb45fe8df8573820dd06"><td class="memTemplItemLeft" align="right" valign="top">const Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a008ed801cbebbb45fe8df8573820dd06">Wonton::operator-</a> (const Vector&lt; D &gt; &amp;a, const Vector&lt; D &gt; &amp;b)</td></tr>
-<tr class="memdesc:a008ed801cbebbb45fe8df8573820dd06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract two vectors.  <a href="namespaceWonton.html#a008ed801cbebbb45fe8df8573820dd06">More...</a><br /></td></tr>
-<tr class="separator:a008ed801cbebbb45fe8df8573820dd06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8158d7bc40748788bdb2e3fc27b1e71"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:af8158d7bc40748788bdb2e3fc27b1e71"><td class="memTemplItemLeft" align="right" valign="top">const Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#af8158d7bc40748788bdb2e3fc27b1e71">Wonton::operator*</a> (const Vector&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
-<tr class="memdesc:af8158d7bc40748788bdb2e3fc27b1e71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="namespaceWonton.html#af8158d7bc40748788bdb2e3fc27b1e71">More...</a><br /></td></tr>
-<tr class="separator:af8158d7bc40748788bdb2e3fc27b1e71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ff12c21a91713d814786978dd379f56"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a0ff12c21a91713d814786978dd379f56"><td class="memTemplItemLeft" align="right" valign="top">const Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a0ff12c21a91713d814786978dd379f56">Wonton::operator*</a> (const double &amp;s, const Vector&lt; D &gt; &amp;a)</td></tr>
-<tr class="memdesc:a0ff12c21a91713d814786978dd379f56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="namespaceWonton.html#a0ff12c21a91713d814786978dd379f56">More...</a><br /></td></tr>
-<tr class="separator:a0ff12c21a91713d814786978dd379f56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60f2210f00eef26d4ee101745edad37f"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a60f2210f00eef26d4ee101745edad37f"><td class="memTemplItemLeft" align="right" valign="top">const Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a60f2210f00eef26d4ee101745edad37f">Wonton::operator/</a> (const Vector&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
-<tr class="memdesc:a60f2210f00eef26d4ee101745edad37f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide a vector by a scalar, \( \frac{1}{s} \vec{a}\).  <a href="namespaceWonton.html#a60f2210f00eef26d4ee101745edad37f">More...</a><br /></td></tr>
-<tr class="separator:a60f2210f00eef26d4ee101745edad37f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90db3637d6da5f5b277eb4afad68e597"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a90db3637d6da5f5b277eb4afad68e597"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a90db3637d6da5f5b277eb4afad68e597">Wonton::dot</a> (const Vector&lt; D &gt; &amp;a, const Vector&lt; D &gt; &amp;b)</td></tr>
+<tr class="memdesc:a90db3637d6da5f5b277eb4afad68e597"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dot product of two vectors, \(\vec{a} \cdot \vec{b}\).  <a href="namespaceWonton.html#a90db3637d6da5f5b277eb4afad68e597">More...</a><br /></td></tr>
+<tr class="separator:a90db3637d6da5f5b277eb4afad68e597"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aacd7de1ad6467b0aba7cfb737fa006ec">Wonton::operator+</a> (const Vector&lt; D &gt; &amp;a, const Vector&lt; D &gt; &amp;b)</td></tr>
+<tr class="memdesc:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add two vectors.  <a href="namespaceWonton.html#aacd7de1ad6467b0aba7cfb737fa006ec">More...</a><br /></td></tr>
+<tr class="separator:aacd7de1ad6467b0aba7cfb737fa006ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ab98e0e3cc54f47048cb873bd9a51aee4">Wonton::operator-</a> (const Vector&lt; D &gt; &amp;a, const Vector&lt; D &gt; &amp;b)</td></tr>
+<tr class="memdesc:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract two vectors.  <a href="namespaceWonton.html#ab98e0e3cc54f47048cb873bd9a51aee4">More...</a><br /></td></tr>
+<tr class="separator:ab98e0e3cc54f47048cb873bd9a51aee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8f6573af23d7cee4f4ffb48ad951cb4f">Wonton::operator*</a> (const Vector&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
+<tr class="memdesc:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="namespaceWonton.html#a8f6573af23d7cee4f4ffb48ad951cb4f">More...</a><br /></td></tr>
+<tr class="separator:a8f6573af23d7cee4f4ffb48ad951cb4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7bab077ba359491088c7f8be0e3a8d7"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:aa7bab077ba359491088c7f8be0e3a8d7"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#aa7bab077ba359491088c7f8be0e3a8d7">Wonton::operator*</a> (const double &amp;s, const Vector&lt; D &gt; &amp;a)</td></tr>
+<tr class="memdesc:aa7bab077ba359491088c7f8be0e3a8d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector by a scalar, \( s \vec{a}\).  <a href="namespaceWonton.html#aa7bab077ba359491088c7f8be0e3a8d7">More...</a><br /></td></tr>
+<tr class="separator:aa7bab077ba359491088c7f8be0e3a8d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> Vector&lt; D &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#ad11f946e5da806d1c20a6579d4ff8b2d">Wonton::operator/</a> (const Vector&lt; D &gt; &amp;a, const double &amp;s)</td></tr>
+<tr class="memdesc:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide a vector by a scalar, \( \frac{1}{s} \vec{a}\).  <a href="namespaceWonton.html#ad11f946e5da806d1c20a6579d4ff8b2d">More...</a><br /></td></tr>
+<tr class="separator:ad11f946e5da806d1c20a6579d4ff8b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fccf9610bbe5afd92ee1b86040cbbe6"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
 <tr class="memitem:a6fccf9610bbe5afd92ee1b86040cbbe6"><td class="memTemplItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a6fccf9610bbe5afd92ee1b86040cbbe6">Wonton::operator&lt;&lt;</a> (std::ostream &amp;os, const Vector&lt; D &gt; &amp;v)</td></tr>
 <tr class="memdesc:a6fccf9610bbe5afd92ee1b86040cbbe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pretty printing of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> to an output stream.  <a href="namespaceWonton.html#a6fccf9610bbe5afd92ee1b86040cbbe6">More...</a><br /></td></tr>
@@ -146,16 +146,16 @@ Functions</h2></td></tr>
 <tr class="memitem:a661bdf812144ea3b63b1999306fde54d"><td class="memTemplItemLeft" align="right" valign="top">std::istream &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a661bdf812144ea3b63b1999306fde54d">Wonton::operator&gt;&gt;</a> (std::istream &amp;is, Vector&lt; D &gt; &amp;v)</td></tr>
 <tr class="memdesc:a661bdf812144ea3b63b1999306fde54d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read in a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a> from an input stream.  <a href="namespaceWonton.html#a661bdf812144ea3b63b1999306fde54d">More...</a><br /></td></tr>
 <tr class="separator:a661bdf812144ea3b63b1999306fde54d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a486758f00a0411668cfa4e83badbc57e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a486758f00a0411668cfa4e83badbc57e">Wonton::cross</a> (const Vector&lt; 2 &gt; &amp;a, const Vector&lt; 2 &gt; &amp;b)</td></tr>
-<tr class="memdesc:a486758f00a0411668cfa4e83badbc57e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 2d vectors, \(\vec{a} \times \vec{b}\).  <a href="namespaceWonton.html#a486758f00a0411668cfa4e83badbc57e">More...</a><br /></td></tr>
-<tr class="separator:a486758f00a0411668cfa4e83badbc57e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20bb6ccd088df20d04ede4e66033e3e6"><td class="memItemLeft" align="right" valign="top">const Vector&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a20bb6ccd088df20d04ede4e66033e3e6">Wonton::cross</a> (const Vector&lt; 3 &gt; &amp;a, const Vector&lt; 3 &gt; &amp;b)</td></tr>
-<tr class="memdesc:a20bb6ccd088df20d04ede4e66033e3e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 3d vectors, \(\vec{a} \times \vec{b}\).  <a href="namespaceWonton.html#a20bb6ccd088df20d04ede4e66033e3e6">More...</a><br /></td></tr>
-<tr class="separator:a20bb6ccd088df20d04ede4e66033e3e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c8a24760d86549a9e5c2c86594ef6be"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
-<tr class="memitem:a8c8a24760d86549a9e5c2c86594ef6be"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a8c8a24760d86549a9e5c2c86594ef6be">Wonton::MaxComponent</a> (const Vector&lt; D &gt; &amp;v, int &amp;icomp)</td></tr>
-<tr class="memdesc:a8c8a24760d86549a9e5c2c86594ef6be"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain the value and index of the maximum component of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="namespaceWonton.html#a8c8a24760d86549a9e5c2c86594ef6be">More...</a><br /></td></tr>
-<tr class="separator:a8c8a24760d86549a9e5c2c86594ef6be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af896cc9d438113eaa248460dc03353cb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#af896cc9d438113eaa248460dc03353cb">Wonton::cross</a> (const Vector&lt; 2 &gt; &amp;a, const Vector&lt; 2 &gt; &amp;b)</td></tr>
+<tr class="memdesc:af896cc9d438113eaa248460dc03353cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 2d vectors, \(\vec{a} \times \vec{b}\).  <a href="namespaceWonton.html#af896cc9d438113eaa248460dc03353cb">More...</a><br /></td></tr>
+<tr class="separator:af896cc9d438113eaa248460dc03353cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accf61c82c51d46f522059f2fa25d0c37"><td class="memItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> Vector&lt; 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#accf61c82c51d46f522059f2fa25d0c37">Wonton::cross</a> (const Vector&lt; 3 &gt; &amp;a, const Vector&lt; 3 &gt; &amp;b)</td></tr>
+<tr class="memdesc:accf61c82c51d46f522059f2fa25d0c37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Cross product operator for two 3d vectors, \(\vec{a} \times \vec{b}\).  <a href="namespaceWonton.html#accf61c82c51d46f522059f2fa25d0c37">More...</a><br /></td></tr>
+<tr class="separator:accf61c82c51d46f522059f2fa25d0c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dec3e771550b82308d16fbd2227db63"><td class="memTemplParams" colspan="2">template&lt;int D&gt; </td></tr>
+<tr class="memitem:a6dec3e771550b82308d16fbd2227db63"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="wonton_8h.html#aaec855db6a8a49ae878f2206266ae4bb">WONTON_INLINE</a> double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceWonton.html#a6dec3e771550b82308d16fbd2227db63">Wonton::MaxComponent</a> (const Vector&lt; D &gt; &amp;v, int &amp;icomp)</td></tr>
+<tr class="memdesc:a6dec3e771550b82308d16fbd2227db63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain the value and index of the maximum component of a <a class="el" href="classWonton_1_1Vector.html" title="Represents a vector in N-dimensional space. ">Vector</a>.  <a href="namespaceWonton.html#a6dec3e771550b82308d16fbd2227db63">More...</a><br /></td></tr>
+<tr class="separator:a6dec3e771550b82308d16fbd2227db63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!--

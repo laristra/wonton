@@ -24,7 +24,7 @@ Please see the license file at the root of this repository, or at:
 			  crossorigin="anonymous"></script>
       <!-- <script src="//code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
     <script type="text/javascript" src="smartmenu.js"></script>
-    <title>wonton: /home/wonton/wonton/wonton/support/test/test_Polytope3.cc File Reference</title>
+    <title>wonton: /home/wonton/wonton/wonton/support/equifactor.h File Reference</title>
     <link href="tabs.css" rel="stylesheet" type="text/css">
       <!-- this version is too old for bootstrap, but it includes modifications
 	   from standard jquery
@@ -70,54 +70,50 @@ $(function() {
 <div id="main-nav"></div>
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_a76e5c7393bf6b6a53c072ac6c0576ca.html">wonton</a></li><li class="navelem"><a class="el" href="dir_7b0b206f6f07e4e31926b0af1e9e552f.html">support</a></li><li class="navelem"><a class="el" href="dir_3436e99cd099c238a8d9ad74b3aa3cd1.html">test</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_a76e5c7393bf6b6a53c072ac6c0576ca.html">wonton</a></li><li class="navelem"><a class="el" href="dir_7b0b206f6f07e4e31926b0af1e9e552f.html">support</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#define-members">Macros</a>  </div>
   <div class="headertitle">
-<div class="title">test_Polytope3.cc File Reference</div>  </div>
+<div class="title">equifactor.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="Polytope_8h_source.html">wonton/support/Polytope.h</a>&quot;</code><br />
-<code>#include &quot;gtest/gtest.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="wonton_8h_source.html">wonton/support/wonton.h</a>&quot;</code><br />
-</div><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:a0febf771eac06b17d57453e5e67a17f3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="test__Polytope3_8cc.html#a0febf771eac06b17d57453e5e67a17f3">TEST</a> (Polytope, Mesh3D)</td></tr>
-<tr class="memdesc:a0febf771eac06b17d57453e5e67a17f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test the Polytope class for a 3D polyhedron.  <a href="#a0febf771eac06b17d57453e5e67a17f3">More...</a><br /></td></tr>
-<tr class="separator:a0febf771eac06b17d57453e5e67a17f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<div class="textblock"><code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
+<code>#include &lt;unordered_set&gt;</code><br />
+<code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
+<code>#include &lt;ctime&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &quot;<a class="el" href="prime__factors_8h_source.html">wonton/support/prime_factors.h</a>&quot;</code><br />
+</div>
+<p><a href="equifactor_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespaceWonton"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceWonton.html">Wonton</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:ace2fe67313a5f18c7a507e82010ab6ec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="equifactor_8h.html#ace2fe67313a5f18c7a507e82010ab6ec">WONTON_EQUIFACTOR_H_</a></td></tr>
+<tr class="separator:ace2fe67313a5f18c7a507e82010ab6ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a0febf771eac06b17d57453e5e67a17f3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0febf771eac06b17d57453e5e67a17f3">&#9670;&nbsp;</a></span>TEST()</h2>
+<h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="ace2fe67313a5f18c7a507e82010ab6ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace2fe67313a5f18c7a507e82010ab6ec">&#9670;&nbsp;</a></span>WONTON_EQUIFACTOR_H_</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TEST </td>
-          <td>(</td>
-          <td class="paramtype">Polytope&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Mesh3D&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="memname">#define WONTON_EQUIFACTOR_H_</td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Test the Polytope class for a 3D polyhedron. </p>
 
 </div>
 </div>
