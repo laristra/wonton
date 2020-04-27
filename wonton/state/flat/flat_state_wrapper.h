@@ -40,7 +40,7 @@ class Flat_State_Wrapper {
   /*!
     @brief Constructor of Flat_State_Wrapper
    */
-  Flat_State_Wrapper() { };
+  Flat_State_Wrapper() = default;
 
   /*!
    * @brief Initialize the state wrapper with another state wrapper and a list of names
@@ -59,15 +59,13 @@ class Flat_State_Wrapper {
    */
   template <class State_Wrapper>
   void initialize(State_Wrapper const & input,
-                  std::vector<std::string> var_names)
+                   std::vector<std::string> const& var_names)
   {
           clear(); // forget everything
 
-          for (unsigned int i=0; i<var_names.size(); i++)
+          for (auto varname : var_names)
           {
                   // get name
-                  std::string varname = var_names[i];
-
                   // get entity
                   Entity_kind entity = input.get_entity(varname);
 
@@ -93,7 +91,7 @@ class Flat_State_Wrapper {
   /*!
     @brief Empty destructor
    */
-  ~Flat_State_Wrapper() {};
+  ~Flat_State_Wrapper() = default;
 
   /*!
    * @brief Initialize the state wrapper with explicit lists of names, entities and data
@@ -119,7 +117,6 @@ class Flat_State_Wrapper {
 
     clear();
 
-    size_t index;
     for (size_t i=0; i<names.size(); i++) {
         mesh_add_data(entities[i], names[i], data[i]);
     }
@@ -145,13 +142,6 @@ class Flat_State_Wrapper {
 
   int num_materials() const {
     return 0;
-  }
-
-  /*!
-    @brief Name of material
-  */
-
-  std::string material_name(int matid) const {
   }
 
   /*!
@@ -380,7 +370,7 @@ class Flat_State_Wrapper {
   */
   void add_gradients(std::shared_ptr<std::vector<Wonton::Point3>> new_grad)
   {
-    if (new_grad->size() <= 0) return;
+    if (new_grad->empty()) return;
     gradients_.push_back(new_grad);
   }
 

@@ -25,6 +25,9 @@ Please see the license file at the root of this repository, or at:
 
 #cmakedefine WONTON_ENABLE_THRUST
 
+// Is WONTON compiled with KOKKOS
+
+#cmakedefine WONTON_ENABLE_KOKKOS
 
 #endif  // WONTON_CONFIG_H_
 

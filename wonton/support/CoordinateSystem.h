@@ -9,6 +9,7 @@ Please see the license file at the root of this repository, or at:
 
 #include <cassert>
 #include <cmath>
+#include <string>
 #include <tuple>
 
 #include "moment_index.h"
@@ -55,7 +56,9 @@ namespace CoordinateSystem {
     auto num_new_moments = count_moments<D>(max_order);
     std::vector<double> new_moments(num_new_moments);
     // Shift moments
-    for (int new_index = 0; new_index < new_moments.size(); new_index++) {
+    int const nb_new_moments = new_moments.size();
+
+    for (int new_index = 0; new_index < nb_new_moments; new_index++) {
       auto moment_spec = index_to_moment<D>(new_index);
       auto order = std::get<0>(moment_spec);
       auto exponents = std::get<1>(moment_spec);
@@ -65,8 +68,8 @@ namespace CoordinateSystem {
       new_moments[new_index] = moments[old_index];
     }
     // Rescale moments
-    for (int d = 0; d < new_moments.size(); ++d) {
-      new_moments[d] *= scaling_factor;
+    for (double & new_moment : new_moments) {
+      new_moment *= scaling_factor;
     }
     // Swap vectors
     new_moments.swap(moments);
@@ -78,6 +81,11 @@ namespace CoordinateSystem {
 /// Cartesian Coordinates
 struct CartesianCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"Cartesian coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
@@ -149,8 +157,8 @@ struct CartesianCoordinates {
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= inv_geo_fac;
+    for (double & moment : moments) {
+      moment *= inv_geo_fac;
     }
   }
 
@@ -162,6 +170,11 @@ struct CartesianCoordinates {
 /// Only valid in 1D.  The coordinate is the distance from the z axis.
 struct CylindricalRadialCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical radial coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
@@ -246,6 +259,11 @@ struct CylindricalRadialCoordinates {
 /// height.
 struct CylindricalAxisymmetricCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical axisymmetric coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
@@ -334,6 +352,11 @@ struct CylindricalAxisymmetricCoordinates {
 struct CylindricalPolarCoordinates {
  public:
 
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical polar coordinates"};
+  }
+
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
@@ -418,6 +441,11 @@ struct CylindricalPolarCoordinates {
 struct Cylindrical3DCoordinates {
  public:
 
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical 3D coordinates"};
+  }
+
   /// Geometry factor
   static constexpr double geometry_factor = 1;
 
@@ -501,6 +529,11 @@ struct Cylindrical3DCoordinates {
 /// Only valid in 1D.  The coordinate is the distance from the origin.
 struct SphericalRadialCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"spherical radial coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 4 pi: a one-steradian wedge of a sphere.  Portage
@@ -587,6 +620,11 @@ struct SphericalRadialCoordinates {
 /// angle of inclination, and the azimuthal angle.
 struct Spherical3DCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"spherical 3D coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;

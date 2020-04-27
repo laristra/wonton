@@ -32,6 +32,10 @@ Please see the license file at the root of this repository, or at:
 #include "mpi.h"
 #endif
 
+#ifdef WONTON_ENABLE_KOKKOS
+#include <Kokkos_Macros.hpp>
+#endif
+
 /*
   @file wonton.h
   @brief Several utility types and functions within the Wonton namespace.
@@ -224,6 +228,14 @@ struct Executor_type {
 
 struct SerialExecutor_type : Executor_type {};  // for RTTI
 
+#if !defined(WONTON_INLINE)
+  #ifdef WONTON_ENABLE_KOKKOS
+    #define WONTON_INLINE KOKKOS_INLINE_FUNCTION
+  #else
+    #define WONTON_INLINE inline
+  #endif
+#endif
+
 #ifdef WONTON_ENABLE_MPI
 struct MPIExecutor_type : Executor_type {
   MPIExecutor_type(MPI_Comm comm) : mpicomm(comm) {}
@@ -241,8 +253,8 @@ template<typename T>
 template<typename T>
     using pointer = thrust::device_ptr<T>;
 
-typedef thrust::counting_iterator<unsigned int> counting_iterator;
-inline counting_iterator make_counting_iterator(unsigned int const i) {
+typedef thrust::counting_iterator<int> counting_iterator;
+inline counting_iterator make_counting_iterator(int const i) {
   return thrust::make_counting_iterator(i);
 }
 
@@ -275,9 +287,9 @@ template<typename T>
 template<typename T>
     using pointer = T*;
 
-typedef boost::counting_iterator<unsigned int> counting_iterator;
-inline counting_iterator make_counting_iterator(unsigned int const i) {
-  return boost::make_counting_iterator<unsigned int>(i);
+typedef boost::counting_iterator<int> counting_iterator;
+inline counting_iterator make_counting_iterator(int const i) {
+  return boost::make_counting_iterator<int>(i);
 }
 
 template<typename InputIterator, typename OutputIterator,

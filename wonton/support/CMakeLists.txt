@@ -18,6 +18,9 @@ set(support_HEADERS
   svd.h
   Vector.h
   Polytope.h
+  prime_factors.h
+  equifactor.h
+  structured_partitioner.h
   wonton.h
   PARENT_SCOPE
 )
@@ -33,6 +36,14 @@ set(support_SOURCES
 
 if (ENABLE_UNIT_TESTS)
 
+  cinch_add_unit(test_point
+    SOURCES test/test_point.cc
+    POLICY SERIAL)
+
+  cinch_add_unit(test_vector
+      SOURCES test/test_vector.cc
+      POLICY SERIAL)
+
   cinch_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
     LIBRARIES wonton
@@ -44,17 +55,34 @@ if (ENABLE_UNIT_TESTS)
     POLICY SERIAL
     )
 
-  cinch_add_unit(moment_index
+  cinch_add_unit(test_moment_index
     SOURCES test/test_moment_index.cc
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_Polytope2
-    SOURCES test/test_Polytope2.cc
+  cinch_add_unit(test_polytope_2
+    SOURCES test/test_polytope_2.cc
     POLICY SERIAL)
 
-  cinch_add_unit(test_Polytope3
-    SOURCES test/test_Polytope3.cc
+  cinch_add_unit(test_polytope_3
+    SOURCES test/test_polytope_3.cc
     POLICY SERIAL) 
 
+  cinch_add_unit(test_prime_factors
+    SOURCES test/test_prime_factors.cc
+    POLICY SERIAL)
+
+  cinch_add_unit(test_equifactor
+    SOURCES test/test_equifactor.cc
+    POLICY SERIAL)
+  
+  cinch_add_unit(test_structured_partitioner
+    SOURCES test/test_structured_partitioner.cc
+    POLICY SERIAL)
+
+  cinch_add_unit(test_structured_partitioner_par
+    SOURCES test/test_structured_partitioner_par.cc
+    POLICY MPI
+    THREADS 4)
+  
 endif(ENABLE_UNIT_TESTS)

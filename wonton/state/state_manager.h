@@ -203,7 +203,8 @@ StateManager(const MeshWrapper& mesh,
     of the state vector, and the return type is a Wonton::Entity_kind
   */
   Entity_kind get_entity(std::string const& name) const {
-    return state_vectors_.at(name)->get_kind();
+    auto v=state_vectors_.find(name);
+    return (v != state_vectors_.end()) ? v->second->get_kind() :  Entity_kind::UNKNOWN_KIND;  
   }
 
 
@@ -800,6 +801,7 @@ StateManager(const MeshWrapper& mesh,
   */
   template <class T = double>
   bool shape_is_good(const std::shared_ptr<StateVectorMulti<T>> sv) {
+
     // get the data shape
     std::unordered_map<int, int> shape{get_material_shape()};
 
@@ -813,6 +815,7 @@ StateManager(const MeshWrapper& mesh,
 	  // this one is tricky, but if we build up the state vector material
 	  // we may start with no data, so for the moment, let's pass this
 	  if (data.size() == 0) return true;
+
     // check first that there are the correct number of materials
     if (shape.size() != data.size()) return false;
 
@@ -834,6 +837,7 @@ StateManager(const MeshWrapper& mesh,
   }
 
  protected:
+
   // underlying mesh reference
   const MeshWrapper& mesh_;
 
@@ -864,6 +868,7 @@ StateManager(const MeshWrapper& mesh,
     material_cells_.clear();
     cell_materials_.clear();
   }
+
 };
 
 }  // namespace Wonton

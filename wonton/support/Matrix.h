@@ -211,7 +211,7 @@ class Matrix {
   */
   
   std::vector<double> operator*(std::vector<double> const& X) const {
-    assert(Columns_ == X.size());
+    assert(unsigned(Columns_) == X.size());
 
     std::vector<double> AX(Rows_);
     for (int i = 0; i < Rows_; ++i) {
@@ -308,8 +308,7 @@ class Matrix {
 };  // class Matrix
 
 // Add two matrices.
-inline
-const Matrix operator+(const Matrix& A, const Matrix& B) {
+inline Matrix operator+(const Matrix& A, const Matrix& B) {
   assert((A.rows() == B.rows()) && (A.columns() == B.columns()));
 
   Matrix Sum(A);
@@ -321,8 +320,7 @@ const Matrix operator+(const Matrix& A, const Matrix& B) {
 }
 
 /// Subtract two materices.
-inline
-const Matrix operator-(const Matrix& A, const Matrix& B) {
+inline Matrix operator-(const Matrix& A, const Matrix& B) {
   assert((A.rows() == B.rows()) && (A.columns() == B.columns()));
 
   Matrix Diff(A);
@@ -337,8 +335,7 @@ const Matrix operator-(const Matrix& A, const Matrix& B) {
   @brief  Multiply a Matrix by a scalar
   @param[in] x The scaling factor 
 */
-inline  
-const Matrix operator*(const Matrix& A, const double& s) {
+inline Matrix operator*(const Matrix& A, const double& s) {
   Matrix As(A);
   
   for (int i = 0; i < A.rows(); ++i)
@@ -352,8 +349,7 @@ const Matrix operator*(const Matrix& A, const double& s) {
   @brief  Multiply a Matrix by a scalar
   @param[in] x The scaling factor
 */
-inline  
-const Matrix operator*(const double& s, const Matrix& A) {
+inline Matrix operator*(const double& s, const Matrix& A) {
   Matrix sA(A);
   
   for (int i = 0; i < A.rows(); ++i)
@@ -365,8 +361,7 @@ const Matrix operator*(const double& s, const Matrix& A) {
 
 // Multiply the first vector by the transpose of the second vector
 template<int D>
-inline
-Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
+inline Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   Matrix prod(D, D);
   for (int i = 0; i < D; i++) 
     for (int j = 0; j < D; j++)

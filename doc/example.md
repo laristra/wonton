@@ -70,3 +70,101 @@ Wonton::Simple_State_Wrapper provides a set of 'add' and 'get' methods
 to retrieve data from the Simple_State as well as some error checking
 for missing or duplicate data. 
 
+# Other Meshes
+
+Wonton provides other example meshes and wrappers to help users find or write
+the tools they need.
+
+## Adaptive Refinement Mesh and Wrapper
+
+An extremely simplified mesh that mimics the structure of an adaptive mesh
+refinement (AMR) grid.  This mesh should not be used in production, as it is
+intended simply as a guide for the kinds of data structures and interfaces that
+one might see in an AMR grid.  In addition, it only works in serial and not
+across multiple processing elements.  The Adaptive Refinement Mesh is set up to
+work with non-Cartesian coordinate systems, and can provide an example for
+usage of various coordinate systems within Wonton and Portage.
+
+An Adaptive Refinement Mesh requires three inputs:
+
+1.  A refinement function (explained below).
+2.  A point in space that defines the lowest corner of your mesh.
+3.  A point in space that defines the highest corner of your mesh.
+
+The outer bounds of the mesh are assumed to be an axis-aligned box extending
+from the lowest corner to the highest corner.  Within that box, the mesh will
+refine itself based on the refinement function.  It will evaluate the
+refinement function at the center of each cell (initially the mesh is only a
+single cell).  If the refinement function returns a value that is higher than
+the current level of the cell (the initial cell is level zero), the cell is
+refined by bisecting it along each axis.
+
+The construction of a 2D Adaptive Refinement Mesh would look something like:
+
+```c++
+// coordinates extents
+Point<2> lo = { 0.0, 0.0 };
+Point<2> hi = { 1.0, 1.5 };
+// the sizing function
+auto refine = [&](Wonton::Point<2> const& p) {
+  Point<2> norm;
+  norm[0] = (p[0] - lo[0]) / (hi[0] - lo[0]);
+  norm[1] = (p[1] - lo[1]) / (hi[1] - lo[1]);
+  return static_cast<int>(std::ceil(2.0 + 3.0 * norm[0] + 1.0 * norm[1]));
+};
+// create the mesh
+Wonton::Adaptive_Refinement_Mesh<2> mesh(refine, lo, hi);
+```
+
+This creates a 2D Adaptive Refinement Mesh that extends from (0.0,0.0) to
+(1.0,1.5) and has a refinement function that creates finer cells at higher
+values of x and y.
+
+Technically this mesh only refines itself on setup, making it a
+statically-refined mesh rather than an adaptively-refined mesh.  But it
+demonstrates the sorts of interfaces and issues that an adaptively-refined mesh
+needs to consider with respect to Portage.
+
+## Direct Product Mesh and Wrapper
+
+The Direct Product Mesh is a single-level, orthogonal mesh.  Along each axis
+there is a set of points that specify the edges of the cells.  Taking a direct
+product of these sets of points gives the set of corners for all cells in the
+direct product mesh.  This allows the Direct Product Mesh to have variable cell
+sizes along each axis, while still maintaining that simple, orthogonal
+structure.  The Direct Product Mesh is set up to work with non-Cartesian
+coordinate systems, and can provide an example for usage of various coordinate
+systems within Wonton and Portage.
+
+A Direct Product Mesh requires three inputs:
+
+1.  A `std::array` of `std::vector` providing the list of edge points along
+    each axis.
+2.  An executor to define MPI communication details.
+3.  The number of ghost cell layers.
+
+The construction of a 2D Direct Product Mesh would look something like:
+
+```c++
+// instantiate an executor
+Wonton::MPIExecutor_type executor(MPI_COMM_WORLD);
+// create the axis points
+std::array<std::vector<double>,2> axis_points = {
+    {0.0, 0.25, 0.75. 1.0},
+    {0.0, 0.5, 1.5}
+    };
+// define how many ghost layers
+int num_ghost_layers = 1;
+// create the mesh
+Wonton::Direct_Product_Mesh<2> mesh(axis_points, &executor, num_ghost_layers);
+```
+
+This creates a 2D Direct Product Mesh that is 3 cells by 2 cells, with MPI
+communication, and a single layer of ghost cells for domain decomposition.
+
+## Flat Mesh and Wrapper
+
+## FleCSI Mesh and Wrapper
+
+## Jali Mesh and Wrapper
+
