@@ -312,7 +312,7 @@ if (WONTON_ENABLE_LAPACKE)  # if overridden by command line or environment
   endif ()
 endif ()
 
-if (LAPACKE_FOUND)
+if (WONTON_ENABLE_LAPACKE AND LAPACKE_FOUND)
   enable_language(Fortran)
   include(FortranCInterface)  # will ensure the fortran library is linked in
   
