@@ -105,6 +105,13 @@ if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
 
   target_compile_definitions(wonton INTERFACE WONTON_ENABLE_FleCSI)
+
+  if (NOT FleCSI_ROOT)
+    get_filename_component(FleCSI_ROOT ${FleCSI_INCLUDE_DIR} DIRECTORY CACHE)
+  endif ()
+  if (NOT FleCSISP_ROOT)
+    get_filename_component(FleCSISP_ROOT ${FleCSISP_INCLUDE_DIR} DIRECTORY CACHE)
+  endif ()
 endif()
 
 
@@ -128,8 +135,12 @@ if (WONTON_ENABLE_Jali AND WONTON_ENABLE_MPI AND NOT Jali_LIBRARIES)
     # Jali_CONFIG should be the full path to where the config file was found
     # which is typically SOMEDIR/lib/cmake - back out Jali_ROOT from that
     # until we fix JaliConfig
-    set(Jali_ROOT ${Jali_CONFIG}/../.. CACHE FILEPATH "Where Jali lives")
+    get_filename_component(Jali_CONFIGLOC ${Jali_CONFIG} DIRECTORY)
+    get_filename_component(Jali_CONFIGLOC_UP1 ${Jali_CONFIGLOC} DIRECTORY)
+    get_filename_component(Jali_CONFIGLOC_UP2 ${Jali_CONFIGLOC_UP1} DIRECTORY)
+    get_filename_component(Jali_ROOT ${Jali_CONFIGLOC_UP2} DIRECTORY CACHE "Where Jali lives")
   endif ()
+  message(STATUS "Jali_ROOT ${Jali_ROOT}")
   
   target_compile_definitions(wonton INTERFACE WONTON_ENABLE_Jali)
 endif ()
@@ -172,7 +183,13 @@ else ()
   find_package(Boost REQUIRED)
   target_include_directories(wonton SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
   message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
-  message(STATUS "Boost_LIBRARIES?=${Boost_LIBRARIES}")
+  #  message(STATUS "Boost_LIBRARIES?=${Boost_LIBRARIES}")
+
+  if (NOT Boost_ROOT)
+    get_filename_component(Boost_ROOT ${Boost_INCLUDE_DIR} DIRECTORY CACHE)
+    set(BOOST_ROOT ${Boost_ROOT} CACHE PATH "Boost installation directories")
+    message(STATUS "Boost_ROOT ${Boost_ROOT}")
+  endif ()
 
 endif()
 
@@ -267,6 +284,14 @@ if (WONTON_ENABLE_Kokkos)
     
     find_package(OpenMP)
   endif ()
+
+  if (NOT Kokkos_ROOT)
+    get_property(Kokkos_INCDIR TARGET ${Kokkos_LIBRARIES} PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+    if (Kokkos_INCDIR)
+      get_filename_component(Kokkos_ROOT ${Kokkos_INCDIR} DIRECTORY CACHE)
+    endif ()
+  endif ()
+  message(STATUS "Kokkos_ROOT ${Kokkos_ROOT}")
 endif ()
 
 
@@ -324,6 +349,13 @@ if (WONTON_ENABLE_LAPACKE AND LAPACKE_FOUND)
 
   message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
   message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
+
+  if (NOT LAPACKE_ROOT)
+    get_property(LAPACKE_LOC TARGET ${LAPACKE_LIBRARIES} PROPERTY LOCATION)
+    get_filename_component(LAPACKE_LIBDIR ${LAPACKE_LOC} DIRECTORY)
+    get_filename_component(LAPACKE_ROOT ${LAPACKE_LIBDIR} DIRECTORY CACHE "Where LAPACKE lives")
+  endif ()
+  message(STATUS "LAPACKE_ROOT ${LAPACKE_ROOT}")
 else ()
   message(FATAL_ERROR "LAPACKE enabled but not found.")
 endif ()
