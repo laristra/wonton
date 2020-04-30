@@ -181,15 +181,20 @@ else ()
   #-----------------------------------------------------------------------------
 
   find_package(Boost REQUIRED)
-  target_include_directories(wonton SYSTEM INTERFACE ${Boost_INCLUDE_DIR})
-  message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIR}")
+  target_include_directories(wonton SYSTEM INTERFACE ${Boost_INCLUDE_DIRS})
+  message(STATUS "Boost_INCLUDE_DIRS=${Boost_INCLUDE_DIRS}")
   #  message(STATUS "Boost_LIBRARIES?=${Boost_LIBRARIES}")
 
   if (NOT Boost_ROOT)
-    get_filename_component(Boost_ROOT ${Boost_INCLUDE_DIR} DIRECTORY CACHE)
-    set(BOOST_ROOT ${Boost_ROOT} CACHE PATH "Boost installation directories")
-    message(STATUS "Boost_ROOT ${Boost_ROOT}")
+    if (Boost_DIR)
+      set(Boost_ROOT ${Boost_DIR} CACHE PATH "Boost installation directories")
+      set(BOOST_ROOT ${Boost_DIR} CACHE PATH "Boost installation directories")
+    elseif (Boost_INCLUDE_DIRS)
+      get_filename_component(Boost_ROOT ${Boost_INCLUDE_DIRS} DIRECTORY CACHE)
+      set(BOOST_ROOT ${Boost_ROOT} CACHE PATH "Boost installation directories")
+    endif ()
   endif ()
+  message(STATUS "Boost_ROOT ${Boost_ROOT}")
 
 endif()
 
