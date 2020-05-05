@@ -31,11 +31,11 @@ install(FILES ${wonton_state_HEADERS} DESTINATION include/wonton/state)
 
 target_link_libraries(wonton_state INTERFACE wonton_support)
 
-if (ENABLE_Jali)
+if (WONTON_ENABLE_Jali)
   add_subdirectory(jali)
-endif (ENABLE_Jali)
+endif ()
 
-if (ENABLE_FleCSI)
+if (WONTON_ENABLE_FleCSI)
   add_subdirectory(flecsi)
 endif ()
 

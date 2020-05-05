@@ -30,7 +30,7 @@ if (WONTON_ENABLE_Jali)
   add_subdirectory(jali)
 endif ()
 
-if (WONTON_ENABLE_Jali)
+if (WONTON_ENABLE_FleCSI)
   add_subdirectory(flecsi)
 endif ()
 

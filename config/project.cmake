@@ -116,8 +116,7 @@ endif()
 
 
 #------------------------------------------------------------------------------#
-# Configure Jali
-# (this includes the TPLs that Jali will need)
+# Locate Jali
 #------------------------------------------------------------------------------#
 
 set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
