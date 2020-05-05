@@ -35,7 +35,7 @@ endif ()
 
 set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 1)
-set(WONTON_VERSION_PATCH 3)
+set(WONTON_VERSION_PATCH 5)
 
 
 # Top level target
