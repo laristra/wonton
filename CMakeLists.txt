@@ -25,7 +25,7 @@ Please see the license file at the root of this repository, or at:
 # Require some version of cmake
 #------------------------------------------------------------------------------#
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.13)
 
 #------------------------------------------------------------------------------#
 # Include project-level CMake configuration file
