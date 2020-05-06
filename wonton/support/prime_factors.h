@@ -4,7 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_PRIME_FACTOR_H
+#ifndef WONTON_PRIME_FACTOR_H_
 #define WONTON_PRIME_FACTOR_H_
 
 namespace Wonton {
