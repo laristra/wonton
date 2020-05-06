@@ -57,14 +57,7 @@ set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config
 set(LAPACK_CONFIG_FOUND @LAPACK_CONFIG_FOUND@ CACHE BOOL "Was a LAPACK config file found?")
 
 
-# CMake's Boost find package claims to use BOOST_ROOT as a hint for
-# finding Boost but sets output variables like Boost_LIBRARIES and
-# Boost_INCLUDE_DIRS - which is the proper capitalization?
-
-set(Boost_ROOT @Boost_ROOT@ CACHE PATH "Boost installation directories")
 set(BOOST_ROOT @BOOST_ROOT@ CACHE PATH "Boost installation directories")
-
-
 
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
