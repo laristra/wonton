@@ -4,21 +4,19 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 ]]
 
-project(wonton_swarm)
+project(swarm)
 
 add_library(wonton_swarm INTERFACE)
 
 target_include_directories(wonton_swarm INTERFACE
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
-    $<INSTALL_INTERFACE:include>
-    )
+    $<INSTALL_INTERFACE:include/wonton/swarm>)
 
 # Add header files
 set (wonton_swarm_HEADERS
     swarm.h
-    swarm_state.h
-    )
+    swarm_state.h)
 
 # Not yet allowed for INTERFACE libraries
 #
@@ -39,31 +37,26 @@ install(TARGETS wonton_swarm
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
     PUBLIC_HEADER DESTINATION include/wonton/swarm
-    INCLUDES DESTINATION include/wonton/swarm
-    )
+    INCLUDES DESTINATION include/wonton/swarm)
 
 
 # Unit tests
-
 if (ENABLE_UNIT_TESTS)
   cinch_add_unit(test_swarm
       SOURCES test/test_swarm.cc
       LIBRARIES wonton_swarm
       POLICY MPI
-      THREADS 1
-      )
+      THREADS 1)
 
   cinch_add_unit(test_swarm_state
       SOURCES test/test_swarm_state.cc
       LIBRARIES wonton_swarm
       POLICY MPI
-      THREADS 1
-      )
+      THREADS 1)
 
   cinch_add_unit(test_swarm_state_multi
       SOURCES test/test_swarm_state_multi.cc
       LIBRARIES wonton_swarm
       POLICY MPI
-      THREADS 1
-      )
+      THREADS 1)
 endif (ENABLE_UNIT_TESTS)

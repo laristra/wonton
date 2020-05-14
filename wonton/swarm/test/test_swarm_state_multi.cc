@@ -21,7 +21,6 @@
 #include "wonton/state/simple/simple_state_wrapper.h"
 #include "wonton/mesh/simple/simple_mesh.h"
 #include "wonton/mesh/simple/simple_mesh_wrapper.h"
-#include "wonton/support/Point.h"
 
 TEST(SwarmState, Multiple2D) {
 

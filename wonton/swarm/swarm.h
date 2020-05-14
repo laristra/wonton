@@ -123,7 +123,7 @@ public:
     switch (type) {
       case Wonton::PARALLEL_OWNED: return num_owned_particles();
       case Wonton::PARALLEL_GHOST: return num_ghost_particles();
-      default: return num_owned_particles() + num_ghost_particles();;
+      default: return num_owned_particles() + num_ghost_particles();
     }
   }
 
