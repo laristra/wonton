@@ -3,8 +3,8 @@
  * Please see the license file at the root of this repository, or at:
  *  https://github.com/laristra/wonton/blob/master/LICENSE
  */
-#ifndef SWARM_STATE_H_
-#define SWARM_STATE_H_
+#ifndef WONTON_SWARM_STATE_H_
+#define WONTON_SWARM_STATE_H_
 
 #include <vector>
 #include <map>
@@ -393,4 +393,4 @@ private:
 
 } //namespace Wonton
 
-#endif // SWARM_STATE_H_
+#endif // WONTON_SWARM_STATE_H_
