@@ -4,11 +4,6 @@
  *  https://github.com/laristra/wonton/blob/master/LICENSE
  */
 
-#include <cstdlib>
-#include <ctime>
-#include <algorithm>
-#include <memory>
-
 #include "gtest/gtest.h"
 
 // wonton includes
