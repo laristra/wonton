@@ -40,7 +40,7 @@ TEST(SwarmState, basic) {
   // create state
   Wonton::Swarm<3> swarm(points);
   Wonton::SwarmState<3> state(swarm);
-  ASSERT_EQ(state.get_size(), unsigned(num_points));
+  ASSERT_EQ(state.get_size(), num_points);
 
   // create state fields
   Wonton::vector<double> dbl_field1(num_points, 0.);
@@ -133,7 +133,7 @@ TEST(SwarmState, Simple_State_Wrapper) {
     auto intnames = state.get_field_names<int>();
     auto dblnames = state.get_field_names<double>();
 
-    ASSERT_EQ(state.get_size(), unsigned(nb_cells));
+    ASSERT_EQ(state.get_size(), nb_cells);
     ASSERT_EQ(intnames.size(), unsigned(0));
     ASSERT_EQ(dblnames.size(), unsigned(1));
     ASSERT_EQ(dblnames[0], "cf1");
@@ -149,7 +149,7 @@ TEST(SwarmState, Simple_State_Wrapper) {
     auto intnames = state.get_field_names<int>();
     auto dblnames = state.get_field_names<double>();
 
-    ASSERT_EQ(state.get_size(), unsigned(nb_nodes));
+    ASSERT_EQ(state.get_size(), nb_nodes);
     ASSERT_EQ(intnames.size(), unsigned(0));
     ASSERT_EQ(dblnames.size(), unsigned(1));
     ASSERT_EQ(dblnames[0], "nf1");
