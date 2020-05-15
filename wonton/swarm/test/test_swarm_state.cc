@@ -92,11 +92,11 @@ TEST(SwarmState, basic) {
   // check names lists are correct
   auto dnames = state.get_field_names<double>();
   auto inames = state.get_field_names<int>();
-  ASSERT_EQ(dnames.size(), 3);
+  ASSERT_EQ(dnames.size(), unsigned(3));
   ASSERT_EQ(dnames[0], "d1");
   ASSERT_EQ(dnames[1], "d2");
   ASSERT_EQ(dnames[2], "d3");
-  ASSERT_EQ(inames.size(), 3);
+  ASSERT_EQ(inames.size(), unsigned(3));
   ASSERT_EQ(inames[0], "i1");
   ASSERT_EQ(inames[1], "i2");
   ASSERT_EQ(inames[2], "i3");
@@ -133,9 +133,9 @@ TEST(SwarmState, Simple_State_Wrapper) {
     auto intnames = state.get_field_names<int>();
     auto dblnames = state.get_field_names<double>();
 
-    ASSERT_EQ(state.get_size(), nb_cells);
-    ASSERT_EQ(intnames.size(), 0);
-    ASSERT_EQ(dblnames.size(), 1);
+    ASSERT_EQ(state.get_size(), unsigned(nb_cells));
+    ASSERT_EQ(intnames.size(), unsigned(0));
+    ASSERT_EQ(dblnames.size(), unsigned(1));
     ASSERT_EQ(dblnames[0], "cf1");
 
     auto field = state.get_field_dbl("cf1");
@@ -149,9 +149,9 @@ TEST(SwarmState, Simple_State_Wrapper) {
     auto intnames = state.get_field_names<int>();
     auto dblnames = state.get_field_names<double>();
 
-    ASSERT_EQ(state.get_size(), nb_nodes);
-    ASSERT_EQ(intnames.size(), 0);
-    ASSERT_EQ(dblnames.size(), 1);
+    ASSERT_EQ(state.get_size(), unsigned(nb_nodes));
+    ASSERT_EQ(intnames.size(), unsigned(0));
+    ASSERT_EQ(dblnames.size(), unsigned(1));
     ASSERT_EQ(dblnames[0], "nf1");
 
     auto field = state.get_field_dbl("nf1");
