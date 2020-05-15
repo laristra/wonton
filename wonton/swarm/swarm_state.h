@@ -112,7 +112,7 @@ public:
     // check all fields in all states
     for (auto&& state : states) {
       auto current = state->names();
-      if (current.size() == num_fields) {
+      if (current.size() == unsigned(num_fields)) {
         for (int i = 0; i < num_fields; ++i)
           if (names[i] != current[i])
             throw std::runtime_error("field names do not match");
@@ -177,19 +177,21 @@ public:
    * @param value: field values list.
    */
   template<typename T = double>
-  void add_field(std::string name, Wonton::vector<T> const&  value) {
+  void add_field(std::string name, Wonton::vector<T> const& value) {
 
     static_assert(std::is_arithmetic<T>::value, "only numeric fields");
+    int const num_values = value.size();
+
     // sizes should match
-    assert(value.size() == num_local_points_);
+    assert(num_values == num_local_points_);
 
     if (std::is_integral<T>::value) {
       auto& field = fields_int_[name];
-      field.resize(value.size());
+      field.resize(num_values);
       std::copy(value.begin(), value.end(), field.begin());
     } else {
       auto& field = fields_dbl_[name];
-      field.resize(value.size());
+      field.resize(num_values);
       std::copy(value.begin(), value.end(), field.begin());
     }
   }
@@ -206,16 +208,18 @@ public:
   void add_field(std::string name, std::vector<T> const&  value) {
 
     static_assert(std::is_arithmetic<T>::value, "only numeric fields");
+    int const num_values = value.size();
+
     // sizes should match
-    assert(value.size() == num_local_points_);
+    assert(num_values == num_local_points_);
 
     if (std::is_integral<T>::value) {
       auto& field = fields_int_[name];
-      field.resize(value.size());
+      field.resize(num_values);
       std::copy(value.begin(), value.end(), field.begin());
     } else {
       auto& field = fields_dbl_[name];
-      field.resize(value.size());
+      field.resize(num_values);
       std::copy(value.begin(), value.end(), field.begin());
     }
   }
