@@ -4,16 +4,15 @@
  *  https://github.com/laristra/wonton/blob/master/LICENSE
  */
 
-#include "gtest/gtest.h"
-
-// wonton includes
-#include "wonton/swarm/swarm.h"
+// wonton
 #include "wonton/support/wonton.h"
-
-// wonton includes
+#include "wonton/swarm/swarm.h"
 #include "wonton/mesh/simple/simple_mesh.h"
 #include "wonton/mesh/simple/simple_mesh_wrapper.h"
 #include "wonton/support/Point.h"
+
+// test framework
+#include "gtest/gtest.h"
 
 class SwarmTest : public testing::Test {
 protected:

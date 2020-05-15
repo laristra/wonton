@@ -4,19 +4,18 @@
  *  https://github.com/laristra/wonton/blob/master/LICENSE
  */
 
-#include "gtest/gtest.h"
-
-// wonton includes
+// wonton
+#include "wonton/support/wonton.h"
 #include "wonton/swarm/swarm.h"
 #include "wonton/swarm/swarm_state.h"
-#include "wonton/support/wonton.h"
-
-// wonton includes
 #include "wonton/mesh/simple/simple_mesh.h"
 #include "wonton/mesh/simple/simple_mesh_wrapper.h"
 #include "wonton/state/simple/simple_state.h"
 #include "wonton/state/simple/simple_state_wrapper.h"
 #include "wonton/support/Point.h"
+
+// test framework
+#include "gtest/gtest.h"
 
 TEST(SwarmState, basic) {
 

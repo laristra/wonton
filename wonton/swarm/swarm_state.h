@@ -6,14 +6,16 @@
 #ifndef WONTON_SWARM_STATE_H_
 #define WONTON_SWARM_STATE_H_
 
+// system
 #include <vector>
 #include <map>
 #include <memory>
 #include <string>
 #include <cassert>
 
-#include "wonton/swarm/swarm.h"
+// wonton
 #include "wonton/support/wonton.h"
+#include "wonton/swarm/swarm.h"
 
 namespace Wonton {
 
