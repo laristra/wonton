@@ -41,7 +41,7 @@ TEST(SwarmState, basic) {
   // create state
   Wonton::Swarm<3> swarm(points);
   Wonton::SwarmState<3> state(swarm);
-  ASSERT_EQ(state.get_size(), num_points);
+  ASSERT_EQ(state.get_size(), unsigned(num_points));
 
   // create state fields
   Wonton::vector<double> dbl_field1(num_points, 0.);
@@ -106,7 +106,7 @@ TEST(SwarmState, basic) {
   Wonton::SwarmState<3> state2(num_points);
   state2.add_field("d1", dbl_field1);
   auto d1p2 = state2.get_field_dbl("d1");
-  ASSERT_EQ(d1p2.size(), num_points);
+  ASSERT_EQ(d1p2.size(), unsigned(num_points));
 }
 
 
