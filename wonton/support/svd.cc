@@ -19,16 +19,11 @@ Please see the license file at the root of this repository, or at:
  *   v = returns the right orthogonal transformation matrix
 */
 
-#ifndef WONTON_SUPPORT_SVD_H_
-#define WONTON_SUPPORT_SVD_H_
-
 #include "wonton/support/svd.h"
 
-#include <stdio.h>
-#include <iostream>
+#include <cstdio>
 #include <vector>
-#include <stdlib.h>
-#include <math.h>
+#include <cmath>
 #define MIN(x,y) ( (x) < (y) ? (x) : (y) )
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #define SIGN(a, b) ((b) >= 0.0 ? fabs(a) : -fabs(a))
@@ -64,8 +59,8 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
         fprintf(stderr, "#rows must be >= #cols \n");
         return(1);
     }
-  
-    rv1 = (double *)malloc((unsigned int) n*sizeof(double));
+
+    rv1 = new double[n];
 
 /* Householder reduction to bidiagonal form */
     for (i = 0; i < n; i++) 
@@ -78,7 +73,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
         {
             for (k = i; k < m; k++) 
                 scale += fabs((double)a[k][i]);
-            if (scale) 
+            if (scale > 0.)
             {
                 for (k = i; k < m; k++) 
                 {		    
@@ -112,7 +107,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
         {
             for (k = l; k < n; k++) 
                 scale += fabs((double)a[i][k]);
-            if (scale) 
+            if (scale > 0.)
             {
                 for (k = l; k < n; k++) 
                 {
@@ -147,7 +142,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
     {
         if (i < n - 1) 
         {
-            if (g) 
+            if (g != 0.)
             {
                 for (j = l; j < n; j++)
                     v[j][i] = (double)(((double)a[i][j] / (double)a[i][l]) / g);
@@ -175,7 +170,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
         if (i < n - 1) 
             for (j = l; j < n; j++) 
                 a[i][j] = 0.0;
-        if (g) 
+        if (g != 0.)
         {
             g = 1.0 / g;
             if (i != n - 1) 
@@ -254,7 +249,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
                 break;
             }
             if (its >= 30) {
-                free((void*) rv1);
+                delete[] rv1;
                 fprintf(stderr, "No convergence after 30,000! iterations \n");
                 return(1);
             }
@@ -295,7 +290,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
                 }
                 z = PYTHAG(f, h);
                 w[j] = (double)z;
-                if (z) 
+                if (z != 0.)
                 {
                     z = 1.0 / z;
                     c = f * z;
@@ -316,7 +311,7 @@ int svd(std::vector<std::vector<double> > & a, std::vector<double> & w, std::vec
             w[k] = (double)x;
         }
     }
-    free((void*) rv1);
+    delete[] rv1;
     return(0);
 }
 
@@ -355,5 +350,3 @@ void svd_solve(const std::vector<std::vector<double> > & u, const std::vector<do
 }
 
 }  // namespace Wonton
-
-#endif

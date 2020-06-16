@@ -60,9 +60,9 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
                              bool request_sides = true,
                              bool request_wedges = true,
                              bool request_corners = true) :
-      jali_mesh_(mesh),
-      AuxMeshTopology<Jali_Mesh_Wrapper>(request_sides, request_wedges,
-                                               request_corners) {
+      AuxMeshTopology<Jali_Mesh_Wrapper>
+        (request_sides, request_wedges, request_corners),
+      jali_mesh_(mesh) {
 
     // base class (AuxMeshTopology) method that has to be called here
     // and not in the constructor of the base class because it needs
@@ -159,7 +159,8 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
     jali_mesh_.cell_get_faces_and_dirs(cellid, cfaces, &fdirs);
 
     cfdirs->resize(fdirs.size());
-    for (int i = 0; i < fdirs.size(); ++i)
+    int const nb_dirs = fdirs.size();
+    for (int i = 0; i < nb_dirs; ++i)
       (*cfdirs)[i] = static_cast<int>(fdirs[i]);
   }
 

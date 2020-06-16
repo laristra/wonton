@@ -145,10 +145,9 @@ class Jali_State_Wrapper {
     @return          Field type
   */
 
-  Field_type field_type(Entity_kind on_what, std::string const& var_name)
-      const {
+  Field_type field_type(Entity_kind on_what, std::string const& var_name) const {
 
-    Jali::State::const_iterator it = jali_state_.cbegin();
+    auto it = jali_state_.cbegin();
     while (it != jali_state_.cend()) {
       std::shared_ptr<Jali::StateVectorBase> bvec = *it;
       if (bvec->name() == var_name &&
@@ -160,6 +159,7 @@ class Jali_State_Wrapper {
       }
       it++;
     }
+    throw std::runtime_error("cannot retrieve field type");
   }
 
 
@@ -541,7 +541,15 @@ class Jali_State_Wrapper {
         return (Entity_kind) vector->entity_kind();
     }
 
-    std::cerr << "Could not find state variable " << var_name << "\n";
+    // At the moment we are using this as the API function to tell whether a
+    // state vector is defined. In particular we use this to test for the
+    // non existence of material centroids which is acceptable in VOF. We 
+    // don't have a runtime check of MOF vs. VOF vs other, so I (DWS) have
+    // disabled the warning here. If a MOF problem doesn't have material 
+    // centroids I'm guessing a warning will appear somewhere else. 
+    if (var_name != "mat_centroids")
+      std::cerr << "Could not find state variable " << var_name << "\n";
+
     return UNKNOWN_KIND;
   }
 

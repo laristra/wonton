@@ -175,7 +175,7 @@ TEST(Jali_Mesh_Wrapper, Get_Neighbor_Cells) {
   mesh_wrapper.cell_get_node_adj_cells(anycell, Wonton::ALL, &adjcellids);
 
   int ncells = mesh_wrapper.num_owned_cells();
-  EXPECT_EQ(ncells-1, adjcellids.size()) <<
+  EXPECT_EQ(unsigned(ncells-1), adjcellids.size()) <<
       "Not the right number of adjacent cells" << std::endl;
 
   for (int i = 0; i < ncells; i++) {
@@ -210,7 +210,7 @@ TEST(Jali_Mesh_Wrapper, Get_Neighbor_Cells) {
 
   int nnodes = mesh_wrapper.num_owned_nodes();
 
-  EXPECT_EQ(nnodes-1, adjdualcellids.size()) <<
+  EXPECT_EQ(unsigned(nnodes-1), adjdualcellids.size()) <<
       "Not the right number of adjacent dual cells" << std::endl;
 
   for (int i = 0; i < nnodes; i++) {
@@ -228,7 +228,7 @@ TEST(Jali_Mesh_Wrapper, Get_Neighbor_Cells) {
 TEST(Jali_Mesh_Wrapper, Get_Exterior_Flag) {
   Jali::MeshFactory mf(MPI_COMM_WORLD);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
-  ASSERT_TRUE(mesh != NULL);
+  ASSERT_TRUE(mesh != nullptr);
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
 
   int nfaces = mesh_wrapper.num_entities(Wonton::Entity_kind::FACE,
@@ -237,9 +237,9 @@ TEST(Jali_Mesh_Wrapper, Get_Exterior_Flag) {
     std::vector<int> fcells;
     mesh_wrapper.face_get_cells(f, Wonton::Entity_type::ALL, &fcells);
     if (mesh_wrapper.on_exterior_boundary(Wonton::Entity_kind::FACE, f))
-      ASSERT_EQ(1, fcells.size());
+      ASSERT_EQ(unsigned(1), fcells.size());
     else
-      ASSERT_EQ(2, fcells.size());
+      ASSERT_EQ(unsigned(2), fcells.size());
   }
 
   int ncells = mesh_wrapper.num_entities(Wonton::Entity_kind::CELL,
@@ -274,11 +274,14 @@ TEST(Jali_Mesh_Wrapper, Get_Exterior_Flag) {
     bool exterior_cell_found = false;
     for (auto const &cn : nodecorners) {
       int c = mesh_wrapper.corner_get_cell(cn);
-      if (mesh_wrapper.on_exterior_boundary(Wonton::Entity_kind::CELL, c))
+      if (mesh_wrapper.on_exterior_boundary(Wonton::Entity_kind::CELL, c)) {
         exterior_cell_found = true;
+      }
     }
-    if (mesh_wrapper.on_exterior_boundary(Wonton::Entity_kind::NODE, n))
+
+    if (mesh_wrapper.on_exterior_boundary(Wonton::Entity_kind::NODE, n)) {
       ASSERT_TRUE(exterior_cell_found);
+    }
   }
 }
 
@@ -299,12 +302,12 @@ TEST(Jali_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
 
   // The standard decomposition has 24 tets:
   mesh_wrapper.decompose_cell_into_tets(0, &tcoords, false);
-  EXPECT_EQ(tcoords.size(), 24);
+  EXPECT_EQ(tcoords.size(), unsigned(24));
 
   // The special decomposition has 5 tets:
   tcoords.clear();
   mesh_wrapper.decompose_cell_into_tets(0, &tcoords, true);
-  EXPECT_EQ(tcoords.size(), 5);
+  EXPECT_EQ(tcoords.size(), unsigned(5));
 
 }
 
@@ -322,7 +325,7 @@ TEST(Jali_Mesh_Wrapper, MESH_SIDES_2D) {
   MPI_Comm_rank(MPI_COMM_WORLD, &me);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
 
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
@@ -337,8 +340,6 @@ TEST(Jali_Mesh_Wrapper, MESH_SIDES_2D) {
   else
     ASSERT_TRUE(!nsides_ghost);
 
-  double dp;
-
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> csides;
@@ -346,7 +347,7 @@ TEST(Jali_Mesh_Wrapper, MESH_SIDES_2D) {
 
     // Quad elements have 4 sides
 
-    ASSERT_EQ(csides.size(), 4);
+    ASSERT_EQ(csides.size(), unsigned(4));
 
     double cellvol = mesh->cell_volume(c);
 
@@ -458,21 +459,21 @@ TEST(Jali_Mesh_Wrapper, MESH_SIDES_3D) {
   MPI_Comm_rank(MPI_COMM_WORLD, &me);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
 
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
 
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
 
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
-  double dp;
+
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> csides;
     mesh_wrapper.cell_get_sides(c, &csides);
 
     // Hex elements have 24 sides
 
-    ASSERT_EQ(24, csides.size());
+    ASSERT_EQ(unsigned(24), csides.size());
 
     double cellvol = mesh_wrapper.cell_volume(c);
 
@@ -592,7 +593,7 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_2D) {
   // Create the mesh
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
 
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
@@ -607,8 +608,6 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_2D) {
   else
     ASSERT_TRUE(!nwedges_ghost);
 
-
-  double dp;
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> cwedges;
@@ -616,7 +615,7 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_2D) {
 
     // Quad elements have 8 wedges
 
-    ASSERT_EQ(cwedges.size(), 8);
+    ASSERT_EQ(cwedges.size(), unsigned(8));
 
     double cellvol = mesh_wrapper.cell_volume(c);
 
@@ -673,8 +672,9 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_2D) {
 
       int w4 = mesh_wrapper.wedge_get_opposite_wedge(w3);
       ASSERT_GE(w4, -1);
-      if (w4 != -1 && w2 != -1)
+      if (w4 != -1 && w2 != -1) {
         ASSERT_EQ(w4, mesh_wrapper.wedge_get_adjacent_wedge(w2));
+      }
 
       // Get wedge coordinates and make sure they match up with the
       // expected coordinates (node, edge center, face center, cell
@@ -698,8 +698,6 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_2D) {
       // Now get the wedge coordinate in the positive volume order
       std::array<Wonton::Point<2>, 3> wcoords2;
       mesh_wrapper.wedge_get_coordinates(w, &wcoords2, true);
-
-      bool flipped = true;
 
       if (wcoords[1][0] == wcoords2[2][0] &&
           wcoords[1][1] == wcoords2[2][1] &&
@@ -742,12 +740,11 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_3D) {
   // Create the mesh
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
 
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
 
-  double dp;
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> cwedges;
@@ -755,7 +752,7 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_3D) {
 
     // Hex elements have 48 wedges
 
-    ASSERT_EQ(cwedges.size(), 48);
+    ASSERT_EQ(cwedges.size(), unsigned(48));
 
     double cellvol = mesh_wrapper.cell_volume(c);
 
@@ -812,8 +809,9 @@ TEST(Jali_Mesh_Wrapper, MESH_WEDGES_3D) {
 
       int w4 = mesh_wrapper.wedge_get_opposite_wedge(w3);
       ASSERT_GE(w4, -1);
-      if (w4 != -1 && w2 != -1)
+      if (w4 != -1 && w2 != -1) {
         ASSERT_EQ(w4, mesh_wrapper.wedge_get_adjacent_wedge(w2));
+      }
 
       // Get wedge coordinates in the natural order and make sure
       // they match up with the expected coordinates (node, edge
@@ -887,7 +885,7 @@ TEST(Jali_Mesh_Wrapper, MESH_CORNERS_2D) {
   // Create the mesh
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
 
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
@@ -910,7 +908,7 @@ TEST(Jali_Mesh_Wrapper, MESH_CORNERS_2D) {
 
     // Quad elements have 4 corners
 
-    ASSERT_EQ(4, ccorners.size());
+    ASSERT_EQ(unsigned(4), ccorners.size());
 
     double cellvol = mesh_wrapper.cell_volume(c);
     totalvol += cellvol;
@@ -938,7 +936,7 @@ TEST(Jali_Mesh_Wrapper, MESH_CORNERS_2D) {
       std::vector<int> cnwedges;
 
       mesh_wrapper.corner_get_wedges(cn, &cnwedges);
-      ASSERT_EQ(2, cnwedges.size());   // corner in a 2D cell has 2 wedges
+      ASSERT_EQ(unsigned(2), cnwedges.size());   // corner in a 2D cell has 2 wedges
 
       double volwedges = 0;
 
@@ -1010,7 +1008,7 @@ TEST(Jali_Mesh_Wrapper, MESH_CORNERS_3D) {
   // Create the mesh
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2, 2, 2);
 
   Wonton::Jali_Mesh_Wrapper mesh_wrapper(*mesh);
@@ -1023,7 +1021,7 @@ TEST(Jali_Mesh_Wrapper, MESH_CORNERS_3D) {
 
     // Hex elements have 8 corners
 
-    ASSERT_EQ(8, ccorners.size());
+    ASSERT_EQ(unsigned(8), ccorners.size());
 
     double cellvol = mesh_wrapper.cell_volume(c);
     totalvol += cellvol;
@@ -1051,7 +1049,7 @@ TEST(Jali_Mesh_Wrapper, MESH_CORNERS_3D) {
       std::vector<int> cnwedges;
 
       mesh_wrapper.corner_get_wedges(cn, &cnwedges);
-      ASSERT_EQ(6, cnwedges.size());   // 6 wedges in corner at trivalent
+      ASSERT_EQ(unsigned(6), cnwedges.size());   // 6 wedges in corner at trivalent
       //                                 // node of 3D cell
 
       double volwedges = 0;
@@ -1123,7 +1121,7 @@ TEST(Jali_Mesh_Wrapper, MESH_NON_DEFAULT_OPTS) {
   MPI_Comm_rank(MPI_COMM_WORLD, &me);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::FACE});
+  mf.included_entities(Jali::Entity_kind::FACE);
   std::shared_ptr<Jali::Mesh> mesh = mf(0.0, 0.0, 1.0, 1.0, 2, 2);
 
 
@@ -1197,7 +1195,7 @@ TEST(Jali_Mesh_Wrapper, MultiCell_Facetization) {
   MPI_Comm_rank(MPI_COMM_WORLD, &me);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::ALL_KIND});
+  mf.included_entities(Jali::Entity_kind::ALL_KIND);
   mf.partitioner(Jali::Partitioner_type::BLOCK);
   std::shared_ptr<Jali::Mesh> mesh = mf(xmin, ymin, zmin,
                                         xmax, ymax, zmax,
@@ -1244,14 +1242,14 @@ TEST(Jali_Mesh_Wrapper, MultiCell_Facetization) {
   for (int n = 0; n < nnodes; n++) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
-    if (ncells.size() == 8) {
+    if (ncells.size() == unsigned(8)) {
       if (nproc == 1) {
         inode = n;
         break;
       } else {
         bool owned_found = false, ghost_found = false;
-        for (int i = 0; i < ncells.size(); i++) {
-          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncells[i]);
+        for (int ncell : ncells) {
+          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncell);
           if (ctype == Wonton::Entity_type::PARALLEL_OWNED)
             owned_found = true;
           else
@@ -1285,7 +1283,7 @@ TEST(Jali_Mesh_Wrapper, MultiCell_Facetization) {
   for (int n = 0; n < nnodes; n++) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
-    if (ncells.size() == 1) {
+    if (ncells.size() == unsigned(1)) {
       inode = n;
       break;
     }
@@ -1312,14 +1310,14 @@ TEST(Jali_Mesh_Wrapper, MultiCell_Facetization) {
   for (int n = 0; n < nnodes; n++) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
-    if (ncells.size() == 2) {
+    if (ncells.size() == unsigned(2)) {
       if (nproc == 1) {
         inode = n;
         break;
       } else {
         bool owned_found = false, ghost_found = false;
-        for (int i = 0; i < ncells.size(); i++) {
-          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncells[i]);
+        for (int ncell : ncells) {
+          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncell);
           if (ctype == Wonton::Entity_type::PARALLEL_OWNED)
             owned_found = true;
           else
@@ -1354,14 +1352,14 @@ TEST(Jali_Mesh_Wrapper, MultiCell_Facetization) {
   for (int n = 0; n < nnodes; n++) {
     std::vector<int> ncells;
     mesh_wrapper.node_get_cells(n, Wonton::Entity_type::ALL, &ncells);
-    if (ncells.size() == 4) {
+    if (ncells.size() == unsigned(4)) {
       if (nproc == 1) {
         inode = n;
         break;
       } else {
         bool owned_found = false, ghost_found = false;
-        for (int i = 0; i < ncells.size(); i++) {
-          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncells[i]);
+        for (int ncell : ncells) {
+          Wonton::Entity_type ctype = mesh_wrapper.cell_get_type(ncell);
           if (ctype == Wonton::Entity_type::PARALLEL_OWNED)
             owned_found = true;
           else
@@ -1402,7 +1400,7 @@ TEST(Jali_Mesh_Wrapper, Skewed_2DCell_Geometry) {
   MPI_Comm_rank(MPI_COMM_WORLD, &me);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::ALL_KIND});
+  mf.included_entities(Jali::Entity_kind::ALL_KIND);
   mf.partitioner(Jali::Partitioner_type::BLOCK);
   std::shared_ptr<Jali::Mesh> mesh = mf(xmin, ymin, xmax, ymax, nx, ny);
 
@@ -1449,7 +1447,7 @@ TEST(Jali_Mesh_Wrapper, Skewed_3DCell_Geometry) {
   MPI_Comm_rank(MPI_COMM_WORLD, &me);
 
   Jali::MeshFactory mf(MPI_COMM_WORLD);
-  mf.included_entities({Jali::Entity_kind::ALL_KIND});
+  mf.included_entities(Jali::Entity_kind::ALL_KIND);
   mf.partitioner(Jali::Partitioner_type::BLOCK);
   std::shared_ptr<Jali::Mesh> mesh = mf(xmin, ymin, zmin,
                                         xmax, ymax, zmax,

@@ -199,19 +199,8 @@ class flecsi_state_t {
   //! \param[in] matid   Index (not unique identifier) of the material
   //! \param[out] data   vector containing the values corresponding to cells in
   //! the material
-
-  void mat_get_celldata(std::string const& var_name, int matid,
-                        double const **data) const {
-  }
-
-  // TEMPORARY: UNTIL THIS GETS TEMPLATED ON TYPE OF DATA
-  void mat_get_celldata(std::string const& var_name, int matid,
-                        Point<2> const **data) const {
-  }
-  void mat_get_celldata(std::string const& var_name, int matid,
-                        Point<3> const **data) const {
-  }
-
+  template<typename T>
+  void mat_get_celldata(std::string const& var_name, int matid, T const **data) const {}
 
   //! \brief Get pointer to read-write scalar data for a particular material
   //! \param[in] on_what The entity type on which to get the data
@@ -219,9 +208,8 @@ class flecsi_state_t {
   //! \param[in] matid   Index (not unique identifier) of the material
   //! \param[out] data   vector containing the values corresponding to cells in
   //! the material
-
-  void mat_get_celldata(std::string const& var_name, int matid, double **data) {
-  }
+  template<typename T>
+  void mat_get_celldata(std::string const& var_name, int matid, T **data) {}
 
   //! \brief Get a pointer to data from the state manager with a given
   //! variable @c name and on @c on_what mesh entities.

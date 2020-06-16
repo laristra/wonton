@@ -4,7 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_EQUIFACTOR_H
+#ifndef WONTON_EQUIFACTOR_H_
 #define WONTON_EQUIFACTOR_H_
 
 #include <vector>
@@ -16,8 +16,6 @@ Please see the license file at the root of this repository, or at:
 #include <string>
 
 #include "wonton/support/prime_factors.h"
-
-namespace Wonton {
 
 /*!
   @brief Factorize a number N into D equal (or nearly equal) factors
@@ -41,12 +39,19 @@ namespace Wonton {
   return vector int64_t
 */
 
-namespace {  // for ODR
+namespace Wonton {
 
 #ifdef ENABLE_DEBUG
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
 
+// gcc 7.3.0 doesn't recognize that this function is used in the code 
+// so use the compiler specific attribute to turn off the warning (since we
+// use -Werror and cannot get past compilation)
+#if defined(__GNUC__) && (__GNUC__ == 7 && __GNUC_MINOR__ == 3)
+__attribute__ ((unused))
+#endif
+static inline
 std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
   clock_t startclock, curclock;
   startclock = clock();
@@ -60,8 +65,9 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
 
   std::vector<int> prime_facs = prime_factors(N);
   std::sort(prime_facs.begin(), prime_facs.end());
-  if (prime_facs.size() < D) {
-    for (int i = prime_facs.size(); i < D; i++)
+  int const prime_facs_size = prime_facs.size();
+  if (prime_facs_size < D) {
+    for (int i = prime_facs_size; i < D; i++)
       prime_facs.push_back(1);
   }
 
@@ -220,7 +226,7 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
       }
 
       inner_iter++;
-      if (inner_iter > 2*set1.size()) inner_done = true;
+      if (unsigned(inner_iter) > 2*set1.size()) inner_done = true;
     }  // while (!inner_done)
 
     outer_iter++;
@@ -299,8 +305,6 @@ void print_sets(std::vector<std::vector<int>> sets) {
   std::cerr << "Max diff: " << maxdiff << "\n";
 }
 #endif
-
-}
 
 }  // namespace Wonton
 

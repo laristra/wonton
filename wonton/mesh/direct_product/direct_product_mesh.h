@@ -362,10 +362,10 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
   num_ghost_layers_ = 0;
   for (int d = 0; d < D; ++d)
     axis_points_[d] = axis_points_in[d];
-    for (int d = 0; d < D; ++d) {
-      gid_bounds_local_[d][0] = 0;
-      gid_bounds_local_[d][1] = num_axis_points_global_[d];
-    }
+  for (int d = 0; d < D; ++d) {
+    gid_bounds_local_[d][0] = 0;
+    gid_bounds_local_[d][1] = num_axis_points_global_[d];
+  }
 #endif
 
 }
@@ -448,9 +448,11 @@ double Direct_Product_Mesh<D,CoordSys>::get_axis_point(
   assert(dim >= 0);
   assert(dim < D);
 
+#if DEBUG
   int npall = axis_points_[dim].size();
   assert(pointid >= -num_ghost_layers_);
   assert(pointid <= npall);
+#endif
 
   // pointid starts at -num_ghost_layers for lowest ghost point  
   return axis_points_[dim][pointid+num_ghost_layers_];
@@ -469,10 +471,7 @@ bool Direct_Product_Mesh<D,CoordSys>::point_on_external_boundary(
   GID_t global_point_index = point_global_index(dim, pointid);
   if (global_point_index <= 0)
     return true;               // coord on or outside of lower global bounds
-  else if (global_point_index >= num_axis_points_global_[dim]-1)
-    return true;               // coord on or outside of upper global bounds
-  else
-    return false;
+  else return global_point_index >= num_axis_points_global_[dim] - 1;
 }
 
 

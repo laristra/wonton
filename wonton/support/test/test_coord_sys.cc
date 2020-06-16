@@ -4,6 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/portage/blob/master/LICENSE
 */
 
+#include <iostream>
 #include <numeric>
 
 #include "gtest/gtest.h"
@@ -811,6 +812,8 @@ void run_coord_sys_test() {
   for (int d = 0; d < D; ++d) {
     ASSERT_NEAR(mod_first_moments[d], first_moments[d], TOLERANCE);
   }
+
+  std::cout << CoordSys::to_string() << std::endl;
 }
 
 // ============================================================================
@@ -1025,7 +1028,8 @@ constexpr void run_shift_test() {
   auto new_moments = get_sample_moments<D,CoordSys::moment_shift>();
   // Verify
   ASSERT_EQ(new_moments.size(), moments.size());
-  for (int d = 0; d < new_moments.size(); ++d) {
+  int const nb_new_moments = new_moments.size();
+  for (int d = 0; d < nb_new_moments; ++d) {
     ASSERT_NEAR(new_moments[d],
             moments[d] / CoordSys::moment_coefficient, TOLERANCE);
   }

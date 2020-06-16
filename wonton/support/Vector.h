@@ -23,11 +23,11 @@
 #define WONTON_VECTOR_H_
 
 #include <cmath>
-#include <math.h>
-#include <assert.h>
+#include <cassert>
 #include <iostream>
 #include <vector>
 #include <limits>
+#include "wonton/support/wonton.h"
 
 namespace Wonton {
 
@@ -39,12 +39,13 @@ namespace Wonton {
 */
 template <int D> class Vector {
  private:
-  double m_comp[D];
+  double m_comp[D] {};
 
  public:
 
   /// Default constructor - zero Vector in D-space.
-  inline Vector() {
+  WONTON_INLINE
+  Vector() {
     for (int i = 0; i < D; i++)
       m_comp[i] = 0.0;
   }
@@ -53,17 +54,18 @@ template <int D> class Vector {
     @brief Initialize all components to same value (also constructor for 1d vectors)
     @param[in] xm_comp The x coordinate.
   */
-  inline Vector(const double& xm_comp) {
+  WONTON_INLINE
+  Vector(const double& xm_comp) {
     for (int i = 0; i < D; i++)
       m_comp[i] = xm_comp;
   }
-  
+
   /*!
     @brief Specialized constructor for 2d Vectors.
     @param[in] xm_comp,ym_comp The (x,y) coordinate pair.
   */
-  inline Vector(const double& xm_comp,
-                const double& ym_comp) {
+  WONTON_INLINE
+  Vector(const double& xm_comp, const double& ym_comp) {
     assert(D == 2);
     m_comp[0] = xm_comp;
     m_comp[1] = ym_comp;
@@ -73,9 +75,8 @@ template <int D> class Vector {
     @brief Specialized constructor for 3d Vectors.
     @param[in] xm_comp,ym_comp,zm_comp The (x,y,z) coordinate triple.
   */
-  inline Vector(const double& xm_comp,
-                const double& ym_comp,
-                const double& zm_comp) {
+  WONTON_INLINE
+  Vector(const double& xm_comp, const double& ym_comp, const double& zm_comp) {
     assert(D == 3);
     m_comp[0] = xm_comp;
     m_comp[1] = ym_comp;
@@ -85,23 +86,25 @@ template <int D> class Vector {
   /*!
     @brief Constructor from a std:vector
   */
-  inline
-  Vector(std::vector<double> const& invec) {
+  inline Vector(std::vector<double> const& invec) {
     assert(D == invec.size());
     for (int i = 0; i < D; i++) m_comp[i] = invec[i];
   }
 
   /// Return component @c i of the Vector.
-  inline const double& operator[](const int& i) const {
+  WONTON_INLINE
+  const double& operator[](const int& i) const {
     return m_comp[i];
   }
 
   /// Return component @c i of the Vector.
-  inline double& operator[](const int& i) {
+  WONTON_INLINE
+  double& operator[](const int& i) {
     return m_comp[i];
   }
 
   /// Negative of this vector.
+  WONTON_INLINE
   Vector operator-() const {
     Vector v;
     for (int i = 0; i < D; i++) v.m_comp[i] = -m_comp[i];
@@ -109,24 +112,28 @@ template <int D> class Vector {
   }
 
   /// Add the Vector @c rhs to this Vector.
+  WONTON_INLINE
   Vector& operator+=(const Vector<D>& rhs) {
     for (int i = 0; i < D; i++) m_comp[i] += rhs.m_comp[i];
     return *this;
   }
 
   /// Subtract the Vector @c rhs from this vector.
+  WONTON_INLINE
   Vector& operator-=(const Vector<D>& rhs) {
     for (int i = 0; i < D; i++) m_comp[i] -= rhs.m_comp[i];
     return *this;
   }
 
   /// Scalar multiplication of this Vector by @c s.
+  WONTON_INLINE
   Vector& operator*=(const double& s) {
     for (int i = 0; i < D; i++) m_comp[i] *= s;
     return *this;
   }
 
   /// Scalar division of this Vector by @c s.
+  WONTON_INLINE
   Vector& operator/=(const double& s) {
     for (int i = 0; i < D; i++) m_comp[i] /= s;
     return *this;
@@ -137,16 +144,17 @@ template <int D> class Vector {
     @param[in] doSqrt OPTIONAL: Return the square root of the norm, i.e. the
     magnitude of the Vector.
   */
+  WONTON_INLINE
   double norm(bool doSqrt = true) const {
     double result = 0.0;
     for (int i = 0; i < D; i++) result += (m_comp[i] * m_comp[i]);
-    if (doSqrt) return sqrt(result);
-    return result;
+    return doSqrt ? sqrt(result) : result;
   }
 
   /*!
     @brief Calculate the 1-norm of a Vector.
   */
+  WONTON_INLINE
   double one_norm() const {
     double result = 0.0;
     for (int i = 0; i < D; i++) result += std::fabs(m_comp[i]);
@@ -156,6 +164,7 @@ template <int D> class Vector {
   /*!
     @brief Calculate the max norm of a Vector.
   */
+  WONTON_INLINE
   double max_norm() const {
     double result = std::fabs(m_comp[0]);
     for (int i = 0; i < D - 1; i++) {
@@ -167,30 +176,34 @@ template <int D> class Vector {
   }
 
   /// Convert this Vector into a unit Vector.
+  WONTON_INLINE
   void normalize() {
     double s = norm();
     *this /= s;
   }
 
   /// Convert this Vector into a zero Vector.
+  WONTON_INLINE
   void zero() {
     for (int i = 0; i < D; i++) m_comp[i] = 0;
   }
 
   /*!
     @brief Check if this Vector is a zero Vector.
-    @param[in] dst_tol Distance tolerance: 
+    @param[in] dst_tol Distance tolerance:
     Vector is zero if its length is below this tolerance.
   */
+  WONTON_INLINE
   bool is_zero(double dst_tol) const {
     return (norm() < dst_tol);
   }
 
   /*!
-    @brief Convenience method for constructing a Vector 
+    @brief Convenience method for constructing a Vector
     with all components equal to a given value
     @param[in] value Value to assign to all the components
   */
+  WONTON_INLINE
   void fill(double val) {
     for (int i = 0; i < D; i++) m_comp[i] = val;
   }
@@ -200,6 +213,7 @@ template <int D> class Vector {
     axis
     @param[in] nonZero The coordinate axis along which the Vector should point.
   */
+  WONTON_INLINE
   void axis(int nonZero) {
     zero();
     m_comp[nonZero] = 1;
@@ -230,7 +244,7 @@ typedef Vector<2> Vector2;
 
 /// Dot product of two vectors, @f$\vec{a} \cdot \vec{b}@f$.
 template<int D>
-inline
+WONTON_INLINE
 double dot(const Vector<D>& a, const Vector<D>& b) {
   double r = 0.0;
   for (int i = 0; i < D; i++) r += a[i] * b[i];
@@ -239,36 +253,36 @@ double dot(const Vector<D>& a, const Vector<D>& b) {
 
 /// Add two vectors.
 template<int D>
-inline
-const Vector<D> operator+(const Vector<D>& a, const Vector<D>& b) {
+WONTON_INLINE
+Vector<D> operator+(const Vector<D>& a, const Vector<D>& b) {
   return Vector<D>(a) += b;
 }
 
 /// Subtract two vectors.
 template<int D>
-inline
-const Vector<D> operator-(const Vector<D>& a, const Vector<D>& b) {
+WONTON_INLINE
+Vector<D> operator-(const Vector<D>& a, const Vector<D>& b) {
   return Vector<D>(a) -= b;
 }
 
 /// Multiply a vector by a scalar, @f$ s \vec{a}@f$.
 template<int D>
-inline
-const Vector<D> operator*(const Vector<D>& a, const double& s) {
+WONTON_INLINE
+Vector<D> operator*(const Vector<D>& a, const double& s) {
   return Vector<D>(a) *= s;
 }
 
 /// Multiply a vector by a scalar, @f$ s \vec{a}@f$.
 template<int D>
-inline
-const Vector<D> operator*(const double& s, const Vector<D>& a) {
+WONTON_INLINE
+Vector<D> operator*(const double& s, const Vector<D>& a) {
   return Vector<D>(a) *= s;
 }
 
 /// Divide a vector by a scalar, @f$ \frac{1}{s} \vec{a}@f$.
 template<int D>
-inline
-const Vector<D> operator/(const Vector<D>& a, const double& s) {
+WONTON_INLINE
+Vector<D> operator/(const Vector<D>& a, const double& s) {
   return Vector<D>(a) /= s;
 }
 
@@ -286,13 +300,14 @@ operator>>(std::istream& is, Vector<D>& v) {
 }
 
 /// Cross product operator for two 2d vectors,  @f$\vec{a} \times \vec{b}@f$.
-
-inline double cross(const Vector<2>& a, const Vector<2>& b) {
+WONTON_INLINE
+double cross(const Vector<2>& a, const Vector<2>& b) {
   return (a[0] * b[1] - a[1] * b[0]);
 }
 
 /// Cross product operator for two 3d vectors, @f$\vec{a} \times \vec{b}@f$.
-inline const Vector<3> cross(const Vector<3>& a, const Vector<3>& b) {
+WONTON_INLINE
+Vector<3> cross(const Vector<3>& a, const Vector<3>& b) {
   Vector<3> r;
   r[0] = a[1] * b[2] - a[2] * b[1];
   r[1] = a[2] * b[0] - a[0] * b[2];
@@ -307,7 +322,8 @@ inline const Vector<3> cross(const Vector<3>& a, const Vector<3>& b) {
   @return The maximum component of @c v.
 */
 template<int D>
-inline double MaxComponent(const Vector<D>& v, int& icomp) {
+WONTON_INLINE
+double MaxComponent(const Vector<D>& v, int& icomp) {
   double max = v[0];
   icomp = 0;
   for (int i = 1; i < D; i++)
