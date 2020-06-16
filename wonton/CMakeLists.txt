@@ -8,4 +8,4 @@ add_subdirectory(support)
 add_subdirectory(intersect)
 add_subdirectory(mesh)
 add_subdirectory(state)
-
+add_subdirectory(swarm)

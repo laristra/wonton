@@ -4,7 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_EQUIFACTOR_H
+#ifndef WONTON_EQUIFACTOR_H_
 #define WONTON_EQUIFACTOR_H_
 
 #include <vector>
@@ -51,7 +51,7 @@ void print_sets(std::vector<std::vector<int>> sets);
 #if defined(__GNUC__) && (__GNUC__ == 7 && __GNUC_MINOR__ == 3)
 __attribute__ ((unused))
 #endif
-static
+static inline
 std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
   clock_t startclock, curclock;
   startclock = clock();

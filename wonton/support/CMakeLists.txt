@@ -62,7 +62,7 @@ else ()
   if (Boost_LIBRARIES)
     target_link_libraries(wonton_support PUBLIC ${Boost_LIBRARIES})
   else ()
-    target_include_directories(wonton_support PUBLIC ${Boost_INCLUDE_DIR})
+    target_include_directories(wonton_support PUBLIC ${Boost_INCLUDE_DIRS})
   endif ()
 
 endif()

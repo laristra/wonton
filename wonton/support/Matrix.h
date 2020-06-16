@@ -387,7 +387,6 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   assert(n == A.columns());
   assert(D == n);
 
-  const std::vector<double>& a_ = A.data();
   double s, norm;
    
   Matrix R(A);

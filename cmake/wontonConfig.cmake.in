@@ -30,41 +30,34 @@ set(WONTON_ENABLE_MPI @WONTON_ENABLE_MPI@ CACHE BOOL "Enable MPI Parallelism for
 
 
 # Thrust options
-set(WONTON_ENABLE_THRUST @WONTON_ENABLE_THRUST@ CACHE BOOL "Enable Thrust Parallelism for Wonton" FORCE)
-set(THRUST_ROOT @THRUST_ROOT@ CACHE PATH "Thrust directory" FORCE)
-set(THRUST_COMPONENTS @THRUST_COMPONENTS@ CACHE STRING "Thrust components/backends found" FORCE)
-set(THRUST_HOST_BACKEND @THRUST_HOST_BACKEND@ CACHE STRING "Thrust host backend" FORCE)
-set(THRUST_DEVICE_BACKEND @THRUST_DEVICE_BACKEND@ CACHE STRING "Thrust device backend" FORCE)
+set(WONTON_ENABLE_THRUST @WONTON_ENABLE_THRUST@ CACHE BOOL "Enable Thrust Parallelism for Wonton")
+set(THRUST_ROOT @THRUST_ROOT@ CACHE PATH "Thrust directory")
+set(THRUST_COMPONENTS @THRUST_COMPONENTS@ CACHE STRING "Thrust components/backends found")
+set(THRUST_HOST_BACKEND @THRUST_HOST_BACKEND@ CACHE STRING "Thrust host backend")
+set(THRUST_DEVICE_BACKEND @THRUST_DEVICE_BACKEND@ CACHE STRING "Thrust device backend")
 
 
 # Kokkos options
-set(WONTON_ENABLE_Kokkos @WONTON_ENABLE_Kokkos@ CACHE BOOL "Enable Kokkos Parallelism for Wonton" FORCE)
-set(Kokkos_ROOT @Kokkos_ROOT@ CACHE PATH "Kokkos directory" FORCE)
-set(WONTON_ENABLE_Kokkos_OPENMP @WONTON_ENABLE_Kokkos_OPENMP@ CACHE BOOL "Use OpenMP device in Kokkos" FORCE)
-set(WONTON_ENABLE_Kokkos_CUDA @WONTON_ENABLE_Kokkos_CUDA@ CACHE BOOL "Use CUDA device in Kokkos" FORCE)
+set(WONTON_ENABLE_Kokkos @WONTON_ENABLE_Kokkos@ CACHE BOOL "Enable Kokkos Parallelism for Wonton")
+set(Kokkos_ROOT @Kokkos_ROOT@ CACHE PATH "Kokkos directory")
+set(WONTON_ENABLE_Kokkos_OPENMP @WONTON_ENABLE_Kokkos_OPENMP@ CACHE BOOL "Use OpenMP device in Kokkos")
+set(WONTON_ENABLE_Kokkos_CUDA @WONTON_ENABLE_Kokkos_CUDA@ CACHE BOOL "Use CUDA device in Kokkos")
 
 
-set(WONTON_ENABLE_FleCSI @WONTON_ENABLE_FleCSI@ CACHE BOOL "Use FleCSI" FORCE)
-set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root" FORCE)
+set(WONTON_ENABLE_FleCSI @WONTON_ENABLE_FleCSI@ CACHE BOOL "Use FleCSI")
+set(FleCSI_ROOT @FleCSI_DIR@ CACHE PATH "FleCSI installation root")
 
-set(WONTON_ENABLE_Jali @WONTON_ENABLE_Jali@ CACHE STRING "Use Jali" FORCE)
-set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root" FORCE)
+set(WONTON_ENABLE_Jali @WONTON_ENABLE_Jali@ CACHE STRING "Use Jali")
+set(Jali_ROOT @Jali_ROOT@ CACHE PATH "Jali installation root")
 
-set(WONTON_ENABLE_LAPACKE @WONTON_ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE" FORCE)
-set(LAPACKE_ROOT @LAPACKE_ROOT@ CACHE PATH "LAPACKE installation dir" FORCE)
-set(LAPACKE_LIBRARIES @LAPACKE_LIBRARIES@ CACHE STRING "LAPACKE libraries" FORCE)
-set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config file found?" FORCE)
-set(LAPACK_CONFIG_FOUND @LAPACK_CONFIG_FOUND@ CACHE BOOL "Was a LAPACK config file found?" FORCE)
-
-
-# CMake's Boost find package claims to use BOOST_ROOT as a hint for
-# finding Boost but sets output variables like Boost_LIBRARIES and
-# Boost_INCLUDE_DIRS - which is the proper capitalization?
-
-set(Boost_ROOT @Boost_ROOT@ CACHE PATH "Boost installation directories" FORCE)
-set(BOOST_ROOT @BOOST_ROOT@ CACHE PATH "Boost installation directories" FORCE)
+set(WONTON_ENABLE_LAPACKE @WONTON_ENABLE_LAPACKE@ CACHE PATH "Enable use of LAPACKE")
+set(LAPACKE_ROOT @LAPACKE_ROOT@ CACHE PATH "LAPACKE installation dir")
+set(LAPACKE_LIBRARIES @LAPACKE_LIBRARIES@ CACHE STRING "LAPACKE libraries")
+set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config file found?")
+set(LAPACK_CONFIG_FOUND @LAPACK_CONFIG_FOUND@ CACHE BOOL "Was a LAPACK config file found?")
 
 
+set(BOOST_ROOT @BOOST_ROOT@ CACHE PATH "Boost installation directories")
 
 
 if (CMAKE_VERSION VERSION_GREATER_EQUAL 3.12)
