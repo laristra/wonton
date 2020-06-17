@@ -93,7 +93,7 @@ fi
 kokkos_flags=
 kokkos_suffix=
 kokkos_version=3.1.01
-kokkos_install_dir=$NGC/private/kokkos/${kokkos_version}
+kokkos_install_dir=$NGC/private/kokkos/${kokkos_version}${compiler_suffix}
 if [[ $build_type == "kokkos" ]]; then
     kokkos_flags="-D WONTON_ENABLE_Kokkos=True -D Kokkos_ROOT=${kokkos_install_dir}"
     kokkos_suffix="-kokkos"
