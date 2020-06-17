@@ -8,6 +8,9 @@ BUILD_TYPE:
   - base
   - serial
   - thrust
+  - kokkos
 
 exclude:
+  - COMPILER: intel18
+    BUILD_TYPE: kokkos
 
