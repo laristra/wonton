@@ -143,7 +143,7 @@ cmake \
     $lapacke_flags \
     $thrust_flags \
     $kokkos_flags \
-    .. &&
-make -j2 &&
-ctest --output-on-failure &&
+    ..
+make -j2
+ctest --output-on-failure
 make install
