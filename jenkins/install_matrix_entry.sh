@@ -112,13 +112,12 @@ fi
 module load cmake/3.14.0 # 3.13 or higher is required
 
 module load git
-branch=`git rev-parse --abbrev-ref HEAD`
 
-if [[ branch == "master" && build_type == "kokkos" ]]; then
+if [[ $BRANCH_NAME == "master" && build_type == "kokkos" ]]; then
     exit
 fi
 
-if [[ branch == "kokkos" && build_type != "kokkos" ]]; then
+if [[ $BRANCH_NAME == "kokkos" && build_type != "kokkos" ]]; then
     exit
 fi
 
