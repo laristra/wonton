@@ -51,9 +51,9 @@ set(WONTON_LIBRARIES wonton::wonton CACHE STRING "Wonton library target")
 
 # cinch extras
 
-cinch_load_extras()
+#cinch_load_extras()
 
-set(CINCH_HEADER_SUFFIXES "\\.h")
+#set(CINCH_HEADER_SUFFIXES "\\.h")
 
 # Explicitly turn off module paths inherited from Cinch. When we get rid of
 # Cinch we can delete this line
@@ -363,6 +363,18 @@ if (WONTON_ENABLE_LAPACKE)
     message(FATAL_ERROR "LAPACKE enabled but not found.")
   endif ()
 endif ()
+
+
+if (ENABLE_UNIT_TESTS)
+
+  # This needs to be set in the root directory for tests to be run by
+  # 'make test' or ctest
+  enable_testing()
+
+  include(cmake/unit.cmake)
+  
+endif ()
+
 
 
 #-----------------------------------------------------------------------------
