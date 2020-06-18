@@ -53,7 +53,7 @@ if (WONTON_ENABLE_FleCSI)
     )
 
 
-  cinch_add_unit(test_flecsi_mesh_wrapper
+  wonton_add_unit(test_flecsi_mesh_wrapper
     SOURCES test/test_flecsi_mesh_wrapper.cc
     LIBRARIES flecsi_mesh_wrapper
     POLICY MPI

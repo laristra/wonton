@@ -43,18 +43,18 @@ install(TARGETS simple_state_wrapper
   )
 
 if (ENABLE_UNIT_TESTS)
-  cinch_add_unit(test_simple_state
+  wonton_add_unit(test_simple_state
     SOURCES test/test_simple_state.cc
     LIBRARIES simple_state_wrapper
     POLICY SERIAL
     )
   
-  cinch_add_unit(test_simple_state_wrapper
+  wonton_add_unit(test_simple_state_wrapper
     SOURCES test/test_simple_state_wrapper.cc
     LIBRARIES simple_state_wrapper
     POLICY SERIAL)  
   
-  cinch_add_unit(test_simple_state_mm_wrapper
+  wonton_add_unit(test_simple_state_mm_wrapper
     SOURCES test/test_simple_state_mm_wrapper.cc
     LIBRARIES simple_state_wrapper
     POLICY SERIAL)

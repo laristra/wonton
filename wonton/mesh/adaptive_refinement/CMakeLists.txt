@@ -44,14 +44,14 @@ install(TARGETS adaptive_refinement_mesh_wrapper
 if (ENABLE_UNIT_TESTS)
   
   # Adaptive Refinement Mesh
-  cinch_add_unit(test_adaptive_refinement_mesh
+  wonton_add_unit(test_adaptive_refinement_mesh
     SOURCES test/test_adaptive_refinement_mesh.cc
     LIBRARIES adaptive_refinement_mesh_wrapper
     POLICY SERIAL
     )
 
   # Adaptive Refinement Mesh Wrapper
-  cinch_add_unit(test_adaptive_refinement_mesh_wrapper
+  wonton_add_unit(test_adaptive_refinement_mesh_wrapper
     SOURCES test/test_adaptive_refinement_mesh_wrapper.cc
     LIBRARIES adaptive_refinement_mesh_wrapper
     POLICY SERIAL

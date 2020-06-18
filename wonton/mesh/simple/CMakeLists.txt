@@ -41,14 +41,14 @@ install(TARGETS simple_mesh_wrapper
   )
       
 if (ENABLE_UNIT_TESTS)
-  cinch_add_unit(test_simple_mesh
+  wonton_add_unit(test_simple_mesh
     SOURCES test/test_simple_mesh.cc
     LIBRARIES simple_mesh_wrapper
     POLICY SERIAL
     )
 
   # Simple Mesh wrapper
-  cinch_add_unit(test_simple_mesh_wrapper
+  wonton_add_unit(test_simple_mesh_wrapper
     SOURCES test/test_simple_mesh_wrapper.cc
     LIBRARIES simple_mesh_wrapper
     POLICY SERIAL)  

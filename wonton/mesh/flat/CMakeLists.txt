@@ -46,7 +46,7 @@ if (ENABLE_UNIT_TESTS)
 
     # Flat mesh wrapper (has to be paired with a real MPI capable mesh wrapper)
     
-    cinch_add_unit(test_flat_mesh_wrapper
+    wonton_add_unit(test_flat_mesh_wrapper
       SOURCES test/test_flat_mesh_wrapper.cc
       LIBRARIES flat_mesh_wrapper jali_mesh_wrapper
       # this is relative to the wrapper directory

@@ -46,7 +46,7 @@ if (WONTON_ENABLE_Jali)
   )
 
   if (ENABLE_UNIT_TESTS)
-    cinch_add_unit(test_jali_mesh_wrapper
+    wonton_add_unit(test_jali_mesh_wrapper
       SOURCES test/test_jali_mesh_wrapper.cc
       LIBRARIES jali_mesh_wrapper
       # this is relative to the wrapper directory

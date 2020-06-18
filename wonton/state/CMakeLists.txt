@@ -60,37 +60,37 @@ install(TARGETS wonton_state
 
 if (ENABLE_UNIT_TESTS)
 
-  cinch_add_unit(test_state_vector_uni
+  wonton_add_unit(test_state_vector_uni
     SOURCES test/test_state_vector_uni.cc
     LIBRARIES wonton_state
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_state_vector_multi
+  wonton_add_unit(test_state_vector_multi
     SOURCES test/test_state_vector_multi.cc
     LIBRARIES wonton_state
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_state_manager
+  wonton_add_unit(test_state_manager
     SOURCES test/test_state_manager.cc
     LIBRARIES wonton_state
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_state_vector_uni_raw
+  wonton_add_unit(test_state_vector_uni_raw
     SOURCES test/test_state_vector_uni_raw.cc
     LIBRARIES wonton_state
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_state_vector_multi_raw
+  wonton_add_unit(test_state_vector_multi_raw
     SOURCES test/test_state_vector_multi_raw.cc
     LIBRARIES wonton_state
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_state_manager_raw
+  wonton_add_unit(test_state_manager_raw
     SOURCES test/test_state_manager_raw.cc
     LIBRARIES wonton_state
     POLICY SERIAL

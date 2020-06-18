@@ -101,63 +101,63 @@ install(TARGETS wonton_support
 
 if (ENABLE_UNIT_TESTS)
 
-  cinch_add_unit(test_point
+  wonton_add_unit(test_point
     SOURCES test/test_point.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_vector
+  wonton_add_unit(test_vector
     SOURCES test/test_vector.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_matfuncs
+  wonton_add_unit(test_matfuncs
     SOURCES test/test_matfuncs.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_coord_sys
+  wonton_add_unit(test_coord_sys
     SOURCES test/test_coord_sys.cc
     LIBRARIES wonton_support
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_moment_index
+  wonton_add_unit(test_moment_index
     SOURCES test/test_moment_index.cc
     LIBRARIES wonton_support
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_polytope_2
+  wonton_add_unit(test_polytope_2
     SOURCES test/test_polytope_2.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_polytope_3
+  wonton_add_unit(test_polytope_3
     SOURCES test/test_polytope_3.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
   if (WONTON_ENABLE_THRUST)
-    cinch_add_unit(test_thrust
+    wonton_add_unit(test_thrust
       SOURCES test/test_thrust.cc
       LIBRARIES wonton_support
       POLICY SERIAL)
   endif ()
 
-  cinch_add_unit(test_prime_factors
+  wonton_add_unit(test_prime_factors
     SOURCES test/test_prime_factors.cc
     POLICY SERIAL)
 
-  cinch_add_unit(test_equifactor
+  wonton_add_unit(test_equifactor
     SOURCES test/test_equifactor.cc
     POLICY SERIAL)
   
-  cinch_add_unit(test_structured_partitioner
+  wonton_add_unit(test_structured_partitioner
     SOURCES test/test_structured_partitioner.cc
     POLICY SERIAL)
 
-  cinch_add_unit(test_structured_partitioner_par
+  wonton_add_unit(test_structured_partitioner_par
     SOURCES test/test_structured_partitioner_par.cc
     LIBRARIES wonton_support
     POLICY MPI

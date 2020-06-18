@@ -42,19 +42,19 @@ install(TARGETS wonton_swarm
 
 # Unit tests
 if (ENABLE_UNIT_TESTS)
-  cinch_add_unit(test_swarm
+  wonton_add_unit(test_swarm
       SOURCES test/test_swarm.cc
       LIBRARIES wonton_swarm
       POLICY MPI
       THREADS 1)
 
-  cinch_add_unit(test_swarm_state
+  wonton_add_unit(test_swarm_state
       SOURCES test/test_swarm_state.cc
       LIBRARIES wonton_swarm
       POLICY MPI
       THREADS 1)
 
-  cinch_add_unit(test_swarm_state_multi
+  wonton_add_unit(test_swarm_state_multi
       SOURCES test/test_swarm_state_multi.cc
       LIBRARIES wonton_swarm
       POLICY MPI

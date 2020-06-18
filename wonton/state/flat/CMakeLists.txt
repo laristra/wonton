@@ -44,7 +44,7 @@ if (ENABLE_Jali)
 
     # has to be processed after directory jali_state_wrapper is processed
     
-    cinch_add_unit(test_flat_state_wrapper
+    wonton_add_unit(test_flat_state_wrapper
       SOURCES test/test_flat_state_wrapper.cc
       LIBRARIES flat_state_wrapper jali_state_wrapper
       POLICY MPI
