@@ -1,6 +1,6 @@
-[submodule "cinch"]
-	path = cinch
-	url = ../../laristra/cinch.git
 [submodule "wonton/intersect/r3d"]
 	path = wonton/intersect/r3d
 	url = ../../laristra/r3d.git
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest
