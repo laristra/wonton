@@ -9,8 +9,8 @@ project(mesh)
 add_library(wonton_mesh INTERFACE)
 
 target_include_directories(wonton_mesh INTERFACE
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 set(wonton_mesh_HEADERS AuxMeshTopology.h)

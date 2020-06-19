@@ -7,8 +7,8 @@ Please see the license file at the root of this repository, or at:
 add_library(flat_state_wrapper INTERFACE)
 
 target_include_directories(flat_state_wrapper INTERFACE
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>
   )
 
@@ -44,7 +44,7 @@ if (ENABLE_Jali)
 
     # has to be processed after directory jali_state_wrapper is processed
     
-    wonton_add_unit(test_flat_state_wrapper
+    wonton_add_unittest(test_flat_state_wrapper
       SOURCES test/test_flat_state_wrapper.cc
       LIBRARIES flat_state_wrapper jali_state_wrapper
       POLICY MPI

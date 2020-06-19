@@ -7,8 +7,8 @@ Please see the license file at the root of this repository, or at:
 add_library(simple_state_wrapper INTERFACE)
 
 target_include_directories(simple_state_wrapper INTERFACE
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>
   )
 
@@ -43,18 +43,18 @@ install(TARGETS simple_state_wrapper
   )
 
 if (ENABLE_UNIT_TESTS)
-  wonton_add_unit(test_simple_state
+  wonton_add_unittest(test_simple_state
     SOURCES test/test_simple_state.cc
     LIBRARIES simple_state_wrapper
     POLICY SERIAL
     )
   
-  wonton_add_unit(test_simple_state_wrapper
+  wonton_add_unittest(test_simple_state_wrapper
     SOURCES test/test_simple_state_wrapper.cc
     LIBRARIES simple_state_wrapper
     POLICY SERIAL)  
   
-  wonton_add_unit(test_simple_state_mm_wrapper
+  wonton_add_unittest(test_simple_state_mm_wrapper
     SOURCES test/test_simple_state_mm_wrapper.cc
     LIBRARIES simple_state_wrapper
     POLICY SERIAL)

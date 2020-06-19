@@ -9,8 +9,8 @@ add_library(flat_mesh_wrapper INTERFACE)
 
 
 target_include_directories(flat_mesh_wrapper INTERFACE
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 set(flat_mesh_HEADERS flat_mesh_wrapper.h)
@@ -46,7 +46,7 @@ if (ENABLE_UNIT_TESTS)
 
     # Flat mesh wrapper (has to be paired with a real MPI capable mesh wrapper)
     
-    wonton_add_unit(test_flat_mesh_wrapper
+    wonton_add_unittest(test_flat_mesh_wrapper
       SOURCES test/test_flat_mesh_wrapper.cc
       LIBRARIES flat_mesh_wrapper jali_mesh_wrapper
       # this is relative to the wrapper directory

@@ -10,8 +10,8 @@ add_library(wonton_r3d_intersect)
 target_sources(wonton_r3d_intersect PRIVATE r3d/r3d.c r3d/r2d.c)
 
 target_include_directories(wonton_r3d_intersect PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 set(R3D_HEADERS r3d/r3d.h r3d/r2d.h)
