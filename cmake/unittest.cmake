@@ -12,20 +12,31 @@ Please see the license file at the root of this repository, or at:
 find_package(GTest QUIET)  # This will catch externally installed GTest
 
 if (NOT GTest_FOUND OR NOT TARGET GTest::gtest)  # build from submodule
-  find_package(Threads)  # Find thread libraries for system
-  
+  find_package(Threads QUIET)  # Find thread libraries for system
+
+  option(INSTALL_GTEST OFF)
   add_subdirectory(googletest)
+
+  if (NOT TARGET GTest::gtest)
+    if (TARGET gtest)
+      # Add aliases that will allow us to refer to the targets the same way
+      # whether we use an extern googletest installation or the one we have
+      # as a submodule
+      add_library(GTest::gtest ALIAS gtest)
+      add_library(GTest::gtest_main ALIAS gtest_main)
+    else ()
+      message(FATAL_ERROR "Added googletest subdirectory but cannot find target GTest::gtest or gtest")
+    endif ()
+  endif ()
 endif ()
 
-set(GTEST_LIBRARIES GTest::gtest)
-
 #[===========================================================================[
-.. command:: wonton_add_unit
+.. command:: wonton_add_unittest
 
-The ``wonton_add_unit`` function creates a custom unit test with
+The ``wonton_add_unittest`` function creates a custom unit test with
 various runtime policies::
 
-wonton_add_unit(<name> [<option>...])
+wonton_add_unittest(<name> [<option>...])
 
 General options are:
 
@@ -45,47 +56,55 @@ Defines to set when building test target
 Arguments supplied to the test command line
 #]===========================================================================]
 
-function(wonton_add_unit name)
+function(wonton_add_unittest name)
 
   #--------------------------------------------------------------------------#
   # Setup argument options.
   #--------------------------------------------------------------------------#
-  
+
+  set(options)
   set(one_value_args POLICY)
   set(multi_value_args SOURCES INPUTS LIBRARIES DEFINES THREADS)
-  cmake_parse_arguments(unit "${one_value_args}" "${multi_value_args}" ${ARGN})
+  cmake_parse_arguments(test "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
   
   #--------------------------------------------------------------------------#
   # Make sure that the user specified sources and the list contains Main.cc
   #--------------------------------------------------------------------------#
   
-  if (NOT SOURCES)
-    message(FATAL_ERROR
-      "You must specify unit test source files using SOURCES")
+  if (NOT test_SOURCES)
+    message(FATAL_ERROR "You must specify unit test source files using SOURCES")
   endif ()
 
   # Include the correct main file
-  if (POLICY STREQUAL "MPI")
-    set(_main_file ${CMAKE_SOURCE_DIRECTORY}/cmake/unit_main_mpi.cc)
-  else ()
-    set(_main_file ${CMAKE_SOURCE_DIRECTORY}/cmake/unit_main_serial.cc)
+  if (test_POLICY STREQUAL "MPI")
+    list(APPEND test_SOURCES ${CMAKE_SOURCE_DIR}/cmake/test_main_mpi.cc)
   endif ()
 
-  list(INSERT ${SOURCES} 0 ${_main_file}) 
   
   # Set up the unit test executable and dependencies
   
-  add_executable(${name} ${SOURCES})
-  target_link_libraries(${name} PRIVATE ${GTEST_LIBRARIES})
-  target_compile_definitions(${name} PRIVATE ${DEFINES})
-  
-  if (LIBRARIES)
-    target_link_libraries(${name} PRIVATE ${LIBRARIES})
+  add_executable(${name} ${test_SOURCES})
+  target_link_libraries(${name} PRIVATE GTest::gtest)
+
+  if (NOT test_POLICY OR test_POLICY STREQUAL "SERIAL")
+    # use the standard gtest main program
+    target_link_libraries(${name} PRIVATE GTest::gtest_main)
   endif ()
+
+  # Add any user supplied compiler definitions
   
+  target_compile_definitions(${name} PRIVATE ${test_DEFINES})
+
+  # Add in any extra libraries
+  
+  if (test_LIBRARIES)
+    target_link_libraries(${name} PRIVATE ${test_LIBRARIES})
+  endif ()
+
+  # If test needs any input files, copy them to the testing directory
   if (INPUTS)
     set(_INPUT_FILES)
-    foreach (input ${INPUTS})
+    foreach (input ${test_INPUTS})
       get_filename_component(_OUTPUT_NAME ${input} NAME)
       get_filename_component(_PATH ${input} ABSOLUTE)
       configure_file(${_PATH} ${PROJECT_BINARY_DIR}/${_OUTPUT_NAME})
@@ -97,12 +116,12 @@ function(wonton_add_unit name)
   endif ()
 
   
-  if (POLICY STREQUAL "MPI")
-    if (NOT THREADS)
-      set(THREADS 1)
+  if (test_POLICY STREQUAL "MPI")
+    if (NOT test_THREADS)
+      set(test_THREADS 1)
     endif ()
     
-    foreach (instance ${THREADS})
+    foreach (instance ${test_THREADS})
       if (ENABLE_JENKINS_OUTPUT)
         set(_OUTPUT ${name}_${instance}.xml)
         set(_GTEST_FLAGS "--gtest_output=xml:${_OUTPUT}")
@@ -110,8 +129,8 @@ function(wonton_add_unit name)
       
       add_test(NAME ${name}
         COMMAND
-	${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${THREADS}
-        $<TARGET_FILE:${name}> ${ARGUMENTS}
+	${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${test_THREADS}
+        $<TARGET_FILE:${name}> ${test_ARGUMENTS}
         ${GTEST_FLAGS}
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
     endforeach ()
@@ -131,4 +150,4 @@ function(wonton_add_unit name)
       WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
   endif ()
 
-endfunction (wonton_add_unit)
+endfunction (wonton_add_unittest)
