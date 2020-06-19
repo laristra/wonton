@@ -3,4 +3,4 @@
 	url = ../../laristra/r3d.git
 [submodule "googletest"]
 	path = googletest
-	url = ../../laristra/googletest
+	url = https://github.com/google/googletest
