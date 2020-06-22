@@ -160,10 +160,12 @@ if (ENABLE_UNIT_TESTS)
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  wonton_add_unittest(test_structured_partitioner_par
-    SOURCES test/test_structured_partitioner_par.cc
-    LIBRARIES wonton_support
-    POLICY MPI
-    THREADS 4)
+  if (WONTON_ENABLE_MPI)
+    wonton_add_unittest(test_structured_partitioner_par
+      SOURCES test/test_structured_partitioner_par.cc
+      LIBRARIES wonton_support
+      POLICY MPI
+      THREADS 4)
+  endif ()
   
 endif(ENABLE_UNIT_TESTS)
