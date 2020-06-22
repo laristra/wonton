@@ -68,7 +68,8 @@ lapacke_dir=$NGC/private/lapack/${lapack_version}-patched${compiler_suffix}
 lapacke_flags="-D WONTON_ENABLE_LAPACKE:BOOL=True -D LAPACKE_ROOT:PATH=$lapacke_dir"
 
 if [[ $compiler == "gcc6" ]]; then
-    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True"
+    flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
+    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir"
 fi
 
 
@@ -140,6 +141,7 @@ cmake \
     -D ENABLE_JENKINS_OUTPUT=True \
     $mpi_flags \
     $jali_flags \
+    $flecsi_flags \
     $lapacke_flags \
     $thrust_flags \
     $kokkos_flags \
