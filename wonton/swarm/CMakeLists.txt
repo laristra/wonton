@@ -45,18 +45,15 @@ if (ENABLE_UNIT_TESTS)
   wonton_add_unittest(test_swarm
       SOURCES test/test_swarm.cc
       LIBRARIES wonton_swarm
-      POLICY MPI
-      THREADS 1)
+      POLICY SERIAL)
 
   wonton_add_unittest(test_swarm_state
       SOURCES test/test_swarm_state.cc
       LIBRARIES wonton_swarm
-      POLICY MPI
-      THREADS 1)
+      POLICY SERIAL)
 
   wonton_add_unittest(test_swarm_state_multi
       SOURCES test/test_swarm_state_multi.cc
       LIBRARIES wonton_swarm
-      POLICY MPI
-      THREADS 1)
+      POLICY SERIAL)
 endif (ENABLE_UNIT_TESTS)
