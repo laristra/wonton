@@ -13,8 +13,8 @@ if (WONTON_ENABLE_FleCSI)
   add_library(flecsi_mesh_wrapper INTERFACE)
   
   target_include_directories(flecsi_mesh_wrapper INTERFACE
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>)
 
   set(flecsi_mesh_wrapper_HEADERS
@@ -53,7 +53,7 @@ if (WONTON_ENABLE_FleCSI)
     )
 
 
-  cinch_add_unit(test_flecsi_mesh_wrapper
+  wonton_add_unittest(test_flecsi_mesh_wrapper
     SOURCES test/test_flecsi_mesh_wrapper.cc
     LIBRARIES flecsi_mesh_wrapper
     POLICY MPI

@@ -9,8 +9,8 @@ project(swarm)
 add_library(wonton_swarm INTERFACE)
 
 target_include_directories(wonton_swarm INTERFACE
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
+    $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
     $<INSTALL_INTERFACE:include/wonton/swarm>)
 
 # Add header files
@@ -42,21 +42,18 @@ install(TARGETS wonton_swarm
 
 # Unit tests
 if (ENABLE_UNIT_TESTS)
-  cinch_add_unit(test_swarm
+  wonton_add_unittest(test_swarm
       SOURCES test/test_swarm.cc
       LIBRARIES wonton_swarm
-      POLICY MPI
-      THREADS 1)
+      POLICY SERIAL)
 
-  cinch_add_unit(test_swarm_state
+  wonton_add_unittest(test_swarm_state
       SOURCES test/test_swarm_state.cc
       LIBRARIES wonton_swarm
-      POLICY MPI
-      THREADS 1)
+      POLICY SERIAL)
 
-  cinch_add_unit(test_swarm_state_multi
+  wonton_add_unittest(test_swarm_state_multi
       SOURCES test/test_swarm_state_multi.cc
       LIBRARIES wonton_swarm
-      POLICY MPI
-      THREADS 1)
+      POLICY SERIAL)
 endif (ENABLE_UNIT_TESTS)

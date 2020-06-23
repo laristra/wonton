@@ -11,8 +11,8 @@ add_library(wonton_support)
 target_sources(wonton_support PRIVATE Matrix.cc svd.cc)
 
 target_include_directories(wonton_support PUBLIC
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIRECTORY}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIRECTORY}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 set(wonton_support_HEADERS
@@ -101,66 +101,71 @@ install(TARGETS wonton_support
 
 if (ENABLE_UNIT_TESTS)
 
-  cinch_add_unit(test_point
+  wonton_add_unittest(test_point
     SOURCES test/test_point.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_vector
+  wonton_add_unittest(test_vector
     SOURCES test/test_vector.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_matfuncs
+  wonton_add_unittest(test_matfuncs
     SOURCES test/test_matfuncs.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_coord_sys
+  wonton_add_unittest(test_coord_sys
     SOURCES test/test_coord_sys.cc
     LIBRARIES wonton_support
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_moment_index
+  wonton_add_unittest(test_moment_index
     SOURCES test/test_moment_index.cc
     LIBRARIES wonton_support
     POLICY SERIAL
     )
 
-  cinch_add_unit(test_polytope_2
+  wonton_add_unittest(test_polytope_2
     SOURCES test/test_polytope_2.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_polytope_3
+  wonton_add_unittest(test_polytope_3
     SOURCES test/test_polytope_3.cc
     LIBRARIES wonton_support
     POLICY SERIAL)
 
   if (WONTON_ENABLE_THRUST)
-    cinch_add_unit(test_thrust
+    wonton_add_unittest(test_thrust
       SOURCES test/test_thrust.cc
       LIBRARIES wonton_support
       POLICY SERIAL)
   endif ()
 
-  cinch_add_unit(test_prime_factors
+  wonton_add_unittest(test_prime_factors
     SOURCES test/test_prime_factors.cc
+    LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_equifactor
+  wonton_add_unittest(test_equifactor
     SOURCES test/test_equifactor.cc
+    LIBRARIES wonton_support
     POLICY SERIAL)
   
-  cinch_add_unit(test_structured_partitioner
+  wonton_add_unittest(test_structured_partitioner
     SOURCES test/test_structured_partitioner.cc
+    LIBRARIES wonton_support
     POLICY SERIAL)
 
-  cinch_add_unit(test_structured_partitioner_par
-    SOURCES test/test_structured_partitioner_par.cc
-    LIBRARIES wonton_support
-    POLICY MPI
-    THREADS 4)
+  if (WONTON_ENABLE_MPI)
+    wonton_add_unittest(test_structured_partitioner_par
+      SOURCES test/test_structured_partitioner_par.cc
+      LIBRARIES wonton_support
+      POLICY MPI
+      THREADS 4)
+  endif ()
   
 endif(ENABLE_UNIT_TESTS)

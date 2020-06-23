@@ -8,8 +8,8 @@ Please see the license file at the root of this repository, or at:
 add_library(simple_mesh_wrapper INTERFACE)
 
 target_include_directories(simple_mesh_wrapper INTERFACE
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
 
 set(simple_mesh_HEADERS
@@ -41,14 +41,14 @@ install(TARGETS simple_mesh_wrapper
   )
       
 if (ENABLE_UNIT_TESTS)
-  cinch_add_unit(test_simple_mesh
+  wonton_add_unittest(test_simple_mesh
     SOURCES test/test_simple_mesh.cc
     LIBRARIES simple_mesh_wrapper
     POLICY SERIAL
     )
 
   # Simple Mesh wrapper
-  cinch_add_unit(test_simple_mesh_wrapper
+  wonton_add_unittest(test_simple_mesh_wrapper
     SOURCES test/test_simple_mesh_wrapper.cc
     LIBRARIES simple_mesh_wrapper
     POLICY SERIAL)  

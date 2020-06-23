@@ -11,8 +11,8 @@ if (WONTON_ENABLE_Jali)
   add_library(jali_state_wrapper INTERFACE)
   
   target_include_directories(jali_state_wrapper INTERFACE
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>
     )
 
@@ -47,7 +47,7 @@ if (WONTON_ENABLE_Jali)
     )
       
   if (ENABLE_UNIT_TESTS)
-    cinch_add_unit(test_jali_state_wrapper
+    wonton_add_unittest(test_jali_state_wrapper
       SOURCES test/test_jali_state_wrapper.cc
       LIBRARIES jali_state_wrapper
       POLICY MPI

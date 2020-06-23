@@ -8,6 +8,8 @@ Please see the license file at the root of this repository, or at:
 #include "gtest/gtest.h"
 
 #include "wonton/support/wonton.h"
+
+#include <algorithm>
 #include <iostream>
 
 TEST(THRUST_TEST, TRANSFORM) {

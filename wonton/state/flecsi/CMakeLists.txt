@@ -11,8 +11,8 @@ if (WONTON_ENABLE_FleCSI)
   add_library(flecsi_state_wrapper INTERFACE)
   
   target_include_directories(flecsi_state_wrapper INTERFACE
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-    $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>
+    $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
     $<INSTALL_INTERFACE:include>
   )
 
