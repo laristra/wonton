@@ -32,8 +32,8 @@ endif ()
 # tag the central repository.
 
 set(WONTON_VERSION_MAJOR 1)
-set(WONTON_VERSION_MINOR 1)
-set(WONTON_VERSION_PATCH 6)
+set(WONTON_VERSION_MINOR 2)
+set(WONTON_VERSION_PATCH 0)
 
 
 # Top level target
