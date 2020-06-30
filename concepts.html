@@ -71,14 +71,14 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title"><a class="el" href="namespaceWonton.html">Wonton</a> Concepts </div>  </div>
+<div class="title"><a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> Concepts </div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><h2>Wrappers</h2>
 <p>Mesh and state or data associated with the mesh are fundamental data structures in any physics based application. In general, the application has its own native data structures with its native interface for data access.</p>
 <p>This makes it harder to design generic libraries that can work with different applications with different native APIs. One way to overcome this problem is to access data through a wrapper. A wrapper is an implementation of an interface to the native interface and can be used to avoid data copy between application and the library if the wrapper interface provides the essential queries required by the library.</p>
 <p>Both Portage and Tangram are templated on mesh and state wrapper types ensuring that any application code can use them regardless of their native API while avoiding data copy.</p>
-<p><a class="el" href="namespaceWonton.html">Wonton</a> primarily serves two purposes:</p><ol type="1">
+<p><a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> primarily serves two purposes:</p><ol type="1">
 <li>It defines a common interface to access mesh and field data from any application.</li>
 <li>It serves as a repository of example wrappers, specifically to the Jali mesh framework, FleCSI Burton Mesh Specialization and couple of native mesh/state wrappers.</li>
 </ol>
@@ -98,7 +98,7 @@ $(function() {
 <li>int get_global_id(int const id, Entity_kind const kind) const;</li>
 </ul>
 </li>
-<li>Type information (see for details on <a class="el" href="namespaceWonton.html">Wonton</a> types)<ul>
+<li>Type information (see for details on <a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> types)<ul>
 <li><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb" title="The parallel type of a given entity. ">Wonton::Entity_type</a> cell_get_type(int const cellid) const;</li>
 <li><a class="el" href="namespaceWonton.html#a4ba4d01e597f011be429bc05e6f0cebb" title="The parallel type of a given entity. ">Wonton::Entity_type</a> node_get_type(int const nodeid) const;</li>
 <li><a class="el" href="namespaceWonton.html#a782ada4a682b30fc8e94d58b09b17bcc" title="Element (cell topology) type. ">Wonton::Element_type</a> cell_get_element_type(int const cellid) const;</li>
@@ -130,18 +130,18 @@ Illustration for 2D auxiliary entities</div></div>
 <p>In addition to the advanced mesh entities (sides, wedges, and corners), <a class="el" href="namespaceAuxMeshTopology.html">AuxMeshTopology</a> also computes some advanced connectivity information. An example is <a class="el" href="classWonton_1_1AuxMeshTopology.html#ab749dbd39a5a47b9d469f2e63647f3e9" title="Get the list of node IDs for all nodes attached to all cells attached to a specific node...">Wonton::AuxMeshTopology::node_get_cell_adj_nodes()</a>, which, given a node index in the mesh, returns a vector of all the nodes that are attached to all cells attached to the given node. <a class="el" href="namespaceAuxMeshTopology.html">AuxMeshTopology</a> additionally creates iterators over all the various types of mesh entities, provides geometric information (e.g. volumes, centroids, etc.) of the mesh entities, and a method to determine if an entitiy is on the domain boundary (needed for limiting in higher-order remaps).</p>
 <p><em>If one does <b>not</b> use <a class="el" href="namespaceAuxMeshTopology.html">AuxMeshTopology</a> to help extend their mesh wrapper's functionality, one should ensure that their mesh wrapper at least has the same public functions as <a class="el" href="namespaceAuxMeshTopology.html">AuxMeshTopology</a>.</em> For this reason, it is advised to utilize <a class="el" href="namespaceAuxMeshTopology.html">AuxMeshTopology</a> where possible, but to defer to one's own mesh framework wrapper when more efficient methods are available.</p>
 <h3>Current Support</h3>
-<p>At present, <a class="el" href="namespaceWonton.html">Wonton</a> provides the following wrappers to external frameworks:</p><ol type="1">
+<p>At present, <a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> provides the following wrappers to external frameworks:</p><ol type="1">
 <li><a href="http://github.com/lanl/jali">Jali</a></li>
 <li><a href="http://github.com/laristra/flecsi-sp">FleCSI Burton Specialization</a></li>
 </ol>
-<p><a class="el" href="namespaceWonton.html">Wonton</a> also provides two native mesh and state managers and their wrappers:</p><ol type="1">
+<p><a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> also provides two native mesh and state managers and their wrappers:</p><ol type="1">
 <li><a class="el" href="example.html">Simple Mesh and State</a>: A very light-weight, serial, 2D/3D Cartesian mesh and its state.</li>
 <li>Flat Mesh and State: A native framework used internally for redistributing mesh/state data across partitions.</li>
 </ol>
 <h3>State Wrappers</h3>
 <p>There is no equivalent of <a class="el" href="namespaceAuxMeshTopology.html">AuxMeshTopology</a> for state wrappers. This is simply because the requirements of a state manager are much less than those of the mesh framework. In particular, the state wrappers need to know how to add data, get data, and query things like the size of the data and where the data lives (<a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396a134bbbf860ead84cd3cca86dcd6db4d4">Wonton::CELL</a> or <a class="el" href="namespaceWonton.html#ac53f3e6fa9764c905a442e31623f5396accf5cd8c72d2351871e7e309be7ad7ee">Wonton::NODE</a>).</p>
 <h2>Types</h2>
-<p><a class="el" href="namespaceWonton.html">Wonton</a> currently provides the following enumerated types:</p><ol type="1">
+<p><a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> currently provides the following enumerated types:</p><ol type="1">
 <li><em>Entity_kind</em>: The type of mesh entity.<ul>
 <li>ALL_KIND, ANY_KIND, UNKNOWN_KIND, NODE, EDGE, FACE, CELL, SIDE, WEDGE, CORNER, FACET, BOUNDARY_FACE, PARTICLE</li>
 </ul>
@@ -159,7 +159,7 @@ Illustration for 2D auxiliary entities</div></div>
 </ul>
 </li>
 </ol>
-<p><a class="el" href="namespaceWonton.html">Wonton</a> also provides types for Points, Vectors and Matrices. These are advanced types with the following operators and methods:</p>
+<p><a class="el" href="namespaceWonton.html" title="Factorize a number N into D equal (or nearly equal) factors. ">Wonton</a> also provides types for Points, Vectors and Matrices. These are advanced types with the following operators and methods:</p>
 <ul>
 <li>Point:<ul>
 <li>Operators: [], -p, p+t, c*p, p/c</li>
