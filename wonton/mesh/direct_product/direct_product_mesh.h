@@ -362,10 +362,10 @@ Direct_Product_Mesh<D,CoordSys>::Direct_Product_Mesh(
   num_ghost_layers_ = 0;
   for (int d = 0; d < D; ++d)
     axis_points_[d] = axis_points_in[d];
-    for (int d = 0; d < D; ++d) {
-      gid_bounds_local_[d][0] = 0;
-      gid_bounds_local_[d][1] = num_axis_points_global_[d];
-    }
+  for (int d = 0; d < D; ++d) {
+    gid_bounds_local_[d][0] = 0;
+    gid_bounds_local_[d][1] = num_axis_points_global_[d];
+  }
 #endif
 
 }

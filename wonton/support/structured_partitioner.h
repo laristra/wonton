@@ -4,7 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_STRUCTURED_PARTITIONER_H
+#ifndef WONTON_STRUCTURED_PARTITIONER_H_
 #define WONTON_STRUCTURED_PARTITIONER_H_
 
 
