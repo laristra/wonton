@@ -33,7 +33,7 @@ endif ()
 
 set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 2)
-set(WONTON_VERSION_PATCH 0)
+set(WONTON_VERSION_PATCH 1)
 
 
 # Top level target
