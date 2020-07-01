@@ -33,7 +33,7 @@ endif ()
 
 set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 2)
-set(WONTON_VERSION_PATCH 0)
+set(WONTON_VERSION_PATCH 1)
 
 
 # Top level target
@@ -54,6 +54,16 @@ else ()
   set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
 endif ()
 
+#------------------------------------------------------------------------------#
+# Enable documentation generation
+#------------------------------------------------------------------------------#
+option(ENABLE_DOXYGEN "Enable Doxygen documentation" OFF)
+option(ENABLE_DOXYGEN_WARN "Enable Doxygen warnings" OFF)
+
+if (ENABLE_DOXYGEN)
+  include(cmake/doxygen.cmake)
+  add_doxygen()
+endif()
 
 #------------------------------------------------------------------------------#
 # Discover packages here but set them as dependencies of
@@ -400,7 +410,6 @@ install(TARGETS wonton
 #-----------------------------------------------------------------------------
 
 add_subdirectory(app)
-
 
 #-----------------------------------------------------------------------------
 # Prepare output for configuration files to be used by projects importing Wonton
