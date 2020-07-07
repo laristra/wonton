@@ -4,7 +4,7 @@ Please see the license file at the root of this repository, or at:
     https://github.com/laristra/wonton/blob/master/LICENSE
 */
 
-#ifndef WONTON_PRIME_FACTOR_H
+#ifndef WONTON_PRIME_FACTOR_H_
 #define WONTON_PRIME_FACTOR_H_
 
 namespace Wonton {
@@ -15,7 +15,7 @@ namespace Wonton {
   @returns     vector of factors (with repeated factors)
 */
 
-namespace {  // for ODR
+static
 std::vector<int> prime_factors(unsigned int const N) {
   constexpr int nprimes = 10;
   int primes[nprimes] = {2,3,5,7,11,13,17,19,23,29};  // unlikely to need more
@@ -46,8 +46,6 @@ std::vector<int> prime_factors(unsigned int const N) {
 
   return factors;
 }
-}
-        
   
 }  // end namespace Wonton
 

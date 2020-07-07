@@ -1,0 +1,16 @@
+# axis_varan_install.yml
+COMPILER:
+  - intel18
+  - gcc6
+  - gcc7
+
+BUILD_TYPE:
+  - base
+  - serial
+  - thrust
+  - kokkos
+
+exclude:
+  - COMPILER: intel18
+    BUILD_TYPE: kokkos
+
