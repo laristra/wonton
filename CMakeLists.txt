@@ -95,8 +95,8 @@ if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
 
-  target_include_directories(wonton INTERFACE ${FleCSI_INCLUDE_DIR})
-  target_include_directories(wonton INTERFACE ${FleCSISP_INCLUDE_DIR})
+  target_include_directories(wonton SYSTEM INTERFACE ${FleCSI_INCLUDE_DIR})
+  target_include_directories(wonton SYSTEM INTERFACE ${FleCSISP_INCLUDE_DIR})
 
   target_link_libraries(wonton INTERFACE ${FleCSI_LIBRARIES})
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
