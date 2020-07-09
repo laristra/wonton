@@ -119,11 +119,13 @@ class flecsi_mesh_t : public AuxMeshTopology<flecsi_mesh_t<M>> {
   //!  \param[in] mesh The minimum coordinates of the domain.
   explicit flecsi_mesh_t(const mesh_t & mesh, 
                          bool request_sides = true,
-			 bool request_wedges = true,
-			 bool request_corners = true) :
-    cells_(mesh.cells()),  faces_(mesh.faces()),
-    vertices_(mesh.vertices()),  mesh_(&mesh),
-    wonton_mesh_aux_t(request_sides, request_wedges, request_corners) {
+			                   bool request_wedges = true,
+			                   bool request_corners = true)
+    : wonton_mesh_aux_t(request_sides, request_wedges, request_corners),
+      mesh_(&mesh),
+      cells_(mesh.cells()),
+      faces_(mesh.faces()),
+      vertices_(mesh.vertices()) {
     // base class (AuxMeshTopology) method that has to be called here
     // and not in the constructor of the base class because it needs
     // access to methods in this class which in turn need access to
