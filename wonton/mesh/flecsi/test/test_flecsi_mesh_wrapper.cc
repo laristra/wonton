@@ -11,10 +11,7 @@ Please see the license file at the root of this repository, or at:
 #include "gtest/gtest.h"
 #include "mpi.h"
 
-#include "flecsi-sp.h"
-#include "flecsi-sp/burton/burton.h"
-#include "flecsi-sp/burton/factory.h"
-
+#include "wonton/mesh/flecsi/test/flecsi-headers.h"
 #include "wonton/support/Point.h"
 
 namespace fmesh = flecsi::sp::burton; 
