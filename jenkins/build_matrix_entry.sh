@@ -80,6 +80,13 @@ elif [[ $build_type == "thrust" ]]; then
     thrust_flags="-D WONTON_ENABLE_THRUST=True -DTHRUST_ROOT:FILEPATH=${thrust_dir}"
 fi
 
+flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=False"
+if [[ $compiler == "gcc6" && $build_type != "serial" ]]; then
+    flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
+    flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
+    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
+fi
+
 export SHELL=/bin/sh
 
 export MODULEPATH=""
@@ -105,6 +112,7 @@ cmake \
     -D ENABLE_JENKINS_OUTPUT=True \
     $mpi_flags \
     $jali_flags \
+    $flecsi_flags \
     $lapacke_flags \
     $thrust_flags \
     ..
