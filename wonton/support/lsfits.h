@@ -27,21 +27,21 @@ namespace Wonton {
 
 
 /**
- * @brief Build the transposed matrix A^T used in the
- *        least square equation (A^T.A).X = (A^T.F)
- *        from the stencil.
+ * @brief Build the transposed matrix A^T used in the least square
+ *        equation (A^T.A).X = (A^T.F) from the stencil.
  *
- * Since the stencil is the same for multiple field
- * variables, it should be called only once. It will
- * also be used to compute the right hand side of
- * the equation.
+ * Since the stencil is the same for multiple field variables,
+ * it should be called only once. It will also be used to compute
+ * the right hand side of the equation. Here the first point
+ * of the stencil is assumed to be the point where the gradient
+ * must be computed.
  *
  * @tparam dim: the spatial dimension of the problem.
  * @param stencil: the stencil point coordinates.
  * @return the matrix A^T.
  */
 template<int dim>
-Matrix build_transposed_matrix(std::vector<Point<D>> const& stencil) {
+std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<D>> const& stencil) {
 
   // the first point is the reference point where we are trying
   // to compute the gradient; so the number of rows is size - 1.
@@ -57,7 +57,7 @@ Matrix build_transposed_matrix(std::vector<Point<D>> const& stencil) {
     }
   }
 
-  return A.transpose();
+  return std::make_pair(A.transpose(), A);
 }
 
 /**
@@ -103,8 +103,10 @@ Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& v
 template<int dim, typename CoordSys = CartesianCoordinates>
 Vector<dim> ls_gradient(Matrix const& ATA_inv, Vector<dim> const& ATF) {
 
+  CoordSys::template verify_coordinate_system<D>();
+
   // compute gradient
-  auto gradient = ATA_inv * ATF;
+  Vector<dim> gradient = ATA_inv * ATF;
 
   // correct it for curvilinear coordinates
   CoordSys::modify_gradient(gradient, coord0);
