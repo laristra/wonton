@@ -341,12 +341,6 @@ if (WONTON_ENABLE_LAPACKE)
     enable_language(Fortran)
     include(FortranCInterface)  # will ensure the fortran library is linked in
     
-    
-    target_include_directories(wonton INTERFACE ${LAPACKE_INCLUDE_DIRS})
-    target_compile_definitions(wonton INTERFACE WONTON_HAS_LAPACKE)
-    
-    target_link_libraries(wonton INTERFACE ${LAPACKE_LIBRARIES})
-    
     message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
     message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")
     
