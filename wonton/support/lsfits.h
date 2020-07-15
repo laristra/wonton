@@ -97,16 +97,21 @@ Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& v
  * @tparam dim: the spatial dimension of the problem.
  * @tparam CoordSys: the current coordinate system.
  * @param ATA_inv: the cached inverse of the least square matrix.
- * @param ATF: the right hand side of the least square equation.
+ * @param AT: the cached transposed matrix A^T.
+ * @param values: the field value at each stencil point.
  * @param reference: the coordinate of the reference point.
  * @return the gradient at the current point.
  */
 template<int dim, typename CoordSys = CartesianCoordinates>
 Vector<dim> ls_gradient(Matrix const& ATA_inv,
-                        Vector<dim> const& ATF,
+                        Matrix const& AT,
+                        std::vector<double> const& values,
                         Point<dim> const& reference) {
 
   CoordSys::template verify_coordinate_system<dim>();
+
+  // compute the right hand side (A^T.F) from stencil values
+  Vector<dim> ATF = build_right_hand_side(AT, values);
 
   // compute gradient
   Vector<dim> gradient = ATA_inv * ATF;
