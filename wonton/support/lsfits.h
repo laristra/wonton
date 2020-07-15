@@ -116,9 +116,6 @@ Vector<dim> ls_gradient(Matrix const& ATA_inv,
   // compute gradient
   Vector<dim> gradient = ATA_inv * ATF;
 
-  // correct it for curvilinear coordinates
-  CoordSys::modify_gradient(gradient, reference);
-
   return gradient;
 }
 
@@ -157,9 +154,6 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
   // use the inverse method
   Vector<D> gradient = ATA.solve(ATF, "inverse");
 #endif
-
-  // correct it for curvilinear coordinates
-  CoordSys::modify_gradient(gradient, coords[0]);
 
   return gradient;
 }
