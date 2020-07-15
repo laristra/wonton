@@ -38,14 +38,14 @@ namespace Wonton {
  *
  * @tparam dim: the spatial dimension of the problem.
  * @param stencil: the stencil point coordinates.
- * @return the matrix A^T.
+ * @return the matrices A^T and A.
  */
 template<int dim>
-std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<D>> const& stencil) {
+std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<dim>> const& stencil) {
 
   // the first point is the reference point where we are trying
   // to compute the gradient; so the number of rows is size - 1.
-  int const num = coords.size() - 1;
+  int const num = stencil.size() - 1;
 
   // each row of A contains the components of the vector from
   // coords[0] to the candidate point coords[i] being used
@@ -53,7 +53,7 @@ std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<D>> const& s
   Matrix A(num, dim);
   for (int i = 0; i < num; ++i) {
     for (int j = 0; j < dim; ++j) {
-      A[i][j] = coords[i+1][j] - coords[0][j];
+      A[i][j] = stencil[i+1][j] - stencil[0][j];
     }
   }
 
@@ -69,22 +69,22 @@ std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<D>> const& s
  *
  * @tparam dim: the spatial dimension of the problem.
  * @param AT: the cached transposed matrix A^T.
- * @param vals: the field value at each stencil point.
+ * @param values: the field value at each stencil point.
  * @return the vector (A^T.F)
  */
 template<int dim>
-Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& vals) {
+Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& values) {
 
   // the first value is that of the reference point where we are trying
   // to compute the gradient; so the number of components is size - 1.
-  int const num = vals.size() - 1;
+  int const num = values.size() - 1;
 
   // Each entry/row of F contains the difference between the
   // function value at the candidate point and the function value
   // at the point where we are computing (f-f_0)
   Vector<num> F;
   for (int i = 0; i < num; ++i) {
-    F[i] = vals[i+1] - vals[0];
+    F[i] = values[i+1] - values[0];
   }
 
   return AT * F;
@@ -98,18 +98,21 @@ Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& v
  * @tparam CoordSys: the current coordinate system.
  * @param ATA_inv: the cached inverse of the least square matrix.
  * @param ATF: the right hand side of the least square equation.
+ * @param reference: the coordinate of the reference point.
  * @return the gradient at the current point.
  */
 template<int dim, typename CoordSys = CartesianCoordinates>
-Vector<dim> ls_gradient(Matrix const& ATA_inv, Vector<dim> const& ATF) {
+Vector<dim> ls_gradient(Matrix const& ATA_inv,
+                        Vector<dim> const& ATF,
+                        Point<dim> const& reference) {
 
-  CoordSys::template verify_coordinate_system<D>();
+  CoordSys::template verify_coordinate_system<dim>();
 
   // compute gradient
   Vector<dim> gradient = ATA_inv * ATF;
 
   // correct it for curvilinear coordinates
-  CoordSys::modify_gradient(gradient, coord0);
+  CoordSys::modify_gradient(gradient, reference);
 
   return gradient;
 }
@@ -151,7 +154,7 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 #endif
 
   // correct it for curvilinear coordinates
-  CoordSys::modify_gradient(gradient, coord0);
+  CoordSys::modify_gradient(gradient, coords[0]);
 
   return gradient;
 }
