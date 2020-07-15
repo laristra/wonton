@@ -90,6 +90,28 @@ Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& v
   return AT * F;
 }
 
+/**
+ * @brief Compute the gradient using the cached inverse of the
+ *        (A^T.A) matrix and the given right hand side (A^T.F).
+ *
+ * @tparam dim: the spatial dimension of the problem.
+ * @tparam CoordSys: the current coordinate system.
+ * @param ATA_inv: the cached inverse of the least square matrix.
+ * @param ATF: the right hand side of the least square equation.
+ * @return the gradient at the current point.
+ */
+template<int dim, typename CoordSys = CartesianCoordinates>
+Vector<dim> ls_gradient(Matrix const& ATA_inv, Vector<dim> const& ATF) {
+
+  // compute gradient
+  auto gradient = ATA_inv * ATF;
+
+  // correct it for curvilinear coordinates
+  CoordSys::modify_gradient(gradient, coord0);
+
+  return gradient;
+}
+
 /*!
   @brief Compute least squares gradient from set of values
   @param[in] coords Vector of coordinates at which values are given
