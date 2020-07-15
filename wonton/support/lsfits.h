@@ -149,10 +149,11 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
   // solve it
 #ifdef WONTON_HAS_LAPACKE
   // use lapack solver for symmetric positive definite matrices
-  Vector<D> gradient = ATA.solve(ATF, "lapack-posv");
+  Vector<D> gradient( ATA.solve(ATF, "lapack-posv").data() );
 #else
-  // use the inverse method
-  Vector<D> gradient = ATA.solve(ATF, "inverse");
+  // use the QR decomposition method
+  Vector<D> gradient;
+  solve(ATA, ATF, gradient);
 #endif
 
   return gradient;
