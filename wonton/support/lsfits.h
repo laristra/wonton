@@ -26,6 +26,70 @@ Please see the license file at the root of this repository, or at:
 namespace Wonton {
 
 
+/**
+ * @brief Build the transposed matrix A^T used in the
+ *        least square equation (A^T.A).X = (A^T.F)
+ *        from the stencil.
+ *
+ * Since the stencil is the same for multiple field
+ * variables, it should be called only once. It will
+ * also be used to compute the right hand side of
+ * the equation.
+ *
+ * @tparam dim: the spatial dimension of the problem.
+ * @param stencil: the stencil point coordinates.
+ * @return the matrix A^T.
+ */
+template<int dim>
+Matrix build_transposed_matrix(std::vector<Point<D>> const& stencil) {
+
+  // the first point is the reference point where we are trying
+  // to compute the gradient; so the number of rows is size - 1.
+  int const num = coords.size() - 1;
+
+  // Each row of A contains the components of the vector from
+  // coords[0] to the candidate point coords[i] being used
+  // in the least squares approximation (x_i - x_0).
+  Matrix A(num, dim);
+  for (int i = 0; i < num; ++i) {
+    for (int j = 0; j < dim; ++j) {
+      A[i][j] = coords[i+1][j] - coords[0][j];
+    }
+  }
+
+  return A.transpose();
+}
+
+/**
+ * @brief Build the right hand side (A^T.F) of the least square
+ *        equation (A^T.A).X = (A^T.F) from field values.
+ *
+ * It should be called for each field variable using the cached
+ * transposed matrix A^T used in the least square equation.
+ *
+ * @tparam dim: the spatial dimension of the problem.
+ * @param AT: the cached transposed matrix A^T.
+ * @param vals: the field value at each stencil point.
+ * @return the vector (A^T.F)
+ */
+template<int dim>
+Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& vals) {
+
+  // the first value is that of the reference point where we are trying
+  // to compute the gradient; so the number of components is size - 1.
+  int const num = vals.size() - 1;
+
+  // Each entry/row of F contains the difference between the
+  // function value at the candidate point and the function value
+  // at the point where we are computing (f-f_0)
+  Vector<num> F;
+  for (int i = 0; i < num; ++i) {
+    F[i] = vals[i+1] - vals[0];
+  }
+
+  return AT * F;
+}
+
 /*!
   @brief Compute least squares gradient from set of values
   @param[in] coords Vector of coordinates at which values are given
