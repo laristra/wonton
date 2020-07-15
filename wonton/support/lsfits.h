@@ -27,7 +27,7 @@ namespace Wonton {
 
 
 /**
- * @brief Build the transposed matrix A^T used in the least square
+ * @brief Build the matrix A and its transpose A^T used in the
  *        equation (A^T.A).X = (A^T.F) from the stencil.
  *
  * Since the stencil is the same for multiple field variables,
@@ -47,7 +47,7 @@ std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<D>> const& s
   // to compute the gradient; so the number of rows is size - 1.
   int const num = coords.size() - 1;
 
-  // Each row of A contains the components of the vector from
+  // each row of A contains the components of the vector from
   // coords[0] to the candidate point coords[i] being used
   // in the least squares approximation (x_i - x_0).
   Matrix A(num, dim);
@@ -124,6 +124,9 @@ Vector<dim> ls_gradient(Matrix const& ATA_inv, Vector<dim> const& ATF) {
   and the first value is assumed to the value at this reference point
 
   This operator does not know anything about a mesh.
+  It solves the algebraic equation using an optimized LAPACK kernel
+  if available, or the inverse method if not. It is meant to be used
+  only when remapping a single field variable.
 
 */
 
@@ -133,62 +136,24 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
 
   CoordSys::template verify_coordinate_system<D>();
 
-  Point<D> coord0 = coords[0];
+  // construct the least square equation components
+  auto const M = build_transposed_matrix(coords);
+  Matrix ATA = M.first * M.second;
+  Vector<D> ATF = build_right_hand_side(M.first, vals);
 
-  double val0 = vals[0];
+  // solve it
+#ifdef WONTON_HAS_LAPACKE
+  // use lapack solver for symmetric positive definite matrices
+  Vector<D> gradient = ATA.solve(ATF, "lapack-posv");
+#else
+  // use the inverse method
+  Vector<D> gradient = ATA.solve(ATF, "inverse");
+#endif
 
-  // There are nvals but the first is the reference point where we
-  // are trying to compute the gradient; so the matrix sizes etc
-  // will only be nvals-1
-
-  int nvals = vals.size();
-
-  // Each row of A contains the components of the vector from
-  // coord0 to the candidate point being used in the Least Squares
-  // approximation (X_i-X_0).
-
-  Matrix A(nvals-1, D);
-  for (int i = 0; i < nvals-1; ++i) {
-    for (int j = 0; j < D; ++j)
-      A[i][j] = coords[i+1][j]-coord0[j];
-  }
-
-
-  // A is a matrix of size nvals-1 by D (where D is the space
-  // dimension). So transpose(A)*A is D by D
-
-  Matrix AT = A.transpose();
-
-  Matrix ATA = AT*A;
-
-  // Each entry/row of F contains the difference between the
-  // function value at the candidate point and the function value
-  // at the point where we are computing (f-f_0)
-
-  std::vector<double> F(nvals-1);
-  for (int i = 0; i < nvals-1; ++i)
-    F[i] = vals[i+1]-val0;
-
-  // F is a vector of nvals. So transpose(A)*F is vector of D
-  // (where D is the space dimension)
-
-  Vector<D> ATF = Vector<D>(AT*F);
-
-  // Inverse of ATA
-
-  Matrix ATAinv = ATA.inverse();
-
-  // Gradient of length D
-
-  auto gradient = ATAinv*ATF;
-
-  // Corrections for curvilinear coordinates
-
+  // correct it for curvilinear coordinates
   CoordSys::modify_gradient(gradient, coord0);
 
-  // Return
-
-  return ATAinv*ATF;
+  return gradient;
 }
 
 
