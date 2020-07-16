@@ -27,7 +27,7 @@ namespace Wonton {
 
 
 /**
- * @brief Build the matrix A and its transpose A^T used in the
+ * @brief Build the matrices used in the least square
  *        equation (A^T.A).X = (A^T.F) from the stencil.
  *
  * Since the stencil is the same for multiple field variables,
@@ -38,10 +38,10 @@ namespace Wonton {
  *
  * @tparam dim: the spatial dimension of the problem.
  * @param stencil: the stencil point coordinates.
- * @return the matrices A^T and A.
+ * @return the matrices (A^T.A) and A^T.
  */
 template<int dim>
-std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<dim>> const& stencil) {
+std::vector<Matrix> build_gradient_stencil_matrices(std::vector<Point<dim>> const& stencil) {
 
   // the first point is the reference point where we are trying
   // to compute the gradient; so the number of rows is size - 1.
@@ -57,7 +57,8 @@ std::pair<Matrix, Matrix> build_transposed_matrix(std::vector<Point<dim>> const&
     }
   }
 
-  return std::make_pair(A.transpose(), A);
+  Matrix AT = A.transpose();
+  return { AT * A, AT };
 }
 
 /**
@@ -142,11 +143,12 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
   CoordSys::template verify_coordinate_system<D>();
 
   // construct the least square equation components
-  auto const M = build_transposed_matrix(coords);
-  Matrix ATA = M.first * M.second;
-  Vector<D> ATF = build_right_hand_side(M.first, vals);
+  auto const M = build_gradient_stencil_matrices(coords);
+  Vector<D> ATF = build_right_hand_side(M[1], vals);
 
   // solve it
+  Matrix const& ATA = M[0];
+
 #ifdef WONTON_HAS_LAPACKE
   // use lapack solver for symmetric positive definite matrices
   Vector<D> gradient( ATA.solve(ATF, "lapack-posv").data() );
