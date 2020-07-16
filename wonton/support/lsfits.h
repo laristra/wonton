@@ -38,10 +38,12 @@ namespace Wonton {
  *
  * @tparam dim: the spatial dimension of the problem.
  * @param stencil: the stencil point coordinates.
- * @return the matrices (A^T.A) and A^T.
+ * @param invert: invert (A^T.A) or not.
+ * @return (A^T.A) or its inverse, and A^T.
  */
 template<int dim>
-std::vector<Matrix> build_gradient_stencil_matrices(std::vector<Point<dim>> const& stencil) {
+std::vector<Matrix> build_gradient_stencil_matrices(std::vector<Point<dim>> const& stencil,
+                                                    bool invert = false) {
 
   // the first point is the reference point where we are trying
   // to compute the gradient; so the number of rows is size - 1.
@@ -58,7 +60,7 @@ std::vector<Matrix> build_gradient_stencil_matrices(std::vector<Point<dim>> cons
   }
 
   Matrix AT = A.transpose();
-  return { AT * A, AT };
+  return { invert ? (AT * A).inverse() : (AT * A), AT };
 }
 
 /**
@@ -100,14 +102,12 @@ Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& v
  * @param ATA_inv: the cached inverse of the least square matrix.
  * @param AT: the cached transposed matrix A^T.
  * @param values: the field value at each stencil point.
- * @param reference: the coordinate of the reference point.
  * @return the gradient at the current point.
  */
 template<int dim, typename CoordSys = CartesianCoordinates>
 Vector<dim> ls_gradient(Matrix const& ATA_inv,
                         Matrix const& AT,
-                        std::vector<double> const& values,
-                        Point<dim> const& reference) {
+                        std::vector<double> const& values) {
 
   CoordSys::template verify_coordinate_system<dim>();
 
@@ -143,7 +143,7 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
   CoordSys::template verify_coordinate_system<D>();
 
   // construct the least square equation components
-  auto const M = build_gradient_stencil_matrices(coords);
+  auto const M = build_gradient_stencil_matrices(coords, false);
   Vector<D> ATF = build_right_hand_side(M[1], vals);
 
   // solve it
