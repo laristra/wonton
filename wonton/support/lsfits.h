@@ -85,12 +85,12 @@ Vector<dim> build_right_hand_side(Matrix const& AT, std::vector<double> const& v
   // Each entry/row of F contains the difference between the
   // function value at the candidate point and the function value
   // at the point where we are computing (f-f_0)
-  Vector<num> F;
+  std::vector<double> F(num);
   for (int i = 0; i < num; ++i) {
     F[i] = values[i+1] - values[0];
   }
 
-  return AT * F;
+  return Vector<dim>(AT * F);
 }
 
 /**
@@ -112,7 +112,7 @@ Vector<dim> ls_gradient(Matrix const& ATA_inv,
   CoordSys::template verify_coordinate_system<dim>();
 
   // compute the right hand side (A^T.F) from stencil values
-  Vector<dim> ATF = build_right_hand_side(AT, values);
+  Vector<dim> ATF = build_right_hand_side<dim>(AT, values);
 
   // compute gradient
   Vector<dim> gradient = ATA_inv * ATF;
