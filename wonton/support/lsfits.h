@@ -143,15 +143,18 @@ Vector<D> ls_gradient(std::vector<Point<D>> const & coords,
   CoordSys::template verify_coordinate_system<D>();
 
   // construct the least square equation components
-  auto const M = build_gradient_stencil_matrices(coords, false);
-  Vector<D> ATF = build_right_hand_side(M[1], vals);
+  auto M = build_gradient_stencil_matrices<D>(coords, false);
+  Vector<D> ATF = build_right_hand_side<D>(M[1], vals);
 
   // solve it
-  Matrix const& ATA = M[0];
+  Matrix& ATA = M[0];
 
 #ifdef WONTON_HAS_LAPACKE
+  Matrix B(D, 1);
+  for (int i = 0; i < D; ++i) { B[i][0] = ATF[i]; }
+
   // use lapack solver for symmetric positive definite matrices
-  Vector<D> gradient( ATA.solve(ATF, "lapack-posv").data() );
+  Vector<D> gradient( ATA.solve(B, "lapack-posv").data() );
 #else
   // use the QR decomposition method
   Vector<D> gradient;
