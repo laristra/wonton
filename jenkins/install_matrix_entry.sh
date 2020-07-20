@@ -26,7 +26,7 @@ export NGC=/usr/local/codes/ngc
 ngc_include_dir=$NGC/private/include
 
 wonton_install_dir=$NGC/private/wonton
-wonton_version=dev
+wonton_version=$3
 
 thrust_dir=${ngc_include_dir}
 
