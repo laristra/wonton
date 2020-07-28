@@ -35,33 +35,31 @@ thrust_dir=${ngc_include_dir}
 
 # compiler-specific settings
 if [[ $compiler == "intel18" ]]; then
-  intel_version=18.0.1
-  cxxmodule=intel/${intel_version}
-  # openmpi version that libs were built against
+  compiler_version=18.0.5
+  cxxmodule=intel/${compiler_version}
+  compiler_suffix="-intel-${compiler_version}"
+
   openmpi_version=2.1.2
-  # openmpi module for compiling and linking
   mpi_module=openmpi/2.1.2
-  jali_install_dir=$NGC/private/jali/${jali_version}-intel-${intel_version}-openmpi-${openmpi_version}
-  lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-intel-${intel_version}
-elif [[ $compiler == "gcc6" ]]; then
-  gcc_version=6.4.0
-  cxxmodule=gcc/${gcc_version}
-  # openmpi version that libs were built against
+  mpi_suffix="-openmpi-${openmpi_version}"
+
+elif [[ $compiler =~ "gcc" ]]; then
+    
+  if [[ $compiler == "gcc6" ]]; then
+      compiler_version=6.4.0
+  elif [[ $compiler == "gcc7" ]]; then
+      compiler_version=7.3.0
+  fi  
+  cxxmodule=gcc/${compiler_version}
+  compiler_suffix="-gcc-${compiler_version}"
+  
   openmpi_version=2.1.2
-  # openmpi module for compiling and linking
-  mpi_module=openmpi/2.1.2
-  jali_install_dir=$NGC/private/jali/${jali_version}-gcc-${gcc_version}-openmpi-${openmpi_version}
-  lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-gcc-${gcc_version}
-elif [[ $compiler == "gcc7" ]]; then
-  gcc_version=7.3.0
-  cxxmodule=gcc/${gcc_version}
-  # openmpi version that libs were built against
-  openmpi_version=2.1.2
-  # openmpi module for compiling and linking
-  mpi_module=openmpi/2.1.2
-  jali_install_dir=$NGC/private/jali/${jali_version}-gcc-${gcc_version}-openmpi-${openmpi_version}
-  lapacke_dir=$NGC/private/lapack/${lapack_version}-patched-gcc-${gcc_version}
+  mpi_module=openmpi/${openmpi_version}
+  mpi_suffix="-openmpi-${openmpi_version}"
+  
 fi
+jali_install_dir=$NGC/private/jali/${jali_version}${compiler_suffix}${mpi_suffix}
+lapacke_dir=$NGC/private/lapack/${lapack_version}-patched${compiler_suffix}
 
 
 # build-type-specific settings
@@ -109,4 +107,4 @@ cmake \
     $thrust_flags \
     ..
 make -j2
-ctest --output-on-failure
+ctest -j2 --output-on-failure
