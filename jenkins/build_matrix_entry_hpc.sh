@@ -27,7 +27,7 @@ fi
 jali_version=1.1.4
 lapack_version=3.8.0
 
-export NGC=/usr/local/codes/ngc
+export NGC=/usr/projects/ngc
 ngc_include_dir=$NGC/private/include
 
 thrust_dir=${ngc_include_dir}
@@ -88,7 +88,7 @@ fi
 export SHELL=/bin/sh
 
 export MODULEPATH=""
-. /opt/local/packages/Modules/default/init/sh
+. /usr/share/lmod/lmod/init/sh
 module load $cxxmodule
 if [[ -n "$mpi_flags" ]]; then
     module load ${mpi_module}
