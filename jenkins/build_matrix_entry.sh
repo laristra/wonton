@@ -35,7 +35,7 @@ thrust_dir=${ngc_include_dir}
 
 # compiler-specific settings
 if [[ $compiler == "intel18" ]]; then
-  compiler_version=18.0.5
+  compiler_version=18.0.1
   cxxmodule=intel/${compiler_version}
   compiler_suffix="-intel-${compiler_version}"
 
