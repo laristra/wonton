@@ -124,7 +124,7 @@ public:
     @brief Moments for a face of the polytope
     @param face_id  ID of the face of the polytope
     @return  Vector of moments; moments[0] is the area (length in 2D), moments[i+1]/moments[0]
-    is i-th coordinate of the centroid
+    is i-th coordinate of the centroid.
   */
   std::vector<double> face_moments(int face_id) const;
 
