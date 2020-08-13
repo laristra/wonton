@@ -1367,7 +1367,7 @@ class AuxMeshTopology {
       compute_cell_centroids<1, CoordSys>();
 
       if (sides_requested_)
-        compute_side_volumes<1>();
+        compute_side_volumes<1, CoordSys>();
 
     } else if (dim == 2) {
       compute_approximate_face_centroids<2>();
@@ -1380,7 +1380,7 @@ class AuxMeshTopology {
       compute_cell_centroids<2, CoordSys>();
 
       if (sides_requested_)
-        compute_side_volumes<2>();
+        compute_side_volumes<2, CoordSys>();
 
     } else if (dim == 3) {
       compute_approximate_face_centroids<3>();
@@ -1393,7 +1393,7 @@ class AuxMeshTopology {
       compute_cell_centroids<3, CoordSys>();
 
       if (sides_requested_)
-        compute_side_volumes<3>();
+        compute_side_volumes<3, CoordSys>();
     }
 
     compute_cell_volumes();  // needs side volumes
@@ -1409,9 +1409,11 @@ class AuxMeshTopology {
  private:
   template<int dim> void compute_approximate_cell_centroids();
   template<int dim> void compute_approximate_face_centroids();
+  template<int dim> void compute_face_centroids();  // should be tempated later on CoordSys
+
   template<int dim, class CoordSys> void compute_cell_centroids();
-  template<int dim> void compute_face_centroids();
-  template<int dim> void compute_side_volumes();
+  template<int dim, class CoordSys> void compute_side_volumes();
+
   void compute_cell_volumes();
 
   void build_wedges();
@@ -2274,7 +2276,7 @@ void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
   std::array<Point<dim>, dim+1> sxyz;
   bool posvol_order = true;
   for (int c = 0; c < ncells; ++c) {
-    // fork the code temporarily since construction of the Polytope 
+    // fork the code since construction of the Polytope 
     // object in 1D and 3D requires more discussion
 
     double cellvol = 0.0;
@@ -2325,7 +2327,7 @@ void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
 
 
 template<typename BasicMesh>
-template<int dim>
+template<int dim, class CoordSys>
 void AuxMeshTopology<BasicMesh>::compute_side_volumes() {
   int num_sides_all = num_sides_owned_ + num_sides_ghost_;
   side_volumes_.resize(num_sides_all);
@@ -2335,6 +2337,12 @@ void AuxMeshTopology<BasicMesh>::compute_side_volumes() {
   for (int s = 0; s < num_sides_all; s++) {
     side_get_coordinates(s, &sxyz, posvol_order);
     side_volumes_[s] = calc_side_volume(sxyz);
+
+    // sufficient for correct cell-volume calculation in curvilinear coordinate systems
+    // volume corresponds to 1 radiant of the cylindrically symmetric side 
+    if (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value) {
+      side_volumes_[s] *= (sxyz[0][0] + sxyz[1][0] + sxyz[2][0]) / 3;
+    }
   }
 }
 
