@@ -505,7 +505,7 @@ class AuxMeshTopology {
 
   template <int D>
   void cell_centroid(int const cellid, Point<D> *ccen) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     for (int d = 0; d < D; ++d)
@@ -515,7 +515,7 @@ class AuxMeshTopology {
   //! Volume of a cell
   
   double cell_volume(int const cellid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     assert(sides_requested_);
@@ -527,7 +527,7 @@ class AuxMeshTopology {
 
   template <int D>
   void face_centroid(int const faceid, Point<D> *fcen) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(faceid < num_entities(FACE, ALL));
 #endif
     for (int d = 0; d < D; ++d)
@@ -545,7 +545,7 @@ class AuxMeshTopology {
   //! centroid form a positive volume tet.
 
   int side_get_node(int const sideid, int const inode) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(sideid < num_entities(SIDE, ALL));
 #endif
     assert(sides_requested_);
@@ -557,7 +557,7 @@ class AuxMeshTopology {
   //! Cell of side
 
   int side_get_cell(int const sideid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(sideid < num_entities(SIDE, ALL));
 #endif
     assert(sides_requested_);
@@ -568,7 +568,7 @@ class AuxMeshTopology {
   //! Face of side
 
   int side_get_face(int const sideid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(sideid < num_entities(SIDE, ALL));
 #endif
     assert(sides_requested_);
@@ -584,7 +584,7 @@ class AuxMeshTopology {
   //! So, side_get_node(s,i) = wedge_get_node(side_get_wedge(s,i))
 
   int side_get_wedge(int const sideid, int iwedge) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(sideid < num_entities(SIDE, ALL));
 #endif
     assert(wedges_requested_);
@@ -600,7 +600,7 @@ class AuxMeshTopology {
   //! returns -1
 
   int side_get_opposite_side(int const sideid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(sideid < num_entities(SIDE, ALL));
 #endif
     assert(sides_requested_);
@@ -611,7 +611,7 @@ class AuxMeshTopology {
   //! Get all the sides of a cell
 
   void cell_get_sides(int const cellid, std::vector<int> *csides) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     assert(sides_requested_);
@@ -667,7 +667,7 @@ class AuxMeshTopology {
   //! Volume of a side
 
   double side_volume(int const sideid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(sideid < num_entities(SIDE, ALL));
 #endif
     assert(sides_requested_);
@@ -677,7 +677,7 @@ class AuxMeshTopology {
   //! Side of wedge
 
   int wedge_get_side(int const wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     assert(wedges_requested_);
@@ -688,7 +688,7 @@ class AuxMeshTopology {
   //! Cell of wedge
 
   int wedge_get_cell(int const wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     assert(wedges_requested_);
@@ -700,7 +700,7 @@ class AuxMeshTopology {
   //! Face of wedge
 
   int wedge_get_face(int const wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     assert(wedges_requested_);
@@ -712,7 +712,7 @@ class AuxMeshTopology {
   //! Corner of a wedge
 
   int wedge_get_corner(int const wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     assert(corners_requested_);
@@ -723,7 +723,7 @@ class AuxMeshTopology {
   //! node of a wedge
 
   int wedge_get_node(int const wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     assert(wedges_requested_);
@@ -740,7 +740,7 @@ class AuxMeshTopology {
   //! routine returns -1
 
   int wedge_get_opposite_wedge(const int wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     assert(wedges_requested_);
@@ -760,7 +760,7 @@ class AuxMeshTopology {
   //! 2D
 
   int wedge_get_adjacent_wedge(const int wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     // Wedges come in pairs; their IDs are (2*sideid) and (2*sideid+1)
@@ -775,7 +775,7 @@ class AuxMeshTopology {
   //! Volume of a wedge - half its side volume
 
   double wedge_volume(int const wedgeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(wedgeid < num_entities(WEDGE, ALL));
 #endif
     int sideid = static_cast<int>(wedgeid/2);
@@ -832,7 +832,7 @@ class AuxMeshTopology {
   //! Get all the wedges in a cell
 
   void cell_get_wedges(int const cellid, std::vector<int> *wedgeids) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     int nsides = cell_side_ids_[cellid].size();
@@ -849,7 +849,7 @@ class AuxMeshTopology {
 
   void node_get_wedges(int const nodeid, Entity_type const type,
                        std::vector<int> *wedgeids) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(wedges_requested_ && corners_requested_);
@@ -871,7 +871,7 @@ class AuxMeshTopology {
   //! Get node of corner
 
   int corner_get_node(const int cornerid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cornerid < num_entities(CORNER, ALL));
 #endif
     assert(corners_requested_);
@@ -882,7 +882,7 @@ class AuxMeshTopology {
   //! Get cell of corner
 
   int corner_get_cell(int const cornerid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cornerid < num_entities(CORNER, ALL));
 #endif
     assert(corners_requested_);
@@ -893,7 +893,7 @@ class AuxMeshTopology {
   //! Get wedges of a corner
 
   void corner_get_wedges(int const cornerid, std::vector<int> *wedgeids) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cornerid < num_entities(CORNER, ALL));
 #endif
     assert(corners_requested_);
@@ -907,7 +907,7 @@ class AuxMeshTopology {
 
   void node_get_corners(int const nodeid, Entity_type const type,
                         std::vector<int> *cornerids) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(corners_requested_);
@@ -930,7 +930,7 @@ class AuxMeshTopology {
   //! Get corners in a cell
 
   void cell_get_corners(int const cellid, std::vector<int> *cornerids) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     assert(corners_requested_);
@@ -942,7 +942,7 @@ class AuxMeshTopology {
   //! Get a cell's corner at a particular node of the cell
 
   int cell_get_corner_at_node(int const cellid, int const nodeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     assert(corners_requested_);
@@ -957,7 +957,7 @@ class AuxMeshTopology {
   //! Volume of a corner
 
   double corner_volume(int const cornerid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cornerid < num_entities(CORNER, ALL));
 #endif
     assert(corners_requested_);
@@ -985,7 +985,7 @@ class AuxMeshTopology {
   void decompose_cell_into_tets(int cellid,
               std::vector<std::array<Wonton::Point<3>, 4>> *tcoords,
                                 const bool planar_hex) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(cellid < num_entities(CELL, ALL));
 #endif
     if (planar_hex
@@ -1051,7 +1051,7 @@ class AuxMeshTopology {
 
   void dual_cell_get_coordinates(int const nodeid,
                     std::vector<Point<2>> *pplist) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(basicmesh_ptr_->space_dimension() == 2);
@@ -1186,7 +1186,7 @@ class AuxMeshTopology {
   void dual_cell_get_node_adj_cells(int const nodeid,
                                     Entity_type const ptype,
                                     std::vector<int> *adjnodes) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     basicmesh_ptr_->node_get_cell_adj_nodes(nodeid, ptype, adjnodes);
@@ -1200,7 +1200,7 @@ class AuxMeshTopology {
 
   void dual_cell_get_coordinates(int const nodeid,
          std::vector<Point<3>> *pplist) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(basicmesh_ptr_->space_dimension() == 3);
@@ -1262,7 +1262,7 @@ class AuxMeshTopology {
 
   void dual_wedges_get_coordinates(int nodeid,
       std::vector<std::array<Point<3>, 4>> *wcoords) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(wedges_requested_);
@@ -1281,7 +1281,7 @@ class AuxMeshTopology {
 
   template <int D>
   void dual_cell_centroid(int nodeid, Point<D> *centroid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(wedges_requested_);
@@ -1314,7 +1314,7 @@ class AuxMeshTopology {
 
   //! Get the volume of dual cell by finding the corners that attach to the node
   double dual_cell_volume(int const nodeid) const {
-#ifdef DEBUG
+#ifndef NDEBUG
     assert(nodeid < num_entities(NODE, ALL));
 #endif
     assert(corners_requested_);
@@ -2443,7 +2443,7 @@ void AuxMeshTopology<BasicMesh>::dual_cell_get_facetization(int const nodeid,
   facetpoints->clear();
   points->clear();
 
-#ifdef DEBUG
+#ifndef NDEBUG
   assert(nodeid < num_entities(NODE, ALL));
 #endif
   assert(wedges_requested_);
