@@ -46,7 +46,7 @@ static                 // for ODR
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
 
-static                 // for ODR
+static inline                // for ODR
 std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
   clock_t startclock, curclock;
   startclock = clock();
