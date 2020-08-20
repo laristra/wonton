@@ -74,8 +74,10 @@ namespace CoordinateSystem {
     // Swap vectors
     new_moments.swap(moments);
   }
-
 }
+
+enum class CoordSys { Cartesian = 1,
+                      CylindricalAxisymmetric };
 
 // ============================================================================
 /// Cartesian Coordinates
