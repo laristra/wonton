@@ -89,9 +89,24 @@ export SHELL=/bin/sh
 
 export MODULEPATH=""
 . /opt/local/packages/Modules/default/init/sh
+
+if ! module avail -t 2>&1 | grep -wq "^${cxxmodule}" ; then 
+    echo "Module ${cxxmodule} not found"
+    exit 2
+fi
 module load $cxxmodule
+
 if [[ -n "$mpi_flags" ]]; then
+    if ! module avail -t 2>&1 | grep -wq "^${mpi_module}" ; then 
+        echo "Module ${mpi_module} not found"
+        exit 2
+    fi
     module load ${mpi_module}
+fi
+
+if ! module avail -t 2>&1 | grep -wq "cmake/3.14.0" ; then 
+    echo "Module cmake/3.14.0 not found"
+    exit 2
 fi
 module load cmake/3.14.0 # 3.13 or higher is required
 
