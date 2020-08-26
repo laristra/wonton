@@ -16,10 +16,21 @@ compiler=$1
 build_type=$2
 
 echo "inside build_matrix entry"
+
 # special case for README builds
 if [[ $build_type == "readme" ]]; then
-  python2 $WORKSPACE/jenkins/parseREADME.py $WORKSPACE/README.md $WORKSPACE
-  exit
+
+    # Put a couple of settings in place to generate test output even if
+    # the README doesn't ask for it.
+    export CTEST_OUTPUT_ON_FAILURE=1
+    CACHE_OPTIONS="-D ENABLE_JENKINS_OUTPUT=True"
+    sed "s/^ *cmake/& $CACHE_OPTIONS/g" $WORKSPACE/README.md >$WORKSPACE/README.md.1
+    python2 $WORKSPACE/jenkins/parseREADME.py \
+	    $WORKSPACE/README.md.1 \
+	    $WORKSPACE \
+	    sn-fey
+    exit
+
 fi
 
 # set modules and install paths
@@ -86,27 +97,10 @@ fi
 #fi
 
 export SHELL=/bin/sh
-
-export MODULEPATH=""
-. /usr/share/lmod/lmod/init/sh
-
-if ! module avail -t 2>&1 | grep -wq "^${cxxmodule}" ; then 
-    echo "Module ${cxxmodule} not found"
-    exit 2
-fi
+#Rely on default user environment to load modules; these scripts can be found in /etc/profile.d/ as of 8/25/20 the scripts that set up modules on snow are  /etc/profile.d/z00_lmod.sh; /etc/profile.d/00-modulepath.sh; /etc/profile.d/z01-modules.lanl.sh;
 module load $cxxmodule
-
 if [[ -n "$mpi_flags" ]]; then
-    if ! module avail -t 2>&1 | grep -wq "^${mpi_module}" ; then 
-        echo "Module ${mpi_module} not found"
-        exit 2
-    fi
     module load ${mpi_module}
-fi
-
-if ! module avail -t 2>&1 | grep -wq "cmake/3.14.0" ; then 
-    echo "Module cmake/3.14.0 not found"
-    exit 2
 fi
 module load cmake/3.14.0 # 3.13 or higher is required
 
@@ -129,5 +123,5 @@ cmake \
     $lapacke_flags \
     $thrust_flags \
     ..
-make -j2
-ctest -j8 --output-on-failure
+make -j36
+ctest -j36 --output-on-failure

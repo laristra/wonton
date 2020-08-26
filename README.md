@@ -148,3 +148,32 @@ cmake \
 make -j2
 ctest --output-on-failure
 ```
+
+## Snow
+
+Execute the following from the Wonton root directory:
+
+```c++
+# machine=snow
+module load intel/18.0.5 openmpi/2.1.2 cmake/3.14.0
+NGC=/usr/projects/ngc
+NGC_INCLUDE_DIR=$NGC/private/include
+JALI_INSTALL_PREFIX=$NGC/private/jali/1.1.4-intel-18.0.5-openmpi-2.1.2
+LAPACKE_INSTALL_PREFIX=$NGC/private/lapack/3.8.0-patched-intel-18.0.5
+mkdir build
+cd build
+cmake \
+  -D CMAKE_PREFIX_PATH=$NGC_INCLUDE_DIR \
+  -D CMAKE_BUILD_TYPE=Release \
+  -D CMAKE_CXX_FLAGS="-Wall -Werror" \
+  -D ENABLE_UNIT_TESTS=True \
+  -D WONTON_ENABLE_MPI=True \
+  -D ENABLE_JENKINS_OUTPUT=True \
+  -D WONTON_ENABLE_Jali=True \
+  -D Jali_ROOT:FILEPATH=$JALI_INSTALL_PREFIX \
+  -D WONTON_ENABLE_LAPACKE=True \
+  -D LAPACKE_ROOT:FILEPATH=$LAPACKE_INSTALL_PREFIX \
+  ..
+make -j36
+ctest -j36 --output-on-failure
+```
