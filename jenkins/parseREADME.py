@@ -37,12 +37,11 @@ retcode = 0
 for host in scripts:
     if(host == machine):
         print "HOST " + host
-        scripts[host] += 'cd ..;rm -Rf build;'
         print scripts[host]
         sshHost = host.split(':')[0]
         proc = subprocess.Popen(['bash'], stdin = subprocess.PIPE)
         print "opened process"
         proc.communicate("".join(scripts[host]))
         if proc.returncode:
-            retcode = proc.returncode
+            retcode = proc.returncode            
 sys.exit(retcode)
