@@ -154,7 +154,7 @@ ctest --output-on-failure
 Execute the following from the Wonton root directory:
 
 ```c++
-# machine=snow
+# machine=sn-fey
 module load intel/18.0.5 openmpi/2.1.2 cmake/3.14.0
 NGC=/usr/projects/ngc
 NGC_INCLUDE_DIR=$NGC/private/include
