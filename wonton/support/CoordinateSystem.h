@@ -76,8 +76,10 @@ namespace CoordinateSystem {
   }
 }
 
-enum class CoordSys { Cartesian = 1,
-                      CylindricalAxisymmetric };
+// Typically, we template a class to add functionality. By majority vote, this
+// has not been done for curvilinier coordinate systems.
+enum class CoordSysType { Cartesian = 1,
+                          CylindricalAxisymmetric };
 
 // ============================================================================
 /// Cartesian Coordinates
