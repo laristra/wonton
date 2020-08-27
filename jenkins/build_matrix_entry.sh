@@ -16,10 +16,26 @@ compiler=$1
 build_type=$2
 
 echo "inside build_matrix entry"
+
 # special case for README builds
 if [[ $build_type == "readme" ]]; then
   python2 $WORKSPACE/jenkins/parseREADME.py $WORKSPACE/README.md $WORKSPACE
   exit
+fi
+# special case for README builds
+if [[ $build_type == "readme" ]]; then
+
+    # Put a couple of settings in place to generate test output even if
+    # the README doesn't ask for it.
+    export CTEST_OUTPUT_ON_FAILURE=1
+    CACHE_OPTIONS="-D ENABLE_JENKINS_OUTPUT=True"
+    sed "s/^ *cmake/& $CACHE_OPTIONS/g" $WORKSPACE/README.md >$WORKSPACE/README.md.1
+    python2 $WORKSPACE/jenkins/parseREADME.py \
+	    $WORKSPACE/README.md.1 \
+	    $WORKSPACE \
+	    varan
+    exit
+
 fi
 
 # set modules and install paths
