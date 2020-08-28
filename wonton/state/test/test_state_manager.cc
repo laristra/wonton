@@ -371,9 +371,9 @@ TEST(StateManager, multiMatField){
 
 	// test that the value obtained through the state manager is correct
 	for (auto& kv : out->get_data()) {
-		auto& out=kv.second;
-		for (unsigned j=0; j < out.size(); j++){
-			ASSERT_EQ(data[kv.first][j], out[j]);
+		auto& tmp=kv.second;
+		for (unsigned j=0; j < tmp.size(); j++){
+			ASSERT_EQ(data[kv.first][j], tmp[j]);
 		}
 	} 
 	
@@ -404,9 +404,9 @@ TEST(StateManager, mixedFields){
 	
 	// test that the value obtained through the state manager is correct
 	for (auto& kv : out->get_data()) {
-		auto& out=kv.second;
-		for (unsigned j=0; j < out.size(); j++){
-			ASSERT_EQ(data[kv.first][j], out[j]);
+		auto& tmp=kv.second;
+		for (unsigned j=0; j < tmp.size(); j++){
+			ASSERT_EQ(data[kv.first][j], tmp[j]);
 		}
 	} 
 	

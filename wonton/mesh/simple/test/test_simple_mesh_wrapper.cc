@@ -11,6 +11,7 @@ Please see the license file at the root of this repository, or at:
 
 #include "wonton/mesh/simple/simple_mesh.h"
 #include "wonton/mesh/simple/simple_mesh_wrapper.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
 #include "wonton/support/Vector.h"

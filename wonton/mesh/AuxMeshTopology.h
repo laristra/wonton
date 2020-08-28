@@ -18,7 +18,9 @@ Please see the license file at the root of this repository, or at:
 #include <limits>
 
 #include "wonton/support/wonton.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/Point.h"
+#include "wonton/support/Polytope.h"
 
 namespace Wonton {
 
@@ -1328,6 +1330,7 @@ class AuxMeshTopology {
 
 
  protected:
+  template <class CoordSys = CartesianCoordinates>
   void build_aux_entities() {
     int dim = basicmesh_ptr_->space_dimension();
 
@@ -1361,10 +1364,10 @@ class AuxMeshTopology {
         build_sides_1D(*this);
 
       compute_face_centroids<1>();
-      compute_cell_centroids<1>();
+      compute_cell_centroids<1, CoordSys>();
 
       if (sides_requested_)
-        compute_side_volumes<1>();
+        compute_side_volumes<1, CoordSys>();
 
     } else if (dim == 2) {
       compute_approximate_face_centroids<2>();
@@ -1374,10 +1377,10 @@ class AuxMeshTopology {
         build_sides_2D(*this);
 
       compute_face_centroids<2>();
-      compute_cell_centroids<2>();
+      compute_cell_centroids<2, CoordSys>();
 
       if (sides_requested_)
-        compute_side_volumes<2>();
+        compute_side_volumes<2, CoordSys>();
 
     } else if (dim == 3) {
       compute_approximate_face_centroids<3>();
@@ -1387,10 +1390,10 @@ class AuxMeshTopology {
         build_sides_3D(*this);
 
       compute_face_centroids<3>();
-      compute_cell_centroids<3>();
+      compute_cell_centroids<3, CoordSys>();
 
       if (sides_requested_)
-        compute_side_volumes<3>();
+        compute_side_volumes<3, CoordSys>();
     }
 
     compute_cell_volumes();  // needs side volumes
@@ -1406,9 +1409,11 @@ class AuxMeshTopology {
  private:
   template<int dim> void compute_approximate_cell_centroids();
   template<int dim> void compute_approximate_face_centroids();
-  template<int dim> void compute_cell_centroids();
-  template<int dim> void compute_face_centroids();
-  template<int dim> void compute_side_volumes();
+  template<int dim> void compute_face_centroids();  // should be tempated later on CoordSys
+
+  template<int dim, class CoordSys> void compute_cell_centroids();
+  template<int dim, class CoordSys> void compute_side_volumes();
+
   void compute_cell_volumes();
 
   void build_wedges();
@@ -2258,7 +2263,7 @@ void AuxMeshTopology<BasicMesh>::compute_approximate_cell_centroids() {
 // average of the centroids of the sides (tets)
 
 template<typename BasicMesh>
-template<int dim>
+template<int dim, class CoordSys>
 void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
   int ncells = basicmesh_ptr_->num_owned_cells() +
       basicmesh_ptr_->num_ghost_cells();
@@ -2271,25 +2276,44 @@ void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
   std::array<Point<dim>, dim+1> sxyz;
   bool posvol_order = true;
   for (int c = 0; c < ncells; ++c) {
-    // Now compute the real centroid as the volume weighted average of the
-    // centroids of the sides with the temporary geometry
+    // fork the code since construction of the Polytope 
+    // object in 1D and 3D requires more discussion
 
-    std::vector<int> csides;
-    basicmesh_ptr_->cell_get_sides(c, &csides);
-
-    Point<dim> ccen;
     double cellvol = 0.0;
-    for (auto const& s : csides) {
-      side_get_coordinates(s, &sxyz, posvol_order);
-      Point<dim> scen;
-      for (int i = 0; i < dim+1; i++)
-        scen += sxyz[i];
-      scen /= (dim+1);
+    Point<dim> ccen;
 
-      double svol = calc_side_volume(sxyz);
-      cellvol += svol;
+    if (dim == 2) {
+      std::vector<Point<2>> vertices;
+      basicmesh_ptr_->cell_get_coordinates(c, &vertices);
+      Polytope<2> poly(vertices);
 
-      ccen += scen*svol;
+      int order = (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value) ? 2 : 1;
+      auto moments = poly.moments(order);
+      CoordSys::template shift_moments_list<2>(moments);
+
+      cellvol = moments[0];
+      for (int d = 0; d < dim; d++)
+        ccen[d] = moments[d + 1];
+
+    } else {
+      // Now compute the real centroid as the volume weighted average of the
+      // centroids of the sides with the temporary geometry
+
+      std::vector<int> csides;
+      basicmesh_ptr_->cell_get_sides(c, &csides);
+
+      for (auto const& s : csides) {
+        side_get_coordinates(s, &sxyz, posvol_order);
+        Point<dim> scen;
+        for (int i = 0; i < dim+1; i++)
+          scen += sxyz[i];
+        scen /= (dim+1);
+
+        double svol = calc_side_volume(sxyz);
+        cellvol += svol;
+
+        ccen += scen*svol;
+      }
     }
 
     //If we have a degenerate cell of zero volume, we use the geometric center
@@ -2303,7 +2327,7 @@ void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
 
 
 template<typename BasicMesh>
-template<int dim>
+template<int dim, class CoordSys>
 void AuxMeshTopology<BasicMesh>::compute_side_volumes() {
   int num_sides_all = num_sides_owned_ + num_sides_ghost_;
   side_volumes_.resize(num_sides_all);
@@ -2313,6 +2337,12 @@ void AuxMeshTopology<BasicMesh>::compute_side_volumes() {
   for (int s = 0; s < num_sides_all; s++) {
     side_get_coordinates(s, &sxyz, posvol_order);
     side_volumes_[s] = calc_side_volume(sxyz);
+
+    // sufficient for correct cell-volume calculation in curvilinear coordinate systems
+    // volume corresponds to 1 radiant of the cylindrically symmetric side 
+    if (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value) {
+      side_volumes_[s] *= (sxyz[0][0] + sxyz[1][0] + sxyz[2][0]) / 3;
+    }
   }
 }
 
