@@ -21,31 +21,41 @@ template <int D>
 class Polytope {
 public:
   /*!
-    @brief Constructor for a 2D polygon
+    @brief Constructor for a 1D or 2D polygon
     @param vertex_points  Vector of coordinates of the polygon's vertices
     listed counter-clockwise
   */
-  explicit Polytope(const std::vector< Point<2> >& vertex_points) {
+  Polytope(const std::vector< Point<D> >& vertex_points) {
+    assert(D == 1 || D == 2);  // this signature won't work for 3D polytopes
+    
     int nfaces = static_cast<int>(vertex_points.size());
-    assert(nfaces > 2);
+    assert((D == 1 && nfaces == 2) || (nfaces >= D+1));
 
     vertex_points_ = vertex_points;
     face_vertices_.resize(nfaces);
-    for (int iface = 0; iface < nfaces; iface++)
-      face_vertices_[iface] = { iface, (iface + 1)%nfaces };    
+    if (D == 1)
+      for (int iface = 0; iface < nfaces; iface++)
+        face_vertices_[iface] = { iface };    
+    else
+      for (int iface = 0; iface < nfaces; iface++)
+        face_vertices_[iface] = { iface, (iface + 1)%nfaces };    
   }
 
   /*!
-    @brief Constructor for a 3D polyhedron
+    @brief Constructor for a general polyhedron
     @param vertex_points  Vector of coordinates of the polyhedron's vertices
-    @param face_vertices  Faces of the polyhedron, every face is given by
-    IDs of its vertices in counter-clockwise order (i.e. so that the normal
-    to the face is pointing outside of the polyhedron)
+    @param face_vertices  Face vertices of the polyhedron
+
+    In 3D, every face is given by IDs of its vertices in
+    counter-clockwise order (i.e. so that the normal to the face is
+    pointing outside of the polyhedron). In 2D, a "face" is an edge between two 
   */
-  Polytope(const std::vector< Point<3> >& vertex_points,
+  Polytope(const std::vector< Point<D> >& vertex_points,
            const std::vector< std::vector<int> >& face_vertices) {
-    assert(vertex_points.size() > 3);
-    assert(face_vertices.size() > 3);
+    assert((D == 1 && vertex_points.size() == 2) ||
+           (vertex_points.size() > D+1));
+    assert((D == 1 && face_vertices.size() == 2) ||
+           (face_vertices.size() > D+1));
     
     vertex_points_ = vertex_points;
     face_vertices_ = face_vertices;  
@@ -283,6 +293,17 @@ Vector<3> Polytope<3>::face_normal(int face_id) const {
   fnormal /= fmoments[0];
 
   return fnormal;
+}
+
+/*!
+  @brief Moments for the polygon (1D)
+  @param moments Computed moments: moments[0] is length, 
+  moments[i+1]/moments[0] is i-th coordinate of the centroid, i=1,2
+*/ 
+template<>
+inline
+std::vector<double> Polytope<1>::moments(int order) const {
+  throw std::runtime_error("Wonton::Polytope<1>::moments(int) not implemented");
 }
 
 /*!
