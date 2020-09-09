@@ -1364,7 +1364,7 @@ class AuxMeshTopology {
         build_sides_1D(*this);
 
       compute_face_centroids<1>();
-      compute_cell_centroids<1, CoordSys>();
+      compute_cell_moments<1, CoordSys>();
 
       if (sides_requested_)
         compute_side_volumes<1, CoordSys>();
@@ -1377,7 +1377,7 @@ class AuxMeshTopology {
         build_sides_2D(*this);
 
       compute_face_centroids<2>();
-      compute_cell_centroids<2, CoordSys>();
+      compute_cell_moments<2, CoordSys>();
 
       if (sides_requested_)
         compute_side_volumes<2, CoordSys>();
@@ -1390,13 +1390,11 @@ class AuxMeshTopology {
         build_sides_3D(*this);
 
       compute_face_centroids<3>();
-      compute_cell_centroids<3, CoordSys>();
+      compute_cell_moments<3, CoordSys>();
 
       if (sides_requested_)
         compute_side_volumes<3, CoordSys>();
     }
-
-    compute_cell_volumes();  // needs side volumes
 
     if (wedges_requested_) build_wedges();
     if (corners_requested_) build_corners();
@@ -1411,10 +1409,10 @@ class AuxMeshTopology {
   template<int dim> void compute_approximate_face_centroids();
   template<int dim> void compute_face_centroids();  // should be tempated later on CoordSys
 
-  template<int dim, class CoordSys> void compute_cell_centroids();
+  template<int dim, class CoordSys> void compute_cell_moments();
   template<int dim, class CoordSys> void compute_side_volumes();
 
-  void compute_cell_volumes();
+  //  void compute_cell_volumes();
 
   void build_wedges();
   void build_corners();
@@ -2264,17 +2262,19 @@ void AuxMeshTopology<BasicMesh>::compute_approximate_cell_centroids() {
 
 template<typename BasicMesh>
 template<int dim, class CoordSys>
-void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
+void AuxMeshTopology<BasicMesh>::compute_cell_moments() {
   int ncells = basicmesh_ptr_->num_owned_cells() +
       basicmesh_ptr_->num_ghost_cells();
 
   // Resize (just to be sure) but don't reinitialize since it contains
   // the approximate centroids (geometric centers)
 
+  cell_volumes_.clear();
+  cell_volumes_.assign(ncells, 0.0);
+
   cell_centroids_.resize(ncells);
 
   std::array<Point<dim>, dim+1> sxyz;
-  bool posvol_order = true;
   for (int c = 0; c < ncells; ++c) {
     // fork the code since construction of the Polytope 
     // object in 1D and 3D requires more discussion
@@ -2282,46 +2282,64 @@ void AuxMeshTopology<BasicMesh>::compute_cell_centroids() {
     double cellvol = 0.0;
     Point<dim> ccen;
 
-    if (dim == 2) {
-      std::vector<Point<2>> vertices;
-      basicmesh_ptr_->cell_get_coordinates(c, &vertices);
-      Polytope<2> poly(vertices);
+    std::vector<int> cnodes;
+    basicmesh_ptr_->cell_get_nodes(c, &cnodes);
+    int ncnodes = cnodes.size();
 
-      int order = (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value) ? 2 : 1;
-      auto moments = poly.moments(order);
-      CoordSys::template shift_moments_list<2>(moments);
+    // build list of face nodes (not really needed for 2D and 1D but
+    // we have to do it for consistency of the Polytope constructor
+    // further below).
+    
+    std::vector<int> cfaces, cfdirs;
+    basicmesh_ptr_->cell_get_faces_and_dirs(c, &cfaces, &cfdirs);
+    int nfaces = cfaces.size();
+    
+    // map of face nodes into cell node list    
+    std::vector<std::vector<int>> fnmap(nfaces);
 
-      cellvol = moments[0];
-      for (int d = 0; d < dim; d++)
-        ccen[d] = moments[d + 1];
+    for (int i = 0; i < nfaces; i++) {
+      std::vector<int> fnodes;
+      basicmesh_ptr_->face_get_nodes(cfaces[i], &fnodes);
 
-    } else {
-      // Now compute the real centroid as the volume weighted average of the
-      // centroids of the sides with the temporary geometry
+      int nfnodes = fnodes.size();
+      int dir = cfdirs[i];
 
-      std::vector<int> csides;
-      basicmesh_ptr_->cell_get_sides(c, &csides);
-
-      for (auto const& s : csides) {
-        side_get_coordinates(s, &sxyz, posvol_order);
-        Point<dim> scen;
-        for (int i = 0; i < dim+1; i++)
-          scen += sxyz[i];
-        scen /= (dim+1);
-
-        double svol = calc_side_volume(sxyz);
-        cellvol += svol;
-
-        ccen += scen*svol;
+      std::vector<int> fnodes1(nfnodes);
+      for (int j = 0; j < nfnodes; j++) {
+        int n = (dir == 1) ? fnodes[j] : fnodes[nfnodes-j-1];
+        for (int k = 0; k < ncnodes; k++)
+          if (cnodes[k] == n) {
+            fnodes1[j] = k;
+            break;
+          }
       }
+      fnmap[i] = fnodes1;
     }
+    
+    std::vector<Point<dim>> cpoints(cnodes.size());
+    for (int i = 0; i < ncnodes; i++)
+      basicmesh_ptr_->node_get_coordinates(cnodes[i], &(cpoints[i]));
 
-    //If we have a degenerate cell of zero volume, we use the geometric center
+    Polytope<dim> poly(cpoints, fnmap);
+
+    int order = 1;
+    if (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value)
+      order = 2;
+
+    auto moments = poly.moments(order);
+    CoordSys::template shift_moments_list<dim>(moments);
+    
+    cellvol = moments[0];
+    for (int d = 0; d < dim; d++)
+      ccen[d] = moments[d + 1];
+    
     if (cellvol > std::numeric_limits<double>::epsilon()) {    
       ccen /= cellvol;
       for (int d = 0; d < dim; d++)
         cell_centroids_[c][d] = ccen[d];  // true centroid
     }
+
+    cell_volumes_[c] = cellvol;
   }
 }
 
@@ -2347,18 +2365,18 @@ void AuxMeshTopology<BasicMesh>::compute_side_volumes() {
 }
 
 
-template<typename BasicMesh>
-void AuxMeshTopology<BasicMesh>::compute_cell_volumes() {
-  int ncells = basicmesh_ptr_->num_owned_cells() +
-      basicmesh_ptr_->num_ghost_cells();
+// template<typename BasicMesh>
+// void AuxMeshTopology<BasicMesh>::compute_cell_volumes() {
+//   int ncells = basicmesh_ptr_->num_owned_cells() +
+//       basicmesh_ptr_->num_ghost_cells();
 
-  cell_volumes_.clear();
-  cell_volumes_.assign(ncells, 0.0);
+//   cell_volumes_.clear();
+//   cell_volumes_.assign(ncells, 0.0);
 
-  for (int c = 0; c < ncells; ++c)
-    for (auto s : cell_side_ids_[c])
-      cell_volumes_[c] += side_volumes_[s];
-}
+//   for (int c = 0; c < ncells; ++c)
+//     for (auto s : cell_side_ids_[c])
+//       cell_volumes_[c] += side_volumes_[s];
+// }
 
 //! coords of nodes of a cell
 template <typename BasicMesh>
