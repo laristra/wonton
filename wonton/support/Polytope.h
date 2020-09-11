@@ -53,9 +53,9 @@ public:
   Polytope(const std::vector< Point<D> >& vertex_points,
            const std::vector< std::vector<int> >& face_vertices) {
     assert((D == 1 && vertex_points.size() == 2) ||
-           (vertex_points.size() > D+1));
+           (vertex_points.size() >= D+1));
     assert((D == 1 && face_vertices.size() == 2) ||
-           (face_vertices.size() > D+1));
+           (face_vertices.size() >= D+1));
     
     vertex_points_ = vertex_points;
     face_vertices_ = face_vertices;  
