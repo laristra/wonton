@@ -1412,8 +1412,6 @@ class AuxMeshTopology {
   template<int dim, class CoordSys> void compute_cell_moments();
   template<int dim, class CoordSys> void compute_side_volumes();
 
-  //  void compute_cell_volumes();
-
   void build_wedges();
   void build_corners();
 
@@ -2255,10 +2253,8 @@ void AuxMeshTopology<BasicMesh>::compute_approximate_cell_centroids() {
   }
 }
 
-// Use approximate cell centroids and the geometry of sides (tets)
-// using these approximate centroids to compute the real
-// centroids. The real centroid is computed as the volume weighted
-// average of the centroids of the sides (tets)
+
+// Compute centroids and volumes for cells
 
 template<typename BasicMesh>
 template<int dim, class CoordSys>
@@ -2266,11 +2262,11 @@ void AuxMeshTopology<BasicMesh>::compute_cell_moments() {
   int ncells = basicmesh_ptr_->num_owned_cells() +
       basicmesh_ptr_->num_ghost_cells();
 
-  // Resize (just to be sure) but don't reinitialize since it contains
-  // the approximate centroids (geometric centers)
-
   cell_volumes_.clear();
   cell_volumes_.assign(ncells, 0.0);
+
+  // Resize (just to be sure) but don't reinitialize since it contains
+  // the approximate centroids (geometric centers) - implicit assumption is that th
 
   cell_centroids_.resize(ncells);
 
@@ -2364,19 +2360,6 @@ void AuxMeshTopology<BasicMesh>::compute_side_volumes() {
   }
 }
 
-
-// template<typename BasicMesh>
-// void AuxMeshTopology<BasicMesh>::compute_cell_volumes() {
-//   int ncells = basicmesh_ptr_->num_owned_cells() +
-//       basicmesh_ptr_->num_ghost_cells();
-
-//   cell_volumes_.clear();
-//   cell_volumes_.assign(ncells, 0.0);
-
-//   for (int c = 0; c < ncells; ++c)
-//     for (auto s : cell_side_ids_[c])
-//       cell_volumes_[c] += side_volumes_[s];
-// }
 
 //! coords of nodes of a cell
 template <typename BasicMesh>

@@ -298,7 +298,7 @@ Vector<3> Polytope<3>::face_normal(int face_id) const {
 /*!
   @brief Moments for the polygon (1D)
   @param moments Computed moments: moments[0] is length, 
-  moments[i+1]/moments[0] is i-th coordinate of the centroid, i=1,2
+  moments[i+1]/moments[0] is i-th coordinate of the centroid, i=1
 */ 
 template<>
 inline
@@ -307,7 +307,7 @@ std::vector<double> Polytope<1>::moments(int order) const {
 }
 
 /*!
-  @brief Moments for the polygon
+  @brief Moments for the polygon (2D)
   @param moments Computed moments: moments[0] is area, 
   moments[i+1]/moments[0] is i-th coordinate of the centroid, i=1,2
 */ 
