@@ -1346,51 +1346,47 @@ class AuxMeshTopology {
     //
     // So the steps should be:
     //
+    // compute_cell_moments
     // compute_approximate_face_centroids
-    // compute_approximate_cell_centroids
     //
     // build_sides (topology only)
     //
     // compute_face_centroids
-    // compute_cell_centroids
     //
     // compute_side_volumes
 
     if (dim == 1) {
+      compute_cell_moments<1, CoordSys>();
       compute_approximate_face_centroids<1>();
-      compute_approximate_cell_centroids<1>();
 
       if (sides_requested_)
         build_sides_1D(*this);
 
       compute_face_centroids<1>();
-      compute_cell_moments<1, CoordSys>();
 
       if (sides_requested_)
         compute_side_volumes<1, CoordSys>();
 
     } else if (dim == 2) {
+      compute_cell_moments<2, CoordSys>();
       compute_approximate_face_centroids<2>();
-      compute_approximate_cell_centroids<2>();
 
       if (sides_requested_)
         build_sides_2D(*this);
 
       compute_face_centroids<2>();
-      compute_cell_moments<2, CoordSys>();
 
       if (sides_requested_)
         compute_side_volumes<2, CoordSys>();
 
     } else if (dim == 3) {
+      compute_cell_moments<3, CoordSys>();
       compute_approximate_face_centroids<3>();
-      compute_approximate_cell_centroids<3>();
 
       if (sides_requested_)
         build_sides_3D(*this);
 
       compute_face_centroids<3>();
-      compute_cell_moments<3, CoordSys>();
 
       if (sides_requested_)
         compute_side_volumes<3, CoordSys>();
@@ -1407,7 +1403,7 @@ class AuxMeshTopology {
  private:
   template<int dim> void compute_approximate_cell_centroids();
   template<int dim> void compute_approximate_face_centroids();
-  template<int dim> void compute_face_centroids();  // should be tempated later on CoordSys
+  template<int dim> void compute_face_centroids();  // should be templated later on CoordSys
 
   template<int dim, class CoordSys> void compute_cell_moments();
   template<int dim, class CoordSys> void compute_side_volumes();
@@ -2225,6 +2221,7 @@ void AuxMeshTopology<BasicMesh>::compute_face_centroids() {
 
 
 // Compute an approximate centroid as the geometric mean of the cell nodes
+// NOT USED - CAN BE REMOVED IN THE NEAR FUTURE
 
 template<typename BasicMesh>
 template<int dim>
@@ -2265,10 +2262,9 @@ void AuxMeshTopology<BasicMesh>::compute_cell_moments() {
   cell_volumes_.clear();
   cell_volumes_.assign(ncells, 0.0);
 
-  // Resize (just to be sure) but don't reinitialize since it contains
-  // the approximate centroids (geometric centers) - implicit assumption is that th
-
-  cell_centroids_.resize(ncells);
+  cell_centroids_.clear();
+  std::vector<double> pnt(dim, 0.0);
+  cell_centroids_.assign(ncells, pnt);
 
   std::array<Point<dim>, dim+1> sxyz;
   for (int c = 0; c < ncells; ++c) {
@@ -2333,6 +2329,15 @@ void AuxMeshTopology<BasicMesh>::compute_cell_moments() {
       ccen /= cellvol;
       for (int d = 0; d < dim; d++)
         cell_centroids_[c][d] = ccen[d];  // true centroid
+    } else {
+      // use the geometric center of cell nodes as a proxy for the centroid
+      Point<dim> geomcen;
+      for (int n = 0; n < ncnodes; ++n) {
+        geomcen += cpoints[n];
+      }
+      geomcen /= ncnodes;
+      for (int d = 0; d < dim; ++d)
+        cell_centroids_[c][d] = geomcen[d];
     }
 
     cell_volumes_[c] = cellvol;
