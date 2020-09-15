@@ -1,0 +1,18 @@
+COMPILER:
+  - intel18
+  - gcc6
+  - gcc7
+
+BUILD_TYPE:
+  - base
+  - debug
+  - serial
+  - readme
+  - thrust
+
+exclude:
+  - COMPILER: gcc6
+    BUILD_TYPE: readme
+  - COMPILER: gcc7
+    BUILD_TYPE: readme
+

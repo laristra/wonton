@@ -19,11 +19,6 @@ echo "inside build_matrix entry"
 
 # special case for README builds
 if [[ $build_type == "readme" ]]; then
-  python2 $WORKSPACE/jenkins/parseREADME.py $WORKSPACE/README.md $WORKSPACE
-  exit
-fi
-# special case for README builds
-if [[ $build_type == "readme" ]]; then
 
     # Put a couple of settings in place to generate test output even if
     # the README doesn't ask for it.
@@ -33,7 +28,7 @@ if [[ $build_type == "readme" ]]; then
     python2 $WORKSPACE/jenkins/parseREADME.py \
 	    $WORKSPACE/README.md.1 \
 	    $WORKSPACE \
-	    varan
+	    sn-fey
     exit
 
 fi
@@ -43,7 +38,7 @@ fi
 jali_version=1.1.4
 lapack_version=3.8.0
 
-export NGC=/usr/local/codes/ngc
+export NGC=/usr/projects/ngc
 ngc_include_dir=$NGC/private/include
 
 thrust_dir=${ngc_include_dir}
@@ -51,7 +46,7 @@ thrust_dir=${ngc_include_dir}
 
 # compiler-specific settings
 if [[ $compiler == "intel18" ]]; then
-  compiler_version=18.0.1
+  compiler_version=18.0.5
   cxxmodule=intel/${compiler_version}
   compiler_suffix="-intel-${compiler_version}"
 
@@ -64,7 +59,7 @@ elif [[ $compiler =~ "gcc" ]]; then
   if [[ $compiler == "gcc6" ]]; then
       compiler_version=6.4.0
   elif [[ $compiler == "gcc7" ]]; then
-      compiler_version=7.3.0
+      compiler_version=7.4.0
   fi  
   cxxmodule=gcc/${compiler_version}
   compiler_suffix="-gcc-${compiler_version}"
@@ -94,17 +89,15 @@ elif [[ $build_type == "thrust" ]]; then
     thrust_flags="-D WONTON_ENABLE_THRUST=True -DTHRUST_ROOT:FILEPATH=${thrust_dir}"
 fi
 
-flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=False"
-if [[ $compiler == "gcc6" && $build_type != "serial" ]]; then
-    flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
-    flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
-    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
-fi
+# We don't seem to have a suitable (read as "ancient") flecsi install on HPC 
+#if [[ $compiler == "gcc6" && $build_type != "serial" ]]; then
+#    flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
+#    flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
+#    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
+#fi
 
 export SHELL=/bin/sh
-
-export MODULEPATH=""
-. /opt/local/packages/Modules/default/init/sh
+#Rely on default user environment to load modules; these scripts can be found in /etc/profile.d/ as of 8/25/20 the scripts that set up modules on snow are  /etc/profile.d/z00_lmod.sh; /etc/profile.d/00-modulepath.sh; /etc/profile.d/z01-modules.lanl.sh;
 module load $cxxmodule
 if [[ -n "$mpi_flags" ]]; then
     module load ${mpi_module}
@@ -130,5 +123,5 @@ cmake \
     $lapacke_flags \
     $thrust_flags \
     ..
-make -j2
-ctest -j2 --output-on-failure
+make -j36
+ctest -j36 --output-on-failure

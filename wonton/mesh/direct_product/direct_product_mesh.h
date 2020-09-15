@@ -448,7 +448,7 @@ double Direct_Product_Mesh<D,CoordSys>::get_axis_point(
   assert(dim >= 0);
   assert(dim < D);
 
-#if DEBUG
+#ifndef NDEBUG
   int npall = axis_points_[dim].size();
   assert(pointid >= -num_ghost_layers_);
   assert(pointid <= npall);

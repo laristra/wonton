@@ -13,6 +13,7 @@ Please see the license file at the root of this repository, or at:
 #include <algorithm>
 
 #include "wonton/mesh/AuxMeshTopology.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
 
@@ -47,14 +48,22 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
     @param[in] request_corners Should the AuxMeshToplogy class build corner
     datastructures?
    */
+ 
+  // Typically, we template a class to add functionality. By majority vote,
+  // this has not been done for curvilinier coordinate systems. Instead,
+  // a low-intrusion (optional parameter) approach was adopted 
   explicit Simple_Mesh_Wrapper(Simple_Mesh const & mesh,
                                bool request_sides = true,
                                bool request_wedges = true,
-                               bool request_corners = true) :
+                               bool request_corners = true,
+                               CoordSysType coord_sys = CoordSysType::Cartesian) :
       AuxMeshTopology<Simple_Mesh_Wrapper>(
         request_sides, request_wedges, request_corners),
       mesh_(mesh) {
-    AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities();
+    if (coord_sys == CoordSysType::CylindricalAxisymmetric)
+      AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<CylindricalAxisymmetricCoordinates>();
+    else
+      AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities();
   }  // explicit constructor
 
   /// Copy constructor (disabled).
