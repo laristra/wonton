@@ -161,6 +161,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
 
   } else if (method == "lapack-sysv") {  // LAPACK symmetric matrix
     // check symmetric
@@ -235,6 +237,9 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
+
     
   } else if (method == "lapack-gesv") {  // LAPACK general matrix
 
@@ -308,6 +313,9 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
+
     
   } else if (method == "lapack-sytr") {  // LAPACK symmetric matrix
     
@@ -364,7 +372,9 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
-    
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
+
     // solve it
     if (not skip) {
       info = LAPACKE_dsytrs(matrix_layout,uplo,n,nrhs,a,lda,ipiv,b,ldb);
@@ -379,6 +389,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
         if (error != "none") is_singular_ = 2;
         else                 is_singular_ = 1;
       }
+      else
+        is_singular_ = (info == 0) ? 1 : 2;
     }
     
     X = XT.transpose();
