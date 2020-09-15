@@ -27,6 +27,7 @@ version=$4
 if [[ $version == "" ]]; then
     version=dev
 fi
+platform=varan
 
 # Don't build kokkos config from master branch and general configs
 # from kokkos branch
@@ -47,10 +48,6 @@ lapack_version=3.8.0
 
 echo "inside build_matrix with build_type=$build_type config_type=$config_type compiler=$compiler"
 
-jali_version=1.1.4
-thrust_version=1.8.3
-kokkos_version=3.1.01
-lapack_version=3.8.0
 
 # special case for README builds
 if [[ $build_type != "install" && config_type == "readme" ]]; then
@@ -63,7 +60,7 @@ if [[ $build_type != "install" && config_type == "readme" ]]; then
     python2 $WORKSPACE/jenkins/parseREADME.py \
 	    $WORKSPACE/README.md.1 \
 	    $WORKSPACE \
-	    varan
+	    $PLATFORM
     exit
 
 fi
@@ -103,11 +100,11 @@ fi
 
 # Jali
 jali_install_dir=$NGC/private/jali/${jali_version}${compiler_suffix}${mpi_suffix}
-jali_flags="-D WONTON_ENABLE_Jali:BOOL=True -D Jali_ROOT:PATH=$jali_install_dir"
+jali_flags="-D WONTON_ENABLE_Jali:BOOL=True -D Jali_ROOT:FILEPATH=$jali_install_dir"
 
 # LAPACKE
 lapacke_dir=$NGC/private/lapack/${lapack_version}-patched${compiler_suffix}
-lapacke_flags="-D WONTON_ENABLE_LAPACKE:BOOL=True -D LAPACKE_ROOT:PATH=$lapacke_dir"
+lapacke_flags="-D WONTON_ENABLE_LAPACKE:BOOL=True -D LAPACKE_ROOT:FILEPATH=$lapacke_dir"
 
 # Flecsi
 flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=False"
