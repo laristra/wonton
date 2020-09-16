@@ -1,40 +1,42 @@
 #!/usr/bin/env bash
 # This script is executed on Jenkins using
 #
-# $WORKSPACE/jenkins/build_matrix_entry.sh build_type config_type compiler <VER>
+# $WORKSPACE/jenkins/build_matrix_entry_varan.sh BUILD_TYPE <VER>
 #
-# build_type  -  pr, nightly, install
-# config_type -  base, debug, serial, readme, thrust, kokkos
-# compiler    -  intel, gcc6, gcc7
+# BUILD_TYPE  -  pr, nightly, install
 #
 # if VER is absent, the HEAD of the master branch will be taken
 # (except for kokkos config_type which takes the HEAD of the kokkos
-# branch)
+# branch). If BUILD_TYPE is 'install' it will install it to
+# /install_prefix/wonton/dev-blah-blah
+#
+# Note that the following environment variables must be set (Jenkins
+# will do this automatically).
+#
+# WORKSPACE   -  where the code is checked out
+# CONFIG_TYPE -  base, debug, serial, readme, thrust, kokkos
+# COMPILER    -  intel, gcc6, gcc7
 #
 # The exit code determines if the test succeeded or failed.
-# Note that the environment variable WORKSPACE must be set (Jenkins
-# will do this automatically).
 
 # Exit on error
 set -e
 # Echo each command
 set -x
 
-build_type=$1
-config_type=$2
-compiler=$3
-version=$4
+BUILD_TYPE=$1
+version=$2
 if [[ $version == "" ]]; then
     version=dev
 fi
-platform=varan
+
 
 # Don't build kokkos config from master branch and general configs
 # from kokkos branch
-if [[ $BRANCH_NAME == "master" && config_type == "kokkos" ]]; then
+if [[ $BRANCH_NAME == "master" && $CONFIG_TYPE == "kokkos" ]]; then
     exit
 fi
-if [[ $BRANCH_NAME == "kokkos" && config_type != "kokkos" ]]; then
+if [[ $BRANCH_NAME == "kokkos" && $CONFIG_TYPE != "kokkos" ]]; then
     exit
 fi
 
@@ -45,12 +47,11 @@ thrust_version=1.8.3
 kokkos_version=3.1.01
 lapack_version=3.8.0
 
-
-echo "inside build_matrix with build_type=$build_type config_type=$config_type compiler=$compiler"
+echo "inside build_matrix on PLATFORM=$PLATFORM with BUILD_TYPE=$BUILD_TYPE $CONFIG_TYPE=$CONFIG_TYPE COMPILER=$COMPILER"
 
 
 # special case for README builds
-if [[ $build_type != "install" && config_type == "readme" ]]; then
+if [[ $BUILD_TYPE != "install" && $CONFIG_TYPE == "readme" ]]; then
 
     # Put a couple of settings in place to generate test output even if
     # the README doesn't ask for it.
@@ -60,7 +61,7 @@ if [[ $build_type != "install" && config_type == "readme" ]]; then
     python2 $WORKSPACE/jenkins/parseREADME.py \
 	    $WORKSPACE/README.md.1 \
 	    $WORKSPACE \
-	    $PLATFORM
+	    varan
     exit
 
 fi
@@ -118,7 +119,7 @@ fi
 thrust_flags=
 thrust_suffix=
 thrust_install_dir=$NGC/private/thrust/${thrust_version}
-if [[ $config_type == "thrust" ]]; then
+if [[ $CONFIG_TYPE == "thrust" ]]; then
     thrust_flags="-D WONTON_ENABLE_THRUST=True -D THRUST_ROOT=${thrust_install_dir}"
     thrust_suffix="-thrust"
 fi
@@ -127,14 +128,14 @@ fi
 kokkos_flags=
 kokkos_suffix=
 kokkos_install_dir=$NGC/private/kokkos/${kokkos_version}${compiler_suffix}
-if [[ $config_type == "kokkos" ]]; then
+if [[ $CONFIG_TYPE == "kokkos" ]]; then
     kokkos_flags="-D WONTON_ENABLE_Kokkos=True -D Kokkos_ROOT=${kokkos_install_dir}"
     kokkos_suffix="-kokkos"
 fi
 
 # MPI or not
 mpi_flags="-D WONTON_ENABLE_MPI=True"
-if [[ $config_type == "serial" ]]; then
+if [[ $CONFIG_TYPE == "serial" ]]; then
     mpi_flags="-D WONTON_ENABLE_MPI=False"
     mpi_suffix=
     jali_flags=
@@ -144,7 +145,7 @@ fi
 # Debug or Optimized build
 cmake_build_type=Release
 debug_suffix=
-if [[ $config_type == "debug" ]]; then
+if [[ $CONFIG_TYPE == "debug" ]]; then
     cmake_build_type=Debug
     debug_suffix="-debug"
 fi
@@ -190,6 +191,6 @@ cmake \
 make -j2
 ctest -j2 --output-on-failure
 
-if [[ $build_type == "install" ]]; then
+if [[ $BUILD_TYPE == "install" ]]; then
     make install
 fi
