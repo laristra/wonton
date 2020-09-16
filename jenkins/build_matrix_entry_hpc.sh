@@ -16,6 +16,7 @@
 # WORKSPACE   -  where the code is checked out
 # CONFIG_TYPE -  base, debug, serial, readme, thrust, kokkos
 # COMPILER    -  intel, gcc6, gcc7
+# BRANCH_NAME -  master, kokkos
 #
 # The exit code determines if the test succeeded or failed.
 
