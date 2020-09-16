@@ -73,7 +73,7 @@ ngc_include_dir=$NGC/private/include
 
 
 # compiler-specific settings
-if [[ $compiler =~ "intel" ]]; then
+if [[ $COMPILER =~ "intel" ]]; then
 
     compiler_version=18.0.5
     cxxmodule=intel/${compiler_version}
@@ -83,12 +83,12 @@ if [[ $compiler =~ "intel" ]]; then
     mpi_module=openmpi/2.1.2
     mpi_suffix="-openmpi-${openmpi_version}"
     
-elif [[ $compiler =~ "gcc" ]]; then
+elif [[ $COMPILER =~ "gcc" ]]; then
 
     openmpi_version=2.1.2
-    if [[ $compiler == "gcc6" ]]; then
+    if [[ $COMPILER == "gcc6" ]]; then
 	compiler_version=6.4.0
-    elif [[ $compiler == "gcc7" ]]; then
+    elif [[ $COMPILER == "gcc7" ]]; then
 	compiler_version=7.4.0
     fi  
     cxxmodule=gcc/${compiler_version}
@@ -109,7 +109,7 @@ lapacke_flags="-D WONTON_ENABLE_LAPACKE:BOOL=True -D LAPACKE_ROOT:FILEPATH=$lapa
 
 # Flecsi - Not yet installed on Snow
 flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=False"
-# if [[ $compiler == "gcc6" ]]; then
+# if [[ $COMPILER == "gcc6" ]]; then
 #     flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
 #     flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
 #     flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
