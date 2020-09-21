@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This script is executed on Jenkins using
 #
-# $WORKSPACE/jenkins/build_matrix_entry_hpc.sh BUILD_TYPE <VER>
+# $WORKSPACE/jenkins/build_matrix_entry_varan.sh BUILD_TYPE <VER>
 #
 # BUILD_TYPE  -  pr, nightly, install
 #
@@ -62,21 +62,21 @@ if [[ $BUILD_TYPE != "install" && $CONFIG_TYPE == "readme" ]]; then
     python2 $WORKSPACE/jenkins/parseREADME.py \
 	    $WORKSPACE/README.md.1 \
 	    $WORKSPACE \
-	    sn-fey
+	    varan
     exit
 
 fi
 
 # set modules and install paths
 
-export NGC=/usr/projects/ngc
+export NGC=/usr/local/codes/ngc
 ngc_include_dir=$NGC/private/include
 
 
 # compiler-specific settings
 if [[ $COMPILER =~ "intel" ]]; then
 
-    compiler_version=18.0.5
+    compiler_version=18.0.1
     cxxmodule=intel/${compiler_version}
     compiler_suffix="-intel-${compiler_version}"
 
@@ -90,7 +90,7 @@ elif [[ $COMPILER =~ "gcc" ]]; then
     if [[ $COMPILER == "gcc6" ]]; then
 	compiler_version=6.4.0
     elif [[ $COMPILER == "gcc7" ]]; then
-	compiler_version=7.4.0
+	compiler_version=7.3.0
     fi  
     cxxmodule=gcc/${compiler_version}
     compiler_suffix="-gcc-${compiler_version}"
@@ -108,13 +108,13 @@ jali_flags="-D WONTON_ENABLE_Jali:BOOL=True -D Jali_ROOT:FILEPATH=$jali_install_
 lapacke_dir=$NGC/private/lapack/${lapack_version}-patched${compiler_suffix}
 lapacke_flags="-D WONTON_ENABLE_LAPACKE:BOOL=True -D LAPACKE_ROOT:FILEPATH=$lapacke_dir"
 
-# Flecsi - Not yet installed on Snow
+# Flecsi
 flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=False"
-# if [[ $COMPILER == "gcc6" ]]; then
-#     flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
-#     flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
-#     flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
-# fi
+if [[ $COMPILER == "gcc6" ]]; then
+    flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
+    flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
+    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
+fi
 
 # THRUST
 thrust_flags=
@@ -157,12 +157,15 @@ wonton_install_dir=$NGC/private/wonton/${version}${compiler_suffix}${mpi_suffix}
 
 export SHELL=/bin/sh
 
-#Rely on default user environment to load modules; these scripts can be found in /etc/profile.d/ as of 8/25/20 the scripts that set up modules on snow are  /etc/profile.d/z00_lmod.sh; /etc/profile.d/00-modulepath.sh; /etc/profile.d/z01-modules.lanl.sh;
+export MODULEPATH=""
+. /opt/local/packages/Modules/default/init/sh
 module load $cxxmodule
 if [[ -n "$mpi_flags" ]]; then
     module load ${mpi_module}
 fi
 module load cmake/3.14.0 # 3.13 or higher is required
+
+module load git
 
 echo "JENKINS WORKSPACE = $WORKSPACE"
 cd $WORKSPACE
@@ -186,8 +189,8 @@ cmake \
     $thrust_flags \
     $kokkos_flags \
     ..
-make -j36
-ctest -j36 --output-on-failure
+make -j2
+ctest -j2 --output-on-failure
 
 if [[ $BUILD_TYPE == "install" ]]; then
     make install

@@ -11,11 +11,6 @@
 # THRUST_COMPONENTS   - Which backends were found (OpenMP, TBB, CUDA)
 #------------------------------------------------------------------------------#
 
-# Create an INTERFACE library
-
-set(THRUST_LIBRARIES THRUST::THRUST)
-add_library(${THRUST_LIBRARIES} INTERFACE IMPORTED)
-
 #------------------------------------------------------------------------------#
 # Find the header file
 #------------------------------------------------------------------------------#
@@ -29,7 +24,6 @@ else ()
   endif ()
 endif ()
 
-target_include_directories(${THRUST_LIBRARIES} INTERFACE ${THRUST_INCLUDE_DIRS})
 
 #------------------------------------------------------------------------------#
 # Find the backend components
@@ -38,24 +32,38 @@ target_include_directories(${THRUST_LIBRARIES} INTERFACE ${THRUST_INCLUDE_DIRS})
 set(THRUST_COMPONENTS "")
 foreach (_component IN LISTS THRUST_FIND_COMPONENTS)
   if (${_component} STREQUAL "OpenMP")
-    find_package(OpenMP)
+    find_package(OpenMP COMPONENTS CXX)
     if (OpenMP_FOUND)
-      target_link_libraries(${THRUST_LIBRARIES} INTERFACE OpenMP::OpenMP_CXX)
       list(APPEND THRUST_COMPONENTS OpenMP)
     endif ()
   elseif (${_component} STREQUAL "CUDA")
     find_package(CUDA)
     if (CUDA_FOUND)
-      target_link_libraries(${THRUST_LIBRARIES} INTERFACE "${CUDA_LIBRARIES}")
       list(APPEND THRUST_COMPONENTS CUDA)
     endif ()
-  elseif ()
-    message(FATAL_ERROR "Unknown component ${_component) requested for THRUST")
+  else ()
+    message(FATAL_ERROR "Unknown component ${_component} requested for THRUST")
   endif ()
 endforeach ()
 
 
 message(STATUS "THRUST components found: ${THRUST_COMPONENTS}")
+
+# Create an INTERFACE library
+
+set(THRUST_LIBRARIES THRUST::THRUST)
+if (NOT TARGET ${THRUST_LIBRARIES})
+  add_library(${THRUST_LIBRARIES} INTERFACE IMPORTED)
+  target_include_directories(${THRUST_LIBRARIES} INTERFACE ${THRUST_INCLUDE_DIRS})
+  foreach (_component IN LISTS THRUST_COMPONENTS)
+    if (${_component} STREQUAL "OpenMP" AND OpenMP_FOUND)
+      target_link_libraries(${THRUST_LIBRARIES} INTERFACE OpenMP::OpenMP_CXX)
+    endif ()
+    if (${_component} STREQUAL "CUDA" AND CUDA_FOUND)
+      target_link_libraries(${THRUST_LIBRARIES} INTERFACE "${CUDA_LIBRARIES}")
+    endif ()
+  endforeach ()
+endif ()
 
 #------------------------------------------------------------------------------#
 # Set standard args stuff

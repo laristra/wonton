@@ -107,7 +107,19 @@ if (WONTON_ENABLE_LAPACKE)
 endif ()
 
 if (WONTON_ENABLE_THRUST)
-  find_dependency(THRUST COMPONENTS ${THRUST_COMPONENTS})
+  set(THRUST_LIBRARIES THRUST::THRUST)
+
+  # First try discovery through a config file
+  find_package(THRUST NAMES Thrust CONFIG)
+  if (THRUST_FOUND)
+    string(REPLACE "THRUST_HOST_SYSTEM_" "" HOST_SYSTEM ${THRUST_HOST_BACKEND})
+    string(REPLACE "THRUST_DEVICE_SYSTEM_" "" DEVICE_SYSTEM ${THRUST_DEVICE_BACKEND})
+    if (NOT TARGET ${THRUST_LIBRARIES})
+      thrust_create_target(${THRUST_LIBRARIES} HOST ${HOST_SYSTEM} DEVICE ${DEVICE_SYSTEM})
+    endif ()
+  else ()
+    find_dependency(THRUST COMPONENTS ${THRUST_COMPONENTS} REQUIRED MODULE)
+  endif ()
 endif ()
 
 if (WONTON_ENABLE_Kokkos)
