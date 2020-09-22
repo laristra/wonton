@@ -4,7 +4,7 @@ COMPILER:
   - gcc6
   - gcc7
 
-BUILD_TYPE:
+CONFIG_TYPE:
   - base
   - serial
   - thrust
@@ -12,5 +12,5 @@ BUILD_TYPE:
 
 exclude:
   - COMPILER: intel18
-    BUILD_TYPE: kokkos
+    CONFIG_TYPE: kokkos
 
