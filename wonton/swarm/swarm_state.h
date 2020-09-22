@@ -31,6 +31,12 @@ class SwarmState {
 public:
 
   /**
+   * @brief Create an empty state.
+   *
+   */
+  SwarmState() = default;
+
+  /**
    * @brief Initialize from a reference swarm.
    *
    * @param swarm: the swarm with which the field data are associated.

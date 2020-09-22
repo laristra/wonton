@@ -36,6 +36,12 @@ class Swarm {
 public:
 
   /**
+   * @brief Create an empty swarm.
+   *
+   */
+  Swarm() = default;
+
+  /**
    * @brief Create a particle field from a given list.
    *
    * @param points: the given list of points.
