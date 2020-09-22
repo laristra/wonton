@@ -61,7 +61,29 @@ public:
     : points_(points),
       num_local_points_(points_.size())
   {}
+
+  /**
+   * @brief Initialize from a given list of points.
+   *
+   * @param points: the given list of points.
+   */
+  inline void init(std::vector<Wonton::Point<dim>> const& points) {
+    num_local_points_ = points.size();
+    points_.resize(num_local_points_);
+    std::copy(points.begin(), points.end(), points_.begin());
+  }
 #endif
+
+  /**
+   * @brief Initialize from a given list of points.
+   *
+   * @param points: the given list of points.
+   */
+  inline void init(Wonton::vector<Wonton::Point<dim>> const& points) {
+    num_local_points_ = points.size();
+    points_.resize(num_local_points_);
+    std::copy(points.begin(), points.end(), points_.begin());
+  }
 
   /**
    * @brief Generate a random or uniform particle field.

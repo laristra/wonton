@@ -53,6 +53,20 @@ public:
   explicit SwarmState(int size) : num_local_points_(size) {}
 
   /**
+   * @brief Initialize from a reference swarm.
+   *
+   * @param swarm: the reference swarm.
+   */
+  void init(Swarm<dim> const& swarm) { num_local_points_ = swarm.num_owned_particles(); }
+
+  /**
+   * @brief Initialize with a field size.
+   *
+   * @param size: size of each field.
+   */
+  void init(int size) { num_local_points_ = size; }
+
+  /**
    * @brief Create the swarm state from a given mesh state wrapper.
    *
    * Copies fields from mesh state wrapper to the current swarm state
