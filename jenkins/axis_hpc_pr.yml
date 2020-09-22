@@ -11,5 +11,5 @@ CONFIG_TYPE:
 
 exclude:
   - COMPILER: gcc7
-    BUILD_TYPE: readme
+    CONFIG_TYPE: readme
 
