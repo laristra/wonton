@@ -31,6 +31,12 @@ class SwarmState {
 public:
 
   /**
+   * @brief Create an empty state.
+   *
+   */
+  SwarmState() = default;
+
+  /**
    * @brief Initialize from a reference swarm.
    *
    * @param swarm: the swarm with which the field data are associated.
@@ -45,6 +51,20 @@ public:
    * @param size: size of each field.
    */
   explicit SwarmState(int size) : num_local_points_(size) {}
+
+  /**
+   * @brief Initialize from a reference swarm.
+   *
+   * @param swarm: the reference swarm.
+   */
+  void init(Swarm<dim> const& swarm) { num_local_points_ = swarm.num_owned_particles(); }
+
+  /**
+   * @brief Initialize with a field size.
+   *
+   * @param size: size of each field.
+   */
+  void init(int size) { num_local_points_ = size; }
 
   /**
    * @brief Create the swarm state from a given mesh state wrapper.
