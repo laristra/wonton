@@ -9,8 +9,8 @@ set -e
 # Echo each command
 set -x
 
-# Set umask so installations have correct permissions
-umask 002
+# Set umask so installations have rwx permissions for the group
+umask 007
 
 JALI_VERSION=1.0.0
 openmpi_version=2.1.2
