@@ -303,7 +303,12 @@ Vector<3> Polytope<3>::face_normal(int face_id) const {
 template<>
 inline
 std::vector<double> Polytope<1>::moments(int order) const {
-  throw std::runtime_error("Wonton::Polytope<1>::moments(int) not implemented");
+  assert(order < 2);
+  int nmoments = order + 1;
+  std::vector<double> poly_moments(nmoments, 0.0);
+  poly_moments[0] = vertex_points_[0][1] - vertex_points_[0][0];
+  poly_moments[1] = (vertex_points_[0][1] + vertex_points_[0][0]) * poly_moments[0];
+  return poly_moments;
 }
 
 /*!
