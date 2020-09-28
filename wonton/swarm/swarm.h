@@ -202,6 +202,15 @@ public:
     points_.insert(points_.end(), new_pts.begin(), new_pts.end());
   }
 
+  /**
+   * @brief Retrieve a reference of the internal list of points.
+   *        It is useful when initializing each point of the swarm
+   *        externally without copying the list.
+   *
+   * @return the reference of the internal list of points.
+   */
+  inline Wonton::vector<Wonton::Point<dim>>& get_points() { return points_; }
+
 private:
   /** the centers of the particles */
   Wonton::vector<Wonton::Point<dim>> points_;
