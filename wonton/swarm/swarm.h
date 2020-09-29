@@ -86,6 +86,28 @@ public:
   }
 
   /**
+   * @brief Resize internal list of points.
+   *
+   * @param new_size: the new size
+   */
+  inline void resize(int new_size) {
+    assert(new_size > 0);
+    num_local_points_ = new_size;
+    points_.resize(new_size);
+  }
+
+  /**
+   * @brief Assign the given point at the given location.
+   *
+   * @param id: index of the point.
+   * @param p: coordinates of the point.
+   */
+  inline void assign(int id, Wonton::Point<dim> const& p) {
+    assert(id >= 0 and id < num_local_points_);
+    points_[id] = p;
+  }
+
+  /**
    * @brief Generate a random or uniform particle field.
    *
    * @param num_particles: number of points.
@@ -201,15 +223,6 @@ public:
   void extend_particle_list(std::vector<Wonton::Point<dim>> const& new_pts) {
     points_.insert(points_.end(), new_pts.begin(), new_pts.end());
   }
-
-  /**
-   * @brief Retrieve a reference of the internal list of points.
-   *        It is useful when initializing each point of the swarm
-   *        externally without copying the list.
-   *
-   * @return the reference of the internal list of points.
-   */
-  inline Wonton::vector<Wonton::Point<dim>>& get_points() { return points_; }
 
 private:
   /** the centers of the particles */
