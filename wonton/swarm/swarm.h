@@ -86,6 +86,28 @@ public:
   }
 
   /**
+   * @brief Resize internal list of points.
+   *
+   * @param new_size: the new size
+   */
+  inline void resize(int new_size) {
+    assert(new_size > 0);
+    num_local_points_ = new_size;
+    points_.resize(new_size);
+  }
+
+  /**
+   * @brief Assign the given point at the given location.
+   *
+   * @param id: index of the point.
+   * @param p: coordinates of the point.
+   */
+  inline void assign(int id, Wonton::Point<dim> const& p) {
+    assert(id >= 0 and id < num_local_points_);
+    points_[id] = p;
+  }
+
+  /**
    * @brief Generate a random or uniform particle field.
    *
    * @param num_particles: number of points.
