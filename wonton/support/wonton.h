@@ -262,7 +262,8 @@ template<typename InputIterator, typename OutputIterator,
          typename UnaryFunction>
 inline OutputIterator transform(InputIterator first, InputIterator last,
                                 OutputIterator result, UnaryFunction op) {
-  return thrust::transform(first, last, result, op);
+  struct thrust::execution_policy<thrust::system::omp::detail::tag> exec;
+  return thrust::transform(exec, first, last, result, op);
 }
 
 template<typename InputIterator1, typename InputIterator2,
@@ -270,13 +271,15 @@ template<typename InputIterator1, typename InputIterator2,
 inline OutputIterator transform(InputIterator1 first1, InputIterator1 last1,
                                 InputIterator2 first2, OutputIterator result,
                                 BinaryFunction op) {
-  return thrust::transform(first1, last1, first2, result, op);
+  struct thrust::execution_policy<thrust::system::omp::detail::tag> exec;
+  return thrust::transform(exec, first1, last1, first2, result, op);
 }
 
 template<typename InputIterator, typename UnaryFunction>
 inline void for_each(InputIterator first, InputIterator last,
                               UnaryFunction f) {
-  thrust::for_each(first, last, f);
+  struct thrust::execution_policy<thrust::system::omp::detail::tag> exec;
+  thrust::for_each(exec, first, last, f);
 }
 
 #else  // no thrust
