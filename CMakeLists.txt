@@ -148,23 +148,12 @@ endif ()
 
 set(WONTON_ENABLE_THRUST False CACHE BOOL "Is the Thrust library being used?")
 if (WONTON_ENABLE_THRUST)
+  set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_OMP"  CACHE STRING "Thrust host backend")
+  set(THRUST_DEVICE_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust device backend")
 
-  # Use OpenMP backend
-#  set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_OMP"  CACHE STRING "Thrust host backend")
-#  set(THRUST_DEVICE_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust device backend")
-
-#  if ((${THRUST_HOST_BACKEND} STREQUAL "THRUST_HOST_SYSTEM_OMP") OR
-#      (${THRUST_DEVICE_BACKEND} STREQUAL "THRUST_DEVICE_SYSTEM_OMP"))
-#    list(APPEND _components OpenMP)
-#  endif ()
-
-#  find_package(THRUST COMPONENTS ${_components} REQUIRED MODULE)
-#  find_package(OpenMP REQUIRED)
   find_package(THRUST COMPONENTS OpenMP REQUIRED MODULE)
   target_include_directories(wonton SYSTEM INTERFACE ${THRUST_INCLUDE_DIRS})
-
   message(STATUS "Enabling compilation with Thrust")
-#  message(STATUS "Using THRUST_ROOT=${THRUST_ROOT}")
 else ()
 
   #-----------------------------------------------------------------------------

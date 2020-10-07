@@ -238,7 +238,7 @@ struct SerialExecutor_type : Executor_type {};  // for RTTI
 
 #ifdef WONTON_ENABLE_MPI
 struct MPIExecutor_type : Executor_type {
-  MPIExecutor_type(MPI_Comm comm) : mpicomm(comm) {}
+  explicit MPIExecutor_type(MPI_Comm comm) : mpicomm(comm) {}
   MPI_Comm mpicomm = MPI_COMM_WORLD;
 };
 #endif
