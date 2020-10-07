@@ -152,7 +152,6 @@ if (WONTON_ENABLE_THRUST)
   set(THRUST_DEVICE_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust device backend")
 
   find_package(THRUST COMPONENTS OpenMP REQUIRED MODULE)
-  target_include_directories(wonton SYSTEM INTERFACE ${THRUST_INCLUDE_DIRS})
   message(STATUS "Enabling compilation with Thrust")
 else ()
 
