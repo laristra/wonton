@@ -353,7 +353,7 @@ std::vector<double> Polytope<3>::moments(int order) const {
     // in counter-clockwise order (i.e. so that the normal
     // to the face is pointing outside of the polytope)
     const auto& ids = face_vertices_[iface];
-    int nfvrts = ids.size();
+    int nfvrts = static_cast<int>(ids.size());
 
     if (nfvrts == 3) {
       int v0 = ids[0], v1 = ids[1], v2 = ids[2];
