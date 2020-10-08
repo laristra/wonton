@@ -24,9 +24,9 @@ namespace Wonton {
 
 /*!
   @class Simple_Mesh "simple_mesh.h"
-  @brief A very light-weight, serial, 2D/3D Cartesian mesh.
+  @brief A very light-weight, serial, 1D/2D/3D Cartesian mesh.
 
-  A Simple_Mesh is a non-distributed (i.e. serial), 2D/3D, regular Cartesian mesh.
+  A Simple_Mesh is a non-distributed (i.e. serial), 1D/2D/3D, regular Cartesian mesh.
   The user need only specify the domain extents and the number of cells per
   direction, and the mesh class will create all of the connectivity information.
   The cells are created in row-first order. 
@@ -39,6 +39,10 @@ namespace Wonton {
 
   In a 2D mesh, each cell is a quadrilateral with 4 nodes and 4 faces. 
   Likewise, each non-domain-boundary node is connected to 4 cells and each 
+  non-domain-boundary face is connected to two cells.  
+  
+  In a 1D mesh, each cell has 2 nodes and 2 faces. 
+  Likewise, each non-domain-boundary node is connected to two cells and each 
   non-domain-boundary face is connected to two cells.  
   
   Nodes and faces on the domain boundary have less connections as there are no
@@ -128,6 +132,49 @@ Simple_Mesh(double x0, double y0, double z0,
 
     // Build cell <--> node, cell <--> face, face --> node adjacencies
     build_cfn_adjacencies_2d();
+
+    // Build ownership information - no ghosts in Simple Mesh
+    nodeids_owned_.resize(num_nodes_);
+    for (int i(0); i < num_nodes_; ++i)
+      nodeids_owned_[i] = i;
+
+    cellids_owned_.resize(num_cells_);
+    for (int i(0); i < num_cells_; ++i)
+      cellids_owned_[i] = i;
+
+    faceids_owned_.resize(num_faces_);
+    for (int i(0); i < num_faces_; ++i)
+      faceids_owned_[i] = i;
+  }
+
+  /*!
+    @brief Constructor for creating a serial, 1D Cartesian mesh.
+    @param[in] x0 The minimum coordinate of the domain.
+    @param[in] x1 The maximum coordinate of the domain.
+    @param[in] nx The number of _cells_.
+
+    Connectivity information is automatically built from global IDs.
+    This mesh class has _zero_ ghost mesh entities.
+  */
+  Simple_Mesh(double x0, double x1, int nx) :
+              nx_(nx), 
+              x0_(x0),
+              x1_(x1) {
+    spacedim_ = 1; 
+    num_cells_ = nx;
+    num_nodes_ = nx+1;
+    num_faces_ = nx_+1;
+
+    nodes_per_face_ = 1;
+    nodes_per_cell_ = 2;
+    faces_per_cell_ = 2;
+    cells_per_node_aug_ = 2;
+
+    // Construct the nodal coordinates from extents and number of nodes
+    build_node_coords_1d();
+
+    // Build cell <--> node, cell <--> face, face --> node adjacencies
+    build_cfn_adjacencies_1d();
 
     // Build ownership information - no ghosts in Simple Mesh
     nodeids_owned_.resize(num_nodes_);
@@ -656,6 +703,74 @@ Simple_Mesh(double x0, double y0, double z0,
   
   }
 
+  /*!
+    @brief Constructs and stores the node coordinates from the extents and
+    number of cells per direction passed to the 2D constructor.
+   */
+  void build_node_coords_1d() {
+    coordinates1d_.clear();
+
+    double hx = (x1_ - x0_)/nx_;
+
+    for (int ix(0); ix <= nx_; ++ix) {
+      coordinates1d_.emplace_back(x0_+ix*hx);
+    }
+  }
+
+  /*
+    @brief Builds the cell-face-node adjacency information for 1D mesh. 
+   */
+  void build_cfn_adjacencies_1d() {
+    // downward adjacencies
+    cell_to_node_.resize(nodes_per_cell_*num_cells_);
+    cell_to_face_.resize(faces_per_cell_*num_cells_);
+    cell_face_dirs_.resize(faces_per_cell_*num_cells_);
+    face_to_node_.resize(nodes_per_face_*num_faces_);
+    // upward adjacencies
+    node_to_cell_.resize(cells_per_node_aug_*num_nodes_);
+    face_to_cell_.resize(num_faces_, -1);
+
+    // cell adjacencies
+    for (int ix = 0; ix < nx_; ++ix) {
+      auto thisCell = ix;
+      auto cstart = nodes_per_cell_ * thisCell;
+      auto fstart = faces_per_cell_ * thisCell;
+
+      // downward connectivity: cell -> node
+      cell_to_node_[cstart] = ix;
+      cell_to_node_[cstart+1] = ix + 1;
+
+      // upward connectivity: node -> cell
+      for (int iix = ix; iix <= ix+1; ++iix) {
+        auto cnstart = cells_per_node_aug_ * iix;
+        auto& count = node_to_cell_[cnstart];
+        node_to_cell_[cnstart+count+1] = thisCell;
+        count++;
+      }
+
+      // downward connectivity cell -> face
+      cell_to_face_[fstart] = ix;
+      cell_face_dirs_[fstart] = -1;
+
+      cell_to_face_[fstart+1] = ix + 1;
+      cell_face_dirs_[fstart+1] = 1;
+
+      // upward connectivity: face -> cell
+      for (int iix = ix; iix <= ix+1; ++iix) {
+        auto cfstart = 2 * iix;
+        auto& count = face_to_cell_[cfstart];
+        face_to_cell_[cfstart+count+1] = thisCell;
+        count++;
+      }
+    }
+
+    // face adjacencies
+    for (int ix = 0; ix <= nx_; ++ix) {
+      auto nstart = nodes_per_face_ * ix;
+      face_to_node_[nstart] = ix;
+    }
+  }
+
   /// @c Simple_Mesh can be 2D or 3D 
   int spacedim_ ;
 
@@ -668,6 +783,7 @@ Simple_Mesh(double x0, double y0, double z0,
   /// Node positions.
   std::vector<Point<3>> coordinates3d_;
   std::vector<Point<2>> coordinates2d_;
+  std::vector<Point<1>> coordinates1d_;
 
   /// Set in constructor for 2D quads and 3D hexes for now.
   int nodes_per_face_ ;
@@ -721,7 +837,7 @@ Simple_Mesh(double x0, double y0, double z0,
 
 // Specializations
 /*!
-  @brief Get the 2D/3D coordinates of a specific node as @c Wonton::Point object.
+  @brief Get the 1D/2D/3D coordinates of a specific node as @c Wonton::Point object.
   @param[in] nodeid The ID of the node.
   @param[out] pp The @c Wonton::Point containing the coordinates for node
   @c nodeid.
@@ -740,6 +856,14 @@ void Simple_Mesh::node_get_coordinates<2>(const ID nodeid,
                                           Point<2> *pp) const {
   assert(spacedim_ == 2);
   *pp = coordinates2d_[nodeid];
+}
+
+template<>
+inline
+void Simple_Mesh::node_get_coordinates<1>(const ID nodeid,
+                                          Point<1> *pp) const {
+  assert(spacedim_ == 1);
+  *pp = coordinates1d_[nodeid];
 }
 
 template<>
