@@ -168,7 +168,7 @@ Simple_Mesh(double x0, double y0, double z0,
     nodes_per_face_ = 1;
     nodes_per_cell_ = 2;
     faces_per_cell_ = 2;
-    cells_per_node_aug_ = 2;
+    cells_per_node_aug_ = 3;
 
     // Construct the nodal coordinates from extents and number of nodes
     build_node_coords_1d();
@@ -728,7 +728,7 @@ Simple_Mesh(double x0, double y0, double z0,
     face_to_node_.resize(nodes_per_face_*num_faces_);
     // upward adjacencies
     node_to_cell_.resize(cells_per_node_aug_*num_nodes_);
-    face_to_cell_.resize(num_faces_, -1);
+    face_to_cell_.resize(2*num_faces_, -1);
 
     // cell adjacencies
     for (int ix = 0; ix < nx_; ++ix) {
