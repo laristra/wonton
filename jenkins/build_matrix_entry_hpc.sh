@@ -49,7 +49,7 @@ fi
 # versions of dependencies
 jali_version=1.1.4
 thrust_version=1.8.3
-kokkos_version=3.1.01
+kokkos_version=3.2.00
 lapack_version=3.8.0
 
 echo "inside build_matrix on PLATFORM=$PLATFORM with BUILD_TYPE=$BUILD_TYPE $CONFIG_TYPE=$CONFIG_TYPE COMPILER=$COMPILER"
