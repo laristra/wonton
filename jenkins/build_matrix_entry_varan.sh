@@ -25,6 +25,9 @@ set -e
 # Echo each command
 set -x
 
+# Set umask so installations have rwx permissions for the group
+umask 007
+
 BUILD_TYPE=$1
 version=$2
 if [[ $version == "" ]]; then

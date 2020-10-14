@@ -7,8 +7,9 @@
 #
 # if VER is absent, the HEAD of the master branch will be taken
 # (except for kokkos config_type which takes the HEAD of the kokkos
-# branch). If BUILD_TYPE is 'install' it will install it to
-# /install_prefix/wonton/dev-blah-blah
+# branch). If BUILD_TYPE is 'install' and VER is specified, it will
+# install it to /install_prefix/wonton/${VER}-blah-blah; if VER is not
+# specified, it will install to /install_prefix/wonton/dev-blah-blah
 #
 # Note that the following environment variables must be set (Jenkins
 # will do this automatically).
@@ -24,6 +25,9 @@
 set -e
 # Echo each command
 set -x
+
+# Set umask so installations have rwx permissions for the group
+umask 007
 
 BUILD_TYPE=$1
 version=$2
