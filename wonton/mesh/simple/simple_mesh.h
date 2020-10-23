@@ -756,13 +756,16 @@ Simple_Mesh(double x0, double y0, double z0,
       cell_face_dirs_[fstart+1] = 1;
 
       // upward connectivity: face -> cell
-      for (int iix = ix; iix <= ix+1; ++iix) {
-        auto cfstart = 2 * iix;
-        auto& count = face_to_cell_[cfstart];
-        face_to_cell_[cfstart+count+1] = thisCell;
-        count++;
-      }
+      int cfstart = 2 * ix;
+      face_to_cell_[cfstart+1] = thisCell;
+
+      cfstart = 2 * (ix + 1);
+      face_to_cell_[cfstart] = thisCell;
     }
+
+    // fixing boundary effects
+    face_to_cell_[0] = face_to_cell_[1];
+    face_to_cell_[1] = -1;
 
     // face adjacencies
     for (int ix = 0; ix <= nx_; ++ix) {
