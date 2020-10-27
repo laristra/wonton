@@ -127,7 +127,7 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //!       Wonton::FACE, Wonton::EDGE, Wonton::NODE, Wonton::CORNER
 //!
 //!
-//!~~~ GROUP III: forward and backward connectivity
+//!~~~ GROUP III: upward and downward connectivity
 //! void cell_get_faces_and_dirs(int const cellid, std::vector<int> *cfaces,
 //!                              std::vector<int> *cfdirs) const;
 //!
