@@ -94,7 +94,7 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! adjacency queries between these entities (In 2D, faces are the
 //! same as edges and in 1D, faces are the same as nodes). In
 //! particular, the basic mesh class is expected to support the
-//! following four groups od methods to successfully instantiate
+//! following four groups of methods to successfully instantiate
 //! this class:
 //!
 //!~~~ GROUP I: counts of mesh objects
@@ -152,7 +152,7 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! void node_get_coordinates(int const nodeid, Wonton::Point<D> *pp) const;
 //!
 //! NOTE: This is the only function that has to be templated on the space
-//!       dimension. The other function can be implemented for a fixed space
+//!       dimension. The other functions can be implemented for a fixed space
 //!       dimension.
 //!
 //!
