@@ -94,9 +94,10 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! adjacency queries between these entities (In 2D, faces are the
 //! same as edges and in 1D, faces are the same as nodes). In
 //! particular, the basic mesh class is expected to support the
-//! following methods to successfully instantiate this class:
+//! following four groups od methods to successfully instantiate
+//! this class:
 //!
-//!~~~
+//!~~~ GROUP I: counts of mesh objects
 //! int space_dimension() const;  // dimensionality of mesh points (1, 2, 3)
 //!
 //! int num_owned_cells() const;
@@ -105,32 +106,36 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! int num_ghost_faces() const;
 //! int num_owned_nodes() const;
 //! int num_ghost_nodes() const;
+//!
+//!
+//!~~~ GROUP II: information about mesh objects
 //! Wonton::Entity_type cell_get_type(int const cellid) const;
 //! Wonton::Entity_type node_get_type(int const nodeid) const;
-//!~~~
 //!
-//! NOTE: Entity_type is Wonton::OWNED or Wonton::GHOST
+//! NOTE: Entity_type is Wonton::PARALLEL_OWNED or Wonton::PARALLEL_GHOST
 //!
-//!~~~
 //! Wonton::Element_type cell_get_element_type(int const cellid) const;
-//!~~~
 //!
-//! Can be Wonton::UNKNOWN_TOPOLOGY, Wonton::TRI, Wonton::QUAD,
-//! Wonton::POLYGON, Wonton::TET, Wonton::PRISM, Wonton::PYRAMID,
-//! Wonton::HEX, Wonton::POLYHEDRON
+//! NOTE: Element_type can be Wonton::UNKNOWN_TOPOLOGY, Wonton::TRI,
+//!       Wonton::QUAD, Wonton::POLYGON, Wonton::TET, Wonton::PRISM,
+//!       Wonton::PYRAMID, Wonton::HEX, Wonton::POLYHEDRON
+//!
+//! GID_t get_global_id(int const id, Entity_kind const kind) const;
+//!
+//! NOTE: GID_t == int64_t
+//!       Entity_kind can be Wonton::CELL, Wonton::SIDE, Wonton::WEDGE,
+//!       Wonton::FACE, Wonton::EDGE, Wonton::NODE, Wonton::CORNER
 //!
 //!
-//!~~~
+//!~~~ GROUP III: forward and backward connectivity
 //! void cell_get_faces_and_dirs(int const cellid, std::vector<int> *cfaces,
 //!                              std::vector<int> *cfdirs) const;
-//!~~~
 //!
 //! NOTE: The 'cfdirs' conveys the directions in which the faces are used by
-//! the cell. If the natural normal of the face points out of the cell, its
-//! direction should be returned as 1, if not, it should be returned as -1
+//!       the cell. If the natural normal of the face points out of the cell,
+//!       its direction should be returned as 1, if not, it should be returned
+//!       as -1.
 //!
-//!
-//!~~~
 //! void cell_get_nodes(int const cellid, std::vector<int> *cnodes) const;
 //!
 //! void face_get_nodes(int const faceid, std::vector<int> *fnodes) const;
@@ -141,13 +146,16 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! void node_get_cells(int const nodeid, Wonton::Entity_type etype,
 //!                     std::vector<int> *ncells) const;
 //!
+//!
+//!~~~ GROUP IV: mesh geometry
 //! template<int D>
 //! void node_get_coordinates(int const nodeid, Wonton::Point<D> *pp) const;
 //!
-//! GID_t get_global_id(int const id, Entity_kind const kind) const;
-//! (where GID_t == int64_t)
+//! NOTE: This is the only function that has to be templated on the space
+//!       dimension. The other function can be implemented for a fixed space
+//!       dimension.
 //!
-//!~~~
+//!
 //! ******************************** NOTE ***********************************
 //!
 //! THIS IS AN INCOMPLETE CLASS DESIGNED TO BE USED IN A 'CRTP' (CURIOUSLY
@@ -155,23 +163,27 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! PROVIDE A COMPLETE MESH CLASS
 //! (See https://en.m.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 //!
-//! So, If one is writing a mesh wrapper class called @c MY_MESH_WRAPPER, it is
-//! declared like so
+//! So, if one is writing a mesh wrapper class called @c MY_MESH_WRAPPER, it is
+//! declared like so (see also example in portage/app/fixed_d_app)
 //!
 //!~~~
 //! class MY_MESH_WRAPPER : public AuxMeshTopology<MY_MESH_WRAPPER>
-//! {......}
+//! {
+//!    required methods();  // see four groups above
+//!    ...
+//!    optional methods();  // re-implementation of AuxMeshTopology API
+//!    ...
+//! };
 //!~~~
 //! and it will automatically have the methods of the AuxMeshTopology class.
 //!
-//! If MY_MESH_WRAPPER has equivalent classes for the ones in
-//! AuxMeshTopology (possibly because they are more efficient), then
-//! the ones from AuxMeshTopology are overridden
+//! If MY_MESH_WRAPPER has methods for the ones in AuxMeshTopology (possibly
+//! because they are more efficient), then the ones from AuxMeshTopology are
+//! overridden.
 //!
 //! NOTE THAT THIS CLASS IS NOT DESIGNED TO EVER BE INSTANTIATED DIRECTLY
 //!
 //!***************************************************************************
-
 
 
 template<typename BasicMesh>
