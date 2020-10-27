@@ -155,7 +155,7 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //!       dimension. If someone is implementing a mesh wrapper class to work
 //!       with a fixed space dimension (D=1 or 2 or 3), this method has to 
 //!       be available for all dimensions. It can be empty or throw an exception 
-//!       for a non-relevant dimensions? The other methods can be implemented 
+//!       for a non-relevant dimensions. The other methods can be implemented 
 //!       for a fixed space dimension. 
 //!
 //!
