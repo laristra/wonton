@@ -151,9 +151,12 @@ void build_sides_3D(AuxMeshTopology<BasicMesh>& mesh);
 //! template<int D>
 //! void node_get_coordinates(int const nodeid, Wonton::Point<D> *pp) const;
 //!
-//! NOTE: This is the only function that has to be templated on the space
-//!       dimension. The other functions can be implemented for a fixed space
-//!       dimension.
+//! NOTE: This is the only method that has to be templated on the space
+//!       dimension. If someone is implementing a mesh wrapper class to work
+//!       with a fixed space dimension (D=1 or 2 or 3), this method has to 
+//!       be available for all dimensions. It can be empty or throw an exception 
+//!       for a non-relevant dimensions? The other methods can be implemented 
+//!       for a fixed space dimension. 
 //!
 //!
 //! ******************************** NOTE ***********************************
