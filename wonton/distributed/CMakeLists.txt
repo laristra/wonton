@@ -43,12 +43,14 @@ install(TARGETS wonton_distributed
 
 if (ENABLE_UNIT_TESTS)
 
-  wonton_add_unittest(test_mpi_ghost_manager
-    SOURCES test/test_mpi_ghost_manager.cc
-    LIBRARIES wonton_distributed
-    POLICY MPI
-    THREADS 4
-    )
+  if (WONTON_ENABLE_Jali)
+    wonton_add_unittest(test_mpi_ghost_manager
+      SOURCES test/test_mpi_ghost_manager.cc
+      LIBRARIES wonton_distributed
+      POLICY MPI
+      THREADS 4
+      )
+  endif ()
   
 endif ()
 
