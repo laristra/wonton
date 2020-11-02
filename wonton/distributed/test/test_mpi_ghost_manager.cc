@@ -11,6 +11,13 @@
 #include "wonton/support/wonton.h"
 #include "wonton/distributed/mpi_ghost_manager.h"
 
+#include "wonton/mesh/jali/jali_mesh_wrapper.h"
+#include "wonton/state/jali/jali_state_wrapper.h"
+
+// Jali headers
+#include "Mesh.hh"
+#include "MeshFactory.hh"
+
 TEST(GhostManager, CommMatrices) {
 
   int rank = 0;

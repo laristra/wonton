@@ -8,9 +8,10 @@
 #define WONTON_MPI_GHOST_MANAGER_H
 
 #include <map>
+#include <numeric>
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
-#include "portage/support/portage.h"
+
 
 #ifdef WONTON_ENABLE_MPI
 namespace Wonton {
