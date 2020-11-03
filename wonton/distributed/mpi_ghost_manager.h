@@ -282,6 +282,7 @@ private:
 
     num_mats = state.num_materials() + 1;
     send.matrix.resize(num_mats);
+    send.count.resize(num_mats);
     take.matrix.resize(num_mats);
     take.count.resize(num_mats);
 
@@ -297,6 +298,7 @@ private:
 
       send.matrix[m].resize(num_ranks);
       take.matrix[m].resize(num_ranks);
+      send.count[m].resize(num_ranks);
       take.count[m].resize(num_ranks);
 
       std::vector<int> entities;
