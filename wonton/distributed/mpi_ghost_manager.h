@@ -146,6 +146,98 @@ public:
   }
 
   /**
+   * @brief Update vector field values on ghost cells.
+   *
+   * @tparam dim: number of components of each vector.
+   * @param field: the vector field array.
+   * @param m: the material index.
+   * @param cache: whether to cache values or not (for tests).
+   */
+  template<int dim>
+  void update_values(Vector<dim>* field, int m, bool cache = false) {
+
+    static_assert(0 < dim and dim < 4, "invalid dimension");
+
+    if (cache) {
+      if (send.values.empty() or take.values.empty()) {
+        send.values.resize(num_mats);
+        take.values.resize(num_mats);
+        for (int i = 0; i < num_mats; ++i) {
+          send.values[i].resize(num_ranks);
+          take.values[i].resize(num_ranks);
+        }
+      }
+    }
+
+    // skip if no material data for this rank
+    if (field == nullptr) { return; }
+
+    // create a MPI contiguous type for serialization
+    MPI_Datatype MPI_Vector;
+    MPI_Type_contiguous(dim, MPI_DOUBLE, &MPI_Vector);
+    MPI_Type_commit(&MPI_Vector);
+
+    std::vector<double> buffer[num_ranks]; // stride = dim
+    std::vector<MPI_Request> requests;
+
+    // step 1: send owned values
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and not send.matrix[m][i].empty()) {
+        buffer[i].clear();
+        send.count[m][i] = send.matrix[m][i].size();
+        buffer[i].reserve(dim * send.count[m][i]);
+
+        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
+          assert(not is_ghost(j));
+          for (int d = 0; d < dim; ++d) {
+            buffer[i].emplace_back(field[j][d]);
+          }
+        }
+
+        MPI_Request request;
+        MPI_Isend(buffer[i].data(), send.count[m][i], MPI_Vector, i, 0, comm, &request);
+        requests.emplace_back(request);
+
+        if (cache) {
+          send.values[m][i].resize(buffer[i].size());
+          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
+        }
+      }
+    }
+
+    // step 2: receive ghost values
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and take.count[m][i]) {
+        buffer[i].resize(dim * take.count[m][i]);
+        MPI_Request request;
+        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_Vector, i, 0, comm, &request);
+        requests.emplace_back(request);
+      }
+    }
+
+    // step 3: update vector field
+    MPI_Waitall(requests.size(), requests.data(), status);
+
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and take.count[m][i]) {
+        for (int j = 0; j < take.count[m][i]; ++j) {
+          int const& gid = take.matrix[m][i][j];
+          int const& lid = take.lookup[gid];
+          for (int d = 0; d < dim; ++d) {
+            field[lid][d] = buffer[i][j * dim + d];
+          }
+        }
+
+        if (cache) {
+          take.values[m][i].resize(dim * take.count[m][i]);
+          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
+        }
+        buffer[i].clear();
+      }
+    }
+  }
+
+  /**
    * @brief Retrieve the list of owned entities to send to each rank.
    *
    * @param m: material index.
@@ -190,6 +282,7 @@ private:
 
     num_mats = state.num_materials() + 1;
     send.matrix.resize(num_mats);
+    send.count.resize(num_mats);
     take.matrix.resize(num_mats);
     take.count.resize(num_mats);
 
@@ -205,6 +298,7 @@ private:
 
       send.matrix[m].resize(num_ranks);
       take.matrix[m].resize(num_ranks);
+      send.count[m].resize(num_ranks);
       take.count[m].resize(num_ranks);
 
       std::vector<int> entities;
@@ -367,7 +461,7 @@ private:
     std::vector<std::vector<std::vector<int>>> matrix {};
     /** exchanged entities count per material */
     std::vector<std::vector<int>> count {};
-    /** cached values per rank for tests */
+    /** cached values per rank for tests, stride = dim for vector fields */
     std::vector<std::vector<std::vector<double>>> values {};
   };
 
