@@ -158,6 +158,17 @@ public:
 
     static_assert(0 < dim and dim < 4, "invalid dimension");
 
+    if (cache) {
+      if (send.values.empty() or take.values.empty()) {
+        send.values.resize(num_mats);
+        take.values.resize(num_mats);
+        for (int i = 0; i < num_mats; ++i) {
+          send.values[i].resize(num_ranks);
+          take.values[i].resize(num_ranks);
+        }
+      }
+    }
+
     // skip if no material data for this rank
     if (field == nullptr) { return; }
 
