@@ -204,7 +204,7 @@ public:
       }
     }
 
-    // step 3: update state
+    // step 3: update vector field
     MPI_Waitall(requests.size(), requests.data(), status);
 
     for (int i = 0; i < num_ranks; ++i) {
@@ -212,7 +212,6 @@ public:
         for (int j = 0; j < take.count[m][i]; ++j) {
           int const& gid = take.matrix[m][i][j];
           int const& lid = take.lookup[gid];
-          // copy each vector component back
           for (int d = 0; d < dim; ++d) {
             field[lid][d] = buffer[i][j * dim + d];
           }
