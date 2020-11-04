@@ -25,9 +25,12 @@
 class GhostManagerTest : public ::testing::Test {
 
 protected:
-  using GhostManager = Wonton::MPI_GhostManager<Wonton::Jali_Mesh_Wrapper,
-                                                Wonton::Jali_State_Wrapper,
-                                                Wonton::CELL>;
+  using CellGhostManager = Wonton::MPI_GhostManager<Wonton::Jali_Mesh_Wrapper,
+                                                    Wonton::Jali_State_Wrapper,
+                                                    Wonton::CELL>;
+  using NodeGhostManager = Wonton::MPI_GhostManager<Wonton::Jali_Mesh_Wrapper,
+                                                    Wonton::Jali_State_Wrapper,
+                                                    Wonton::NODE>;
 
   /**
    * @brief Prepare the tests.
@@ -44,7 +47,7 @@ protected:
    * @param ghost_manager: the ghost manager.
    * @param mesh: the mesh.
    */
-  template<class Mesh>
+  template<class Mesh, typename GhostManager>
   void verify_communication_matrices(GhostManager const& ghost_manager,
                                      Mesh const& mesh) const {
 
@@ -156,6 +159,7 @@ protected:
    * @param num_ranks: the number of MPI ranks.
    * @param comm: the MPI communicator.
    */
+  template<typename GhostManager>
   void verify_values(GhostManager const& ghost_manager) const {
 
     // gather all sent/received values from all ranks to the master
@@ -264,7 +268,7 @@ TEST_F(GhostManagerTest, CommMatrices) {
   Wonton::Jali_Mesh_Wrapper mesh(*jali_mesh);
   Wonton::Jali_State_Wrapper state(*jali_state);
 
-  GhostManager ghost_manager(mesh, state, comm);
+  CellGhostManager ghost_manager(mesh, state, comm);
 
   verify_communication_matrices(ghost_manager, mesh);
 }
@@ -288,7 +292,7 @@ TEST_F(GhostManagerTest, UpdateScalarField) {
 
   state.mesh_add_data<double>(Wonton::CELL, "temperature", field);
 
-  GhostManager ghost_manager(mesh, state, comm);
+  CellGhostManager ghost_manager(mesh, state, comm);
   ghost_manager.update_values("temperature", true);
 
   verify_values(ghost_manager);
@@ -301,19 +305,21 @@ TEST_F(GhostManagerTest, UpdateVectorField) {
   Wonton::Jali_Mesh_Wrapper  mesh(*jali_mesh);
   Wonton::Jali_State_Wrapper state(*jali_state);
 
-  int const num_owned_cells = mesh.num_owned_cells();
-  int const num_ghost_cells = mesh.num_ghost_cells();
-  Wonton::Vector<2> field[num_owned_cells + num_ghost_cells];
+  int const num_owned_nodes = mesh.num_owned_nodes();
+  int const num_ghost_nodes = mesh.num_ghost_nodes();
+  Wonton::Vector<2> field[num_owned_nodes + num_ghost_nodes];
 
-  for (int i = 0; i < num_owned_cells; ++i) {
-    Wonton::Point<2> centroid;
-    mesh.cell_centroid(i, &centroid);
-    field[i][0] = centroid[0] + 2 * centroid[1];
-    field[i][1] = centroid[1] + 2 * centroid[0];
+  for (int i = 0; i < num_owned_nodes; ++i) {
+    Wonton::Point<2> coord;
+    mesh.node_get_coordinates(i, &coord);
+    field[i][0] = coord[0] + 2 * coord[1];
+    field[i][1] = coord[1] + 2 * coord[0];
   }
 
-  GhostManager ghost_manager(mesh, state, comm);
-  ghost_manager.update_values(field, 0, true);
+  state.mesh_add_data<Wonton::Vector<2>>(Wonton::NODE, "velocity", field);
+  
+  NodeGhostManager ghost_manager(mesh, state, comm);
+  ghost_manager.update_values("velocity", true);
 
   verify_values(ghost_manager);
 }
