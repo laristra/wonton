@@ -322,7 +322,6 @@ private:
         for (auto&& id : take.lookup) { entities.emplace_back(id.first); }
       }
 
-      if (entities.empty()) { continue; }
 
       // step 2: gather number of ghosts for all ranks and deduce offsets
       num_ghosts[rank] = entities.size();
