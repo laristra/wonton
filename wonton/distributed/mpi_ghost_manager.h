@@ -69,174 +69,92 @@ public:
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
 
     if (multimat) {
-      static_assert(entity == Wonton::CELL, "only for cell-centered fields");
-      for (int m = 1; m < num_mats; ++m) {
-        double* data = nullptr;
-        state.mat_get_celldata(field, m - 1, &data);
-        update_values(data, m, cache);
+      assert(entity == Wonton::CELL);
+
+      for (int m = 0; m < num_mats; ++m) {
+        if (state.get_data_type(field) == typeid(double)) {
+
+          double* matdata = nullptr;
+          state.mat_get_celldata(field, m, &matdata);
+          update_ghost_values_mat(matdata, m, cache);
+
+        } else if (state.get_data_type(field) == typeid(Vector<2>)) {
+
+          Vector<2>* matdata = nullptr;
+          state.mat_get_celldata(field, m, &matdata);
+          update_ghost_values_mat(matdata, m, cache);
+
+        } else if (state.get_data_type(field) == typeid(Vector<3>)) {
+
+          Vector<3>* matdata = nullptr;
+          state.mat_get_celldata(field, m, &matdata);
+          update_ghost_values_mat(matdata, m, cache);
+
+        }
       }
-    } else {
-      double* data = nullptr;
-      state.mesh_get_data(entity, field, &data);
-      update_values(data, 0, cache);
-    } // if not multimat
+      
+    } else {  // mesh field
+
+      if (state.get_data_type(field) == typeid(double)) {
+
+        double *meshdata = nullptr;
+        state.mesh_get_data(entity, field, &meshdata);
+        update_ghost_values_mesh(meshdata, cache);
+
+      } else if (state.get_data_type(field) == typeid(Vector<2>)) {
+
+        Vector<2>* meshdata = nullptr;
+        state.mesh_get_data(entity, field, &meshdata);
+        update_ghost_values_mesh(meshdata, cache);
+
+      } else if (state.get_data_type(field) == typeid(Vector<3>)) {
+
+        Vector<3>* meshdata = nullptr;
+        state.mesh_get_data(entity, field, &meshdata);
+        update_ghost_values_mesh(meshdata, cache);
+
+      }
+
+    }
   }
 
-  /**
-   * @brief Send owned values and receive ghost values.
+
+  /** @brief Update ghosts of compact array of material cell values
    *
-   * @param data: field values array (size = num_owned+num_ghost)
-   * @param m: material index.
-   * @param cache: whether to cache values or not.
-   */
-  void update_values(double* data, int m, bool cache) {
-
-    // skip if no material data for this rank
-    if (data == nullptr) { return; }
-
-    std::vector<double> buffer[num_ranks];
-    std::vector<MPI_Request> requests;
-
-    // step 1: send field values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and not send.matrix[m][i].empty()) {
-        buffer[i].clear();
-        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
-          assert(not is_ghost(j));
-          buffer[i].emplace_back(data[j]);
-        }
-        MPI_Request request;
-        MPI_Isend(buffer[i].data(), buffer[i].size(), MPI_DOUBLE, i, 0, comm, &request);
-        requests.emplace_back(request);
-
-        if (cache) {
-          send.values[m][i].resize(buffer[i].size());
-          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
-        }
-      }
-    }
-
-    // step 2: receive field data
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        buffer[i].resize(take.count[m][i]);
-        MPI_Request request;
-        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_DOUBLE, i, 0, comm, &request);
-        requests.emplace_back(request);
-      }
-    }
-
-    // step 3: update state
-    MPI_Waitall(requests.size(), requests.data(), status);
-
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        for (int j = 0; j < take.count[m][i]; ++j) {
-          int const& gid = take.matrix[m][i][j];
-          int const& lid = take.lookup[gid];
-          data[lid] = buffer[i][j];
-        }
-        if (cache) {
-          take.values[m][i].resize(take.count[m][i]);
-          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
-        }
-        buffer[i].clear();
-      }
-    }
-  }
-
-  /**
-   * @brief Update vector field values on ghost cells.
+   * @param matdata  [IN/OUT}: compact material cell data
+   * @param m        [IN]    : material ID
+   * @param cache    [IN]    : whether to cache values or not for this field.
    *
-   * @tparam dim: number of components of each vector.
-   * @param field: the vector field array.
-   * @param m: the material index.
-   * @param cache: whether to cache values or not (for tests).
+   * matdata is compact array of material cell values, sized to
+   * nmatcells_owned + nmatcells_ghost but with only the owned values
+   * filled in. The ghost values are filled in by this routine.
+   *
+   * material ID is 0 offset unlike in update_values call
    */
-  template<int dim>
-  void update_values(Vector<dim>* field, int m, bool cache = false) {
+  template<typename T>
+  void update_ghost_values_mat(T *matdata, int m, bool cache) {
+    int nallent_mesh = mesh.num_entities(Wonton::CELL, Wonton::PARALLEL_OWNED);
+    std::unique_ptr<T> meshdata = std::make_unique<T>(nallent_mesh);
 
-    static_assert(0 < dim and dim < 4, "invalid dimension");
-
-    if (cache) {
-      if (send.values.empty() or take.values.empty()) {
-        send.values.resize(num_mats);
-        take.values.resize(num_mats);
-        for (int i = 0; i < num_mats; ++i) {
-          send.values[i].resize(num_ranks);
-          take.values[i].resize(num_ranks);
-        }
-      }
-    }
-
-    // skip if no material data for this rank
-    if (field == nullptr) { return; }
-
-    // create a MPI contiguous type for serialization
-    MPI_Datatype MPI_Vector;
-    MPI_Type_contiguous(dim, MPI_DOUBLE, &MPI_Vector);
-    MPI_Type_commit(&MPI_Vector);
-
-    std::vector<double> buffer[num_ranks]; // stride = dim
-    std::vector<MPI_Request> requests;
-
-    // step 1: send owned values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and not send.matrix[m][i].empty()) {
-        buffer[i].clear();
-        send.count[m][i] = send.matrix[m][i].size();
-        buffer[i].reserve(dim * send.count[m][i]);
-
-        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
-          assert(not is_ghost(j));
-          for (int d = 0; d < dim; ++d) {
-            buffer[i].emplace_back(field[j][d]);
-          }
-        }
-
-        MPI_Request request;
-        MPI_Isend(buffer[i].data(), send.count[m][i], MPI_Vector, i, 0, comm, &request);
-        requests.emplace_back(request);
-
-        if (cache) {
-          send.values[m][i].resize(buffer[i].size());
-          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
-        }
-      }
-    }
-
-    // step 2: receive ghost values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        buffer[i].resize(dim * take.count[m][i]);
-        MPI_Request request;
-        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_Vector, i, 0, comm, &request);
-        requests.emplace_back(request);
-      }
-    }
-
-    // step 3: update vector field
-    MPI_Waitall(requests.size(), requests.data(), status);
-
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        for (int j = 0; j < take.count[m][i]; ++j) {
-          int const& gid = take.matrix[m][i][j];
-          int const& lid = take.lookup[gid];
-          for (int d = 0; d < dim; ++d) {
-            field[lid][d] = buffer[i][j * dim + d];
-          }
-        }
-
-        if (cache) {
-          take.values[m][i].resize(dim * take.count[m][i]);
-          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
-        }
-        buffer[i].clear();
-      }
-    }
+    mat_to_mesh_values(matdata, m, meshdata.get());
+    update_values(meshdata.get(), m, cache);
+    mesh_to_mat_values(meshdata.get(), m, matdata);
   }
-
+  
+  
+  /** @brief Update ghosts of compact array of material cell values
+   *
+   * @param meshdata  [IN/OUT}: data on mesh entities
+   * @param cache: whether to cache values or not for this field.
+   *
+   * Sized to nowned+nghost entities but with only owned entities filled in
+   */
+  template<typename T>
+  void update_ghost_values_mesh(T *meshdata, bool cache) {
+    update_values(meshdata, 0, cache);
+  }
+  
+  
   /**
    * @brief Retrieve the list of owned entities to send to each rank.
    *
@@ -446,6 +364,225 @@ private:
       case Wonton::CELL: return mesh.cell_get_type(i) == Wonton::PARALLEL_GHOST;
       case Wonton::NODE: return mesh.node_get_type(i) == Wonton::PARALLEL_GHOST;
       default: return false;
+    }
+  }
+
+  /** @brief convert a compact array of material cell values to a full
+   * array of mesh cell values for that material
+   *
+   * @param matvals  [IN] : compact array of material cell values
+   * @param im       [IN] : mat id (0 indexed, not offset as in update_values)
+   * @param meshvals [OUT]: full array of mesh cell values
+   *
+   * matvals size  = num owned mat cells + num ghost mat cells
+   * meshvals size = num owned mesh cells + num ghost mesh cells
+   *
+   * meshvals must be pre-allocated and correctly sized
+   *
+   * NOTE: THIS WOULD BE GOOD TO HAVE IN THE STATE MANAGER DIRECTLY
+   */
+  template<typename T>
+  void mat_to_mesh_values(T *matvals, int im, T *meshvals) {
+    std::vector<int> matcells;
+    state.mat_get_cells(im, &matcells);  // gives ALL cells OWNED+GHOST
+    int nmatcells = matcells.size();
+    for (int i = 0; i < nmatcells; i++)
+      meshvals[matcells[i]] = matvals[i];
+  }
+  
+  /** @brief convert a compact array of material cell values to a full
+   * array of mesh cell values for that material
+   *
+   * @param meshvals [IN] : full array of mesh cell values
+   * @param im       [IN] : mat id (0 indexed, not offset as in update_values)
+   * @param matvals  [OUT]: compact array of material cell values
+   *
+   * meshvals size = num owned mesh cells + num ghost mesh cells
+   * matvals size  = num owned mat cells + num ghost mat cells
+   *
+   * meshvals must be pre-allocated and correctly sized
+   *
+   * NOTE: THIS WOULD BE GOOD TO HAVE IN THE STATE MANAGER DIRECTLY
+   */
+  template<typename T>
+  void mesh_to_mat_values(T *meshvals, int im, T *matvals) {
+    std::vector<int> matcells;
+    state.mat_get_cells(im, &matcells);  // gives ALL cells OWNED+GHOST
+    for (auto && c : matcells) {
+      int j = state.cell_index_in_material(c, im);
+      matvals[j] = meshvals[c];
+    }
+  }
+
+  /**
+   * @brief Send owned values and receive ghost values.
+   *
+   * @param data: field values array (size = num_owned_in_mesh + num_ghost_in_mesh)
+   * @param m: material index.
+   * @param cache: whether to cache values or not.
+   *
+   * Note that the data must not be the compact array of material cell
+   * values; rather it has to be the full mesh cell values array
+   *
+   * NOTE: if the inner routine does not know anything about materials
+   * per se and is just populating mesh sized array, then the comm
+   * matrices may not need to be material aware. The only savings we
+   * are getting is the size of the buffers we are communicating but
+   * not the number of communications.  So, we can consider
+   * communicating the full mesh sized buffer for materials as well
+   * and doing the map from mesh cell values to mat cell values
+   * outside the lowest level update_values call using the state
+   * manager.
+   */
+  void update_values(double* data, int m, bool cache) {
+
+    // skip if no material data for this rank
+    if (data == nullptr) { return; }
+
+    std::vector<double> buffer[num_ranks];
+    std::vector<MPI_Request> requests;
+
+    // step 1: send field values
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and not send.matrix[m][i].empty()) {
+        buffer[i].clear();
+        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
+          assert(not is_ghost(j));
+          buffer[i].emplace_back(data[j]);
+        }
+        MPI_Request request;
+        MPI_Isend(buffer[i].data(), buffer[i].size(), MPI_DOUBLE, i, 0, comm, &request);
+        requests.emplace_back(request);
+
+        if (cache) {
+          send.values[m][i].resize(buffer[i].size());
+          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
+        }
+      }
+    }
+
+    // step 2: receive field data
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and take.count[m][i]) {
+        buffer[i].resize(take.count[m][i]);
+        MPI_Request request;
+        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_DOUBLE, i, 0, comm, &request);
+        requests.emplace_back(request);
+      }
+    }
+
+    // step 3: update state
+    MPI_Waitall(requests.size(), requests.data(), status);
+
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and take.count[m][i]) {
+        for (int j = 0; j < take.count[m][i]; ++j) {
+          int const& gid = take.matrix[m][i][j];
+          int const& lid = take.lookup[gid];
+          data[lid] = buffer[i][j];
+        }
+        if (cache) {
+          take.values[m][i].resize(take.count[m][i]);
+          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
+        }
+        buffer[i].clear();
+      }
+    }
+  }
+
+  /**
+   * @brief Update vector field values on ghost cells.
+   *
+   * @tparam dim: number of components of each vector.
+   * @param field: field Vector array (size = num_owned_in_mesh + num_ghost_in_mesh) 
+   * @param m: the material index.
+   * @param cache: whether to cache values or not (for tests).
+   *
+   * Note that the data must not be the compact array of material cell
+   * values; rather it has to be the full mesh cell values array
+
+   */
+  template<int dim>
+  void update_values(Vector<dim>* field, int m, bool cache = false) {
+
+    static_assert(0 < dim and dim < 4, "invalid dimension");
+
+    if (cache) {
+      if (send.values.empty() or take.values.empty()) {
+        send.values.resize(num_mats);
+        take.values.resize(num_mats);
+        for (int i = 0; i < num_mats; ++i) {
+          send.values[i].resize(num_ranks);
+          take.values[i].resize(num_ranks);
+        }
+      }
+    }
+
+    // skip if no material data for this rank
+    if (field == nullptr) { return; }
+
+    // create a MPI contiguous type for serialization
+    MPI_Datatype MPI_Vector;
+    MPI_Type_contiguous(dim, MPI_DOUBLE, &MPI_Vector);
+    MPI_Type_commit(&MPI_Vector);
+
+    std::vector<double> buffer[num_ranks]; // stride = dim
+    std::vector<MPI_Request> requests;
+
+    // step 1: send owned values
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and not send.matrix[m][i].empty()) {
+        buffer[i].clear();
+        send.count[m][i] = send.matrix[m][i].size();
+        buffer[i].reserve(dim * send.count[m][i]);
+
+        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
+          assert(not is_ghost(j));
+          for (int d = 0; d < dim; ++d) {
+            buffer[i].emplace_back(field[j][d]);
+          }
+        }
+
+        MPI_Request request;
+        MPI_Isend(buffer[i].data(), send.count[m][i], MPI_Vector, i, 0, comm, &request);
+        requests.emplace_back(request);
+
+        if (cache) {
+          send.values[m][i].resize(buffer[i].size());
+          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
+        }
+      }
+    }
+
+    // step 2: receive ghost values
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and take.count[m][i]) {
+        buffer[i].resize(dim * take.count[m][i]);
+        MPI_Request request;
+        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_Vector, i, 0, comm, &request);
+        requests.emplace_back(request);
+      }
+    }
+
+    // step 3: update vector field
+    MPI_Waitall(requests.size(), requests.data(), status);
+
+    for (int i = 0; i < num_ranks; ++i) {
+      if (i != rank and take.count[m][i]) {
+        for (int j = 0; j < take.count[m][i]; ++j) {
+          int const& gid = take.matrix[m][i][j];
+          int const& lid = take.lookup[gid];
+          for (int d = 0; d < dim; ++d) {
+            field[lid][d] = buffer[i][j * dim + d];
+          }
+        }
+
+        if (cache) {
+          take.values[m][i].resize(dim * take.count[m][i]);
+          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
+        }
+        buffer[i].clear();
+      }
     }
   }
 
