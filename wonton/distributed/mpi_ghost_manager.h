@@ -133,7 +133,7 @@ public:
    */
   template<typename T>
   void update_ghost_values_mat(T *matdata, int m, bool cache=false) {
-    int nallent_mesh = mesh.num_entities(Wonton::CELL, Wonton::PARALLEL_OWNED);
+    int nallent_mesh = mesh.num_entities(Wonton::CELL, Wonton::ALL);
     std::unique_ptr<T> meshdata = std::make_unique<T>(nallent_mesh);
 
     mat_to_mesh_values(matdata, m, meshdata.get());
