@@ -132,12 +132,12 @@ public:
    * material ID is 0 offset unlike in update_values call
    */
   template<typename T>
-  void update_ghost_values_mat(T *matdata, int m, bool cache) {
+  void update_ghost_values_mat(T *matdata, int m, bool cache=false) {
     int nallent_mesh = mesh.num_entities(Wonton::CELL, Wonton::PARALLEL_OWNED);
     std::unique_ptr<T> meshdata = std::make_unique<T>(nallent_mesh);
 
     mat_to_mesh_values(matdata, m, meshdata.get());
-    update_values(meshdata.get(), m, cache);
+    update_values(meshdata.get(), m+1, cache);
     mesh_to_mat_values(meshdata.get(), m, matdata);
   }
   
@@ -150,7 +150,7 @@ public:
    * Sized to nowned+nghost entities but with only owned entities filled in
    */
   template<typename T>
-  void update_ghost_values_mesh(T *meshdata, bool cache) {
+  void update_ghost_values_mesh(T *meshdata, bool cache=false) {
     update_values(meshdata, 0, cache);
   }
   
