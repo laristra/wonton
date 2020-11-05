@@ -71,24 +71,24 @@ public:
     if (multimat) {
       assert(entity == Wonton::CELL);
 
-      for (int m = 0; m < num_mats; ++m) {
+      for (int m = 1; m < num_mats; ++m) {
         if (state.get_data_type(field) == typeid(double)) {
 
           double* matdata = nullptr;
-          state.mat_get_celldata(field, m, &matdata);
-          update_ghost_values_mat(matdata, m, cache);
+          state.mat_get_celldata(field, m-1, &matdata);
+          update_ghost_values_mat(matdata, m-1, cache);
 
         } else if (state.get_data_type(field) == typeid(Vector<2>)) {
 
           Vector<2>* matdata = nullptr;
-          state.mat_get_celldata(field, m, &matdata);
-          update_ghost_values_mat(matdata, m, cache);
+          state.mat_get_celldata(field, m-1, &matdata);
+          update_ghost_values_mat(matdata, m-1, cache);
 
         } else if (state.get_data_type(field) == typeid(Vector<3>)) {
 
           Vector<3>* matdata = nullptr;
-          state.mat_get_celldata(field, m, &matdata);
-          update_ghost_values_mat(matdata, m, cache);
+          state.mat_get_celldata(field, m-1, &matdata);
+          update_ghost_values_mat(matdata, m-1, cache);
 
         }
       }
