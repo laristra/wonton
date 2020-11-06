@@ -295,7 +295,7 @@ TEST_F(GhostManagerTest, UpdateScalarField) {
   state.mesh_add_data<double>(Wonton::CELL, "temperature", field);
 
   CellGhostManager ghost_manager(mesh, state, comm);
-  ghost_manager.update_values("temperature", true);
+  ghost_manager.update_ghost_values("temperature", true);
 
   verify_values(ghost_manager);
 }
@@ -321,7 +321,7 @@ TEST_F(GhostManagerTest, UpdateVectorField) {
   state.mesh_add_data<Wonton::Vector<2>>(Wonton::NODE, "velocity", field);
   
   NodeGhostManager ghost_manager(mesh, state, comm);
-  ghost_manager.update_values("velocity", true);
+  ghost_manager.update_ghost_values("velocity", true);
 
   verify_values(ghost_manager);
 }
@@ -430,8 +430,8 @@ TEST_F(GhostManagerTest, UpdateMMScalarField2D) {
 
   
   // Update two sets of ghost values using the field name
-  ghost_manager.update_values("matscalar");
-  ghost_manager.update_values("matvector");
+  ghost_manager.update_ghost_values("matscalar");
+  ghost_manager.update_ghost_values("matvector");
 
 
   // Clear out the local copies of the multi-material arrays stored in
@@ -465,8 +465,8 @@ TEST_F(GhostManagerTest, UpdateMMScalarField2D) {
   // state manager directly (try with and without caching even though
   // we won't use caching here
   for (int m = 0; m < num_mats; m++) {
-    ghost_manager.update_material_values(state_volfracs[m].data(), m);
-    ghost_manager.update_material_values(state_centroids[m].data(), m, true);
+    ghost_manager.update_material_ghost_values(state_volfracs[m].data(), m);
+    ghost_manager.update_material_ghost_values(state_centroids[m].data(), m, true);
   }
 
   // Now compare the state values of ALL cells with calculated values;
