@@ -52,18 +52,7 @@ public:
    * @param field: the field to be remapped.
    * @param cache: whether to cache values or not for this field.
    */
-  void update_values(std::string const& field, bool cache = false) {
-
-    if (cache) {
-      if (send.values.empty() or take.values.empty()) {
-        send.values.resize(num_mats);
-        take.values.resize(num_mats);
-        for (int m = 0; m < num_mats; ++m) {
-          send.values[m].resize(num_ranks);
-          take.values[m].resize(num_ranks);
-        }
-      }
-    }
+  void update_ghost_values(std::string const& field, bool cache = false) {
 
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
@@ -100,10 +89,10 @@ public:
    * Here 'material_values' is a compact array of material cell values,
    * sized to num_owned + num_ghost but with only the owned values
    * filled in. The ghost values are filled in by this routine.
-   * Note that the material ID offset is zero unlike in 'update_values'.
+   * Note that the material ID offset is zero unlike in 'update_ghost_values'.
    */
   template<typename T>
-  void update_material_values(T* material_values, int m, bool cache = false) {
+  void update_material_ghost_values(T* material_values, int m, bool cache = false) {
 
     // convert to mesh cell-centric field
     int const num_mesh_cells = mesh.num_owned_cells() + mesh.num_ghost_cells();
@@ -117,7 +106,7 @@ public:
       mesh_values[material_cells[i]] = material_values[i];
     }
 
-    update_values(mesh_values.data(), m + 1, cache);
+    update_ghost_values(mesh_values.data(), m + 1, cache);
 
     // convert back to material cell-centric field
     for (auto&& c : material_cells) {
@@ -135,8 +124,8 @@ public:
    * Sized to nowned+nghost entities but with only owned entities filled in
    */
   template<typename T>
-  void update_mesh_values(T* values, bool cache = false) {
-    update_values(values, 0, cache);
+  void update_mesh_ghost_values(T* values, bool cache = false) {
+    update_ghost_values(values, 0, cache);
   }
   
   
@@ -364,7 +353,7 @@ private:
   void update_material_field(std::string const& field, int m, bool cache = false) {
     T* values;
     state.mat_get_celldata(field, m - 1, &values);
-    update_material_values(values, m - 1, cache);
+    update_material_ghost_values(values, m - 1, cache);
   }
 
   /**
@@ -378,7 +367,7 @@ private:
   void update_mesh_field(std::string const& field, bool cache = false) {
     T* values;
     state.mesh_get_data(entity, field, &values);
-    update_mesh_values(values, cache);
+    update_mesh_ghost_values(values, cache);
   }
 
   /**
@@ -401,10 +390,21 @@ private:
    * outside the lowest level update_values call using the state
    * manager.
    */
-  void update_values(double* data, int m, bool cache) {
+  void update_ghost_values(double* data, int m, bool cache) {
 
     // skip if no material data for this rank
     if (data == nullptr) { return; }
+
+    if (cache) {
+      if (send.values.empty() or take.values.empty()) {
+        send.values.resize(num_mats);
+        take.values.resize(num_mats);
+        for (int i = 0; i < num_mats; ++i) {
+          send.values[i].resize(num_ranks);
+          take.values[i].resize(num_ranks);
+        }
+      }
+    }
 
     std::vector<double> buffer[num_ranks];
     std::vector<MPI_Request> requests;
@@ -470,7 +470,7 @@ private:
 
    */
   template<int dim>
-  void update_values(Vector<dim>* field, int m, bool cache = false) {
+  void update_ghost_values(Vector<dim>* field, int m, bool cache = false) {
 
     static_assert(0 < dim and dim < 4, "invalid dimension");
 
