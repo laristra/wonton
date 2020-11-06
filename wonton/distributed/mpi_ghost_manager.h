@@ -135,8 +135,8 @@ public:
    * Sized to nowned+nghost entities but with only owned entities filled in
    */
   template<typename T>
-  void update_ghost_values_mesh(T *meshdata, bool cache=false) {
-    update_values(meshdata, 0, cache);
+  void update_mesh_values(T* values, bool cache = false) {
+    update_values(values, 0, cache);
   }
   
   
@@ -352,51 +352,33 @@ private:
     }
   }
 
-  /** @brief convert a compact array of material cell values to a full
-   * array of mesh cell values for that material
+  /**
+   * @brief Update the given material field values on ghost cells.
    *
-   * @param matvals  [IN] : compact array of material cell values
-   * @param im       [IN] : mat id (0 indexed, not offset as in update_values)
-   * @param meshvals [OUT]: full array of mesh cell values
-   *
-   * matvals size  = num owned mat cells + num ghost mat cells
-   * meshvals size = num owned mesh cells + num ghost mesh cells
-   *
-   * meshvals must be pre-allocated and correctly sized
-   *
-   * NOTE: THIS WOULD BE GOOD TO HAVE IN THE STATE MANAGER DIRECTLY
+   * @tparam T: the material field data type.
+   * @param field: the material field name.
+   * @param m: the material number.
+   * @param cache: whether to cache values or not.
    */
   template<typename T>
-  void mat_to_mesh_values(T *matvals, int im, T *meshvals) {
-    std::vector<int> matcells;
-    state.mat_get_cells(im, &matcells);  // gives ALL cells OWNED+GHOST
-    int nmatcells = matcells.size();
-    for (int i = 0; i < nmatcells; i++)
-      meshvals[matcells[i]] = matvals[i];
+  void update_material_field(std::string const& field, int m, bool cache = false) {
+    T* values;
+    state.mat_get_celldata(field, m - 1, &values);
+    update_material_values(values, m - 1, cache);
   }
-  
-  /** @brief convert a compact array of material cell values to a full
-   * array of mesh cell values for that material
+
+  /**
+   * @brief Update the given mesh field values on ghost cells.
    *
-   * @param meshvals [IN] : full array of mesh cell values
-   * @param im       [IN] : mat id (0 indexed, not offset as in update_values)
-   * @param matvals  [OUT]: compact array of material cell values
-   *
-   * meshvals size = num owned mesh cells + num ghost mesh cells
-   * matvals size  = num owned mat cells + num ghost mat cells
-   *
-   * meshvals must be pre-allocated and correctly sized
-   *
-   * NOTE: THIS WOULD BE GOOD TO HAVE IN THE STATE MANAGER DIRECTLY
+   * @tparam T: the mesh field data type.
+   * @param field: the mesh field name.
+   * @param cache: whether to cache values or not.
    */
   template<typename T>
-  void mesh_to_mat_values(T *meshvals, int im, T *matvals) {
-    std::vector<int> matcells;
-    state.mat_get_cells(im, &matcells);  // gives ALL cells OWNED+GHOST
-    for (auto && c : matcells) {
-      int j = state.cell_index_in_material(c, im);
-      matvals[j] = meshvals[c];
-    }
+  void update_mesh_field(std::string const& field, bool cache = false) {
+    T* values;
+    state.mesh_get_data(entity, field, &values);
+    update_mesh_values(values, cache);
   }
 
   /**
