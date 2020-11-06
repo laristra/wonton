@@ -462,10 +462,11 @@ TEST_F(GhostManagerTest, UpdateMMScalarField2D) {
 
 
   // Update the other two multi-material arrays not stored in the
-  // state manager directly
+  // state manager directly (try with and without caching even though
+  // we won't use caching here
   for (int m = 0; m < num_mats; m++) {
     ghost_manager.update_material_values(state_volfracs[m].data(), m);
-    ghost_manager.update_material_values(state_centroids[m].data(), m);
+    ghost_manager.update_material_values(state_centroids[m].data(), m, true);
   }
 
   // Now compare the state values of ALL cells with calculated values;

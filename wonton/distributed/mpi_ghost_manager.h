@@ -54,17 +54,6 @@ public:
    */
   void update_values(std::string const& field, bool cache = false) {
 
-    if (cache) {
-      if (send.values.empty() or take.values.empty()) {
-        send.values.resize(num_mats);
-        take.values.resize(num_mats);
-        for (int m = 0; m < num_mats; ++m) {
-          send.values[m].resize(num_ranks);
-          take.values[m].resize(num_ranks);
-        }
-      }
-    }
-
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
     int data_type = (state.get_data_type(field) == typeid(double) ? 1 :
@@ -405,6 +394,17 @@ private:
 
     // skip if no material data for this rank
     if (data == nullptr) { return; }
+
+    if (cache) {
+      if (send.values.empty() or take.values.empty()) {
+        send.values.resize(num_mats);
+        take.values.resize(num_mats);
+        for (int i = 0; i < num_mats; ++i) {
+          send.values[i].resize(num_ranks);
+          take.values[i].resize(num_ranks);
+        }
+      }
+    }
 
     std::vector<double> buffer[num_ranks];
     std::vector<MPI_Request> requests;
