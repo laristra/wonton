@@ -14,6 +14,8 @@
 #include "wonton/mesh/jali/jali_mesh_wrapper.h"
 #include "wonton/state/jali/jali_state_wrapper.h"
 
+#include "wonton/intersect/simple_intersect_for_tests.h"
+
 // Jali headers
 #include "Mesh.hh"
 #include "MeshFactory.hh"
@@ -322,4 +324,158 @@ TEST_F(GhostManagerTest, UpdateVectorField) {
   ghost_manager.update_values("velocity", true);
 
   verify_values(ghost_manager);
+}
+
+TEST_F(GhostManagerTest, UpdateMMScalarField2D) {
+
+  //    0,1           0.5,1         1,1
+  //     *-------------:------------*
+  //     |             :            |
+  //     |             :        2   |
+  //     |             :     mat2   |
+  //     |             :            |
+  //     |             :            |
+  //     |     0       +............|1,0.5
+  //     |   mat0      :            |
+  //     |             :            |
+  //     |             :     mat1   |
+  //     |             :        1   |
+  //     |             :            |
+  //     *-------------:------------*
+  //    0,0           0.5,0         1,0
+
+  auto jali_mesh  = Jali::MeshFactory(comm)(0.0, 0.0, 1.0, 1.0, 5, 5);
+  auto jali_state = Jali::State::create(jali_mesh);
+  Wonton::Jali_Mesh_Wrapper  mesh(*jali_mesh);
+  Wonton::Jali_State_Wrapper state(*jali_state);
+
+  int const num_owned_cells = mesh.num_owned_cells();
+  int const num_ghost_cells = mesh.num_ghost_cells();
+  int const num_cells = num_owned_cells + num_ghost_cells;
+
+  int const num_mats = 3;
+  std::string const materials[num_mats] = {"mat0", "mat1", "mat2"};
+  Wonton::Point<2> const lower_bound[num_mats] = {{0.0, 0.0}, {0.5, 0.0}, {0.5, 0.5}};
+  Wonton::Point<2> const upper_bound[num_mats] = {{0.5, 1.0}, {1.0, 0.5}, {1.0, 1.0}};
+
+  std::vector<int> mat_cells[num_mats];
+  std::vector<double> calc_volfracs[num_mats];
+  std::vector<Wonton::Vector<2>> calc_centroids[num_mats];
+  std::vector<double> calc_vals[num_mats];
+  std::vector<Wonton::Vector<2>> calc_vecs[num_mats];
+
+  // Calculate the cells that go into each material and material field
+  // values on those cells based on intersection with a known material
+  // geometry
+
+  for (int c = 0; c < num_cells; c++) {
+    std::vector<Wonton::Point<2>> coords;
+    mesh.cell_get_coordinates(c, &coords);
+
+    double cellvol = mesh.cell_volume(c);
+    double const min_vol = 1.E-6;
+
+    Wonton::Point<2> box[2];
+    BOX_INTERSECT::bounding_box<2>(coords, box, box+1);
+
+    std::vector<double> moments;
+    for (int m = 0; m < num_mats; m++) {
+      bool intersected =
+          BOX_INTERSECT::intersect_boxes<2>(lower_bound[m], upper_bound[m],
+                                            box[0], box[1], &moments);
+      if (intersected and moments[0] > min_vol) {  // non-trivial intersection
+        mat_cells[m].emplace_back(c);
+
+        calc_volfracs[m].emplace_back(moments[0] / cellvol);
+        
+        Wonton::Vector<2> p(moments[1] / moments[0], moments[2] / moments[0]);
+
+        calc_centroids[m].emplace_back(p);
+        calc_vals[m].emplace_back((m + 1) * (m + 1) * (p[0] + p[1]));
+        calc_vecs[m].emplace_back((m + 1) * p[0], (m + 2) * p[1]);
+      }
+    }
+  }
+
+  // Create a multi-material state and initialize ONLY OWNED cell values
+
+  std::vector<double> state_volfracs[num_mats];
+  std::vector<Wonton::Vector<2>> state_centroids[num_mats];
+  std::vector<double> state_vals[num_mats];
+  std::vector<Wonton::Vector<2>> state_vecs[num_mats];
+    
+  for (int m = 0; m < num_mats; m++) {
+    state.add_material(materials[m], mat_cells[m]);
+    int nmatcells = mat_cells[m].size();
+
+    state_volfracs[m].reserve(nmatcells);
+    state_centroids[m].reserve(nmatcells);
+    state_vals[m].reserve(nmatcells);
+    state_vecs[m].reserve(nmatcells);
+    for (int i = 0; i < nmatcells; i++) {
+      if (mesh.cell_get_type(mat_cells[m][i]) == Wonton::PARALLEL_OWNED) {
+        state_volfracs[m].push_back(calc_volfracs[m][i]);
+        state_centroids[m].push_back(calc_centroids[m][i]);
+        state_vals[m].push_back(calc_vals[m][i]);
+        state_vecs[m].push_back(calc_vecs[m][i]);
+      }
+    }
+    state.mat_add_celldata("matscalar", m, state_vals[m].data());
+    state.mat_add_celldata("matvector", m, state_vecs[m].data());
+  }
+
+  // Create a ghost update manager
+  
+  CellGhostManager ghost_manager(mesh, state, comm);
+
+  
+  // Update two sets of ghost values using the field name
+  ghost_manager.update_values("matscalar");
+  ghost_manager.update_values("matvector");
+
+
+  // Clear out the local copies of the multi-material arrays stored in
+  // the state manager and reinitialize them
+  for (int m = 0; m < num_mats; m++) {
+    int nmatcells = mat_cells[m].size();
+
+    state_vals[m].clear(); state_vals[m].resize(nmatcells);
+    double *temp1;
+    state.mat_get_celldata("matscalar", m, &temp1);
+    std::copy(temp1, temp1 + nmatcells, state_vals[m].begin());
+
+    state_vecs[m].clear(); state_vecs[m].resize(nmatcells);
+    Wonton::Vector<2> *temp2;
+    state.mat_get_celldata("matvector", m, &temp2);
+    std::copy(temp2, temp2 + nmatcells, state_vecs[m].begin());
+  }
+    
+  // Now compare the state values of ALL cells with calculated values;
+  for (int m = 0; m < num_mats; m++) {
+    int nmatcells = mat_cells[m].size();
+    for (int i = 0; i < nmatcells; i++) {
+      ASSERT_DOUBLE_EQ(state_vals[m][i], calc_vals[m][i]);
+      for (int d = 0; d < 2; d++)
+        ASSERT_DOUBLE_EQ(state_vecs[m][i][d], calc_vecs[m][i][d]);
+    }
+  }
+
+
+  // Update the other two multi-material arrays not stored in the
+  // state manager directly
+  for (int m = 0; m < num_mats; m++) {
+    ghost_manager.update_material_values(state_volfracs[m].data(), m);
+    ghost_manager.update_material_values(state_centroids[m].data(), m);
+  }
+
+  // Now compare the state values of ALL cells with calculated values;
+  for (int m = 0; m < num_mats; m++) {
+    int nmatcells = mat_cells[m].size();
+    for (int i = 0; i < nmatcells; i++) {
+      ASSERT_DOUBLE_EQ(state_volfracs[m][i], calc_volfracs[m][i]);
+           for (int d = 0; d < 2; d++)
+             ASSERT_DOUBLE_EQ(state_centroids[m][i][d], calc_centroids[m][i][d]);
+    }
+  }
+
 }
