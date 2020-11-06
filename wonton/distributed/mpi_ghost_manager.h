@@ -67,78 +67,63 @@ public:
 
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
+    int data_type = (state.get_data_type(field) == typeid(double) ? 1 :
+                    (state.get_data_type(field) == typeid(Vector<2>) ? 2 :
+                    (state.get_data_type(field) == typeid(Vector<3>) ? 3 : 0)));
 
     if (multimat) {
       assert(entity == Wonton::CELL);
-
       for (int m = 1; m < num_mats; ++m) {
-        if (state.get_data_type(field) == typeid(double)) {
-
-          double* matdata = nullptr;
-          state.mat_get_celldata(field, m-1, &matdata);
-          update_ghost_values_mat(matdata, m-1, cache);
-
-        } else if (state.get_data_type(field) == typeid(Vector<2>)) {
-
-          Vector<2>* matdata = nullptr;
-          state.mat_get_celldata(field, m-1, &matdata);
-          update_ghost_values_mat(matdata, m-1, cache);
-
-        } else if (state.get_data_type(field) == typeid(Vector<3>)) {
-
-          Vector<3>* matdata = nullptr;
-          state.mat_get_celldata(field, m-1, &matdata);
-          update_ghost_values_mat(matdata, m-1, cache);
-
+        switch (data_type) {
+          case 1: update_material_field<double>(field, m, cache); break;
+          case 2: update_material_field<Vector<2>>(field, m, cache); break;
+          case 3: update_material_field<Vector<3>>(field, m, cache); break;
+          default: throw std::runtime_error("incorrect material field data type");
         }
       }
-      
     } else {  // mesh field
-
-      if (state.get_data_type(field) == typeid(double)) {
-
-        double *meshdata = nullptr;
-        state.mesh_get_data(entity, field, &meshdata);
-        update_ghost_values_mesh(meshdata, cache);
-
-      } else if (state.get_data_type(field) == typeid(Vector<2>)) {
-
-        Vector<2>* meshdata = nullptr;
-        state.mesh_get_data(entity, field, &meshdata);
-        update_ghost_values_mesh(meshdata, cache);
-
-      } else if (state.get_data_type(field) == typeid(Vector<3>)) {
-
-        Vector<3>* meshdata = nullptr;
-        state.mesh_get_data(entity, field, &meshdata);
-        update_ghost_values_mesh(meshdata, cache);
-
+      switch (data_type) {
+        case 1: update_mesh_field<double>(field, cache); break;
+        case 2: update_mesh_field<Vector<2>>(field, cache); break;
+        case 3: update_mesh_field<Vector<3>>(field, cache); break;
+        default: throw std::runtime_error("incorrect mesh field data type");
       }
-
     }
   }
 
-
   /** @brief Update ghosts of compact array of material cell values
    *
-   * @param matdata  [IN/OUT}: compact material cell data
-   * @param m        [IN]    : material ID
-   * @param cache    [IN]    : whether to cache values or not for this field.
+   * @param[in|out] data: compact material cell data
+   * @param[in]     m: material ID
+   * @param[in]     cache: whether to cache values or not for this field.
    *
-   * matdata is compact array of material cell values, sized to
-   * nmatcells_owned + nmatcells_ghost but with only the owned values
+   * Here 'data' is a compact array of material cell values,
+   * sized to num_owned + num_ghost but with only the owned values
    * filled in. The ghost values are filled in by this routine.
-   *
-   * material ID is 0 offset unlike in update_values call
+   * Note that the material ID offset is zero unlike in 'update_values'.
    */
   template<typename T>
-  void update_ghost_values_mat(T *matdata, int m, bool cache=false) {
-    int nallent_mesh = mesh.num_entities(Wonton::CELL, Wonton::ALL);
-    std::unique_ptr<T> meshdata = std::make_unique<T>(nallent_mesh);
+  void update_material_values(T* data, int m, bool cache = false) {
 
-    mat_to_mesh_values(matdata, m, meshdata.get());
-    update_values(meshdata.get(), m+1, cache);
-    mesh_to_mat_values(meshdata.get(), m, matdata);
+    // convert to mesh cell-centric
+    int const num_cells = mesh.num_owned_cells() + mesh.num_ghost_cells();
+    std::map<int,int> material_index_lookup;
+    std::vector<T> values(num_cells, 0);
+
+    for (int c = 0; c < num_cells; ++c) {
+      int const mid = state.cell_index_in_material(c, m);
+      if (mid > -1) {
+        values[c] = data[mid];
+        material_index_lookup[mid] = c;
+      }
+    }
+
+    update_values(values.data(), m + 1, cache);
+
+    // convert back to material cell-centric
+    for (auto&& index : material_index_lookup) {
+      data[index.first] = values[index.second];
+    }
   }
   
   
