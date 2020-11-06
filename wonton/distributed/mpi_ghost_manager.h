@@ -93,36 +93,36 @@ public:
 
   /** @brief Update ghosts of compact array of material cell values
    *
-   * @param[in|out] data: compact material cell data
+   * @param[in|out] material_values: compact material cell data
    * @param[in]     m: material ID
    * @param[in]     cache: whether to cache values or not for this field.
    *
-   * Here 'data' is a compact array of material cell values,
+   * Here 'material_values' is a compact array of material cell values,
    * sized to num_owned + num_ghost but with only the owned values
    * filled in. The ghost values are filled in by this routine.
    * Note that the material ID offset is zero unlike in 'update_values'.
    */
   template<typename T>
-  void update_material_values(T* data, int m, bool cache = false) {
+  void update_material_values(T* material_values, int m, bool cache = false) {
 
-    // convert to mesh cell-centric
-    int const num_cells = mesh.num_owned_cells() + mesh.num_ghost_cells();
-    std::map<int,int> material_index_lookup;
-    std::vector<T> values(num_cells, 0);
+    // convert to mesh cell-centric field
+    int const num_mesh_cells = mesh.num_owned_cells() + mesh.num_ghost_cells();
+    std::vector<T> mesh_values(num_mesh_cells);
 
-    for (int c = 0; c < num_cells; ++c) {
-      int const mid = state.cell_index_in_material(c, m);
-      if (mid > -1) {
-        values[c] = data[mid];
-        material_index_lookup[mid] = c;
-      }
+    std::vector<int> material_cells;
+    state.mat_get_cells(m, &material_cells);  // gives ALL cells OWNED+GHOST
+    int const num_material_cells = material_cells.size();
+
+    for (int i = 0; i < num_material_cells; i++) {
+      mesh_values[material_cells[i]] = material_values[i];
     }
 
-    update_values(values.data(), m + 1, cache);
+    update_values(mesh_values.data(), m + 1, cache);
 
-    // convert back to material cell-centric
-    for (auto&& index : material_index_lookup) {
-      data[index.first] = values[index.second];
+    // convert back to material cell-centric field
+    for (auto&& c : material_cells) {
+      int const j = state.cell_index_in_material(c, m);
+      material_values[j] = mesh_values[c];
     }
   }
   
