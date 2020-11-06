@@ -67,78 +67,63 @@ public:
 
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
+    int data_type = (state.get_data_type(field) == typeid(double) ? 1 :
+                    (state.get_data_type(field) == typeid(Vector<2>) ? 2 :
+                    (state.get_data_type(field) == typeid(Vector<3>) ? 3 : 0)));
 
     if (multimat) {
       assert(entity == Wonton::CELL);
-
       for (int m = 1; m < num_mats; ++m) {
-        if (state.get_data_type(field) == typeid(double)) {
-
-          double* matdata = nullptr;
-          state.mat_get_celldata(field, m-1, &matdata);
-          update_ghost_values_mat(matdata, m-1, cache);
-
-        } else if (state.get_data_type(field) == typeid(Vector<2>)) {
-
-          Vector<2>* matdata = nullptr;
-          state.mat_get_celldata(field, m-1, &matdata);
-          update_ghost_values_mat(matdata, m-1, cache);
-
-        } else if (state.get_data_type(field) == typeid(Vector<3>)) {
-
-          Vector<3>* matdata = nullptr;
-          state.mat_get_celldata(field, m-1, &matdata);
-          update_ghost_values_mat(matdata, m-1, cache);
-
+        switch (data_type) {
+          case 1: update_material_field<double>(field, m, cache); break;
+          case 2: update_material_field<Vector<2>>(field, m, cache); break;
+          case 3: update_material_field<Vector<3>>(field, m, cache); break;
+          default: throw std::runtime_error("incorrect material field data type");
         }
       }
-      
     } else {  // mesh field
-
-      if (state.get_data_type(field) == typeid(double)) {
-
-        double *meshdata = nullptr;
-        state.mesh_get_data(entity, field, &meshdata);
-        update_ghost_values_mesh(meshdata, cache);
-
-      } else if (state.get_data_type(field) == typeid(Vector<2>)) {
-
-        Vector<2>* meshdata = nullptr;
-        state.mesh_get_data(entity, field, &meshdata);
-        update_ghost_values_mesh(meshdata, cache);
-
-      } else if (state.get_data_type(field) == typeid(Vector<3>)) {
-
-        Vector<3>* meshdata = nullptr;
-        state.mesh_get_data(entity, field, &meshdata);
-        update_ghost_values_mesh(meshdata, cache);
-
+      switch (data_type) {
+        case 1: update_mesh_field<double>(field, cache); break;
+        case 2: update_mesh_field<Vector<2>>(field, cache); break;
+        case 3: update_mesh_field<Vector<3>>(field, cache); break;
+        default: throw std::runtime_error("incorrect mesh field data type");
       }
-
     }
   }
 
-
   /** @brief Update ghosts of compact array of material cell values
    *
-   * @param matdata  [IN/OUT}: compact material cell data
-   * @param m        [IN]    : material ID
-   * @param cache    [IN]    : whether to cache values or not for this field.
+   * @param[in|out] material_values: compact material cell data
+   * @param[in]     m: material ID
+   * @param[in]     cache: whether to cache values or not for this field.
    *
-   * matdata is compact array of material cell values, sized to
-   * nmatcells_owned + nmatcells_ghost but with only the owned values
+   * Here 'material_values' is a compact array of material cell values,
+   * sized to num_owned + num_ghost but with only the owned values
    * filled in. The ghost values are filled in by this routine.
-   *
-   * material ID is 0 offset unlike in update_values call
+   * Note that the material ID offset is zero unlike in 'update_values'.
    */
   template<typename T>
-  void update_ghost_values_mat(T *matdata, int m, bool cache=false) {
-    int nallent_mesh = mesh.num_entities(Wonton::CELL, Wonton::ALL);
-    std::unique_ptr<T> meshdata = std::make_unique<T>(nallent_mesh);
+  void update_material_values(T* material_values, int m, bool cache = false) {
 
-    mat_to_mesh_values(matdata, m, meshdata.get());
-    update_values(meshdata.get(), m+1, cache);
-    mesh_to_mat_values(meshdata.get(), m, matdata);
+    // convert to mesh cell-centric field
+    int const num_mesh_cells = mesh.num_owned_cells() + mesh.num_ghost_cells();
+    std::vector<T> mesh_values(num_mesh_cells);
+
+    std::vector<int> material_cells;
+    state.mat_get_cells(m, &material_cells);  // gives ALL cells OWNED+GHOST
+    int const num_material_cells = material_cells.size();
+
+    for (int i = 0; i < num_material_cells; i++) {
+      mesh_values[material_cells[i]] = material_values[i];
+    }
+
+    update_values(mesh_values.data(), m + 1, cache);
+
+    // convert back to material cell-centric field
+    for (auto&& c : material_cells) {
+      int const j = state.cell_index_in_material(c, m);
+      material_values[j] = mesh_values[c];
+    }
   }
   
   
@@ -150,8 +135,8 @@ public:
    * Sized to nowned+nghost entities but with only owned entities filled in
    */
   template<typename T>
-  void update_ghost_values_mesh(T *meshdata, bool cache=false) {
-    update_values(meshdata, 0, cache);
+  void update_mesh_values(T* values, bool cache = false) {
+    update_values(values, 0, cache);
   }
   
   
@@ -367,51 +352,33 @@ private:
     }
   }
 
-  /** @brief convert a compact array of material cell values to a full
-   * array of mesh cell values for that material
+  /**
+   * @brief Update the given material field values on ghost cells.
    *
-   * @param matvals  [IN] : compact array of material cell values
-   * @param im       [IN] : mat id (0 indexed, not offset as in update_values)
-   * @param meshvals [OUT]: full array of mesh cell values
-   *
-   * matvals size  = num owned mat cells + num ghost mat cells
-   * meshvals size = num owned mesh cells + num ghost mesh cells
-   *
-   * meshvals must be pre-allocated and correctly sized
-   *
-   * NOTE: THIS WOULD BE GOOD TO HAVE IN THE STATE MANAGER DIRECTLY
+   * @tparam T: the material field data type.
+   * @param field: the material field name.
+   * @param m: the material number.
+   * @param cache: whether to cache values or not.
    */
   template<typename T>
-  void mat_to_mesh_values(T *matvals, int im, T *meshvals) {
-    std::vector<int> matcells;
-    state.mat_get_cells(im, &matcells);  // gives ALL cells OWNED+GHOST
-    int nmatcells = matcells.size();
-    for (int i = 0; i < nmatcells; i++)
-      meshvals[matcells[i]] = matvals[i];
+  void update_material_field(std::string const& field, int m, bool cache = false) {
+    T* values;
+    state.mat_get_celldata(field, m - 1, &values);
+    update_material_values(values, m - 1, cache);
   }
-  
-  /** @brief convert a compact array of material cell values to a full
-   * array of mesh cell values for that material
+
+  /**
+   * @brief Update the given mesh field values on ghost cells.
    *
-   * @param meshvals [IN] : full array of mesh cell values
-   * @param im       [IN] : mat id (0 indexed, not offset as in update_values)
-   * @param matvals  [OUT]: compact array of material cell values
-   *
-   * meshvals size = num owned mesh cells + num ghost mesh cells
-   * matvals size  = num owned mat cells + num ghost mat cells
-   *
-   * meshvals must be pre-allocated and correctly sized
-   *
-   * NOTE: THIS WOULD BE GOOD TO HAVE IN THE STATE MANAGER DIRECTLY
+   * @tparam T: the mesh field data type.
+   * @param field: the mesh field name.
+   * @param cache: whether to cache values or not.
    */
   template<typename T>
-  void mesh_to_mat_values(T *meshvals, int im, T *matvals) {
-    std::vector<int> matcells;
-    state.mat_get_cells(im, &matcells);  // gives ALL cells OWNED+GHOST
-    for (auto && c : matcells) {
-      int j = state.cell_index_in_material(c, im);
-      matvals[j] = meshvals[c];
-    }
+  void update_mesh_field(std::string const& field, bool cache = false) {
+    T* values;
+    state.mesh_get_data(entity, field, &values);
+    update_mesh_values(values, cache);
   }
 
   /**
