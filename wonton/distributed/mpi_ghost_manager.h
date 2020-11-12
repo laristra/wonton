@@ -235,8 +235,8 @@ private:
 
 
       // step 2: gather number of ghosts for all ranks and deduce offsets
-      num_ghosts[rank] = entities.size();
-      MPI_Allgather(num_ghosts + rank, 1, MPI_INT, num_ghosts, 1, MPI_INT, comm);
+      int local_num_ghosts = entities.size();
+      MPI_Allgather(&local_num_ghosts, 1, MPI_INT, num_ghosts, 1, MPI_INT, comm);
 
       int const total_ghosts = std::accumulate(num_ghosts, num_ghosts + num_ranks, 0);
       received.resize(total_ghosts);
