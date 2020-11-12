@@ -211,7 +211,7 @@ class Matrix {
   */
   
   std::vector<double> operator*(std::vector<double> const& X) const {
-    assert(Columns_ == X.size());
+    assert(unsigned(Columns_) == X.size());
 
     std::vector<double> AX(Rows_);
     for (int i = 0; i < Rows_; ++i) {
@@ -308,8 +308,7 @@ class Matrix {
 };  // class Matrix
 
 // Add two matrices.
-inline
-const Matrix operator+(const Matrix& A, const Matrix& B) {
+inline Matrix operator+(const Matrix& A, const Matrix& B) {
   assert((A.rows() == B.rows()) && (A.columns() == B.columns()));
 
   Matrix Sum(A);
@@ -321,8 +320,7 @@ const Matrix operator+(const Matrix& A, const Matrix& B) {
 }
 
 /// Subtract two materices.
-inline
-const Matrix operator-(const Matrix& A, const Matrix& B) {
+inline Matrix operator-(const Matrix& A, const Matrix& B) {
   assert((A.rows() == B.rows()) && (A.columns() == B.columns()));
 
   Matrix Diff(A);
@@ -337,8 +335,7 @@ const Matrix operator-(const Matrix& A, const Matrix& B) {
   @brief  Multiply a Matrix by a scalar
   @param[in] x The scaling factor 
 */
-inline  
-const Matrix operator*(const Matrix& A, const double& s) {
+inline Matrix operator*(const Matrix& A, const double& s) {
   Matrix As(A);
   
   for (int i = 0; i < A.rows(); ++i)
@@ -352,8 +349,7 @@ const Matrix operator*(const Matrix& A, const double& s) {
   @brief  Multiply a Matrix by a scalar
   @param[in] x The scaling factor
 */
-inline  
-const Matrix operator*(const double& s, const Matrix& A) {
+inline Matrix operator*(const double& s, const Matrix& A) {
   Matrix sA(A);
   
   for (int i = 0; i < A.rows(); ++i)
@@ -365,8 +361,7 @@ const Matrix operator*(const double& s, const Matrix& A) {
 
 // Multiply the first vector by the transpose of the second vector
 template<int D>
-inline
-Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
+inline Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   Matrix prod(D, D);
   for (int i = 0; i < D; i++) 
     for (int j = 0; j < D; j++)
@@ -380,6 +375,7 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   @param[in] A  The system matrix
   @param[in] b  The system right-hand side
   @param[out] x  The solution vector
+  @return 0 if no errors were encounterted, 1 if A is singular 
 
   Apparently generic template function definitions don't need "inline"
   keyword, only the specializations do
@@ -387,12 +383,11 @@ Matrix operator*(const Vector<D>& a, const Vector<D>& b) {
   https://stackoverflow.com/questions/1759300/when-should-i-write-the-keyword-inline-for-a-function-method
 */
 template<int D>
-void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
+int solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   int n = A.rows();
   assert(n == A.columns());
   assert(D == n);
 
-  const std::vector<double>& a_ = A.data();
   double s, norm;
    
   Matrix R(A);
@@ -413,7 +408,9 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
       s += pow2(R[j][i]);
     }
     norm = sqrt(s + pow2(y[i]));
-    assert(std::fabs(norm > std::numeric_limits<double>::epsilon()));
+    if (std::fabs(norm < std::numeric_limits<double>::epsilon()))
+      return 1;
+
     if (s == 0)
       continue;
     
@@ -437,7 +434,8 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
     R = U*R;
   }
   // We need to confirm that the last element is nonzero
-  assert(std::fabs(R[n - 1][n - 1]) > std::numeric_limits<double>::epsilon());
+  if (std::fabs(R[n - 1][n - 1]) < std::numeric_limits<double>::epsilon())
+    return 1;
 
   Vector<D> QTb = Q.transpose()*b;
   
@@ -448,6 +446,7 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
 
     x[i] = QTb[i]/R[i][i];
   }
+  return 0;
 }
 
 /*!
@@ -455,12 +454,19 @@ void solve(const Matrix& A, const Vector<D>& b, Vector<D>& x) {
   @param[in] A  The system matrix
   @param[in] b  The system right-hand side
   @param[out] x  The solution vector
+  @return 0 if no errors were encounterted, 1 if A is singular 
 */
 template<>
 inline
-void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
-  assert(std::fabs(A[0][0]) > std::numeric_limits<double>::epsilon());
+int solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
+  assert(A.rows() == 1);
+  assert(A.rows() == A.columns());
+
+  if (std::fabs(A[0][0]) < std::numeric_limits<double>::epsilon())
+    return 1;
+
   x[0] = b[0]/A[0][0];
+  return 0;
 }
 
 /*!
@@ -468,15 +474,21 @@ void solve<1>(const Matrix& A, const Vector<1>& b, Vector<1>& x) {
   @param[in] A  The system matrix
   @param[in] b  The system right-hand side
   @param[out] x  The solution vector
+  @return 0 if no errors were encounterted, 1 if A is singular   
 */
 template<>
 inline
-void solve<2>(const Matrix& A, const Vector<2>& b, Vector<2>& x) {
+int solve<2>(const Matrix& A, const Vector<2>& b, Vector<2>& x) {
+  assert(A.rows() == 2);
+  assert(A.rows() == A.columns());
+
   double detA = A[0][0]*A[1][1] - A[0][1]*A[1][0];
-  assert(std::fabs(detA) > std::numeric_limits<double>::epsilon());
+  if (std::fabs(detA) < std::numeric_limits<double>::epsilon())
+    return 1;
 
   x[0] = (A[1][1]*b[0] - A[0][1]*b[1])/detA;
   x[1] = (A[0][0]*b[1] - A[1][0]*b[0])/detA;
+  return 0;
 }
 
 }  // namespace Wonton

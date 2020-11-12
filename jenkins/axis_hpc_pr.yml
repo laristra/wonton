@@ -1,0 +1,15 @@
+COMPILER:
+  - intel18
+  - gcc7
+
+CONFIG_TYPE:
+  - base
+  - debug
+  - serial
+  - readme
+  - thrust
+
+exclude:
+  - COMPILER: gcc7
+    CONFIG_TYPE: readme
+

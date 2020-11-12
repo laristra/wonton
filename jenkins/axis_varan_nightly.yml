@@ -1,0 +1,21 @@
+# axis_varan.yml (some other combinations will get weeded out inside the script)
+COMPILER:
+  - intel18
+  - gcc6
+  - gcc7
+
+CONFIG_TYPE:
+  - base
+  - debug
+  - serial
+  - readme
+  - thrust
+  - kokkos
+
+exclude:
+  - COMPILER: gcc6
+    CONFIG_TYPE: readme
+  - COMPILER: gcc7
+    CONFIG_TYPE: readme
+  - COMPILER: intel18
+    CONFIG_TYPE: kokkos

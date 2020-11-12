@@ -14,7 +14,7 @@ Please see the license file at the root of this repository, or at:
 #include <string>
 #include <sstream>
 
-#ifdef HAVE_LAPACKE
+#ifdef WONTON_HAS_LAPACKE
 #define HAVE_LAPACK_CONFIG_H
 #define LAPACK_COMPLEX_CPP
 #include "lapacke.h"
@@ -59,7 +59,7 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   
   Matrix X(B.rows(), B.columns(), 0.);
 
-#ifdef HAVE_LAPACKE
+#ifdef WONTON_HAS_LAPACKE
   // stuff for lapack which is useful for solves where matrix is already
   // factored
   std::vector<double> AFactored_;
@@ -83,7 +83,7 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       else                   error = "none";
     }
   }
-#ifdef HAVE_LAPACKE    
+#ifdef WONTON_HAS_LAPACKE    
   else if (method == "lapack-posv") {  // LAPACK positive-definite matrix
     
     // check symmetric
@@ -161,6 +161,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
 
   } else if (method == "lapack-sysv") {  // LAPACK symmetric matrix
     // check symmetric
@@ -235,6 +237,9 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
+
     
   } else if (method == "lapack-gesv") {  // LAPACK general matrix
 
@@ -308,6 +313,9 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
+
     
   } else if (method == "lapack-sytr") {  // LAPACK symmetric matrix
     
@@ -364,7 +372,9 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
       if (error != "none") is_singular_ = 2;
       else                 is_singular_ = 1;
     }
-    
+    else
+      is_singular_ = (info == 0) ? 1 : 2;
+
     // solve it
     if (not skip) {
       info = LAPACKE_dsytrs(matrix_layout,uplo,n,nrhs,a,lda,ipiv,b,ldb);
@@ -379,6 +389,8 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
         if (error != "none") is_singular_ = 2;
         else                 is_singular_ = 1;
       }
+      else
+        is_singular_ = (info == 0) ? 1 : 2;
     }
     
     X = XT.transpose();
@@ -390,7 +402,7 @@ Matrix Matrix::solve(Matrix const& B, std::string method, std::string &error) {
   else {
     throw std::runtime_error("Invalid solver type or LAPACK solve requested but code not built with LAPACK support");
   }
-#endif  // HAVE_LAPACKE
+#endif  // WONTON_HAS_LAPACKE
 
   return X;
 }

@@ -32,6 +32,10 @@ Please see the license file at the root of this repository, or at:
 #include "mpi.h"
 #endif
 
+#ifdef WONTON_ENABLE_KOKKOS
+#include <Kokkos_Macros.hpp>
+#endif
+
 /*
   @file wonton.h
   @brief Several utility types and functions within the Wonton namespace.
@@ -224,9 +228,17 @@ struct Executor_type {
 
 struct SerialExecutor_type : Executor_type {};  // for RTTI
 
+#if !defined(WONTON_INLINE)
+  #ifdef WONTON_ENABLE_KOKKOS
+    #define WONTON_INLINE KOKKOS_INLINE_FUNCTION
+  #else
+    #define WONTON_INLINE inline
+  #endif
+#endif
+
 #ifdef WONTON_ENABLE_MPI
 struct MPIExecutor_type : Executor_type {
-  MPIExecutor_type(MPI_Comm comm) : mpicomm(comm) {}
+  explicit MPIExecutor_type(MPI_Comm comm) : mpicomm(comm) {}
   MPI_Comm mpicomm = MPI_COMM_WORLD;
 };
 #endif
@@ -241,8 +253,8 @@ template<typename T>
 template<typename T>
     using pointer = thrust::device_ptr<T>;
 
-typedef thrust::counting_iterator<unsigned int> counting_iterator;
-inline counting_iterator make_counting_iterator(unsigned int const i) {
+typedef thrust::counting_iterator<int> counting_iterator;
+inline counting_iterator make_counting_iterator(int const i) {
   return thrust::make_counting_iterator(i);
 }
 
@@ -250,7 +262,8 @@ template<typename InputIterator, typename OutputIterator,
          typename UnaryFunction>
 inline OutputIterator transform(InputIterator first, InputIterator last,
                                 OutputIterator result, UnaryFunction op) {
-  return thrust::transform(first, last, result, op);
+  struct thrust::execution_policy<thrust::system::omp::detail::tag> exec;
+  return thrust::transform(exec, first, last, result, op);
 }
 
 template<typename InputIterator1, typename InputIterator2,
@@ -258,13 +271,15 @@ template<typename InputIterator1, typename InputIterator2,
 inline OutputIterator transform(InputIterator1 first1, InputIterator1 last1,
                                 InputIterator2 first2, OutputIterator result,
                                 BinaryFunction op) {
-  return thrust::transform(first1, last1, first2, result, op);
+  struct thrust::execution_policy<thrust::system::omp::detail::tag> exec;
+  return thrust::transform(exec, first1, last1, first2, result, op);
 }
 
 template<typename InputIterator, typename UnaryFunction>
 inline void for_each(InputIterator first, InputIterator last,
                               UnaryFunction f) {
-  thrust::for_each(first, last, f);
+  struct thrust::execution_policy<thrust::system::omp::detail::tag> exec;
+  thrust::for_each(exec, first, last, f);
 }
 
 #else  // no thrust
@@ -275,9 +290,9 @@ template<typename T>
 template<typename T>
     using pointer = T*;
 
-typedef boost::counting_iterator<unsigned int> counting_iterator;
-inline counting_iterator make_counting_iterator(unsigned int const i) {
-  return boost::make_counting_iterator<unsigned int>(i);
+typedef boost::counting_iterator<int> counting_iterator;
+inline counting_iterator make_counting_iterator(int const i) {
+  return boost::make_counting_iterator<int>(i);
 }
 
 template<typename InputIterator, typename OutputIterator,

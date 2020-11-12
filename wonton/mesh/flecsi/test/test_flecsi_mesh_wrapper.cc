@@ -11,10 +11,7 @@ Please see the license file at the root of this repository, or at:
 #include "gtest/gtest.h"
 #include "mpi.h"
 
-#include "flecsi-sp.h"
-#include "flecsi-sp/burton/burton.h"
-#include "flecsi-sp/burton/factory.h"
-
+#include "wonton/mesh/flecsi/test/flecsi-headers.h"
 #include "wonton/support/Point.h"
 
 namespace fmesh = flecsi::sp::burton; 
@@ -603,7 +600,7 @@ TEST(FleCSI_Mesh_Wrapper, Decompose_Cell_Into_Tets) {
 TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_2D) {
 
 #ifdef WONTON_ENABLE_MPI
-  int nproc, me;
+  int nproc;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1) return;
 #endif
@@ -619,8 +616,6 @@ TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_2D) {
   bool request_wedges = true;
   bool request_corners = true;
   flecsi_mesh_2d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
-
-  double dp;
 
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   for (int c = 0; c < ncells; ++c) {
@@ -738,7 +733,7 @@ TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_2D) {
 TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_3D) {
 
 #ifdef WONTON_ENABLE_MPI
-  int nproc, me;
+  int nproc;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1) return;
 #endif
@@ -759,7 +754,6 @@ TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_3D) {
   flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
-  double dp;
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> csides;
     mesh_wrapper.cell_get_sides(c, &csides);
@@ -881,7 +875,7 @@ TEST(FleCSI_Mesh_Wrapper, MESH_SIDES_3D) {
 TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
 
 #ifdef WONTON_ENABLE_MPI
-  int nproc, me;
+  int nproc;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1) return;
 #endif
@@ -899,7 +893,6 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
   bool request_corners = true;
   flecsi_mesh_2d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
-  double dp;
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> cwedges;
@@ -990,8 +983,6 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
       std::array<Wonton::Point<2>, 3> wcoords2;
       mesh_wrapper.wedge_get_coordinates(w, &wcoords2, true);
 
-      bool flipped = true;
-
       if (wcoords[1][0] == wcoords2[2][0] &&
           wcoords[1][1] == wcoords2[2][1] &&
           wcoords[2][0] == wcoords2[1][0] &&
@@ -1028,7 +1019,7 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_2D) {
 TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_3D) {
 
 #ifdef WONTON_ENABLE_MPI
-  int nproc, me;
+  int nproc;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1) return;
 #endif
@@ -1049,7 +1040,6 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_3D) {
   
   flecsi_mesh_3d_t mesh_wrapper(mesh, request_sides, request_wedges, request_corners);
 
-  double dp;
   int ncells = mesh_wrapper.num_entities(Wonton::CELL, Wonton::ALL);
   for (int c = 0; c < ncells; ++c) {
     std::vector<int> cwedges;
@@ -1182,7 +1172,7 @@ TEST(FleCSI_Mesh_Wrapper, MESH_WEDGES_3D) {
 TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_2D) {
 
 #ifdef WONTON_ENABLE_MPI
-  int nproc, me;
+  int nproc;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc > 1 ) return;
 #endif
@@ -1302,7 +1292,7 @@ TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_2D) {
 TEST(FleCSI_Mesh_Wrapper, MESH_CORNERS_3D) {
 
 #ifdef WONTON_ENABLE_MPI
-  int nproc, me;
+  int nproc;
   MPI_Comm_size(MPI_COMM_WORLD, &nproc);
   if (nproc>1) return;
 #endif

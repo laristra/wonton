@@ -37,13 +37,13 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
  public:
 
   //! Constructor
-  Flat_Mesh_Wrapper() {};
+  Flat_Mesh_Wrapper() = default;
 
   //! Assignment operator (disabled) - don't know how to implement (RVG)
   Flat_Mesh_Wrapper & operator=(Flat_Mesh_Wrapper const &) = delete;
 
   //! Empty destructor
-  ~Flat_Mesh_Wrapper() {};
+  ~Flat_Mesh_Wrapper() = default;
 
   template<class Mesh_Wrapper>
   void initialize(Mesh_Wrapper& input)
@@ -73,7 +73,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     ///////////////////////////////////////////////////////
     
     // cell global ids, cell node counts, cell node listt
-    for (unsigned int c=0; c<numCells; c++)
+    for (int c = 0; c < numCells; c++)
     {
       cellGlobalIds_.push_back(input.get_global_id(c, Entity_kind::CELL));
 
@@ -85,7 +85,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     }
 
     // node global ids
-    for (unsigned int n=0; n<numNodes; ++n) {
+    for (int n = 0; n < numNodes; ++n) {
 
       nodeGlobalIds_.push_back(input.get_global_id(n, Entity_kind::NODE));
     }
@@ -98,10 +98,10 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     if (dim_ ==2)
     {
     	// node coordinates
-      for (unsigned int n=0; n<numNodes; ++n) {
+      for (int n=0; n<numNodes; ++n) {
         Wonton::Point<2> nodeCoord;
         input.node_get_coordinates(n, &nodeCoord);
-        for (unsigned int j=0; j<2; ++j)
+        for (int j=0; j<2; ++j)
           nodeCoords_.push_back(nodeCoord[j]);
       }
     }
@@ -115,19 +115,20 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     {
     
       // cell face counts, cell face lists, cell face directions
-      for (unsigned int c=0; c<numCells; ++c)
+      for (int c=0; c<numCells; ++c)
       {
         std::vector<int> cellFaces, cfDirs;
         input.cell_get_faces_and_dirs(c, &cellFaces, &cfDirs);
         cellFaceCounts_.push_back(cellFaces.size());
         cellToFaceList_.insert(cellToFaceList_.end(),
                                cellFaces.begin(), cellFaces.end());
-        for (unsigned int j=0; j<cellFaces.size(); ++j)
+        int const nb_cell_faces = cellFaces.size();
+        for (int j = 0; j < nb_cell_faces; ++j)
           cellToFaceDirs_.push_back(cfDirs[j] >= 0);
       }
 
       // face global ids, face node counts, face node lists
-      for (unsigned int f=0; f<numFaces; ++f)
+      for (int f=0; f<numFaces; ++f)
       {
         faceGlobalIds_.push_back(input.get_global_id(f, Entity_kind::FACE));
         std::vector<int> faceNodes;
@@ -138,10 +139,10 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       }
       
       // node coordinates
-      for (unsigned int n=0; n<numNodes; ++n) {
+      for (int n=0; n<numNodes; ++n) {
         Wonton::Point<3> nodeCoord;
         input.node_get_coordinates(n, &nodeCoord);
-        for (unsigned int j=0; j<3; ++j)
+        for (int j=0; j<3; ++j)
           nodeCoords_.push_back(nodeCoord[j]);
       }
       
@@ -213,11 +214,12 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       
       // new face/edge counter
       int facecount = 0;
-      
-      for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
+      int const nb_cell_node_counts = cellNodeCounts_.size();
+
+      for (int c = 0; c < nb_cell_node_counts; ++c) {
         int offset = cellNodeOffsets_[c];
         int count = cellNodeCounts_[c];
-        for (unsigned int i=0; i<count; ++i) {
+        for (int i=0; i<count; ++i) {
           int n0 = cellToNodeList_[offset+i];
           int n1 = cellToNodeList_[offset+((i+1)%count)];
           // put nodes in canonical order
@@ -260,8 +262,9 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
       
       cellToNodeList_.clear();
       cellToNodeList_.reserve(cellFaceCounts_.size() * 4);
-      
-      for (unsigned int c=0; c<cellFaceCounts_.size(); ++c) {
+      int const nb_cell_face_counts = cellFaceCounts_.size();
+
+      for (int c = 0; c < nb_cell_face_counts; ++c) {
         std::vector<int> cellfaces, dummy;
         cell_get_faces_and_dirs(c, &cellfaces, &dummy);
         std::set<int> cellnodes;
@@ -282,10 +285,12 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     // Compute inverse node-to-cell adjacency lists
     int numNodes = nodeCoords_.size()/dim_;
     std::vector<std::set<int>> nodeToCellTmp(numNodes);
-    for (unsigned int c=0; c<cellNodeCounts_.size(); ++c) {
+    int const nb_cell_node_counts = cellNodeCounts_.size();
+
+    for (int c = 0; c < nb_cell_node_counts; ++c) {
       int offset = cellNodeOffsets_[c];
       int count = cellNodeCounts_[c];
-      for (unsigned int i=0; i<count; ++i) {
+      for (int i=0; i<count; ++i) {
         int n = cellToNodeList_[offset+i];
         nodeToCellTmp[n].insert(c);
       }
@@ -297,7 +302,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     nodeToCellList_.clear();
     nodeToCellList_.reserve(cellToNodeList_.size());
     
-    for (unsigned int n=0; n<numNodes; ++n) {
+    for (int n=0; n<numNodes; ++n) {
       const std::set<int>& nodes = nodeToCellTmp[n];
       nodeCellCounts_.emplace_back(nodes.size());
       nodeToCellList_.insert(nodeToCellList_.end(), nodes.begin(), nodes.end());
@@ -356,7 +361,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
   template <int D>
   void node_get_coordinates(int const nodeid, Point<D>* pp) const {
     assert(D == dim_);
-    for (unsigned int j=0; j<dim_; j++)
+    for (int j=0; j<dim_; j++)
       (*pp)[j] = nodeCoords_[nodeid*dim_+j];
   }
 
@@ -394,7 +399,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     cfaces->assign(&cellToFaceList_[offset],
                    &cellToFaceList_[offset+count]);
     cfdirs->clear();
-    for (unsigned int j=0; j<count; ++j)
+    for (int j=0; j<count; ++j)
       cfdirs->push_back(cellToFaceDirs_[offset + j] ? 1 : -1);
   }
 
@@ -452,7 +457,7 @@ class Flat_Mesh_Wrapper : public AuxMeshTopology<Flat_Mesh_Wrapper<>> {
     cell_get_nodes(cellid, &nodes);
     int cellNumNodes = nodes.size();
     pplist->resize(cellNumNodes);
-    for (unsigned int i=0; i<cellNumNodes; ++i)
+    for (int i=0; i<cellNumNodes; ++i)
       node_get_coordinates(nodes[i], &((*pplist)[i]));
   }
 

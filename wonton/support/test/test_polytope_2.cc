@@ -72,11 +72,11 @@ TEST(Polytope, Mesh2D) {
     Wonton::Point<2>(0.0, 1.0)
   };
 
-  std::vector<double> ncv_poly_moments = { 0.75, 0.375, 21.0/72.0 };
+  std::vector<double> ncv_poly_moments = { 0.75, 0.375, 21.0/72.0, 25.0/96.0, 14.0/96.0, 15.0/96.0};
   Wonton::Polytope<2> ncv_poly(ncv_poly_points);
 
-  // Verify moments
-  auto poly_moments = ncv_poly.moments();
-  for (int im = 0; im < 3; im++)
+  // Verify moments upto order 2
+  auto poly_moments = ncv_poly.moments(2);
+  for (int im = 0; im < 6; im++)
     ASSERT_NEAR(ncv_poly_moments[im], poly_moments[im], 1.0e-15);
 }

@@ -21,31 +21,41 @@ template <int D>
 class Polytope {
 public:
   /*!
-    @brief Constructor for a 2D polygon
+    @brief Constructor for a 1D or 2D polygon
     @param vertex_points  Vector of coordinates of the polygon's vertices
     listed counter-clockwise
   */
-  explicit Polytope(const std::vector< Point<2> >& vertex_points) {
+  Polytope(const std::vector< Point<D> >& vertex_points) {
+    assert(D == 1 || D == 2);  // this signature won't work for 3D polytopes
+    
     int nfaces = static_cast<int>(vertex_points.size());
-    assert(nfaces > 2);
+    assert((D == 1 && nfaces == 2) || (nfaces >= D+1));
 
     vertex_points_ = vertex_points;
     face_vertices_.resize(nfaces);
-    for (int iface = 0; iface < nfaces; iface++)
-      face_vertices_[iface] = { iface, (iface + 1)%nfaces };    
+    if (D == 1)
+      for (int iface = 0; iface < nfaces; iface++)
+        face_vertices_[iface] = { iface };    
+    else
+      for (int iface = 0; iface < nfaces; iface++)
+        face_vertices_[iface] = { iface, (iface + 1)%nfaces };    
   }
 
   /*!
-    @brief Constructor for a 3D polyhedron
+    @brief Constructor for a general polyhedron
     @param vertex_points  Vector of coordinates of the polyhedron's vertices
-    @param face_vertices  Faces of the polyhedron, every face is given by
-    IDs of its vertices in counter-clockwise order (i.e. so that the normal
-    to the face is pointing outside of the polyhedron)
+    @param face_vertices  Face vertices of the polyhedron
+
+    In 3D, every face is given by IDs of its vertices in
+    counter-clockwise order (i.e. so that the normal to the face is
+    pointing outside of the polyhedron). In 2D, a "face" is an edge between two 
   */
-  Polytope(const std::vector< Point<3> >& vertex_points,
+  Polytope(const std::vector< Point<D> >& vertex_points,
            const std::vector< std::vector<int> >& face_vertices) {
-    assert(vertex_points.size() > 3);
-    assert(face_vertices.size() > 3);
+    assert((D == 1 && vertex_points.size() == 2) ||
+           (vertex_points.size() >= D+1));
+    assert((D == 1 && face_vertices.size() == 2) ||
+           (face_vertices.size() >= D+1));
     
     vertex_points_ = vertex_points;
     face_vertices_ = face_vertices;  
@@ -68,29 +78,10 @@ public:
     @return  Vector of indices of the face's vertices
   */
   const std::vector<int>& face_vertices(int const face_id) const {
-    assert((face_id >= 0) && (face_id < face_vertices_.size()));
+    assert((face_id >= 0) && (unsigned(face_id) < face_vertices_.size()));
     return face_vertices_[face_id];
   }
   
-  /*!
-    @brief Coordinates of vertices of the polytope's face
-    in counter-clockwise order (i.e. so that the normal
-    to the face is pointing outside of the polytope)
-    @param face_id  ID of the face of the polytope
-    @return  Vector of coordinates of face's vertices
-  */
-  std::vector< Point<D> > face_points(int const face_id) const {
-    assert((face_id >= 0) && (face_id < face_vertices_.size()));
-
-    int nvrts = static_cast<int>(face_vertices_[face_id].size());
-    std::vector< Point<D> > fpoints;
-    fpoints.reserve(nvrts);
-    for (int ivrt = 0; ivrt < nvrts; ivrt++)
-      fpoints.push_back(vertex_points_[face_vertices_[face_id][ivrt]]);
-
-    return fpoints;
-  }
-
   /*!
     @brief Indices of vertices for all the faces of the polytope
     @return  Vector of vectors of indices of faces' vertices
@@ -105,7 +96,7 @@ public:
     @return  Coordinates of that vertex
   */
   Point<D> vertex_point(int const vertex_id) const {
-    assert((vertex_id >= 0) && (vertex_id < vertex_points_.size()));
+    assert((vertex_id >= 0) && (unsigned(vertex_id) < vertex_points_.size()));
     return vertex_points_[vertex_id];
   }
   
@@ -123,24 +114,24 @@ public:
   /*!
     @brief Moments for a face of the polytope
     @param face_id  ID of the face of the polytope
-    @return  Vector of moments; moments[0] is the size, moments[i+1]/moments[0] is i-th
-    coordinate of the centroid
+    @return  Vector of moments; moments[0] is the area (length in 2D), moments[i+1]/moments[0]
+    is i-th coordinate of the centroid.
   */
-  std::vector<double> face_moments(int const face_id) const;
+  std::vector<double> face_moments(int face_id) const;
 
   /*!
     @brief Effective normal to a face of the polytope
     @param face_id  ID of the face of the polytope
     @return  Normal vector
   */
-  Vector<D> face_normal(int const face_id) const;
+  Vector<D> face_normal(int face_id) const;
 
   /*!
    @brief Moments for the polytope
-   @return  Vector of moments; moments[0] is the size, moments[i+1]/moments[0] is i-th
-   coordinate of the centroid
+   @return  Vector of moments; moments[0] is the volume (area in 2D), moments[i+1]/moments[0]
+   is i-th coordinate of the centroid
   */  
-  std::vector<double> moments() const;
+  std::vector<double> moments(int order = 1) const;
 
 private:
   std::vector< Point<D> > vertex_points_;  // coordinates of vertices
@@ -178,8 +169,8 @@ std::vector<double> Polytope<2>::face_moments(int const face_id) const {
 template<>
 inline
 std::vector<double> Polytope<3>::face_moments(int const face_id) const {
-  int nfaces = num_faces();
-  assert((face_id >= 0) && (face_id < nfaces));
+
+  assert((face_id >= 0) && (face_id < num_faces()));
 
   std::vector<double> face_moments(4, 0.0);
   const std::vector<int>& fvertices = face_vertices(face_id);
@@ -224,14 +215,15 @@ std::vector<double> Polytope<3>::face_moments(int const face_id) const {
 */
 template<>
 inline
-Vector<2> Polytope<2>::face_normal(int const face_id) const {
-  int nfaces = num_faces();
+Vector<2> Polytope<2>::face_normal(int face_id) const {
+
+  int const nfaces = num_faces();
   assert((face_id >= 0) && (face_id < nfaces));
 
   int ifv = face_id, isv = (face_id + 1)%nfaces;
   double flen = (vertex_points_[isv] - vertex_points_[ifv]).norm();
   if (flen == 0.0)
-    return Vector<2>(0.0, 0.0);
+    return {0.0, 0.0};
 
   Vector<2> fnormal(
     (vertex_points_[isv][1] - vertex_points_[ifv][1])/flen,
@@ -249,9 +241,9 @@ Vector<2> Polytope<2>::face_normal(int const face_id) const {
 */
 template<>
 inline
-Vector<3> Polytope<3>::face_normal(int const face_id) const {
-  int nfaces = num_faces();
-  assert((face_id >= 0) && (face_id < nfaces));
+Vector<3> Polytope<3>::face_normal(int face_id) const {
+
+  assert((face_id >= 0) && (face_id < num_faces()));
 
   Vector<3> fnormal(0.0, 0.0, 0.0);
   const std::vector<int>& fvertices = face_vertices(face_id);
@@ -285,14 +277,39 @@ Vector<3> Polytope<3>::face_normal(int const face_id) const {
 }
 
 /*!
-  @brief Moments for the polygon
+  @brief Moments for the polygon (1D)
+  @param moments Computed moments: moments[0] is length, 
+  moments[i+1]/moments[0] is i-th coordinate of the centroid, i=1
+*/ 
+template<>
+inline
+std::vector<double> Polytope<1>::moments(int order) const {
+  assert(order < 4);
+  int nmoments = order + 1;
+  std::vector<double> poly_moments(nmoments, 0.0);
+  poly_moments[0] = vertex_points_[0][1] - vertex_points_[0][0];
+  poly_moments[1] = (vertex_points_[0][1] + vertex_points_[0][0]) * poly_moments[0] / 2;
+
+  if (order > 1) {
+    double b(vertex_points_[0][1]), a(vertex_points_[0][0]);
+    double b3(b * b * b), a3(a * a * a);
+    poly_moments[2] = (b3 - a3) / 3;
+    poly_moments[3] = (b3 * b - a3 * a) / 4;
+  }
+  return poly_moments;
+}
+
+/*!
+  @brief Moments for the polygon (2D)
   @param moments Computed moments: moments[0] is area, 
   moments[i+1]/moments[0] is i-th coordinate of the centroid, i=1,2
 */ 
 template<>
 inline
-std::vector<double> Polytope<2>::moments() const {
-  std::vector<double> poly_moments(3, 0.0);
+std::vector<double> Polytope<2>::moments(int order) const {
+  assert(order < 3);
+  int nmoments = (order + 1) * (order + 2) / 2;
+  std::vector<double> poly_moments(nmoments, 0.0);
   int nvrts = num_vertices();
 
   for (int ivrt = 0; ivrt < nvrts; ivrt++) {
@@ -300,13 +317,24 @@ std::vector<double> Polytope<2>::moments() const {
     double cur_term = vertex_points_[ifv][0]*vertex_points_[isv][1] - 
                       vertex_points_[ifv][1]*vertex_points_[isv][0];
     poly_moments[0] += cur_term;
-    for (int ixy = 0; ixy < 2; ixy++)
-      poly_moments[ixy + 1] += cur_term*(
-        vertex_points_[ifv][ixy] + vertex_points_[isv][ixy]);
+    if (order > 0) {
+      for (int n = 0; n < 2; ++n)
+        poly_moments[n + 1] += cur_term * (vertex_points_[ifv][n] + vertex_points_[isv][n]);
+    }
+    if (order > 1) {
+      double xa = vertex_points_[ifv][0], ya = vertex_points_[ifv][1];
+      double xb = vertex_points_[isv][0], yb = vertex_points_[isv][1];
+      poly_moments[3] += cur_term * (xa * xa + xa * xb + xb * xb);
+      poly_moments[4] += cur_term * (xa * ya + xb * yb + (xa * yb + xb * ya) / 2);
+      poly_moments[5] += cur_term * (ya * ya + ya * yb + yb * yb);
+    }
   }
+
   poly_moments[0] /= 2.0;  
-  for (int ixy = 0; ixy < 2; ixy++)
-    poly_moments[ixy + 1] /= 6.0;
+  for (int n = 0; n < 2; ++n) poly_moments[n + 1] /= 6.0;
+  if (order > 1) {
+    for (int n = 0; n < 3; ++n) poly_moments[n + 3] /= 12.0;
+  }
 
   return poly_moments;
 }
@@ -319,9 +347,13 @@ std::vector<double> Polytope<2>::moments() const {
 */  
 template<>
 inline
-std::vector<double> Polytope<3>::moments() const {
+std::vector<double> Polytope<3>::moments(int order) const {
+  assert(order < 2);
   std::vector<double> poly_moments(4, 0.0);
   int nfaces = num_faces();
+
+  Point<3> fcentroid;
+  Vector<3> vcp;
 
   for (int iface = 0; iface < nfaces; iface++) {
     std::vector<double> fmoments = face_moments(iface);
@@ -329,33 +361,43 @@ std::vector<double> Polytope<3>::moments() const {
     if (fmoments[0] == 0.0)
       continue;
 
-    std::vector< Point<3> > face_pts = face_points(iface);
-    std::vector< std::vector<int> > itri_pts;
-    
-    int nfvrts = face_vertices_[iface].size();
-    if (nfvrts == 3)
-      itri_pts.push_back({0, 1, 2});
-    else {
-      Point<3> fcentroid;
-      for (int ixyz = 0; ixyz < 3; ixyz++)
-        fcentroid[ixyz] = fmoments[ixyz + 1]/fmoments[0];
-      face_pts.emplace_back(fcentroid);
+    // Coordinates of vertices of the polytope's face are
+    // in counter-clockwise order (i.e. so that the normal
+    // to the face is pointing outside of the polytope)
+    const auto& ids = face_vertices_[iface];
+    int nfvrts = static_cast<int>(ids.size());
 
-      itri_pts.reserve(nfvrts);
-      for (int ivrt = 0; ivrt < nfvrts; ivrt++)
-        itri_pts.push_back({nfvrts, ivrt, (ivrt + 1)%nfvrts});
-    }
+    if (nfvrts == 3) {
+      int v0 = ids[0], v1 = ids[1], v2 = ids[2];
+      vcp = cross(vertex_points_[v1] - vertex_points_[v0],
+                  vertex_points_[v2] - vertex_points_[v0]);
 
-    for (auto&& point : itri_pts) {
-      Vector<3> vcp = cross(face_pts[point[1]] - face_pts[point[0]],
-                            face_pts[point[2]] - face_pts[point[0]]);
+      poly_moments[0] += dot(vcp, vertex_points_[v0].asV());
 
-      poly_moments[0] += dot(vcp, face_pts[point[0]].asV());
-      for (int ixyz = 0; ixyz < 3; ixyz++) {
-        for (int ivrt = 0; ivrt < 3; ivrt++) {
-          int ifv = point[ivrt], isv = point[(ivrt + 1)%3];
-          poly_moments[ixyz + 1] += vcp[ixyz]*pow(face_pts[ifv][ixyz] +
-                                                  face_pts[isv][ixyz], 2);
+      for (int i = 0; i < 3; i++) {
+        double q0 = vertex_points_[v0][i] + vertex_points_[v1][i];
+        double q1 = vertex_points_[v0][i] + vertex_points_[v2][i];
+        double q2 = vertex_points_[v1][i] + vertex_points_[v2][i];
+        poly_moments[i + 1] += vcp[i] * (q0 * q0 + q1 * q1 + q2 * q2);
+      }
+    } else {
+      for (int i = 0; i < 3; i++)
+        fcentroid[i] = fmoments[i + 1] / fmoments[0];
+
+      for (int i = 0; i < nfvrts; ++i) {
+        int v0 = ids[i];
+        int v1 = ids[(i + 1)%nfvrts];
+
+        vcp = cross(vertex_points_[v0] - fcentroid,
+                    vertex_points_[v1] - fcentroid);
+
+        poly_moments[0] += dot(vcp, vertex_points_[v0].asV());
+
+        for (int i = 0; i < 3; ++i) {
+          double q0 = vertex_points_[v0][i] + vertex_points_[v1][i];
+          double q1 = vertex_points_[v0][i] + fcentroid[i];
+          double q2 = vertex_points_[v1][i] + fcentroid[i];
+          poly_moments[i + 1] += vcp[i] * (q0 * q0 + q1 * q1 + q2 * q2);
         }
       }
     }

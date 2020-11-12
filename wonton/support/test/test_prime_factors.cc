@@ -18,47 +18,52 @@ TEST(PrimeFactors, PrimeFactors) {
   std::vector<int> factors, expected_factors;
 
   factors = Wonton::prime_factors(0);
-  ASSERT_EQ(0, factors.size());
+  ASSERT_EQ(unsigned(0), factors.size());
 
   factors = Wonton::prime_factors(1);
-  ASSERT_EQ(0, factors.size());
+  ASSERT_EQ(unsigned(0), factors.size());
 
   factors = Wonton::prime_factors(2);
-  ASSERT_EQ(1, factors.size());
+  ASSERT_EQ(unsigned(1), factors.size());
   ASSERT_EQ(2, factors[0]);
 
   factors = Wonton::prime_factors(3);
-  ASSERT_EQ(1, factors.size());
+  ASSERT_EQ(unsigned(1), factors.size());
   ASSERT_EQ(3, factors[0]);
 
   factors = Wonton::prime_factors(4);
   expected_factors = std::vector<int>({2,2});
   ASSERT_EQ(expected_factors.size(), factors.size());
-  for (int i = 0; i < expected_factors.size(); i++)
+  int nb_expected_factors = expected_factors.size();
+  for (int i = 0; i < nb_expected_factors; i++)
     ASSERT_EQ(expected_factors[i], factors[i]);
 
   factors = Wonton::prime_factors(36);
   expected_factors = std::vector<int>({2,2,3,3}); 
   ASSERT_EQ(expected_factors.size(), factors.size());
-  for (int i = 0; i < expected_factors.size(); i++)
+  nb_expected_factors = expected_factors.size();
+  for (int i = 0; i < nb_expected_factors; i++)
     ASSERT_EQ(expected_factors[i], factors[i]);
 
   factors = Wonton::prime_factors(36);
   expected_factors = std::vector<int>({2,2,3,3}); 
   ASSERT_EQ(expected_factors.size(), factors.size());
-  for (int i = 0; i < expected_factors.size(); i++)
+  nb_expected_factors = expected_factors.size();
+  for (int i = 0; i < nb_expected_factors; i++)
     ASSERT_EQ(expected_factors[i], factors[i]);
 
   factors = Wonton::prime_factors(7350);
   expected_factors = std::vector<int>({2,3,5,5,7,7}); 
   ASSERT_EQ(expected_factors.size(), factors.size());
-  for (int i = 0; i < expected_factors.size(); i++)
+  nb_expected_factors = expected_factors.size();
+  for (int i = 0; i < nb_expected_factors; i++)
     ASSERT_EQ(expected_factors[i], factors[i]);
 
   factors = Wonton::prime_factors(3509);
   expected_factors = std::vector<int>({11,11,29}); 
   ASSERT_EQ(expected_factors.size(), factors.size());
-  for (int i = 0; i < expected_factors.size(); i++)
+  nb_expected_factors = expected_factors.size();
+  for (int i = 0; i < nb_expected_factors; i++)
     ASSERT_EQ(expected_factors[i], factors[i]);
 
 }

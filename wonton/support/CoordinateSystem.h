@@ -9,6 +9,7 @@ Please see the license file at the root of this repository, or at:
 
 #include <cassert>
 #include <cmath>
+#include <string>
 #include <tuple>
 
 #include "moment_index.h"
@@ -46,7 +47,7 @@ namespace CoordinateSystem {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list_core(
+  static void shift_moments_list_core(
       std::vector<double> & moments, int const shift,
       double const scaling_factor) {
     // Allocate new storage
@@ -55,7 +56,9 @@ namespace CoordinateSystem {
     auto num_new_moments = count_moments<D>(max_order);
     std::vector<double> new_moments(num_new_moments);
     // Shift moments
-    for (int new_index = 0; new_index < new_moments.size(); new_index++) {
+    int const nb_new_moments = new_moments.size();
+
+    for (int new_index = 0; new_index < nb_new_moments; new_index++) {
       auto moment_spec = index_to_moment<D>(new_index);
       auto order = std::get<0>(moment_spec);
       auto exponents = std::get<1>(moment_spec);
@@ -65,19 +68,28 @@ namespace CoordinateSystem {
       new_moments[new_index] = moments[old_index];
     }
     // Rescale moments
-    for (int d = 0; d < new_moments.size(); ++d) {
-      new_moments[d] *= scaling_factor;
+    for (double & new_moment : new_moments) {
+      new_moment *= scaling_factor;
     }
     // Swap vectors
     new_moments.swap(moments);
   }
-
 }
+
+// Typically, we template a class to add functionality. By majority vote, this
+// has not been done for curvilinier coordinate systems.
+enum class CoordSysType { Cartesian = 1,
+                          CylindricalAxisymmetric };
 
 // ============================================================================
 /// Cartesian Coordinates
 struct CartesianCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"Cartesian coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
@@ -144,13 +156,13 @@ struct CartesianCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // No change from "standard", Cartesian-like calculation.
     // --> Other than the geometry factor (which should be one, because any
     //     other value would be highly unusual for Cartesian coordinates, but
     //     we verify this anyway).
-    for (int d = 0; d < moments.size(); ++d) {
-      moments[d] *= inv_geo_fac;
+    for (double & moment : moments) {
+      moment *= inv_geo_fac;
     }
   }
 
@@ -162,6 +174,11 @@ struct CartesianCoordinates {
 /// Only valid in 1D.  The coordinate is the distance from the z axis.
 struct CylindricalRadialCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical radial coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
@@ -231,7 +248,7 @@ struct CylindricalRadialCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -246,6 +263,11 @@ struct CylindricalRadialCoordinates {
 /// height.
 struct CylindricalAxisymmetricCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical axisymmetric coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 2 pi: a one-radian wedge of a cylinder.  Portage
@@ -318,7 +340,7 @@ struct CylindricalAxisymmetricCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -333,6 +355,11 @@ struct CylindricalAxisymmetricCoordinates {
 /// azimuthal angle.
 struct CylindricalPolarCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical polar coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
@@ -402,7 +429,7 @@ struct CylindricalPolarCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -417,6 +444,11 @@ struct CylindricalPolarCoordinates {
 /// azimuthal angle, and the height.
 struct Cylindrical3DCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"cylindrical 3D coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
@@ -487,7 +519,7 @@ struct Cylindrical3DCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -501,6 +533,11 @@ struct Cylindrical3DCoordinates {
 /// Only valid in 1D.  The coordinate is the distance from the origin.
 struct SphericalRadialCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"spherical radial coordinates"};
+  }
 
   /// Geometry factor
   /// A very common choice is 4 pi: a one-steradian wedge of a sphere.  Portage
@@ -572,7 +609,7 @@ struct SphericalRadialCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // Shift and rescale moments
     CoordinateSystem::shift_moments_list_core<D>(
         moments, moment_shift, inv_geo_fac * moment_coefficient);
@@ -587,6 +624,11 @@ struct SphericalRadialCoordinates {
 /// angle of inclination, and the azimuthal angle.
 struct Spherical3DCoordinates {
  public:
+
+  /// Name as a string
+  static std::string to_string() {
+    return std::string{"spherical 3D coordinates"};
+  }
 
   /// Geometry factor
   static constexpr double geometry_factor = 1;
@@ -675,7 +717,7 @@ struct Spherical3DCoordinates {
   /// Modify moments to account for the coordinate system
   /// Handles any shape cell, but may reduce order of moments available.
   template<int D>
-  static constexpr void shift_moments_list(std::vector<double> & moments) {
+  static void shift_moments_list(std::vector<double> & moments) {
     // TODO: The precise expression is M^{\rm sph}[i,j,k] = (1/G)
     //       sum_{n=0}^{\infty} \left[ \frac{(-1)^n}{(2n)!} M^{\rm
     //       Cart}[i+2,j+2n,k]\right].  We could allow an approximation that

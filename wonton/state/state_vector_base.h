@@ -42,7 +42,7 @@ class StateVectorBase {
 
   //! Destructor
 
-  virtual ~StateVectorBase() {}
+  virtual ~StateVectorBase() = default;
 
   //! Virtual methods
 

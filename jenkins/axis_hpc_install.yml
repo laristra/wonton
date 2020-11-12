@@ -1,10 +1,9 @@
-# axis_varan.yml
 COMPILER:
   - intel18
   - gcc6
   - gcc7
 
-BUILD_TYPE:
+CONFIG_TYPE:
   - base
   - debug
   - serial
@@ -13,6 +12,7 @@ BUILD_TYPE:
 
 exclude:
   - COMPILER: gcc6
-    BUILD_TYPE: readme
+    CONFIG_TYPE: readme
   - COMPILER: gcc7
-    BUILD_TYPE: readme
+    CONFIG_TYPE: readme
+
