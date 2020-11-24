@@ -496,10 +496,16 @@ private:
    * values; rather it has to be the full mesh cell values array
 
    */
-  template<int dim>
-  void update_ghost_values(Vector<dim>* field, int m, bool cache = false) {
+  template<template<int> class Container, int dim>
+  void update_ghost_values(Container<dim>* field, int m, bool cache = false) {
 
     static_assert(0 < dim and dim < 4, "invalid dimension");
+
+    if (typeid(Container<dim>) == typeid(Vector<2>)) {
+      std::cout << "vector<2>" << std::endl;
+    } else if (typeid(Container<dim>) == typeid(Point<2>)) {
+      std::cout << "point<2>" << std::endl;
+    }
 
     if (cache) {
       if (send.values.empty() or take.values.empty()) {
@@ -586,109 +592,23 @@ private:
     // else. For this reason, free the user type
     MPI_Type_free(&MPI_Vector);
   }
-  
 
   /**
-   * @brief Update Point field values on ghost cells (e.g. material centroids)
+   * @brief Retrieve unique index for field data type.
    *
-   * @tparam dim: number of components of each Point.
-   * @param field: field Point array (size = num_owned_in_mesh + num_ghost_in_mesh) 
-   * @param m: the material index.
-   * @param cache: whether to cache values or not (for tests).
-   *
-   * Note that the data must not be the compact array of material cell
-   * values; rather it has to be the full mesh cell values array
-
+   * @param field: name of the field.
+   * @return unique index for field data type.
    */
-  template<int dim>
-  void update_ghost_values(Point<dim>* field, int m, bool cache = false) {
-
-    static_assert(0 < dim and dim < 4, "invalid dimension");
-
-    if (cache) {
-      if (send.values.empty() or take.values.empty()) {
-        send.values.resize(num_mats);
-        take.values.resize(num_mats);
-        for (int i = 0; i < num_mats; ++i) {
-          send.values[i].resize(num_ranks);
-          take.values[i].resize(num_ranks);
-        }
-      }
-    }
-
-    // skip if no material data for this rank
-    if (field == nullptr) { return; }
-
-    // create a MPI contiguous type for serialization
-    MPI_Datatype MPI_Point;
-    MPI_Type_contiguous(dim, MPI_DOUBLE, &MPI_Point);
-    MPI_Type_commit(&MPI_Point);
-
-    std::vector<double> buffer[num_ranks]; // stride = dim
-    std::vector<MPI_Request> requests;
-
-    // step 1: send owned values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and not send.matrix[m][i].empty()) {
-        buffer[i].clear();
-        send.count[m][i] = send.matrix[m][i].size();
-        buffer[i].reserve(dim * send.count[m][i]);
-
-        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
-          assert(not is_ghost(j));
-          for (int d = 0; d < dim; ++d) {
-            buffer[i].emplace_back(field[j][d]);
-          }
-        }
-
-        MPI_Request request;
-        MPI_Isend(buffer[i].data(), send.count[m][i], MPI_Point, i, 0, comm, &request);
-        requests.emplace_back(request);
-
-        if (cache) {
-          send.values[m][i].resize(buffer[i].size());
-          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
-        }
-      }
-    }
-
-    // step 2: receive ghost values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        buffer[i].resize(dim * take.count[m][i]);
-        MPI_Request request;
-        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_Point, i, 0, comm, &request);
-        requests.emplace_back(request);
-      }
-    }
-
-    // step 3: update vector field
-    MPI_Waitall(requests.size(), requests.data(), status);
-
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        for (int j = 0; j < take.count[m][i]; ++j) {
-          int const& gid = take.matrix[m][i][j];
-          int const& lid = take.lookup[gid];
-          for (int d = 0; d < dim; ++d) {
-            field[lid][d] = buffer[i][j * dim + d];
-          }
-        }
-
-        if (cache) {
-          take.values[m][i].resize(dim * take.count[m][i]);
-          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
-        }
-        buffer[i].clear();
-      }
-    }
-
-    // While it seems that a type can be committed repeatedly - what
-    // happens if someone tries to do a ghost exchange of Vector<2>
-    // and Vector<3> - say during a 3D to 2D remap. MPI_Vector will
-    // refer to one thing while the caller might assume something
-    // else. For this reason, free the user type
-    MPI_Type_free(&MPI_Point);
+  int get_data_type_index(std::string const& field) const {
+    auto const& type = state.get_data_type(field);
+    if (type == typeid(double))    return 0;
+    if (type == typeid(Point<1>))  return 1;
+    if (type == typeid(Point<2>))  return 2;
+    if (type == typeid(Point<3>))  return 3;
+    if (type == typeid(Vector<1>)) return 4;
+    if (type == typeid(Vector<2>)) return 5;
+    if (type == typeid(Vector<3>)) return 6;
+    return -1;
   }
 
   /**
