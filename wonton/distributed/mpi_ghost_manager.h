@@ -57,47 +57,36 @@ public:
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
 
-    std::type_info const& data_type = state.get_data_type(field);
+    int const index_data_type = get_data_type_index(field);
 
     if (multimat) {
       assert(entity == Wonton::CELL);
       for (int m = 1; m < num_mats; ++m) {
-        if (data_type == typeid(double))
-          update_material_field<double>(field, m, cache);
-        else if (data_type == typeid(Vector<1>))
-          update_material_field<Vector<1>>(field, m, cache);
-        else if (data_type == typeid(Vector<2>))
-          update_material_field<Vector<2>>(field, m, cache);
-        else if (data_type == typeid(Vector<3>))
-          update_material_field<Vector<3>>(field, m, cache);
-        else if (data_type == typeid(Point<1>))
-          update_material_field<Point<1>>(field, m, cache);
-        else if (data_type == typeid(Point<2>))
-          update_material_field<Point<2>>(field, m, cache);
-        else if (data_type == typeid(Point<3>))
-          update_material_field<Point<3>>(field, m, cache);
-        else
-          throw std::runtime_error("mpi_ghost_manager.h: incorrect material field data type");
+        switch (index_data_type) {
+          case 0: update_material_field<double>(field, m, cache); break;
+          case 1: update_material_field<Point<1>>(field, m, cache); break;
+          case 2: update_material_field<Point<2>>(field, m, cache); break;
+          case 3: update_material_field<Point<3>>(field, m, cache); break;
+          case 4: update_material_field<Vector<1>>(field, m, cache); break;
+          case 5: update_material_field<Vector<2>>(field, m, cache); break;
+          case 6: update_material_field<Vector<3>>(field, m, cache); break;
+          default: throw std::runtime_error("incorrect material field data type");
+        }
       }
     } else {  // mesh field
-      if (data_type == typeid(double))
-        update_mesh_field<double>(field, cache);
-      else if (data_type == typeid(Vector<1>))
-        update_mesh_field<Vector<1>>(field, cache);
-      else if (data_type == typeid(Vector<2>))
-        update_mesh_field<Vector<2>>(field, cache);
-      else if (data_type == typeid(Vector<3>))
-        update_mesh_field<Vector<3>>(field, cache);
-      else if (data_type == typeid(Point<1>))
-        update_mesh_field<Point<1>>(field, cache);
-      else if (data_type == typeid(Point<2>))
-        update_mesh_field<Point<2>>(field, cache);
-      else if (data_type == typeid(Point<3>))
-        update_mesh_field<Point<3>>(field, cache);
-      else
-        throw std::runtime_error("mpi_ghost_manager.h: incorrect material field data type");
+      switch (index_data_type) {
+        case 0: update_mesh_field<double>(field, cache); break;
+        case 1: update_mesh_field<Point<1>>(field, cache); break;
+        case 2: update_mesh_field<Point<2>>(field, cache); break;
+        case 3: update_mesh_field<Point<3>>(field, cache); break;
+        case 4: update_mesh_field<Vector<1>>(field, cache); break;
+        case 5: update_mesh_field<Vector<2>>(field, cache); break;
+        case 6: update_mesh_field<Vector<3>>(field, cache); break;
+        default: throw std::runtime_error("incorrect mesh field data type");
+      }
     }
   }
+
 
   /** @brief Update ghosts of compact array of material cell values
    *
