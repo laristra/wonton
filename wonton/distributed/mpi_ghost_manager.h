@@ -56,8 +56,8 @@ public:
 
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
-
-    int const index_data_type = get_data_type_index(field);
+    auto const& data_type = state.get_data_type(field);
+    int const index_data_type = get_data_type_index(data_type);
 
     if (multimat) {
       assert(entity == Wonton::CELL);
@@ -310,7 +310,8 @@ private:
 
       MPI_Waitall(requests.size(), requests.data(), status);
 
-#if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
+#if !defined(NDEBUG)
+  #if defined(VERBOSE_OUTPUT)
       for (int i = 0; i < num_ranks; ++i) {
         if (i != rank) {
           std::cout << "[" << rank << "] <- [" << i << "]: (";
@@ -323,22 +324,27 @@ private:
           std::cout << ")" << std::endl;
         }
       }
-#endif
+  #endif
 
-#if !defined(NDEBUG)      
-      // verification
-      std::vector<int> received_ids;
+      // verification: check that the number of received cells
+      // matches the number of ghost cells for the current rank.
+      // note that when using flat mesh with pseudo-redistribution,
+      // we could end up receiving more cells than the number of
+      // ghost cells for a given rank because a same cell could be
+      // owned by different ranks and hence sent multiple times.
+      // hence we have to filter those cells to remove duplicates
+      // before doing the check.
+      std::set<int> filtered;
+
       for (int i = 0; i < num_ranks; ++i) {
-        int nents = take.matrix[m][i].size();
-        for (int j = 0; j < nents; j++) {
-          int id = take.matrix[m][i][j];
-          if (std::find(received_ids.begin(), received_ids.end(), id) ==
-              received_ids.end())
-            received_ids.push_back(id);
+        for (int j : take.matrix[m][i]) {
+          filtered.insert(j);
         }
       }
-      assert(received_ids.size() == static_cast<size_t>(num_ghosts[rank]));
+      int const num_received = filtered.size();
+      assert(num_received == num_ghosts[rank]);
 #endif
+
       MPI_Barrier(comm);
     }
   }
@@ -476,25 +482,32 @@ private:
   /**
    * @brief Update vector field values on ghost cells.
    *
-   * @tparam dim: number of components of each vector.
-   * @param field: field Vector array (size = num_owned_in_mesh + num_ghost_in_mesh) 
+   * @tparam Field: the field type (can be point or vector field).
+   * @tparam dim: number of components of each point/vector.
+   * @param field: field values (size = num_owned_in_mesh + num_ghost_in_mesh)
    * @param m: the material index.
    * @param cache: whether to cache values or not (for tests).
    *
-   * Note that the data must not be the compact array of material cell
+   * Note that field data must NOT be the compact array of material cell
    * values; rather it has to be the full mesh cell values array
-
    */
-  template<template<int> class Container, int dim>
-  void update_ghost_values(Container<dim>* field, int m, bool cache = false) {
+  template<template<int> class Field, int dim>
+  void update_ghost_values(Field<dim>* field, int m, bool cache = false) {
 
     static_assert(0 < dim and dim < 4, "invalid dimension");
 
-    if (typeid(Container<dim>) == typeid(Vector<2>)) {
-      std::cout << "vector<2>" << std::endl;
-    } else if (typeid(Container<dim>) == typeid(Point<2>)) {
-      std::cout << "point<2>" << std::endl;
+#if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
+    int const index_type = get_data_type_index(typeid(Field<dim>));
+    if (index_type == 0) {
+      throw std::runtime_error("incorrect method for scalar field");
+    } else if (1 <= index_type and index_type <= 3) {
+      std::cout << "update point<"<< dim <<"> field" << std::endl;
+    } else if (4 <= index_type and index_type <= 6) {
+      std::cout << "update vector<"<< dim <<"> field" << std::endl;
+    } else {
+      throw std::runtime_error("unknown field type");
     }
+#endif
 
     if (cache) {
       if (send.values.empty() or take.values.empty()) {
@@ -585,11 +598,13 @@ private:
   /**
    * @brief Retrieve unique index for field data type.
    *
-   * @param field: name of the field.
-   * @return unique index for field data type.
+   * All supported field data types must be registered here.
+   * This unique entry point makes it easy to add new types.
+   *
+   * @param type: type of the field.
+   * @return index for the given field data type.
    */
-  int get_data_type_index(std::string const& field) const {
-    auto const& type = state.get_data_type(field);
+  int get_data_type_index(std::type_info const& type) const {
     if (type == typeid(double))    return 0;
     if (type == typeid(Point<1>))  return 1;
     if (type == typeid(Point<2>))  return 2;
