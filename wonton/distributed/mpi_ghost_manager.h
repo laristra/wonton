@@ -8,6 +8,7 @@
 #define WONTON_MPI_GHOST_MANAGER_H
 
 #include <map>
+#include <set>
 #include <numeric>
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
