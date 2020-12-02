@@ -10,6 +10,7 @@
 #include <map>
 #include <set>
 #include <numeric>
+#include <typeindex>
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
 
@@ -57,13 +58,12 @@ public:
 
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
-    auto const& data_type = state.get_data_type(field);
-    int const index_data_type = get_data_type_index(data_type);
+    auto const field_type_id = field_type_registry.at(state.get_data_type(field));
 
     if (multimat) {
       assert(entity == Wonton::CELL);
       for (int m = 1; m < num_mats; ++m) {
-        switch (index_data_type) {
+        switch (field_type_id) {
           case 0: update_material_field<double>(field, m, cache); break;
           case 1: update_material_field<Point<1>>(field, m, cache); break;
           case 2: update_material_field<Point<2>>(field, m, cache); break;
@@ -75,7 +75,7 @@ public:
         }
       }
     } else {  // mesh field
-      switch (index_data_type) {
+      switch (field_type_id) {
         case 0: update_mesh_field<double>(field, cache); break;
         case 1: update_mesh_field<Point<1>>(field, cache); break;
         case 2: update_mesh_field<Point<2>>(field, cache); break;
@@ -498,15 +498,13 @@ private:
     static_assert(0 < dim and dim < 4, "invalid dimension");
 
 #if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
-    int const index_type = get_data_type_index(typeid(Field<dim>));
-    if (index_type == 0) {
-      throw std::runtime_error("incorrect method for scalar field");
-    } else if (1 <= index_type and index_type <= 3) {
-      std::cout << "update point<"<< dim <<"> field" << std::endl;
-    } else if (4 <= index_type and index_type <= 6) {
-      std::cout << "update vector<"<< dim <<"> field" << std::endl;
-    } else {
-      throw std::runtime_error("unknown field type");
+    int const field_type = field_type_registry.at(typeid(Field<dim>));
+
+    switch (field_type) {
+      case 0: throw std::runtime_error("incorrect method for scalar field");
+      case 1 ... 3: std::cout << "update point<"<< dim <<"> field" << std::endl; break;
+      case 4 ... 6: std::cout << "update vector<"<< dim <<"> field" << std::endl; break;
+      default: throw std::runtime_error("unknown field type");
     }
 #endif
 
@@ -597,26 +595,6 @@ private:
   }
 
   /**
-   * @brief Retrieve unique index for field data type.
-   *
-   * All supported field data types must be registered here.
-   * This unique entry point makes it easy to add new types.
-   *
-   * @param type: type of the field.
-   * @return index for the given field data type.
-   */
-  int get_data_type_index(std::type_info const& type) const {
-    if (type == typeid(double))    return 0;
-    if (type == typeid(Point<1>))  return 1;
-    if (type == typeid(Point<2>))  return 2;
-    if (type == typeid(Point<3>))  return 3;
-    if (type == typeid(Vector<1>)) return 4;
-    if (type == typeid(Vector<2>)) return 5;
-    if (type == typeid(Vector<3>)) return 6;
-    return -1;
-  }
-
-  /**
    * @struct Data for MPI communications.
    *
    */
@@ -629,6 +607,17 @@ private:
     std::vector<std::vector<int>> count {};
     /** cached values per rank for tests, stride = dim for vector fields */
     std::vector<std::vector<std::vector<double>>> values {};
+  };
+
+  /** Registry of all supported field types */
+  std::map<std::type_index, int> const field_type_registry = {
+    { typeid(double)       , 0 },
+    { typeid(Point<1>) , 1 },
+    { typeid(Point<2>) , 2 },
+    { typeid(Point<3>) , 3 },
+    { typeid(Vector<1>), 4 },
+    { typeid(Vector<2>), 5 },
+    { typeid(Vector<3>), 6 },
   };
 
   /** mesh instance */
