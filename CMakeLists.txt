@@ -116,7 +116,13 @@ endif()
 # Locate Jali
 #------------------------------------------------------------------------------#
 
-set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
+# If MPI is enabled,allow the user to set Jali. If no MPI, force false.
+if (WONTON_ENABLE_MPI)
+  set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
+else()
+  set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?" FORCE)
+endif()
+
 if (WONTON_ENABLE_Jali AND WONTON_ENABLE_MPI AND NOT Jali_LIBRARIES)
   # Look for the Jali package
   
