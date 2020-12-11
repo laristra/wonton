@@ -118,7 +118,7 @@ endif()
 
 set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
 
-# If MPI is enabled,allow the user to set Jali. If no MPI, force false.
+# If MPI is enabled,allow the user to set Jali. If no MPI, throw an error.
 if (WONTON_ENABLE_Jali AND NOT WONTON_ENABLE_MPI)
   message(FATAL_ERROR "Jali cannot be enabled without mpi. Please set WONTON_ENABLE_MPI=True")
 endif()
