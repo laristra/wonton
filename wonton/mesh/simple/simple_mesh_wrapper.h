@@ -62,6 +62,10 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
       mesh_(mesh) {
     if (coord_sys == CoordSysType::CylindricalAxisymmetric)
       AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<CylindricalAxisymmetricCoordinates>();
+    else if (coord_sys == CoordSysType::CylindricalRadial)
+      AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<CylindricalRadialCoordinates>();
+    else if (coord_sys == CoordSysType::SphericalRadial)
+      AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<SphericalRadialCoordinates>();
     else
       AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities();
   }  // explicit constructor
