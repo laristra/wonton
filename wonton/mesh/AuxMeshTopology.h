@@ -2333,7 +2333,7 @@ void AuxMeshTopology<BasicMesh>::compute_cell_moments() {
     if (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value ||
         std::is_same<CoordSys, CylindricalRadialCoordinates>::value)
       order = 2;
-    if (std::is_same<CoordSys, SphericalRadialCoordinates>::value)
+    else if (std::is_same<CoordSys, SphericalRadialCoordinates>::value)
       order = 3;
 
     auto moments = poly.moments(order);
