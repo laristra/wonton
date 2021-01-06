@@ -294,7 +294,7 @@ std::vector<double> Polytope<1>::moments(int order) const {
     double b(vertex_points_[0][1]), a(vertex_points_[0][0]);
     double b3(b * b * b), a3(a * a * a);
     poly_moments[2] = (b3 - a3) / 3;
-    poly_moments[3] = (b3 * b - a3 * a) / 4;
+    if (order > 2) poly_moments[3] = (b3 * b - a3 * a) / 4;
   }
   return poly_moments;
 }
