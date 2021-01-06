@@ -26,7 +26,7 @@ export NGC=/usr/local/codes/ngc
 ngc_include_dir=$NGC/private/include
 
 wonton_install_dir=$NGC/private/wonton
-wonton_version=dev
+wonton_version=$3
 
 thrust_dir=${ngc_include_dir}
 
@@ -67,9 +67,11 @@ jali_flags="-D WONTON_ENABLE_Jali:BOOL=True -D Jali_ROOT:PATH=$jali_install_dir"
 lapacke_dir=$NGC/private/lapack/${lapack_version}-patched${compiler_suffix}
 lapacke_flags="-D WONTON_ENABLE_LAPACKE:BOOL=True -D LAPACKE_ROOT:PATH=$lapacke_dir"
 
+flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=False"
 if [[ $compiler == "gcc6" ]]; then
     flecsi_install_dir=$NGC/private/flecsi/374b56b-gcc-6.4.0
-    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir"
+    flecsisp_install_dir=$NGC/private/flecsi-sp/e78c594-gcc-6.4.0
+    flecsi_flags="-D WONTON_ENABLE_FleCSI:BOOL=True -D FleCSI_ROOT:PATH=$flecsi_install_dir -D FleCSISP_ROOT:PATH=$flecsisp_install_dir"
 fi
 
 

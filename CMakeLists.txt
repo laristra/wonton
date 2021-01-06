@@ -33,7 +33,7 @@ endif ()
 
 set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 2)
-set(WONTON_VERSION_PATCH 1)
+set(WONTON_VERSION_PATCH 2)
 
 
 # Top level target
@@ -95,8 +95,8 @@ if (WONTON_ENABLE_FleCSI AND NOT FleCSI_LIBRARIES)
   message(STATUS "FleCSI_LIBRARIES=${FleCSI_LIBRARIES}" )
   message(STATUS "FleCSISP_LIBRARIES=${FleCSISP_LIBRARIES}" )
 
-  target_include_directories(wonton INTERFACE ${FleCSI_INCLUDE_DIR})
-  target_include_directories(wonton INTERFACE ${FleCSISP_INCLUDE_DIR})
+  target_include_directories(wonton SYSTEM INTERFACE ${FleCSI_INCLUDE_DIR})
+  target_include_directories(wonton SYSTEM INTERFACE ${FleCSISP_INCLUDE_DIR})
 
   target_link_libraries(wonton INTERFACE ${FleCSI_LIBRARIES})
   target_link_libraries(wonton INTERFACE ${FleCSISP_LIBRARIES})
@@ -340,12 +340,6 @@ if (WONTON_ENABLE_LAPACKE)
   if (LAPACKE_FOUND)
     enable_language(Fortran)
     include(FortranCInterface)  # will ensure the fortran library is linked in
-    
-    
-    target_include_directories(wonton INTERFACE ${LAPACKE_INCLUDE_DIRS})
-    target_compile_definitions(wonton INTERFACE WONTON_HAS_LAPACKE)
-    
-    target_link_libraries(wonton INTERFACE ${LAPACKE_LIBRARIES})
     
     message(STATUS "LAPACKE_FOUND ${LAPACKE_FOUND}")
     message(STATUS "LAPACKE_LIBRARIES  ${LAPACKE_LIBRARIES}")

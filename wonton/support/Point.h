@@ -36,10 +36,6 @@
 
 namespace Wonton {
 
-const int X = 0;
-const int Y = 1;
-const int Z = 2;
-
 /*!
   @class Point "Point.h"
   @brief Represents a point in an N-dimensional space.

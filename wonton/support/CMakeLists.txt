@@ -44,6 +44,15 @@ if (WONTON_ENABLE_MPI)
 endif ()
 
 #-----------------------------------------------------------------------------
+# Lapacke
+#-----------------------------------------------------------------------------
+if (WONTON_ENABLE_LAPACKE AND LAPACKE_FOUND)
+  target_include_directories(wonton_support PUBLIC ${LAPACKE_INCLUDE_DIRS})
+  target_compile_definitions(wonton_support PUBLIC WONTON_HAS_LAPACKE)
+  target_link_libraries(wonton_support PUBLIC ${LAPACKE_LIBRARIES})
+endif ()
+
+#-----------------------------------------------------------------------------
 # Thrust information
 #-----------------------------------------------------------------------------
 if (WONTON_ENABLE_THRUST)   # if it is overridden by the command line
