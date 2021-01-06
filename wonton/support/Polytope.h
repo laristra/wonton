@@ -384,9 +384,9 @@ std::vector<double> Polytope<3>::moments(int order) const {
       for (int i = 0; i < 3; i++)
         fcentroid[i] = fmoments[i + 1] / fmoments[0];
 
-      for (int i = 0; i < nfvrts; ++i) {
-        int v0 = ids[i];
-        int v1 = ids[(i + 1)%nfvrts];
+      for (int n = 0; n < nfvrts; ++n) {
+        int v0 = ids[n];
+        int v1 = ids[(n + 1)%nfvrts];
 
         vcp = cross(vertex_points_[v0] - fcentroid,
                     vertex_points_[v1] - fcentroid);
