@@ -61,7 +61,7 @@ class FixedD_Mesh_Wrapper : public AuxMeshTopology<FixedD_Mesh_Wrapper> {
   GID_t get_global_id(int id, const Entity_kind kind) const { return id; }
 
   // -- geometry
-  void cell_get_coordinates(int c, std::vector<Point<3>> *ccoords) const { ccoords->resize(8); }
+  void cell_get_coordinates(int c, std::vector<Point<3>> *ccoords) const { ccoords->resize(8, Point<3>(0.0, 0.0, 0.0)); }
 
   // -- functions that are expected to work for all dimensions
   template <int D>
