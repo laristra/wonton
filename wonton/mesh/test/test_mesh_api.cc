@@ -95,7 +95,7 @@ TEST(Mesh_API, Fixed_D) {
   // wedges
   isum = 0;
   dsum = 0.0;
-  std::vector<std::array<Wonton::Point<3>, 4>> wedge_coords(nsides);
+  std::vector<std::array<Wonton::Point<3>, 4>> wedge_coords(nwedges);
 
   for (int w = 0; w < nwedges; ++w) {
     mesh_wrapper.wedge_get_coordinates(w, &(wedge_coords[w]));
