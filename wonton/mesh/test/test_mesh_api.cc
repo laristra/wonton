@@ -27,12 +27,12 @@ TEST(Mesh_API, Fixed_D) {
   int nfaces_ghost = mesh_wrapper.num_ghost_faces();
   int nnodes_ghost = mesh_wrapper.num_ghost_nodes();
   int isum = ncells_ghost + nfaces_ghost + nnodes_ghost;
-  assert(isum == 0);
+  ASSERT_EQ(isum, 0);
 
-  assert(ncells == mesh_wrapper.num_entities(Wonton::CELL, Wonton::Entity_type::ALL));
-  assert(nfaces == mesh_wrapper.num_entities(Wonton::FACE, Wonton::Entity_type::ALL));
-  assert(nsides == mesh_wrapper.num_entities(Wonton::SIDE, Wonton::Entity_type::ALL));
-  assert(nnodes == mesh_wrapper.num_entities(Wonton::NODE, Wonton::Entity_type::ALL));
+  ASSERT_EQ(ncells, mesh_wrapper.num_entities(Wonton::CELL, Wonton::Entity_type::ALL));
+  ASSERT_EQ(nfaces, mesh_wrapper.num_entities(Wonton::FACE, Wonton::Entity_type::ALL));
+  ASSERT_EQ(nsides, mesh_wrapper.num_entities(Wonton::SIDE, Wonton::Entity_type::ALL));
+  ASSERT_EQ(nnodes, mesh_wrapper.num_entities(Wonton::NODE, Wonton::Entity_type::ALL));
 
   // cells: accumulate data into arrays and make small calculations to avoid any 
   // possibility for code optimization. 
