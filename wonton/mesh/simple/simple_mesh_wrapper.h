@@ -84,7 +84,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
   // The following methods are needed somewhere within AuxMeshTopology
 
   /// mesh global information
-  CoordSysType mesh_get_coordinate_system() const { return coord_sys_; }
+  virtual CoordSysType mesh_get_coordinate_system() const override { return coord_sys_; }
 
   /// The spatial dimension of the mesh.
   int space_dimension() const {

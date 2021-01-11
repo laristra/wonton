@@ -229,7 +229,7 @@ class AuxMeshTopology {
 
   // ! Default coordinate system is Cartesian
 
-  Wonton::CoordSysType mesh_get_coordinate_system() const { return Wonton::CoordSysType::Cartesian; }
+  virtual Wonton::CoordSysType mesh_get_coordinate_system() const { return Wonton::CoordSysType::Cartesian; }
 
   // //! A method expected to be found in the BasicMesh class but defined
   // //! here as pure virtual to prevent this class from ever being
