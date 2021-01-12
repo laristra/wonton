@@ -26,6 +26,8 @@ TEST(SwarmState, basic) {
 
   int const num_points = 10;
   Wonton::vector<Wonton::Point<3>> points(num_points);
+  Wonton::Swarm<3> swarm;
+  Wonton::SwarmState<3> state;
 
   for (int i = 0; i < num_points; i++) {
     // point coordinates are not always initialized in order
@@ -38,8 +40,8 @@ TEST(SwarmState, basic) {
   }
 
   // create state
-  Wonton::Swarm<3> swarm(points);
-  Wonton::SwarmState<3> state(swarm);
+  swarm.init(points);
+  state.init(swarm);
   ASSERT_EQ(state.get_size(), num_points);
 
   // create state fields
