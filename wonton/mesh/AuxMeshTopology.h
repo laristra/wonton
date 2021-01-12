@@ -227,6 +227,9 @@ class AuxMeshTopology {
     // build_aux_entities()
   }
 
+  // ! Default coordinate system is Cartesian
+
+  virtual Wonton::CoordSysType mesh_get_coordinate_system() const { return Wonton::CoordSysType::Cartesian; }
 
   // //! A method expected to be found in the BasicMesh class but defined
   // //! here as pure virtual to prevent this class from ever being
@@ -2330,8 +2333,11 @@ void AuxMeshTopology<BasicMesh>::compute_cell_moments() {
     Polytope<dim> poly(cpoints, fnmap);
 
     int order = 1;
-    if (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value)
+    if (std::is_same<CoordSys, CylindricalAxisymmetricCoordinates>::value ||
+        std::is_same<CoordSys, CylindricalRadialCoordinates>::value)
       order = 2;
+    else if (std::is_same<CoordSys, SphericalRadialCoordinates>::value)
+      order = 3;
 
     auto moments = poly.moments(order);
     CoordSys::template shift_moments_list<dim>(moments);

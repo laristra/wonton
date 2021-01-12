@@ -294,7 +294,7 @@ std::vector<double> Polytope<1>::moments(int order) const {
     double b(vertex_points_[0][1]), a(vertex_points_[0][0]);
     double b3(b * b * b), a3(a * a * a);
     poly_moments[2] = (b3 - a3) / 3;
-    poly_moments[3] = (b3 * b - a3 * a) / 4;
+    if (order > 2) poly_moments[3] = (b3 * b - a3 * a) / 4;
   }
   return poly_moments;
 }
@@ -384,9 +384,9 @@ std::vector<double> Polytope<3>::moments(int order) const {
       for (int i = 0; i < 3; i++)
         fcentroid[i] = fmoments[i + 1] / fmoments[0];
 
-      for (int i = 0; i < nfvrts; ++i) {
-        int v0 = ids[i];
-        int v1 = ids[(i + 1)%nfvrts];
+      for (int n = 0; n < nfvrts; ++n) {
+        int v0 = ids[n];
+        int v1 = ids[(n + 1)%nfvrts];
 
         vcp = cross(vertex_points_[v0] - fcentroid,
                     vertex_points_[v1] - fcentroid);
