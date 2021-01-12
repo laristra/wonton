@@ -59,9 +59,14 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
                                CoordSysType coord_sys = CoordSysType::Cartesian) :
       AuxMeshTopology<Simple_Mesh_Wrapper>(
         request_sides, request_wedges, request_corners),
-      mesh_(mesh) {
+      mesh_(mesh),
+      coord_sys_(coord_sys) {
     if (coord_sys == CoordSysType::CylindricalAxisymmetric)
       AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<CylindricalAxisymmetricCoordinates>();
+    else if (coord_sys == CoordSysType::CylindricalRadial)
+      AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<CylindricalRadialCoordinates>();
+    else if (coord_sys == CoordSysType::SphericalRadial)
+      AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities<SphericalRadialCoordinates>();
     else
       AuxMeshTopology<Simple_Mesh_Wrapper>::build_aux_entities();
   }  // explicit constructor
@@ -77,6 +82,9 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
 
   //////////////////////////////////////////////////////////////////////
   // The following methods are needed somewhere within AuxMeshTopology
+
+  /// mesh global information
+  virtual CoordSysType mesh_get_coordinate_system() const override { return coord_sys_; }
 
   /// The spatial dimension of the mesh.
   int space_dimension() const {
@@ -227,6 +235,7 @@ class Simple_Mesh_Wrapper : public AuxMeshTopology<Simple_Mesh_Wrapper> {
  private:
   /// The mesh to wrap.
   Simple_Mesh const & mesh_;
+  const CoordSysType coord_sys_;
 };  // class Simple_Mesh_Wrapper
 
 }  // namespace Wonton

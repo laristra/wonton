@@ -33,7 +33,7 @@ endif ()
 
 set(WONTON_VERSION_MAJOR 1)
 set(WONTON_VERSION_MINOR 2)
-set(WONTON_VERSION_PATCH 2)
+set(WONTON_VERSION_PATCH 8)
 
 
 # Top level target
@@ -117,6 +117,12 @@ endif()
 #------------------------------------------------------------------------------#
 
 set(WONTON_ENABLE_Jali False CACHE BOOL "Jali Interface enabled?")
+
+# If MPI is enabled,allow the user to set Jali. If no MPI, throw an error.
+if (WONTON_ENABLE_Jali AND NOT WONTON_ENABLE_MPI)
+  message(FATAL_ERROR "Jali cannot be enabled without mpi. Please set WONTON_ENABLE_MPI=True")
+endif()
+
 if (WONTON_ENABLE_Jali AND WONTON_ENABLE_MPI AND NOT Jali_LIBRARIES)
   # Look for the Jali package
   
@@ -148,28 +154,11 @@ endif ()
 
 set(WONTON_ENABLE_THRUST False CACHE BOOL "Is the Thrust library being used?")
 if (WONTON_ENABLE_THRUST)
-
-  # Allow for swapping backends
-  set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_CPP"  CACHE STRING "Thrust host backend")
+  set(THRUST_HOST_BACKEND "THRUST_HOST_SYSTEM_OMP"  CACHE STRING "Thrust host backend")
   set(THRUST_DEVICE_BACKEND "THRUST_DEVICE_SYSTEM_OMP" CACHE STRING "Thrust device backend")
 
-  if ((${THRUST_HOST_BACKEND} STREQUAL "THRUST_HOST_SYSTEM_OMP") OR
-      (${THRUST_DEVICE_BACKEND} STREQUAL "THRUST_DEVICE_SYSTEM_OMP"))
-    list(APPEND _components OpenMP)
-  endif ()
-  if (${THRUST_DEVICE_BACKEND} STREQUAL "THRUST_DEVICE_SYSTEM_CUDA")
-    list(APPEND _components CUDA)
-  endif ()
-
-  find_package(THRUST COMPONENTS ${_components} REQUIRED MODULE)
-
+  find_package(THRUST COMPONENTS OpenMP REQUIRED MODULE)
   message(STATUS "Enabling compilation with Thrust")
-  message(STATUS "Using THRUST_ROOT=${THRUST_ROOT}")
-  message(STATUS "THRUST_INCLUDE_DIRS ${THRUST_INCLUDE_DIRS}")
-
-  message(STATUS "Using ${THRUST_HOST_BACKEND} as Thrust host backend")
-  message(STATUS "Using ${THRUST_DEVICE_BACKEND} as Thrust device backend")
-
 else ()
 
   #-----------------------------------------------------------------------------

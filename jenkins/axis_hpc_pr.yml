@@ -2,7 +2,7 @@ COMPILER:
   - intel18
   - gcc7
 
-BUILD_TYPE:
+CONFIG_TYPE:
   - base
   - debug
   - serial
@@ -11,5 +11,5 @@ BUILD_TYPE:
 
 exclude:
   - COMPILER: gcc7
-    BUILD_TYPE: readme
+    CONFIG_TYPE: readme
 

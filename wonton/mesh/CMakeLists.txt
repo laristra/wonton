@@ -53,3 +53,11 @@ install(TARGETS wonton_mesh
   PUBLIC_HEADER DESTINATION include/wonton/mesh
   INCLUDES DESTINATION include/wonton/mesh
   )
+
+if (ENABLE_UNIT_TESTS)
+  wonton_add_unittest(test_mesh_api
+    SOURCES test/test_mesh_api.cc
+    LIBRARIES wonton_mesh
+    POLICY SERIAL
+    )
+endif ()

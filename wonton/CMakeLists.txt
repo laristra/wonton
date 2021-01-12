@@ -5,6 +5,11 @@ Please see the license file at the root of this repository, or at:
 ]]
 
 add_subdirectory(support)
+
+if (WONTON_ENABLE_MPI)
+  add_subdirectory(distributed)
+endif ()
+
 add_subdirectory(intersect)
 add_subdirectory(mesh)
 add_subdirectory(state)
