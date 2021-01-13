@@ -30,8 +30,10 @@ class Simple_State_Wrapper: public StateManager<MeshWrapper> {
     @brief Constructor for the state wrapper
    */
   Simple_State_Wrapper(const MeshWrapper& mesh, 
- 			std::unordered_map<std::string,int> names={},
- 			std::unordered_map<int,std::vector<int>> material_cells={}
+		       std::unordered_map<std::string,int> names=
+		       std::unordered_map<std::string,int>{},
+		       std::unordered_map<int,std::vector<int>> material_cells=
+		       std::unordered_map<int,std::vector<int>>{}
  			) :StateManager<MeshWrapper>(mesh,names,material_cells) { }
 
   /// Assignment operator (disabled).
