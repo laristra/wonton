@@ -1516,7 +1516,7 @@ void AuxMeshTopology<BasicMesh>::build_face_to_cell_adjacency() {
                                             Entity_type::ALL);
   //  face_cell_ids_.resize(nfaces, {-1, -1});  // I think intel 15 barfs
   //                                            // if I do this
-  std::array<int, 2> iniarr = {-1, -1};
+  std::array<int, 2> iniarr = {{-1, -1}};
   face_cell_ids_.assign(nfaces, iniarr);
   
   int ncells = basicmesh_ptr_->num_entities(Entity_kind::CELL,

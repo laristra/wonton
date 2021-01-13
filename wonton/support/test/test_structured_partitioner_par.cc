@@ -24,7 +24,7 @@ TEST(StructuredPartioner, Parallel) {
       // many partitions we are requesting).
 
       int seed = 42;
-      std::array<int64_t, 3> ncells = {144, 256, 16};
+      std::array<int64_t, 3> ncells = {{144, 256, 16}};
       auto partlimits = Wonton::structured_partitioner<3>(16, ncells, 3, seed);
 
       int64_t limitsarray[96];  // flattened array
