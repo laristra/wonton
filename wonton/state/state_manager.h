@@ -39,8 +39,10 @@ class StateManager {
       material id to the cells containing that material
     */
 StateManager(const MeshWrapper& mesh,
-             std::unordered_map<std::string, int> names = {},
-             std::unordered_map<int, std::vector<int>> material_cells = {})
+             std::unordered_map<std::string, int> names =
+	     std::unordered_map<std::string, int>{},
+             std::unordered_map<int, std::vector<int>> material_cells = 
+	     std::unordered_map<int, std::vector<int>>{})
     :mesh_(mesh) {
     add_material_names(names);
     add_material_cells(material_cells);

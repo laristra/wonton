@@ -70,19 +70,19 @@ constexpr std::array<int,D> get_exponents();
 
 template<>
 constexpr std::array<int,1> get_exponents<1>() {
-  std::array<int,1> exponents{17};
+  std::array<int,1> exponents{{17}};
   return exponents;
 }
 
 template<>
 constexpr std::array<int,2> get_exponents<2>() {
-  std::array<int,2> exponents{3,2};
+  std::array<int,2> exponents{{3,2}};
   return exponents;
 }
 
 template<>
 constexpr std::array<int,3> get_exponents<3>() {
-  std::array<int,3> exponents{0,2,1};
+  std::array<int,3> exponents{{0,2,1}};
   return exponents;
 }
 
