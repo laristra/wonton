@@ -43,8 +43,8 @@ class Flat_State_Wrapper: public StateManager<MeshWrapper> {
     the map from material id to the cells containing that material
   */
   explicit Flat_State_Wrapper(const MeshWrapper& mesh,
-                     std::unordered_map<std::string, int> const& names = {},
-                     std::unordered_map<int, std::vector<int>> const& material_cells = {})
+                              std::unordered_map<std::string, int> const& names = std::unordered_map<std::string, int>{},
+                              std::unordered_map<int, std::vector<int>> const& material_cells = std::unordered_map<int, std::vector<int>>{})
     : StateManager<MeshWrapper>(mesh, names, material_cells) { }
 
 
