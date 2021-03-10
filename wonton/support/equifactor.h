@@ -41,7 +41,7 @@ Please see the license file at the root of this repository, or at:
 
 namespace Wonton {
 
-#ifndef NDEBUG
+#ifdef WONTON_DEBUG
 static                 // for ODR
 void print_sets(std::vector<std::vector<int>> sets);
 #endif
@@ -80,7 +80,7 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
     kset++;
   }
 
-#ifndef NDEBUG
+#ifdef WONTON_DEBUG
   // print out initial sets
   std::cerr << "\n\nNumber of sets D " << D << "\n";
   std::cerr << "INITIAL STATE:\n";
@@ -253,7 +253,7 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
     if (outer_iter > maxiter) outer_done = true;
   }  // while (!outer_done)
 
-#ifndef NDEBUG
+#ifdef WONTON_DEBUG
   std::cerr << "\nFINAL STATE:\n";
   std::vector<std::vector<int>> newsets(D);
   for (int i = 0; i < D; i++) {
@@ -278,7 +278,7 @@ std::vector<int> equifactor(int const N, int const D, int const randseed = 0) {
 }  // equifactor
 
 
-#ifndef NDEBUG
+#ifdef WONTON_DEBUG
 void print_sets(std::vector<std::vector<int>> sets) {
   int nsets = sets.size();
   int minprod = std::numeric_limits<int>::max();
