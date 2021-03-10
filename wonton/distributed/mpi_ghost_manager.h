@@ -263,7 +263,7 @@ private:
         }
       }
 
-#if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
+#if defined(WONTON_DEBUG)
       for (int i = 0; i < num_ranks; ++i) {
         if (i != rank) {
           std::cout << "[" << rank << "] -> [" << i << "]: (";
@@ -311,8 +311,7 @@ private:
 
       MPI_Waitall(requests.size(), requests.data(), status);
 
-#if !defined(NDEBUG)
-  #if defined(VERBOSE_OUTPUT)
+#if defined(WONTON_DEBUG)
       for (int i = 0; i < num_ranks; ++i) {
         if (i != rank) {
           std::cout << "[" << rank << "] <- [" << i << "]: (";
@@ -325,8 +324,9 @@ private:
           std::cout << ")" << std::endl;
         }
       }
-  #endif
+#endif
 
+#if !defined(NDEBUG)
       // verification: check that the number of received cells
       // matches the number of ghost cells for the current rank.
       // note that when using flat mesh with pseudo-redistribution,
@@ -497,7 +497,7 @@ private:
 
     static_assert(0 < dim and dim < 4, "invalid dimension");
 
-#if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
+#if defined(WONTON_DEBUG)
     int const field_type = field_type_registry.at(typeid(Field<dim>));
 
     switch (field_type) {
