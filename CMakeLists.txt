@@ -66,6 +66,15 @@ if (ENABLE_DOXYGEN)
 endif()
 
 #------------------------------------------------------------------------------#
+# Enable WONTON_DEBUG flag
+#------------------------------------------------------------------------------#
+option(WONTON_DEBUG "Additional checks will be performed and info printed" OFF)
+if (WONTON_DEBUG)
+  add_definitions(-DWONTON_DEBUG)
+endif()
+
+
+#------------------------------------------------------------------------------#
 # Discover packages here but set them as dependencies of
 # wonton_support target in the wonton/support subdirectory. Since
 # wonton_support is a dependency of the top level target
