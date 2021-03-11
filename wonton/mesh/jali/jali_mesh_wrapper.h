@@ -16,6 +16,7 @@ Please see the license file at the root of this repository, or at:
 #include "Mesh.hh"                      // Jali mesh header
 
 #include "wonton/mesh/AuxMeshTopology.h"
+#include "wonton/support/CoordinateSystem.h"
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
 
@@ -59,10 +60,12 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
   explicit Jali_Mesh_Wrapper(Jali::Mesh const & mesh,
                              bool request_sides = true,
                              bool request_wedges = true,
-                             bool request_corners = true) :
+                             bool request_corners = true,
+                             CoordSysType coord_sys = CoordSysType::Cartesian) :
       AuxMeshTopology<Jali_Mesh_Wrapper>
         (request_sides, request_wedges, request_corners),
-      jali_mesh_(mesh) {
+      jali_mesh_(mesh),
+      coord_sys_(coord_sys) {
 
     // base class (AuxMeshTopology) method that has to be called here
     // and not in the constructor of the base class because it needs
@@ -70,7 +73,10 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
     // its member variables. But these member vars don't get
     // initialized until the base class is constructed
 
-    AuxMeshTopology<Jali_Mesh_Wrapper>::build_aux_entities(); 
+    if (coord_sys == CoordSysType::CylindricalAxisymmetric)
+      AuxMeshTopology<Jali_Mesh_Wrapper>::build_aux_entities<CylindricalAxisymmetricCoordinates>();
+    else 
+      AuxMeshTopology<Jali_Mesh_Wrapper>::build_aux_entities(); 
   }
 
   //! Copy constructor (Deleted)
@@ -81,6 +87,9 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
 
   //! Empty destructor
   ~Jali_Mesh_Wrapper() {}
+
+  /// mesh global information
+  virtual CoordSysType mesh_get_coordinate_system() const override { return coord_sys_; }
 
   //! Dimension of space or mesh points
   int space_dimension() const {
@@ -221,6 +230,7 @@ class Jali_Mesh_Wrapper : public AuxMeshTopology<Jali_Mesh_Wrapper> {
   }
     
   Jali::Mesh const & jali_mesh_;
+  const CoordSysType coord_sys_;
 };  // class Jali_Mesh_Wrapper
 
 
