@@ -6,18 +6,17 @@ Please see the license file at the root of this repository, or at:
 #-----------------------------------------------------------------------------~#
 project(intersect)
 
-add_library(wonton_r3d_intersect)
-target_sources(wonton_r3d_intersect PRIVATE r3d/r3d.c r3d/r2d.c)
+add_subdirectory(r3d)
+set(r3d_ROOT ${CMAKE_INSTALL_PREFIX} CACHE PATH "Path to R3D Installation")
 
-target_include_directories(wonton_r3d_intersect PUBLIC
+add_library(wonton_r3d_intersect INTERFACE)
+
+target_link_libraries(wonton_r3d_intersect INTERFACE r3d::r3d)
+
+target_include_directories(wonton_r3d_intersect INTERFACE
   $<BUILD_INTERFACE:${wonton_SOURCE_DIR}>
   $<BUILD_INTERFACE:${wonton_BINARY_DIR}>
   $<INSTALL_INTERFACE:include>)
-
-set(R3D_HEADERS r3d/r3d.h r3d/r2d.h)
-set_target_properties(wonton_r3d_intersect PROPERTIES
-  PUBLIC_HEADER "${R3D_HEADERS}"
-  )
 
 target_link_libraries(wonton INTERFACE wonton_r3d_intersect)
 
