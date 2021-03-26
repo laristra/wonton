@@ -92,6 +92,14 @@ if (WONTON_ENABLE_MPI)  # if overwritten by user input or environment var
 endif ()
 
 
+#------------------------------------------------------------------------------
+# R3D - currently a submodule but could be separated.
+# Wonton needs to bump up the maximum number of vertices allowed in a polyhedron
+#------------------------------------------------------------------------------
+
+set(R3D_MAX_VERTS 1024 CACHE STRING "Maximum number of vertices in R3D polyhedron")
+
+
 #-----------------------------------------------------------------------------
 # FleCSI and FleCSI-SP location
 #-----------------------------------------------------------------------------
