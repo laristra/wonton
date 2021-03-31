@@ -25,8 +25,6 @@ install(TARGETS wonton_r3d_intersect
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
-  PUBLIC_HEADER DESTINATION include/wonton/intersect/r3d
-  INCLUDES DESTINATION include/wonton/intersect/r3d
   )
 
 
