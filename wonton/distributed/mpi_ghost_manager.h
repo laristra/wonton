@@ -8,7 +8,9 @@
 #define WONTON_MPI_GHOST_MANAGER_H
 
 #include <map>
+#include <set>
 #include <numeric>
+#include <typeindex>
 #include "wonton/support/wonton.h"
 #include "wonton/support/Point.h"
 
@@ -56,48 +58,36 @@ public:
 
     auto field_type = state.field_type(entity, field);
     bool multimat = (field_type == Field_type::MULTIMATERIAL_FIELD);
-
-    std::type_info const& data_type = state.get_data_type(field);
+    auto const field_type_id = field_type_registry.at(state.get_data_type(field));
 
     if (multimat) {
       assert(entity == Wonton::CELL);
       for (int m = 1; m < num_mats; ++m) {
-        if (data_type == typeid(double))
-          update_material_field<double>(field, m, cache);
-        else if (data_type == typeid(Vector<1>))
-          update_material_field<Vector<1>>(field, m, cache);
-        else if (data_type == typeid(Vector<2>))
-          update_material_field<Vector<2>>(field, m, cache);
-        else if (data_type == typeid(Vector<3>))
-          update_material_field<Vector<3>>(field, m, cache);
-        else if (data_type == typeid(Point<1>))
-          update_material_field<Point<1>>(field, m, cache);
-        else if (data_type == typeid(Point<2>))
-          update_material_field<Point<2>>(field, m, cache);
-        else if (data_type == typeid(Point<3>))
-          update_material_field<Point<3>>(field, m, cache);
-        else
-          throw std::runtime_error("mpi_ghost_manager.h: incorrect material field data type");
+        switch (field_type_id) {
+          case 0: update_material_field<double>(field, m, cache); break;
+          case 1: update_material_field<Point<1>>(field, m, cache); break;
+          case 2: update_material_field<Point<2>>(field, m, cache); break;
+          case 3: update_material_field<Point<3>>(field, m, cache); break;
+          case 4: update_material_field<Vector<1>>(field, m, cache); break;
+          case 5: update_material_field<Vector<2>>(field, m, cache); break;
+          case 6: update_material_field<Vector<3>>(field, m, cache); break;
+          default: throw std::runtime_error("incorrect material field data type");
+        }
       }
     } else {  // mesh field
-      if (data_type == typeid(double))
-        update_mesh_field<double>(field, cache);
-      else if (data_type == typeid(Vector<1>))
-        update_mesh_field<Vector<1>>(field, cache);
-      else if (data_type == typeid(Vector<2>))
-        update_mesh_field<Vector<2>>(field, cache);
-      else if (data_type == typeid(Vector<3>))
-        update_mesh_field<Vector<3>>(field, cache);
-      else if (data_type == typeid(Point<1>))
-        update_mesh_field<Point<1>>(field, cache);
-      else if (data_type == typeid(Point<2>))
-        update_mesh_field<Point<2>>(field, cache);
-      else if (data_type == typeid(Point<3>))
-        update_mesh_field<Point<3>>(field, cache);
-      else
-        throw std::runtime_error("mpi_ghost_manager.h: incorrect material field data type");
+      switch (field_type_id) {
+        case 0: update_mesh_field<double>(field, cache); break;
+        case 1: update_mesh_field<Point<1>>(field, cache); break;
+        case 2: update_mesh_field<Point<2>>(field, cache); break;
+        case 3: update_mesh_field<Point<3>>(field, cache); break;
+        case 4: update_mesh_field<Vector<1>>(field, cache); break;
+        case 5: update_mesh_field<Vector<2>>(field, cache); break;
+        case 6: update_mesh_field<Vector<3>>(field, cache); break;
+        default: throw std::runtime_error("incorrect mesh field data type");
+      }
     }
   }
+
 
   /** @brief Update ghosts of compact array of material cell values
    *
@@ -273,7 +263,7 @@ private:
         }
       }
 
-#if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
+#if defined(WONTON_DEBUG)
       for (int i = 0; i < num_ranks; ++i) {
         if (i != rank) {
           std::cout << "[" << rank << "] -> [" << i << "]: (";
@@ -321,7 +311,7 @@ private:
 
       MPI_Waitall(requests.size(), requests.data(), status);
 
-#if !defined(NDEBUG) && defined(VERBOSE_OUTPUT)
+#if defined(WONTON_DEBUG)
       for (int i = 0; i < num_ranks; ++i) {
         if (i != rank) {
           std::cout << "[" << rank << "] <- [" << i << "]: (";
@@ -336,20 +326,26 @@ private:
       }
 #endif
 
-#if !defined(NDEBUG)      
-      // verification
-      std::vector<int> received_ids;
+#if !defined(NDEBUG)
+      // verification: check that the number of received cells
+      // matches the number of ghost cells for the current rank.
+      // note that when using flat mesh with pseudo-redistribution,
+      // we could end up receiving more cells than the number of
+      // ghost cells for a given rank because a same cell could be
+      // owned by different ranks and hence sent multiple times.
+      // hence we have to filter those cells to remove duplicates
+      // before doing the check.
+      std::set<int> filtered;
+
       for (int i = 0; i < num_ranks; ++i) {
-        int nents = take.matrix[m][i].size();
-        for (int j = 0; j < nents; j++) {
-          int id = take.matrix[m][i][j];
-          if (std::find(received_ids.begin(), received_ids.end(), id) ==
-              received_ids.end())
-            received_ids.push_back(id);
+        for (int j : take.matrix[m][i]) {
+          filtered.insert(j);
         }
       }
-      assert(received_ids.size() == static_cast<size_t>(num_ghosts[rank]));
+      int const num_received = filtered.size();
+      assert(num_received == num_ghosts[rank]);
 #endif
+
       MPI_Barrier(comm);
     }
   }
@@ -487,19 +483,30 @@ private:
   /**
    * @brief Update vector field values on ghost cells.
    *
-   * @tparam dim: number of components of each vector.
-   * @param field: field Vector array (size = num_owned_in_mesh + num_ghost_in_mesh) 
+   * @tparam Field: the field type (can be point or vector field).
+   * @tparam dim: number of components of each point/vector.
+   * @param field: field values (size = num_owned_in_mesh + num_ghost_in_mesh)
    * @param m: the material index.
    * @param cache: whether to cache values or not (for tests).
    *
-   * Note that the data must not be the compact array of material cell
+   * Note that field data must NOT be the compact array of material cell
    * values; rather it has to be the full mesh cell values array
-
    */
-  template<int dim>
-  void update_ghost_values(Vector<dim>* field, int m, bool cache = false) {
+  template<template<int> class Field, int dim>
+  void update_ghost_values(Field<dim>* field, int m, bool cache = false) {
 
     static_assert(0 < dim and dim < 4, "invalid dimension");
+
+#if defined(WONTON_DEBUG)
+    int const field_type = field_type_registry.at(typeid(Field<dim>));
+
+    switch (field_type) {
+      case 0: throw std::runtime_error("incorrect method for scalar field");
+      case 1 ... 3: std::cout << "update point<"<< dim <<"> field" << std::endl; break;
+      case 4 ... 6: std::cout << "update vector<"<< dim <<"> field" << std::endl; break;
+      default: throw std::runtime_error("unknown field type");
+    }
+#endif
 
     if (cache) {
       if (send.values.empty() or take.values.empty()) {
@@ -586,110 +593,6 @@ private:
     // else. For this reason, free the user type
     MPI_Type_free(&MPI_Vector);
   }
-  
-
-  /**
-   * @brief Update Point field values on ghost cells (e.g. material centroids)
-   *
-   * @tparam dim: number of components of each Point.
-   * @param field: field Point array (size = num_owned_in_mesh + num_ghost_in_mesh) 
-   * @param m: the material index.
-   * @param cache: whether to cache values or not (for tests).
-   *
-   * Note that the data must not be the compact array of material cell
-   * values; rather it has to be the full mesh cell values array
-
-   */
-  template<int dim>
-  void update_ghost_values(Point<dim>* field, int m, bool cache = false) {
-
-    static_assert(0 < dim and dim < 4, "invalid dimension");
-
-    if (cache) {
-      if (send.values.empty() or take.values.empty()) {
-        send.values.resize(num_mats);
-        take.values.resize(num_mats);
-        for (int i = 0; i < num_mats; ++i) {
-          send.values[i].resize(num_ranks);
-          take.values[i].resize(num_ranks);
-        }
-      }
-    }
-
-    // skip if no material data for this rank
-    if (field == nullptr) { return; }
-
-    // create a MPI contiguous type for serialization
-    MPI_Datatype MPI_Point;
-    MPI_Type_contiguous(dim, MPI_DOUBLE, &MPI_Point);
-    MPI_Type_commit(&MPI_Point);
-
-    std::vector<double> buffer[num_ranks]; // stride = dim
-    std::vector<MPI_Request> requests;
-
-    // step 1: send owned values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and not send.matrix[m][i].empty()) {
-        buffer[i].clear();
-        send.count[m][i] = send.matrix[m][i].size();
-        buffer[i].reserve(dim * send.count[m][i]);
-
-        for (auto&& j : send.matrix[m][i]) {  // 'j' local entity index
-          assert(not is_ghost(j));
-          for (int d = 0; d < dim; ++d) {
-            buffer[i].emplace_back(field[j][d]);
-          }
-        }
-
-        MPI_Request request;
-        MPI_Isend(buffer[i].data(), send.count[m][i], MPI_Point, i, 0, comm, &request);
-        requests.emplace_back(request);
-
-        if (cache) {
-          send.values[m][i].resize(buffer[i].size());
-          std::copy(buffer[i].begin(), buffer[i].end(), send.values[m][i].begin());
-        }
-      }
-    }
-
-    // step 2: receive ghost values
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        buffer[i].resize(dim * take.count[m][i]);
-        MPI_Request request;
-        MPI_Irecv(buffer[i].data(), take.count[m][i], MPI_Point, i, 0, comm, &request);
-        requests.emplace_back(request);
-      }
-    }
-
-    // step 3: update vector field
-    MPI_Waitall(requests.size(), requests.data(), status);
-
-    for (int i = 0; i < num_ranks; ++i) {
-      if (i != rank and take.count[m][i]) {
-        for (int j = 0; j < take.count[m][i]; ++j) {
-          int const& gid = take.matrix[m][i][j];
-          int const& lid = take.lookup[gid];
-          for (int d = 0; d < dim; ++d) {
-            field[lid][d] = buffer[i][j * dim + d];
-          }
-        }
-
-        if (cache) {
-          take.values[m][i].resize(dim * take.count[m][i]);
-          std::copy(buffer[i].begin(), buffer[i].end(), take.values[m][i].begin());
-        }
-        buffer[i].clear();
-      }
-    }
-
-    // While it seems that a type can be committed repeatedly - what
-    // happens if someone tries to do a ghost exchange of Vector<2>
-    // and Vector<3> - say during a 3D to 2D remap. MPI_Vector will
-    // refer to one thing while the caller might assume something
-    // else. For this reason, free the user type
-    MPI_Type_free(&MPI_Point);
-  }
 
   /**
    * @struct Data for MPI communications.
@@ -704,6 +607,17 @@ private:
     std::vector<std::vector<int>> count {};
     /** cached values per rank for tests, stride = dim for vector fields */
     std::vector<std::vector<std::vector<double>>> values {};
+  };
+
+  /** Registry of all supported field types */
+  std::map<std::type_index, int> const field_type_registry = {
+    { typeid(double)       , 0 },
+    { typeid(Point<1>) , 1 },
+    { typeid(Point<2>) , 2 },
+    { typeid(Point<3>) , 3 },
+    { typeid(Vector<1>), 4 },
+    { typeid(Vector<2>), 5 },
+    { typeid(Vector<3>), 6 },
   };
 
   /** mesh instance */
