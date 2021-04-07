@@ -66,6 +66,15 @@ if (ENABLE_DOXYGEN)
 endif()
 
 #------------------------------------------------------------------------------#
+# Enable WONTON_DEBUG flag
+#------------------------------------------------------------------------------#
+option(WONTON_DEBUG "Additional checks will be performed and info printed" OFF)
+if (WONTON_DEBUG)
+  add_definitions(-DWONTON_DEBUG)
+endif()
+
+
+#------------------------------------------------------------------------------#
 # Discover packages here but set them as dependencies of
 # wonton_support target in the wonton/support subdirectory. Since
 # wonton_support is a dependency of the top level target
@@ -81,6 +90,14 @@ set(WONTON_ENABLE_MPI False CACHE BOOL "Is MPI enabled in Wonton?") # create cac
 if (WONTON_ENABLE_MPI)  # if overwritten by user input or environment var
   find_package(MPI REQUIRED)
 endif ()
+
+
+#------------------------------------------------------------------------------
+# R3D - currently a submodule but could be separated.
+# Wonton needs to bump up the maximum number of vertices allowed in a polyhedron
+#------------------------------------------------------------------------------
+
+set(R3D_MAX_VERTS 1024 CACHE STRING "Maximum number of vertices in R3D polyhedron")
 
 
 #-----------------------------------------------------------------------------

@@ -57,6 +57,9 @@ set(LAPACKE_CONFIG_FOUND @LAPACKE_CONFIG_FOUND@ CACHE BOOL "Was a LAPACKE config
 set(LAPACK_CONFIG_FOUND @LAPACK_CONFIG_FOUND@ CACHE BOOL "Was a LAPACK config file found?")
 
 
+# R3D installation path
+set(r3d_ROOT @CMAKE_INSTALL_PREFIX@ CACHE PATH "Path to R3D installation")
+
 set(BOOST_ROOT @BOOST_ROOT@ CACHE PATH "Boost installation directories")
 
 
@@ -82,6 +85,11 @@ else ()
 endif ()
 
 include(CMakeFindDependencyMacro)
+
+# Always need R3D for now
+find_dependency(r3d)
+
+
 if (WONTON_ENABLE_MPI)
   find_dependency(MPI)
 endif ()
