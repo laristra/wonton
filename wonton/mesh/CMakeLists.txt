@@ -34,6 +34,10 @@ if (WONTON_ENABLE_FleCSI)
   add_subdirectory(flecsi)
 endif ()
 
+if (WONTON_ENABLE_Conduit)
+  add_subdirectory(conduit)
+endif ()
+
 add_subdirectory(simple)
 
 add_subdirectory(adaptive_refinement)
