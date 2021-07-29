@@ -18,5 +18,9 @@ Please see the license file at the root of this repository, or at:
  */
 
 TEST(Conduit_Mesh_Wrapper, Sanity_Test) {
-  ASSERT_NE(Wonton::conduit_about(), "");
+  conduit::Node mesh;
+  conduit::blueprint::mesh::examples::basic("uniform", 2, 2, 2, mesh);
+
+  Wonton::Conduit_Mesh_Wrapper mesh_wrapper(mesh);
+  ASSERT_EQ(mesh_wrapper.space_dimension(), 0);
 }
