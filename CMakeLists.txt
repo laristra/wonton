@@ -165,6 +165,40 @@ if (WONTON_ENABLE_Jali AND WONTON_ENABLE_MPI AND NOT Jali_LIBRARIES)
 endif ()
 
 
+#------------------------------------------------------------------------------#
+# Locate Conduit
+#------------------------------------------------------------------------------#
+
+set(WONTON_ENABLE_Conduit False CACHE BOOL "Conduit/Blueprint Interface enabled?")
+
+if (WONTON_ENABLE_Conduit AND NOT Conduit_LIBRARIES)
+  # Look for the Conduit package
+  
+  find_package(Conduit REQUIRED)  # specify in Conduit_ROOT or CMAKE_PREFIX_PATH
+
+  # Similar to Kokkos; Conduit doesn't set 'Conduit_LIBRARIES', so we set it manually
+  set(Conduit_LIBRARIES "conduit::conduit" CACHE STRING "Conduit top level target")
+
+  message(STATUS "Located Conduit")
+  message(STATUS "Conduit_LIBRARIES ${Conduit_LIBRARIES}")
+
+  target_link_libraries(wonton INTERFACE ${Conduit_LIBRARIES})
+  
+  if (NOT Conduit_ROOT)
+    # Conduit_CONFIG should be the full path to where the config file was found
+    # which is typically SOMEDIR/lib/cmake - back out Conduit_ROOT from that
+    # until we fix ConduitConfig
+    get_filename_component(Conduit_CONFIGLOC ${Conduit_CONFIG} DIRECTORY)
+    get_filename_component(Conduit_CONFIGLOC_UP1 ${Conduit_CONFIGLOC} DIRECTORY)
+    get_filename_component(Conduit_CONFIGLOC_UP2 ${Conduit_CONFIGLOC_UP1} DIRECTORY)
+    get_filename_component(Conduit_ROOT ${Conduit_CONFIGLOC_UP2} DIRECTORY CACHE "Where Conduit lives")
+  endif ()
+  message(STATUS "Conduit_ROOT ${Conduit_ROOT}")
+  
+  target_compile_definitions(wonton INTERFACE WONTON_ENABLE_Conduit)
+endif ()
+
+
 #-----------------------------------------------------------------------------
 # Thrust information
 #-----------------------------------------------------------------------------
